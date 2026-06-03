@@ -107,6 +107,15 @@
             transform: translateY(-5px);
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
         }
+
+        /* Instagram Grid Hover Simulation */
+        .ig-post-hover {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .group:hover .ig-post-hover {
+            opacity: 1;
+        }
     </style>
 </head>
 <body class="font-sans text-gray-800 bg-slate-50 antialiased overflow-x-hidden">
@@ -114,13 +123,13 @@
     <!-- Top Bar -->
     <div class="bg-primary-900 text-white text-xs md:text-sm py-2 px-4 md:px-8 hidden md:flex justify-between items-center z-50 relative">
         <div class="flex items-center space-x-4">
-            <span class="flex items-center"><i class="fas fa-envelope mr-2 text-secondary-400"></i> smpqtyq1@gmail.com</span>
+            <span class="flex items-center"><i class="fas fa-envelope mr-2 text-secondary-400"></i> smpqtyq1lilbanat@gmail.com</span>
             <span class="flex items-center"><i class="fas fa-phone mr-2 text-secondary-400"></i> 0295 4102840</span>
         </div>
         <div class="flex items-center space-x-4">
-            <span>NSM: - | NPSN: -</span>
+            <span>NSM: - | NPSN: 70054907</span>
             <div class="flex space-x-3">
-                <a href="https://www.instagram.com/smpqtyq1lilbanat" target="_blank" class="hover:text-secondary-400 transition"><i class="fab fa-instagram"></i></a>
+                <a href="https://www.instagram.com/smpqtyq1lilbanat/" target="_blank" class="hover:text-secondary-400 transition"><i class="fab fa-instagram"></i></a>
                 <a href="https://www.youtube.com/@yqbs1patiputri" target="_blank" class="hover:text-secondary-400 transition"><i class="fab fa-youtube"></i></a>
                 <a href="#" class="hover:text-secondary-400 transition"><i class="fab fa-facebook-f"></i></a>
             </div>
@@ -133,9 +142,11 @@
             <div class="flex justify-between h-20">
                 <!-- Logo -->
                 <div class="flex-shrink-0 flex items-center cursor-pointer" onclick="window.scrollTo(0,0)">
-                    <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center mr-3 shadow-lg border border-gray-200 overflow-hidden">
-                        <img src="logo.png" alt="Logo SMPQT Yanbu'ul Qur'an" class="w-full h-full object-contain">
-                    </div>
+                    <!-- Using logo.png -->
+                    <img src="logo.png" alt="Logo SMPQT" class="w-12 h-12 mr-3 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <!-- Fallback if logo.png fails -->
+                    <div class="hidden w-12 h-12 bg-primary-700 rounded-full items-center justify-center text-white font-bold text-xl mr-3 shadow-lg border-2 border-secondary-500">YQ</div>
+                    
                     <div class="flex flex-col">
                         <span class="font-bold text-lg md:text-xl text-primary-900 leading-tight">SMPQT Yanbu'ul Qur'an 1 Lil Banat</span>
                         <span class="text-xs md:text-sm text-gray-500 font-medium">Kabupaten Pati</span>
@@ -150,8 +161,8 @@
                     <a href="#kurikulum" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md font-medium text-sm transition">Kurikulum</a>
                     <a href="#fasilitas" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md font-medium text-sm transition">Fasilitas</a>
                     <a href="#kemitraan" class="text-gray-700 hover:text-primary-600 px-3 py-2 rounded-md font-medium text-sm transition">Kemitraan</a>
-                    <a href="#kontak" class="bg-primary-700 text-white hover:bg-primary-800 px-5 py-2.5 rounded-full font-medium text-sm transition shadow-md flex items-center">
-                        PPDB 2025/2026 <i class="fas fa-arrow-right ml-2 text-xs"></i>
+                    <a href="psb.html" class="bg-primary-700 text-white hover:bg-primary-800 px-5 py-2.5 rounded-full font-medium text-sm transition shadow-md flex items-center">
+                        Info PSB 2026/2027 <i class="fas fa-arrow-right ml-2 text-xs"></i>
                     </a>
                 </div>
 
@@ -172,7 +183,7 @@
                 <a href="#program" class="mobile-link block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50">Program Khas</a>
                 <a href="#kurikulum" class="mobile-link block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50">Kurikulum</a>
                 <a href="#fasilitas" class="mobile-link block px-3 py-3 rounded-md text-base font-medium text-gray-700 hover:text-primary-700 hover:bg-primary-50">Fasilitas</a>
-                <a href="#kontak" class="mobile-link block mt-4 px-3 py-3 text-center rounded-md text-base font-medium bg-primary-700 text-white hover:bg-primary-800">Daftar PPDB</a>
+                <a href="psb.html" class="mobile-link block mt-4 px-3 py-3 text-center rounded-md text-base font-medium bg-primary-700 text-white hover:bg-primary-800">Info PPDB 2026</a>
             </div>
         </div>
     </nav>
@@ -181,7 +192,8 @@
     <section id="beranda" class="relative h-screen min-h-[600px] flex items-center justify-center pt-20">
         <!-- Background Image with Overlay -->
         <div class="absolute inset-0 z-0">
-            <img src="Ekstra Qiro'ah.jpg" alt="Santriwati Yanbu'ul Qur'an" class="w-full h-full object-cover object-center" onerror="this.src='https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80'">
+            <!-- Diganti menggunakan gambar gedung sekolah -->
+            <img src="Ekstra Qiroatul Kutub.jpg" alt="Santriwati Yanbu'ul Qur'an" class="w-full h-full object-cover object-center" onerror="this.src='https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?auto=format&fit=crop&q=80'">
             <div class="absolute inset-0 hero-gradient"></div>
         </div>
 
@@ -202,8 +214,8 @@
                     <a href="#profil" class="bg-primary-600 hover:bg-primary-500 text-white px-8 py-3.5 rounded-full font-semibold text-center transition shadow-lg shadow-primary-700/50 flex justify-center items-center">
                         Jelajahi Profil <i class="fas fa-arrow-down ml-2"></i>
                     </a>
-                    <a href="#kontak" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 px-8 py-3.5 rounded-full font-semibold text-center transition flex justify-center items-center">
-                        Hubungi Kami <i class="fas fa-headset ml-2"></i>
+                    <a href="psb.html" class="bg-white/10 hover:bg-white/20 backdrop-blur-md text-white border border-white/30 px-8 py-3.5 rounded-full font-semibold text-center transition flex justify-center items-center">
+                        Info Pendaftaran <i class="fas fa-clipboard-list ml-2"></i>
                     </a>
                 </div>
             </div>
@@ -251,7 +263,8 @@
                 <!-- Right: Images/Quotes -->
                 <div class="relative reveal-right">
                     <div class="relative rounded-2xl overflow-hidden shadow-2xl z-10 border-4 border-white">
-                        <img src="Ekstra Qiroatul Kutub.jpg" alt="Gedung SMPQT" class="w-full h-auto" onerror="this.src='https://images.unsplash.com/photo-1594951333792-588cecc5c970?auto=format&fit=crop&q=80'">
+                        <!-- Using uploaded image for Gedung -->
+                        <img src="Ekstra Qiroatul Kutub.jpg" alt="Gedung SMPQT" class="w-full h-auto object-cover" onerror="this.src='https://images.unsplash.com/photo-1594951333792-588cecc5c970?auto=format&fit=crop&q=80'">
                         <div class="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent"></div>
                         <div class="absolute bottom-0 left-0 p-6">
                             <h3 class="text-white font-bold text-xl mb-1">Sekolah Menengah Pertama Al-Qur'an Terpadu</h3>
@@ -294,20 +307,20 @@
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-12 gap-8">
-                <!-- Visi -->
-                <div class="md:col-span-5 text-white rounded-2xl p-8 shadow-xl reveal-left flex flex-col justify-center text-center relative overflow-hidden bg-primary-800" style="background-image: url('Ekstra Qiroatul Kutub.jpg'); background-size: cover; background-position: center;">
-                    <!-- Dark Overlay for readability -->
-                    <div class="absolute inset-0 bg-primary-900/80 z-0"></div>
-                    
-                    <!-- Content -->
-                    <div class="relative z-10 flex flex-col items-center">
-                        <div class="absolute top-0 right-0 -mt-4 -mr-4 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
-                        <div class="absolute bottom-0 left-0 -mb-4 -ml-4 w-24 h-24 bg-secondary-500 opacity-30 rounded-full blur-xl"></div>
-                        
-                        <i class="fas fa-eye text-5xl text-secondary-400 mb-6 drop-shadow-md"></i>
-                        <h3 class="text-2xl font-bold mb-4 font-serif uppercase tracking-widest text-secondary-400 drop-shadow-md">Visi</h3>
-                        <p class="text-xl lg:text-2xl font-semibold leading-relaxed font-serif italic drop-shadow-lg">
-                            "Terwujudnya Generasi Qur'ani yang Unggul Berkarakter Berwawasan Lingkungan dan Kebangsaan"
+                <!-- Visi dengan Background Gedung -->
+                <div class="md:col-span-5 relative rounded-2xl p-8 shadow-xl reveal-left flex flex-col justify-center text-center overflow-hidden">
+                    <!-- Background Image -->
+                    <div class="absolute inset-0 z-0">
+                        <img src="Ekstra Qiroatul Kutub.jpg" alt="Background Visi" class="w-full h-full object-cover" onerror="this.src='https://images.unsplash.com/photo-1594951333792-588cecc5c970?auto=format&fit=crop&q=80'">
+                        <div class="absolute inset-0 bg-primary-900/80 backdrop-blur-sm"></div>
+                    </div>
+
+                    <!-- Visi Content -->
+                    <div class="relative z-10 text-white">
+                        <i class="fas fa-eye text-5xl text-secondary-400 mb-6"></i>
+                        <h3 class="text-2xl font-bold mb-4 font-serif uppercase tracking-widest text-secondary-400">Visi</h3>
+                        <p class="text-xl lg:text-2xl font-semibold leading-relaxed font-serif italic">
+                            “Terwujudnya Generasi Qur’ani yang Unggul Berkarakter Berwawasan Lingkungan dan Kebangsaan”
                         </p>
                     </div>
                 </div>
@@ -320,7 +333,7 @@
                     <ul class="space-y-4">
                         <li class="flex items-start">
                             <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold mr-4 mt-0.5">1</div>
-                            <p class="text-gray-700 text-lg">Mendidik Penghafal Al-Qur'an yang mengintegrasikan pemahaman nilai-nilai Al-Qur'an ke dalam seluruh mata pelajaran dan membudayakan dalam perilaku keseharian.</p>
+                            <p class="text-gray-700 text-lg">Mendidik Penghafal Al-Qur’an yang mengintegrasikan pemahaman nilai-nilai Al-Qur'an ke dalam seluruh mata pelajaran dan membudayakan dalam perilaku keseharian.</p>
                         </li>
                         <li class="flex items-start">
                             <div class="flex-shrink-0 w-8 h-8 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold mr-4 mt-0.5">2</div>
@@ -461,8 +474,216 @@
         </div>
     </section>
 
+    <!-- Ekstrakurikuler Gallery -->
+    <section id="ekstrakurikuler" class="py-20 bg-slate-50 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal">
+                <div class="max-w-2xl">
+                    <span class="text-primary-600 font-bold tracking-wider uppercase text-sm">Pengembangan Diri</span>
+                    <h2 class="text-3xl font-bold text-gray-900 font-serif mt-2">Kegiatan Ekstrakurikuler</h2>
+                    <p class="mt-4 text-gray-600">Mewadahi minat dan bakat santriwati untuk meraih prestasi di bidang akademik maupun non-akademik.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                <!-- Wajib -->
+                <div class="col-span-2 group relative overflow-hidden rounded-xl shadow-md reveal cursor-pointer h-48 md:h-full min-h-[200px]">
+                    <img src="Ekstra Pramuka.jpg" alt="Pramuka" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1526362539659-1e1493a38ee5?auto=format&fit=crop&q=80'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-primary-900/90 via-primary-800/40 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-5 w-full">
+                        <span class="bg-secondary-500 text-white text-xs font-bold px-2 py-1 rounded uppercase tracking-wider mb-2 inline-block">Wajib</span>
+                        <h3 class="font-bold text-white text-lg lg:text-xl">Pramuka</h3>
+                        <p class="text-primary-100 text-xs mt-1 opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-2 group-hover:translate-y-0">Membentuk kemandirian & kedisiplinan</p>
+                    </div>
+                </div>
+
+                <!-- Pilihan 1 -->
+                <div class="group relative overflow-hidden rounded-xl shadow-md hover-card reveal cursor-pointer h-48">
+                    <img src="Ekstra Qiro'ah.jpg" alt="Qiro'ah" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Qiroah'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80"></div>
+                    <div class="absolute bottom-0 left-0 p-4 w-full">
+                        <h3 class="font-bold text-white text-sm">Seni Qiro'ah</h3>
+                    </div>
+                </div>
+
+                <!-- Pilihan 2 -->
+                <div class="group relative overflow-hidden rounded-xl shadow-md hover-card reveal cursor-pointer h-48" style="transition-delay: 100ms;">
+                    <img src="Ekstra Qiroatul Kutub.jpg" alt="Qiroatul Kutub" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Kutub'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80"></div>
+                    <div class="absolute bottom-0 left-0 p-4 w-full">
+                        <h3 class="font-bold text-white text-sm">Qiroatul Kutub</h3>
+                    </div>
+                </div>
+
+                <!-- Pilihan 3 -->
+                <div class="group relative overflow-hidden rounded-xl shadow-md hover-card reveal cursor-pointer h-48" style="transition-delay: 200ms;">
+                    <img src="English Club.jpg" alt="English Club" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=English'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80"></div>
+                    <div class="absolute bottom-0 left-0 p-4 w-full">
+                        <h3 class="font-bold text-white text-sm">English Club</h3>
+                    </div>
+                </div>
+
+                <!-- Pilihan 4 -->
+                <div class="group relative overflow-hidden rounded-xl shadow-md hover-card reveal cursor-pointer h-48">
+                    <img src="Ekstra KTI.jpg" alt="Karya Tulis Ilmiah" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=KTI'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80"></div>
+                    <div class="absolute bottom-0 left-0 p-4 w-full">
+                        <h3 class="font-bold text-white text-sm">Karya Tulis Ilmiah</h3>
+                    </div>
+                </div>
+
+                <!-- Pilihan 5 -->
+                <div class="group relative overflow-hidden rounded-xl shadow-md hover-card reveal cursor-pointer h-48" style="transition-delay: 100ms;">
+                    <img src="Ekstra Kaligrafi.jpg" alt="Kaligrafi" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Kaligrafi'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80"></div>
+                    <div class="absolute bottom-0 left-0 p-4 w-full">
+                        <h3 class="font-bold text-white text-sm">Seni Kaligrafi</h3>
+                    </div>
+                </div>
+
+                <!-- Pilihan 6 -->
+                <div class="group relative overflow-hidden rounded-xl shadow-md hover-card reveal cursor-pointer h-48" style="transition-delay: 200ms;">
+                    <img src="Ekstra Paduan Suara.jpg" alt="Paduan Suara" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Padus'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80"></div>
+                    <div class="absolute bottom-0 left-0 p-4 w-full">
+                        <h3 class="font-bold text-white text-sm">Paduan Suara / Rebana</h3>
+                    </div>
+                </div>
+
+                <!-- Pilihan 7 -->
+                <div class="group relative overflow-hidden rounded-xl shadow-md hover-card reveal cursor-pointer h-48" style="transition-delay: 300ms;">
+                    <img src="Ekstra Kriya.jpg" alt="Kriya" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Kriya'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80"></div>
+                    <div class="absolute bottom-0 left-0 p-4 w-full">
+                        <h3 class="font-bold text-white text-sm">Seni Kriya / Keputrian</h3>
+                    </div>
+                </div>
+
+                <!-- Pilihan 8 -->
+                <div class="group relative overflow-hidden rounded-xl shadow-md hover-card reveal cursor-pointer h-48">
+                    <img src="Ekstra Media.jpg" alt="Jurnalistik Media" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Media'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80"></div>
+                    <div class="absolute bottom-0 left-0 p-4 w-full">
+                        <h3 class="font-bold text-white text-sm">Jurnalistik Media</h3>
+                    </div>
+                </div>
+
+                <!-- Pilihan 9 -->
+                <div class="group relative overflow-hidden rounded-xl shadow-md hover-card reveal cursor-pointer h-48" style="transition-delay: 100ms;">
+                    <img src="Ekstra Tenis Meja.jpg" alt="Tenis Meja" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Olahraga'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-80"></div>
+                    <div class="absolute bottom-0 left-0 p-4 w-full">
+                        <h3 class="font-bold text-white text-sm">Tenis Meja / Olahraga</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- YouTube & Instagram Section -->
+    <section id="galeri" class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-16 reveal">
+                <span class="text-primary-600 font-bold tracking-wider uppercase text-sm">Sosial Media</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-2 font-serif">Galeri & Aktivitas</h2>
+                <p class="mt-4 text-gray-600">Ikuti update terbaru kegiatan santriwati melalui akun sosial media resmi kami.</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+                <!-- YouTube Embed -->
+                <div class="lg:col-span-7 reveal-left">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <i class="fab fa-youtube text-red-600 text-3xl mr-3"></i>
+                            <div>
+                                <h3 class="font-bold text-gray-900 text-lg">YQBS1 Pati Putri</h3>
+                                <a href="https://www.youtube.com/@yqbs1patiputri" target="_blank" class="text-xs text-gray-500 hover:text-red-600">@yqbs1patiputri</a>
+                            </div>
+                        </div>
+                        <a href="https://www.youtube.com/@yqbs1patiputri?sub_confirmation=1" target="_blank" class="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-4 py-1.5 rounded-full shadow transition">Subscribe</a>
+                    </div>
+                    
+                    <!-- YouTube Video Iframe -->
+                    <div class="rounded-2xl overflow-hidden shadow-xl border border-gray-100 aspect-video bg-gray-100 relative">
+                        <!-- We use a standard embed link. Replace the video ID (e.g., dQw4w9WgXcQ) with your actual latest video ID from YouTube -->
+                        <iframe 
+                            width="100%" 
+                            height="100%" 
+                            src="https://www.youtube.com/embed?listType=user_uploads&list=yqbs1patiputri" 
+                            title="YouTube video player" 
+                            frameborder="0" 
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                            allowfullscreen
+                            class="absolute inset-0">
+                        </iframe>
+                        <!-- Fallback text if iframe fails -->
+                        <div class="absolute inset-0 flex items-center justify-center -z-10 text-gray-400">
+                            <i class="fas fa-play-circle text-4xl mb-2"></i>
+                            <p>Loading Video...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Instagram Grid Simulation -->
+                <div class="lg:col-span-5 reveal-right">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center">
+                            <div class="bg-gradient-to-tr from-yellow-400 via-red-500 to-purple-500 p-[2px] rounded-full mr-3">
+                                <div class="bg-white rounded-full p-1">
+                                    <!-- Use Logo for IG Profile Pic -->
+                                    <img src="logo.png" alt="IG Profile" class="w-8 h-8 rounded-full object-contain" onerror="this.src='https://placehold.co/100x100/15803d/ffffff?text=YQ'">
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-gray-900 text-lg">smpqtyq1lilbanat</h3>
+                                <a href="https://www.instagram.com/smpqtyq1lilbanat/" target="_blank" class="text-xs text-gray-500 hover:text-purple-600">Instagram Resmi</a>
+                            </div>
+                        </div>
+                        <a href="https://www.instagram.com/smpqtyq1lilbanat/" target="_blank" class="bg-blue-500 hover:bg-blue-600 text-white text-sm font-semibold px-4 py-1.5 rounded-lg shadow transition">Follow</a>
+                    </div>
+
+                    <!-- IG Photo Grid 2x2 -->
+                    <div class="grid grid-cols-2 gap-2 bg-gray-50 p-2 rounded-2xl border border-gray-100 shadow-inner">
+                        <!-- IG Post 1 -->
+                        <a href="https://www.instagram.com/smpqtyq1lilbanat/" target="_blank" class="group relative aspect-square overflow-hidden rounded-xl bg-gray-200 block">
+                            <img src="Ekstra Qiro'ah.jpg" alt="IG Post 1" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center ig-post-hover">
+                                <i class="fas fa-heart text-white text-xl"></i>
+                            </div>
+                        </a>
+                        <!-- IG Post 2 -->
+                        <a href="https://www.instagram.com/smpqtyq1lilbanat/" target="_blank" class="group relative aspect-square overflow-hidden rounded-xl bg-gray-200 block">
+                            <img src="Ekstra Kaligrafi.jpg" alt="IG Post 2" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center ig-post-hover">
+                                <i class="fas fa-heart text-white text-xl"></i>
+                            </div>
+                        </a>
+                        <!-- IG Post 3 -->
+                        <a href="https://www.instagram.com/smpqtyq1lilbanat/" target="_blank" class="group relative aspect-square overflow-hidden rounded-xl bg-gray-200 block">
+                            <img src="Ekstra KTI.jpg" alt="IG Post 3" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center ig-post-hover">
+                                <i class="fas fa-play text-white text-xl"></i>
+                            </div>
+                        </a>
+                        <!-- IG Post 4 -->
+                        <a href="https://www.instagram.com/smpqtyq1lilbanat/" target="_blank" class="group relative aspect-square overflow-hidden rounded-xl bg-gray-200 block">
+                            <img src="Ekstra Pramuka.jpg" alt="IG Post 4" class="w-full h-full object-cover">
+                            <div class="absolute inset-0 bg-black/40 flex items-center justify-center ig-post-hover">
+                                <i class="fas fa-clone text-white text-xl"></i>
+                            </div>
+                        </a>
+                    </div>
+                    <div class="text-center mt-4">
+                        <a href="https://www.instagram.com/smpqtyq1lilbanat/" target="_blank" class="text-sm font-semibold text-gray-500 hover:text-primary-600 transition">Lihat Galeri Lengkap di Instagram <i class="fas fa-arrow-right ml-1"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Fasilitas Sekolah -->
-    <section id="fasilitas" class="py-20 bg-white">
+    <section id="fasilitas" class="py-20 bg-slate-50 border-t border-gray-100">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16 reveal">
                 <span class="text-primary-600 font-bold tracking-wider uppercase text-sm">Sarana & Prasarana</span>
@@ -473,7 +694,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Fasilitas 1 -->
                 <div class="group relative overflow-hidden rounded-2xl shadow-md reveal">
-                    <img src="" alt="Smart Classroom" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80'">
+                    <img src="ruang kelsa.png" alt="Smart Classroom" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80'">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 p-6 w-full">
                         <h3 class="text-xl font-bold text-white mb-1">Smart Classroom</h3>
@@ -483,7 +704,7 @@
 
                 <!-- Fasilitas 2 -->
                 <div class="group relative overflow-hidden rounded-2xl shadow-md reveal" style="transition-delay: 100ms;">
-                    <img src="" alt="Lab Komputer" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80'">
+                    <img src="lab komputer.png" alt="Lab Komputer" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80'">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 p-6 w-full">
                         <h3 class="text-xl font-bold text-white mb-1">Lab Komputer & Internet</h3>
@@ -493,7 +714,7 @@
 
                 <!-- Fasilitas 3 -->
                 <div class="group relative overflow-hidden rounded-2xl shadow-md reveal" style="transition-delay: 200ms;">
-                    <img src="" alt="Lab IPA" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80'">
+                    <img src="[Image of Laboratorium IPA Sekolah]" alt="Lab IPA" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80'">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 p-6 w-full">
                         <h3 class="text-xl font-bold text-white mb-1">Laboratorium IPA</h3>
@@ -503,7 +724,17 @@
 
                 <!-- Fasilitas 4 -->
                 <div class="group relative overflow-hidden rounded-2xl shadow-md reveal">
-                    <img src="" alt="Asrama Putri" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&q=80'">
+                    <img src="masjid.png" alt="Masjid dan Asrama" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&q=80'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-6 w-full">
+                        <h3 class="text-xl font-bold text-white mb-1">Masjid & Asrama Putri</h3>
+                        <p class="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-4 group-hover:translate-y-0">Nyaman, terpadu dengan masjid, dengan rasio sanitasi toilet yang sangat memadai (20+ unit).</p>
+                    </div>
+                </div>
+
+                <!-- Fasilitas 5 -->
+                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal" style="transition-delay: 100ms;">
+                    <img src="perpustakaan.png" alt="Perpustakaan" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80'">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 p-6 w-full">
                         <h3 class="text-xl font-bold text-white mb-1">Asrama Putri (Boarding)</h3>
@@ -513,7 +744,7 @@
 
                 <!-- Fasilitas 5 -->
                 <div class="group relative overflow-hidden rounded-2xl shadow-md reveal" style="transition-delay: 100ms;">
-                    <img src="" alt="Perpustakaan" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80'">
+                    <img src="[Image of Perpustakaan Sekolah Modern]" alt="Perpustakaan" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80'">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 p-6 w-full">
                         <h3 class="text-xl font-bold text-white mb-1">Perpustakaan & Pojok Baca</h3>
@@ -523,7 +754,7 @@
 
                 <!-- Fasilitas 6 -->
                 <div class="group relative overflow-hidden rounded-2xl shadow-md reveal" style="transition-delay: 200ms;">
-                    <img src="" alt="POSKESTREN" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80'">
+                    <img src="[Image of Ruang UKS atau POSKESTREN Sekolah]" alt="POSKESTREN" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80'">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                     <div class="absolute bottom-0 left-0 p-6 w-full">
                         <h3 class="text-xl font-bold text-white mb-1">POSKESTREN / Ruang UKS</h3>
@@ -533,218 +764,13 @@
             </div>
 
             <!-- List Fasilitas Lainnya -->
-            <div class="mt-12 bg-slate-50 rounded-xl p-6 border border-gray-200 flex flex-wrap justify-center gap-3 reveal">
-                <span class="bg-white px-4 py-2 rounded-full text-sm text-gray-700 shadow-sm border border-gray-100 font-medium"><i class="fas fa-mosque text-primary-600 mr-2"></i>Masjid Sekolah</span>
-                <span class="bg-white px-4 py-2 rounded-full text-sm text-gray-700 shadow-sm border border-gray-100 font-medium"><i class="fas fa-leaf text-primary-600 mr-2"></i>Green House (Hidroponik)</span>
-                <span class="bg-white px-4 py-2 rounded-full text-sm text-gray-700 shadow-sm border border-gray-100 font-medium"><i class="fas fa-chalkboard-teacher text-primary-600 mr-2"></i>Aula Terbuka</span>
-                <span class="bg-white px-4 py-2 rounded-full text-sm text-gray-700 shadow-sm border border-gray-100 font-medium"><i class="fas fa-utensils text-primary-600 mr-2"></i>Dapur Umum & Kantin Sehat</span>
-                <span class="bg-white px-4 py-2 rounded-full text-sm text-gray-700 shadow-sm border border-gray-100 font-medium"><i class="fas fa-running text-primary-600 mr-2"></i>Halaman Olahraga Luas</span>
-                <span class="bg-white px-4 py-2 rounded-full text-sm text-gray-700 shadow-sm border border-gray-100 font-medium"><i class="fas fa-shield-alt text-primary-600 mr-2"></i>Pos Keamanan (Pengawasan 24 Jam)</span>
-            </div>
-        </div>
-    </section>
-
-    <!-- Ekstrakurikuler -->
-    <section id="ekstrakurikuler" class="py-20 bg-slate-50 border-t border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex flex-col md:flex-row justify-between items-end mb-12 reveal">
-                <div class="max-w-2xl">
-                    <h2 class="text-3xl font-bold text-gray-900 font-serif">Pengembangan Diri & Ekstrakurikuler</h2>
-                    <p class="mt-4 text-gray-600">Mewadahi minat dan bakat santriwati untuk meraih prestasi di bidang akademik maupun non-akademik.</p>
-                </div>
-                <div class="mt-4 md:mt-0">
-                    <a href="#fasilitas" class="text-primary-600 font-semibold hover:text-primary-800 transition">Lihat Fasilitas Sekolah <i class="fas fa-arrow-right ml-1"></i></a>
-                </div>
-            </div>
-
-            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                <!-- Wajib -->
-                <div class="col-span-2 md:col-span-2 lg:col-span-2 bg-primary-700 rounded-xl overflow-hidden shadow-lg hover-card relative group h-48">
-                    <img src="Ekstra Pramuka.jpg" alt="Pramuka" class="absolute inset-0 w-full h-full object-cover opacity-60 group-hover:scale-110 transition duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-primary-900 via-primary-800/60 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-5 w-full z-10 text-left">
-                        <div class="flex items-center space-x-2 mb-2">
-                            <i class="fas fa-campground text-2xl text-secondary-400"></i>
-                            <span class="bg-secondary-500 text-white text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Wajib</span>
-                        </div>
-                        <h3 class="font-bold text-xl text-white">Pramuka</h3>
-                        <p class="text-xs text-primary-100 mt-1">Membentuk kemandirian & kedisiplinan</p>
-                    </div>
-                </div>
-
-                <!-- Pilihan 1 -->
-                <div class="bg-white rounded-xl overflow-hidden shadow-md hover-card relative group h-48 border border-gray-100">
-                    <img src="Ekstra Qiro'ah.jpg" alt="Qiro'ah" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full z-10">
-                        <div class="w-8 h-8 rounded-full bg-emerald-500/20 backdrop-blur text-emerald-400 flex items-center justify-center text-sm mb-2 border border-emerald-500/30"><i class="fas fa-book-quran"></i></div>
-                        <h3 class="font-bold text-sm text-white">Seni Qiro'ah</h3>
-                    </div>
-                </div>
-                
-                <!-- Pilihan 2 -->
-                <div class="bg-white rounded-xl overflow-hidden shadow-md hover-card relative group h-48 border border-gray-100">
-                    <img src="Ekstra Qiroatul Kutub.jpg" alt="Qiroatul Kutub" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full z-10">
-                        <div class="w-8 h-8 rounded-full bg-amber-500/20 backdrop-blur text-amber-400 flex items-center justify-center text-sm mb-2 border border-amber-500/30"><i class="fas fa-book-open"></i></div>
-                        <h3 class="font-bold text-sm text-white">Qiroatul Kutub</h3>
-                    </div>
-                </div>
-
-                <!-- Pilihan 3 -->
-                <div class="bg-white rounded-xl overflow-hidden shadow-md hover-card relative group h-48 border border-gray-100">
-                    <img src="English Club.jpg" alt="English Club" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full z-10">
-                        <div class="w-8 h-8 rounded-full bg-blue-500/20 backdrop-blur text-blue-400 flex items-center justify-center text-sm mb-2 border border-blue-500/30"><i class="fas fa-language"></i></div>
-                        <h3 class="font-bold text-sm text-white">English Club</h3>
-                    </div>
-                </div>
-
-                <!-- Pilihan 4 -->
-                <div class="bg-white rounded-xl overflow-hidden shadow-md hover-card relative group h-48 border border-gray-100">
-                    <img src="Ekstra KTI.jpg" alt="Karya Tulis Ilmiah" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full z-10">
-                        <div class="w-8 h-8 rounded-full bg-indigo-500/20 backdrop-blur text-indigo-400 flex items-center justify-center text-sm mb-2 border border-indigo-500/30"><i class="fas fa-flask"></i></div>
-                        <h3 class="font-bold text-sm text-white">Karya Tulis Ilmiah</h3>
-                    </div>
-                </div>
-
-                <!-- Pilihan 5 -->
-                <div class="bg-white rounded-xl overflow-hidden shadow-md hover-card relative group h-48 border border-gray-100">
-                    <img src="Ekstra Kaligrafi.jpg" alt="Kaligrafi" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full z-10">
-                        <div class="w-8 h-8 rounded-full bg-purple-500/20 backdrop-blur text-purple-400 flex items-center justify-center text-sm mb-2 border border-purple-500/30"><i class="fas fa-pen-nib"></i></div>
-                        <h3 class="font-bold text-sm text-white">Seni Kaligrafi</h3>
-                    </div>
-                </div>
-
-                <!-- Pilihan 6 -->
-                <div class="bg-white rounded-xl overflow-hidden shadow-md hover-card relative group h-48 border border-gray-100">
-                    <img src="Ekstra Paduan Suara.jpg" alt="Paduan Suara" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full z-10">
-                        <div class="w-8 h-8 rounded-full bg-pink-500/20 backdrop-blur text-pink-400 flex items-center justify-center text-sm mb-2 border border-pink-500/30"><i class="fas fa-music"></i></div>
-                        <h3 class="font-bold text-sm text-white">Paduan Suara</h3>
-                    </div>
-                </div>
-
-                <!-- Pilihan 7 -->
-                <div class="bg-white rounded-xl overflow-hidden shadow-md hover-card relative group h-48 border border-gray-100">
-                    <img src="Ekstra Kriya.jpg" alt="Kriya" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full z-10">
-                        <div class="w-8 h-8 rounded-full bg-orange-500/20 backdrop-blur text-orange-400 flex items-center justify-center text-sm mb-2 border border-orange-500/30"><i class="fas fa-cut"></i></div>
-                        <h3 class="font-bold text-sm text-white">Seni Kriya</h3>
-                    </div>
-                </div>
-                
-                <!-- Pilihan 8 -->
-                <div class="bg-white rounded-xl overflow-hidden shadow-md hover-card relative group h-48 border border-gray-100">
-                    <img src="Ekstra Media.jpg" alt="Jurnalistik & Media" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full z-10">
-                        <div class="w-8 h-8 rounded-full bg-cyan-500/20 backdrop-blur text-cyan-400 flex items-center justify-center text-sm mb-2 border border-cyan-500/30"><i class="fas fa-camera"></i></div>
-                        <h3 class="font-bold text-sm text-white">Jurnalistik Media</h3>
-                    </div>
-                </div>
-                
-                <!-- Pilihan 9 -->
-                <div class="bg-white rounded-xl overflow-hidden shadow-md hover-card relative group h-48 border border-gray-100">
-                    <img src="Ekstra Tenis Meja.jpg" alt="Tenis Meja" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:scale-110 transition duration-500">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-black/20"></div>
-                    <div class="absolute bottom-0 left-0 p-4 w-full z-10">
-                        <div class="w-8 h-8 rounded-full bg-red-500/20 backdrop-blur text-red-400 flex items-center justify-center text-sm mb-2 border border-red-500/30"><i class="fas fa-table-tennis"></i></div>
-                        <h3 class="font-bold text-sm text-white">Tenis Meja</h3>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Galeri Media & Sosial Media -->
-    <section id="galeri" class="py-20 bg-white border-t border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center max-w-3xl mx-auto mb-16 reveal">
-                <span class="text-primary-600 font-bold tracking-wider uppercase text-sm">Media & Publikasi</span>
-                <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mt-2 font-serif">Galeri & Aktivitas Santriwati</h2>
-                <p class="mt-4 text-gray-600">Ikuti terus perkembangan dan kegiatan terbaru kami melalui kanal sosial media resmi sekolah.</p>
-            </div>
-
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                <!-- YouTube Video -->
-                <div class="reveal-left bg-slate-50 p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 bg-red-100 text-red-600 rounded-full flex items-center justify-center text-2xl mr-4">
-                                <i class="fab fa-youtube"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-xl text-gray-900">Kanal YouTube</h3>
-                                <p class="text-sm text-gray-500">@yqbs1patiputri</p>
-                            </div>
-                        </div>
-                        <a href="https://www.youtube.com/@yqbs1patiputri" target="_blank" class="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-full text-sm font-semibold transition shadow-md whitespace-nowrap flex items-center">
-                            <i class="fab fa-youtube mr-2"></i> Subscribe
-                        </a>
-                    </div>
-                    
-                    <div class="rounded-xl overflow-hidden shadow-md aspect-video bg-gray-200 border-2 border-gray-200 relative">
-                        <!-- Embed Video YouTube -->
-                        <iframe class="absolute top-0 left-0 w-full h-full" src="https://www.youtube.com/embed/-d77R1won9s?si=Wp3Xw4eA6Z_xJ_QO" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                    </div>
-                    <p class="mt-4 text-sm text-gray-600 font-medium text-center">Video Profil & Simulasi Kegiatan Santriwati</p>
-                </div>
-
-                <!-- Instagram Grid -->
-                <div class="reveal-right bg-slate-50 p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm">
-                    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 gap-4">
-                        <div class="flex items-center">
-                            <div class="w-12 h-12 bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white rounded-full flex items-center justify-center text-2xl mr-4">
-                                <i class="fab fa-instagram"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-xl text-gray-900">Instagram Feed</h3>
-                                <p class="text-sm text-gray-500">@smpqtyq1lilbanat</p>
-                            </div>
-                        </div>
-                        <a href="https://www.instagram.com/smpqtyq1lilbanat" target="_blank" class="bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 hover:opacity-90 text-white px-5 py-2 rounded-full text-sm font-semibold transition shadow-md whitespace-nowrap flex items-center">
-                            <i class="fab fa-instagram mr-2"></i> Follow
-                        </a>
-                    </div>
-                    
-                    <!-- Simulated IG Grid (Menggunakan foto yang sudah diupload) -->
-                    <div class="grid grid-cols-3 gap-2 md:gap-3">
-                        <a href="https://www.instagram.com/smpqtyq1lilbanat" target="_blank" class="aspect-square bg-gray-200 rounded-lg overflow-hidden group relative shadow-sm">
-                            <img src="Ekstra KTI.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Postingan Instagram">
-                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center text-white"><i class="fab fa-instagram text-3xl"></i></div>
-                        </a>
-                        <a href="https://www.instagram.com/smpqtyq1lilbanat" target="_blank" class="aspect-square bg-gray-200 rounded-lg overflow-hidden group relative shadow-sm">
-                            <img src="Ekstra Pramuka.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Postingan Instagram">
-                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center text-white"><i class="fab fa-instagram text-3xl"></i></div>
-                        </a>
-                        <a href="https://www.instagram.com/smpqtyq1lilbanat" target="_blank" class="aspect-square bg-gray-200 rounded-lg overflow-hidden group relative shadow-sm">
-                            <img src="Ekstra Qiroatul Kutub.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Postingan Instagram">
-                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center text-white"><i class="fab fa-instagram text-3xl"></i></div>
-                        </a>
-                        <a href="https://www.instagram.com/smpqtyq1lilbanat" target="_blank" class="aspect-square bg-gray-200 rounded-lg overflow-hidden group relative shadow-sm">
-                            <img src="Ekstra Kaligrafi.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Postingan Instagram">
-                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center text-white"><i class="fab fa-instagram text-3xl"></i></div>
-                        </a>
-                        <a href="https://www.instagram.com/smpqtyq1lilbanat" target="_blank" class="aspect-square bg-gray-200 rounded-lg overflow-hidden group relative shadow-sm">
-                            <img src="English Club.jpg" class="w-full h-full object-cover group-hover:scale-110 transition duration-500" alt="Postingan Instagram">
-                            <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition duration-300 flex items-center justify-center text-white"><i class="fab fa-instagram text-3xl"></i></div>
-                        </a>
-                        <!-- Tombol Lihat Semua (Tile ke-6) -->
-                        <a href="https://www.instagram.com/smpqtyq1lilbanat" target="_blank" class="aspect-square rounded-lg overflow-hidden group relative flex flex-col items-center justify-center bg-gray-100 text-gray-600 hover:bg-gray-200 hover:text-primary-600 transition shadow-sm border border-gray-200">
-                            <i class="fas fa-images text-2xl md:text-3xl mb-2"></i>
-                            <span class="text-xs md:text-sm font-semibold text-center leading-tight">Lihat Galeri<br>di Instagram</span>
-                        </a>
-                    </div>
-                </div>
+            <div class="mt-12 bg-white rounded-xl p-6 border border-gray-200 flex flex-wrap justify-center gap-3 reveal shadow-sm">
+                <span class="bg-slate-50 px-4 py-2 rounded-full text-sm text-gray-700 border border-gray-200 font-medium"><i class="fas fa-mosque text-primary-600 mr-2"></i>Masjid Sekolah</span>
+                <span class="bg-slate-50 px-4 py-2 rounded-full text-sm text-gray-700 border border-gray-200 font-medium"><i class="fas fa-leaf text-primary-600 mr-2"></i>Green House (Hidroponik)</span>
+                <span class="bg-slate-50 px-4 py-2 rounded-full text-sm text-gray-700 border border-gray-200 font-medium"><i class="fas fa-chalkboard-teacher text-primary-600 mr-2"></i>Aula Terbuka</span>
+                <span class="bg-slate-50 px-4 py-2 rounded-full text-sm text-gray-700 border border-gray-200 font-medium"><i class="fas fa-utensils text-primary-600 mr-2"></i>Dapur Umum & Kantin Sehat</span>
+                <span class="bg-slate-50 px-4 py-2 rounded-full text-sm text-gray-700 border border-gray-200 font-medium"><i class="fas fa-running text-primary-600 mr-2"></i>Halaman Olahraga Luas</span>
+                <span class="bg-slate-50 px-4 py-2 rounded-full text-sm text-gray-700 border border-gray-200 font-medium"><i class="fas fa-shield-alt text-primary-600 mr-2"></i>Pos Keamanan (Pengawasan 24 Jam)</span>
             </div>
         </div>
     </section>
@@ -755,10 +781,10 @@
             <h3 class="text-lg font-semibold text-gray-500 uppercase tracking-wider mb-8">Kemitraan Strategis & Afiliasi</h3>
             <div class="flex flex-wrap justify-center items-center gap-8 md:gap-16 opacity-70 grayscale hover:grayscale-0 transition duration-500">
                 <!-- Logos conceptually represented by styled text due to lack of actual image URLs -->
-                <div class="flex items-center">
-                    <i class="fas fa-building text-3xl mr-2 text-gray-700"></i>
-                    <span class="font-bold text-xl text-gray-700">Yayasan Arwaniyah</span>
-                </div>
+                <a href="https://yqbs1.or.id/" target="_blank" class="flex items-center group cursor-pointer hover:scale-105 transition" title="Kunjungi Website YQBS 1">
+                    <i class="fas fa-building text-3xl mr-2 text-gray-700 group-hover:text-primary-600 transition"></i>
+                    <span class="font-bold text-xl text-gray-700 group-hover:text-primary-600 transition">Yayasan Arwaniyah (YQBS)</span>
+                </a>
                 <div class="flex items-center">
                     <i class="fas fa-clinic-medical text-3xl mr-2 text-primary-600"></i>
                     <span class="font-bold text-xl text-gray-700">Puskesmas Wedarijaksa</span>
@@ -823,26 +849,26 @@
                                 </div>
                                 <div>
                                     <h4 class="font-semibold text-gray-900">Email</h4>
-                                    <p class="text-gray-600 text-sm">smpqtyq1@gmail.com</p>
+                                    <p class="text-gray-600 text-sm">smpqtyq1lilbanat@gmail.com</p>
                                 </div>
                             </li>
                         </ul>
 
                         <div class="flex flex-col sm:flex-row gap-4">
-                            <a href="#" class="bg-primary-700 hover:bg-primary-800 text-white px-6 py-3 rounded-lg font-semibold text-center transition flex-1 flex justify-center items-center shadow-lg">
-                                Daftar Sekarang <i class="fas fa-external-link-alt ml-2"></i>
+                            <a href="https://psb.ptyqsapa.com/" target="_blank" class="bg-primary-700 hover:bg-primary-800 text-white px-6 py-3 rounded-lg font-semibold text-center transition flex-1 flex justify-center items-center shadow-lg">
+                                Isi Formulir Online <i class="fas fa-external-link-alt ml-2"></i>
                             </a>
-                            <a href="#" class="bg-green-500 hover:bg-green-600 text-white px-6 py-3 rounded-lg font-semibold text-center transition flex-1 flex justify-center items-center shadow-lg">
-                                <i class="fab fa-whatsapp mr-2"></i> Tanya Admin
+                            <a href="psb.html" class="bg-secondary-500 hover:bg-secondary-600 text-white px-6 py-3 rounded-lg font-semibold text-center transition flex-1 flex justify-center items-center shadow-lg">
+                                <i class="fas fa-info-circle mr-2"></i> Baca Rincian Biaya & Syarat
                             </a>
                         </div>
                     </div>
                     
                     <!-- Map / Form Visual -->
                     <div class="bg-gray-100 relative min-h-[400px]">
-                        <!-- Google Maps Embed Placeholder -->
+                        <!-- Corrected Google Maps Embed with actual coordinates -->
                         <iframe 
-                            src="https://maps.google.com/maps?q=-6.706343469060044,111.06098163946514&t=&z=15&ie=UTF8&iwloc=&output=embed" 
+                            src="https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d1980.708688402127!2d111.06098163946514!3d-6.706343469060044!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sid!4v1717000000000!5m2!1sen!2sid" 
                             class="absolute inset-0 w-full h-full border-0" 
                             allowfullscreen="" 
                             loading="lazy">
@@ -872,18 +898,17 @@
                 <!-- Brand / About -->
                 <div class="col-span-1 lg:col-span-1">
                     <div class="flex items-center mb-4">
-                        <div class="w-10 h-10 bg-white rounded flex items-center justify-center mr-3 overflow-hidden p-1">
-                            <img src="logo.png" alt="Logo" class="w-full h-full object-contain">
-                        </div>
+                        <img src="logo.png" alt="Logo" class="w-10 h-10 mr-3 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                        <div class="hidden w-10 h-10 bg-primary-600 rounded-full items-center justify-center text-white font-bold text-sm mr-3">YQ</div>
                         <span class="font-bold text-lg text-white">SMPQT Yanbu'ul Qur'an 1 Lil Banat</span>
                     </div>
                     <p class="text-sm text-gray-400 mb-6 leading-relaxed">
                         Lembaga pendidikan tingkat menengah pertama berbasis tahfizh Al-Qur'an terpadu, mencetak generasi qur'ani berwawasan global.
                     </p>
                     <div class="flex space-x-4">
-                        <a href="#" class="w-8 h-8 rounded-full bg-gray-800 hover:bg-primary-600 flex items-center justify-center transition"><i class="fab fa-facebook-f text-sm"></i></a>
-                        <a href="https://www.instagram.com/smpqtyq1lilbanat" target="_blank" class="w-8 h-8 rounded-full bg-gray-800 hover:bg-primary-600 flex items-center justify-center transition"><i class="fab fa-instagram text-sm"></i></a>
+                        <a href="https://www.instagram.com/smpqtyq1lilbanat/" target="_blank" class="w-8 h-8 rounded-full bg-gray-800 hover:bg-primary-600 flex items-center justify-center transition"><i class="fab fa-instagram text-sm"></i></a>
                         <a href="https://www.youtube.com/@yqbs1patiputri" target="_blank" class="w-8 h-8 rounded-full bg-gray-800 hover:bg-primary-600 flex items-center justify-center transition"><i class="fab fa-youtube text-sm"></i></a>
+                        <a href="#" class="w-8 h-8 rounded-full bg-gray-800 hover:bg-primary-600 flex items-center justify-center transition"><i class="fab fa-facebook-f text-sm"></i></a>
                     </div>
                 </div>
 
@@ -916,9 +941,13 @@
                     <h4 class="text-white font-bold mb-4 uppercase text-sm tracking-wider">Afiliasi</h4>
                     <div class="bg-gray-800 p-4 rounded-lg border border-gray-700">
                         <p class="text-xs text-gray-400 mb-2">Berada di bawah naungan:</p>
-                        <ul class="space-y-1 text-sm font-semibold text-gray-300">
+                        <ul class="space-y-2 text-sm font-semibold text-gray-300">
                             <li>Yayasan Asem Bungkuk</li>
-                            <li>Yayasan Arwaniyah Kudus</li>
+                            <li>
+                                <a href="https://yqbs1.or.id/" target="_blank" class="hover:text-primary-400 transition flex items-center" title="Website Resmi YQBS 1">
+                                    <i class="fas fa-globe mr-2 text-xs text-primary-500"></i> Yayasan Arwaniyah (YQBS 1)
+                                </a>
+                            </li>
                         </ul>
                     </div>
                     <div class="mt-4">
@@ -965,8 +994,6 @@
                     navbar.classList.remove('bg-transparent', 'md:top-[36px]');
                     navbar.classList.add('top-0');
                 } else {
-                    // Retain background for mobile, transparent logic depends on design needs
-                    // Here we keep it mostly white/translucent for readability 
                     navbar.classList.remove('shadow-md');
                     if(window.innerWidth > 768) {
                        navbar.classList.add('md:top-[36px]');
