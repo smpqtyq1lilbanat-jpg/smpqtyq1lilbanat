@@ -605,22 +605,21 @@
                     </div>
                     
                     <!-- YouTube Video Iframe -->
-                    <div class="rounded-2xl overflow-hidden shadow-xl border border-gray-100 aspect-video bg-gray-100 relative">
-                        <!-- We use a standard embed link. Replace the video ID (e.g., dQw4w9WgXcQ) with your actual latest video ID from YouTube -->
+                    <div class="rounded-2xl overflow-hidden shadow-xl border border-gray-100 aspect-video bg-gray-100 relative group">
                         <iframe 
                             width="100%" 
                             height="100%" 
-                            src="https://www.youtube.com/embed?listType=user_uploads&list=yqbs1patiputri" 
+                            src="https://www.youtube.com/embed/TzgJ6Wp7KxE?rel=0" 
                             title="YouTube video player" 
                             frameborder="0" 
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
                             allowfullscreen
-                            class="absolute inset-0">
+                            class="absolute inset-0 z-10">
                         </iframe>
-                        <!-- Fallback text if iframe fails -->
-                        <div class="absolute inset-0 flex items-center justify-center -z-10 text-gray-400">
-                            <i class="fas fa-play-circle text-4xl mb-2"></i>
-                            <p>Loading Video...</p>
+                        <!-- Fallback jika koneksi lambat -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center z-0 text-gray-400 bg-gray-200">
+                            <i class="fas fa-play-circle text-4xl mb-3 text-red-500"></i>
+                            <p class="font-bold">Memuat Video...</p>
                         </div>
                     </div>
                 </div>
@@ -691,76 +690,82 @@
                 <p class="mt-4 text-gray-600">Lingkungan belajar yang bersih, modern, dan terpantau 24 jam untuk kenyamanan santriwati.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- Fasilitas 1 -->
-                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal">
-                    <img src="ruang%20kelsa.png" alt="Smart Classroom" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&q=80'">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-6 w-full">
-                        <h3 class="text-xl font-bold text-white mb-1">Smart Classroom</h3>
-                        <p class="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-4 group-hover:translate-y-0">Dilengkapi AC, Smart TV, Mebelair standar ergonomis, dan CCTV.</p>
+            <!-- Diubah menjadi 4 kolom (lg:grid-cols-4) agar 8 foto pas dan rapi -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- Fasilitas 1: Kelas -->
+                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal cursor-pointer h-64">
+                    <img src="ruang kelas.png" alt="Smart Classroom" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Ruang+Kelas'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-5 w-full">
+                        <h3 class="text-lg font-bold text-white mb-1 drop-shadow-md">Ruang Kelas</h3>
                     </div>
                 </div>
 
-                <!-- Fasilitas 2 -->
-                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal" style="transition-delay: 100ms;">
-                    <img src="lab%20komputer.png" alt="Lab Komputer" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1544197150-b99a580bb7a8?auto=format&fit=crop&q=80'">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-6 w-full">
-                        <h3 class="text-xl font-bold text-white mb-1">Lab Komputer & Internet</h3>
-                        <p class="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-4 group-hover:translate-y-0">Terdiri dari 26+ Unit PC, jaringan LAN, dan Internet dedicated 100Mbps.</p>
+                <!-- Fasilitas 2: Lab Komputer -->
+                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal cursor-pointer h-64" style="transition-delay: 100ms;">
+                    <img src="lab komputer.png" alt="Lab Komputer" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Lab+Komputer'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-5 w-full">
+                        <h3 class="text-lg font-bold text-white mb-1 drop-shadow-md">Lab Komputer</h3>
                     </div>
                 </div>
 
-                <!-- Fasilitas 3 -->
-                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal" style="transition-delay: 200ms;">
-                    <img src="" alt="Lab IPA" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&q=80'">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-6 w-full">
-                        <h3 class="text-xl font-bold text-white mb-1">Laboratorium IPA</h3>
-                        <p class="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-4 group-hover:translate-y-0">Ruang praktikum basah dan kering dengan alat peraga (Fisika & Biologi) lengkap.</p>
+                <!-- Fasilitas 3: Perpustakaan -->
+                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal cursor-pointer h-64" style="transition-delay: 200ms;">
+                    <img src="perpustakaan.png" alt="Perpustakaan" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Perpustakaan'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-5 w-full">
+                        <h3 class="text-lg font-bold text-white mb-1 drop-shadow-md">Perpustakaan</h3>
                     </div>
                 </div>
 
-                <!-- Fasilitas 4 -->
-                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal">
-                    <img src="masjid.png" alt="Masjid dan Asrama" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&q=80'">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-6 w-full">
-                        <h3 class="text-xl font-bold text-white mb-1">Masjid & Asrama Putri</h3>
-                        <p class="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-4 group-hover:translate-y-0">Nyaman, terpadu dengan masjid, dengan rasio sanitasi toilet yang sangat memadai (20+ unit).</p>
+                <!-- Fasilitas 4: Kamar Santri -->
+                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal cursor-pointer h-64" style="transition-delay: 300ms;">
+                    <img src="kamar santri.png" alt="Kamar Santri" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Kamar+Santri'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-5 w-full">
+                        <h3 class="text-lg font-bold text-white mb-1 drop-shadow-md">Kamar Asrama</h3>
                     </div>
                 </div>
 
-                <!-- Fasilitas 5 -->
-                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal" style="transition-delay: 100ms;">
-                    <img src="perpustakaan.png" alt="Perpustakaan" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80'">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-6 w-full">
-                        <h3 class="text-xl font-bold text-white mb-1">Asrama Putri (Boarding)</h3>
-                        <p class="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-4 group-hover:translate-y-0">Nyaman, terpadu dengan masjid, dengan rasio sanitasi toilet yang sangat memadai (20+ unit).</p>
+                <!-- Fasilitas 5: Masjid -->
+                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal cursor-pointer h-64">
+                    <img src="masjid.png" alt="Masjid" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Masjid'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-5 w-full">
+                        <h3 class="text-lg font-bold text-white mb-1 drop-shadow-md">Masjid Sekolah</h3>
                     </div>
                 </div>
 
-                <!-- Fasilitas 6 -->
-                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal" style="transition-delay: 100ms;">
-                    <img src="" alt="Perpustakaan" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1507842217343-583bb7270b66?auto=format&fit=crop&q=80'">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-6 w-full">
-                        <h3 class="text-xl font-bold text-white mb-1">Perpustakaan & Pojok Baca</h3>
-                        <p class="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-4 group-hover:translate-y-0">Koleksi referensi buku lengkap dan akan dikembangkan menuju E-Library digital.</p>
+                <!-- Fasilitas 6: Auditorium -->
+                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal cursor-pointer h-64" style="transition-delay: 100ms;">
+                    <!-- Sesuai dengan nama file yang ada double 'u' nya: auditoriuum.png -->
+                    <img src="auditoriuum.png" alt="Auditorium" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Auditorium'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-5 w-full">
+                        <h3 class="text-lg font-bold text-white mb-1 drop-shadow-md">Auditorium / Aula</h3>
                     </div>
                 </div>
 
-                <!-- Fasilitas 7 -->
-                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal" style="transition-delay: 200ms;">
-                    <img src="" alt="POSKESTREN" class="w-full h-64 object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&q=80'">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
-                    <div class="absolute bottom-0 left-0 p-6 w-full">
-                        <h3 class="text-xl font-bold text-white mb-1">POSKESTREN / Ruang UKS</h3>
-                        <p class="text-gray-300 text-sm opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-4 group-hover:translate-y-0">Fasilitas kesehatan khusus asrama dengan 2 bed periksa dan perlengkapan P3K memadai.</p>
+                <!-- Fasilitas 7: Ruang Makan -->
+                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal cursor-pointer h-64" style="transition-delay: 200ms;">
+                    <img src="ruang makan.png" alt="Ruang Makan" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Ruang+Makan'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-5 w-full">
+                        <h3 class="text-lg font-bold text-white mb-1 drop-shadow-md">Ruang Makan</h3>
                     </div>
                 </div>
+
+                <!-- Fasilitas 8: Kolam Renang -->
+                <div class="group relative overflow-hidden rounded-2xl shadow-md reveal cursor-pointer h-64" style="transition-delay: 300ms;">
+                    <img src="kolam renang.png" alt="Kolam Renang" class="w-full h-full object-cover transform group-hover:scale-110 transition duration-500" onerror="this.src='https://placehold.co/400x300/15803d/ffffff?text=Kolam+Renang'">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-5 w-full">
+                        <h3 class="text-lg font-bold text-white mb-1 drop-shadow-md">Kolam Renang Indoor</h3>
+                    </div>
+                </div>
+                
             </div>
 
             <!-- List Fasilitas Lainnya -->
