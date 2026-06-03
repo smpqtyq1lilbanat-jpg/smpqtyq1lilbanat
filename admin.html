@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - SMPQT Yanbu'ul Qur'an 1 Lil Banat</title>
+    
+    <!-- Google Fonts & Tailwind -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="logo.png">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-slate-50 font-sans text-gray-800 min-h-screen">
+
+    <!-- Top Navigation -->
+    <nav class="bg-primary-900 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center space-x-3">
+                    <img src="logo.png" alt="Logo" class="w-10 h-10 object-contain">
+                    <div>
+                        <span class="font-bold text-sm sm:text-base block">Pusat Kendali Web</span>
+                        <span class="text-xs text-gray-300 block">SMPQT Yanbu'ul Qur'an 1 Lil Banat</span>
+                    </div>
+                </div>
+                <div id="nav-actions" class="hidden flex items-center space-x-4">
+                    <button onclick="showSection('dashboard')" class="text-gray-200 hover:text-white text-sm font-semibold">
+                        <i class="fas fa-home mr-1"></i> Dashboard
+                    </button>
+                    <button onclick="logout()" class="bg-red-600 hover:bg-red-700 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition">
+                        <i class="fas fa-sign-out-alt"></i> Keluar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        
+        <!-- SECTION 1: SETUP/LOGIN -->
+        <section id="setup-section" class="bg-white rounded-2xl shadow-xl p-6 sm:p-10 border border-gray-100">
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-primary-50 text-primary-700 rounded-full flex items-center justify-center text-3xl mx-auto mb-4">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <h1 class="text-2xl font-bold text-gray-900">Masuk Panel Admin</h1>
+                <p class="text-sm text-gray-500 mt-2">Hubungkan dengan akun GitHub Anda untuk mengelola konten berita.</p>
+            </div>
+
+            <form id="setup-form" onsubmit="saveSetup(event)" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">GitHub Username / Akun Owner</label>
+                    <input type="text" id="github-username" required placeholder="Contoh: smpqtyq1lilbanat-jpg" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-700 transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama Repository</label>
+                    <input type="text" id="github-repo" required placeholder="Contoh: smpqtyq1lilbanat-jpg" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-700 transition">
+                </div>
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">GitHub Personal Access Token (PAT)</label>
+                    <input type="password" id="github-token" required placeholder="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-700 transition">
+                    <p class="text-xs text-gray-400 mt-1"><i class="fas fa-info-circle mr-1"></i>Token disimpan aman hanya di browser lokal komputer Anda.</p>
+                </div>
+
+                <button type="submit" class="w-full bg-primary-700 hover:bg-primary-800 text-white font-bold py-3 rounded-xl transition shadow-md shadow-primary-700/20">
+                    Masuk & Ambil Data Berita
+                </button>
+            </form>
+            
+            <div class="mt-8 bg-blue-50 rounded-xl p-4 border border-blue-100 text-xs sm:text-sm text-blue-800 leading-relaxed">
+                <h4 class="font-bold mb-1"><i class="fas fa-lightbulb mr-1"></i> Bagaimana Cara Mendapatkan Token GitHub?</h4>
+                <ol class="list-decimal list-inside space-y-1">
+                    <li>Buka akun GitHub Anda.</li>
+                    <li>Pergi ke <strong>Settings</strong> > <strong>Developer Settings</strong> > <strong>Personal Access Tokens</strong> > <strong>Tokens (classic)</strong>.</li>
+                    <li>Klik <strong>Generate new token (classic)</strong>, beri nama "Web Admin", centang opsi <strong>repo</strong> (sangat penting agar bisa menulis data), lalu klik Generate.</li>
+                    <li>Salin token yang muncul dan tempelkan di formulir di atas.</li>
+                </ol>
+            </div>
+        </section>
+
+        <!-- SECTION 2: DASHBOARD BERITA -->
+        <section id="dashboard-section" class="hidden space-y-6">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-gray-900">Kelola Posting Berita</h2>
+                    <p class="text-sm text-gray-500 mt-1">Daftar artikel berita aktif yang tayang di website.</p>
+                </div>
+                <button onclick="openForm('add')" class="bg-primary-700 hover:bg-primary-800 text-white font-bold px-5 py-2.5 rounded-xl transition flex items-center shadow-lg shadow-primary-700/20">
+                    <i class="fas fa-plus mr-2"></i> Tambah Berita Baru
+                </button>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div id="loading-indicator" class="bg-white rounded-xl p-10 text-center border border-gray-100">
+                <i class="fas fa-spinner fa-spin text-3xl text-primary-700 mb-3"></i>
+                <p class="text-gray-500 text-sm">Menghubungkan ke server GitHub...</p>
+            </div>
+
+            <!-- News List Grid -->
+            <div id="news-list" class="grid grid-cols-1 gap-4">
+                <!-- Javascript will load content here -->
+            </div>
+        </section>
+
+        <!-- SECTION 3: FORM ADD / EDIT -->
+        <section id="form-section" class="hidden bg-white rounded-2xl shadow-xl p-6 sm:p-10 border border-gray-100">
+            <div class="flex items-center space-x-3 mb-6 pb-4 border-b border-gray-100">
+                <button onclick="showSection('dashboard')" class="text-gray-500 hover:text-gray-700"><i class="fas fa-arrow-left text-xl"></i></button>
+                <h3 id="form-title" class="text-xl font-bold text-gray-900">Tambah Berita</h3>
+            </div>
+
+            <form id="news-form" onsubmit="submitNews(event)" class="space-y-5">
+                <input type="hidden" id="edit-id">
+                
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Judul Artikel</label>
+                    <input type="text" id="news-title" required placeholder="Tulis judul berita yang menarik..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-700 transition">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Tanggal Rilis</label>
+                        <input type="text" id="news-date" required placeholder="Contoh: 03 Juni 2026" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-700 transition">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-1">Penulis / Humas</label>
+                        <input type="text" id="news-author" required placeholder="Contoh: Humas Sekolah" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-700 transition">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Nama File Gambar (yang diupload di GitHub)</label>
+                    <select id="news-image" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-700 transition">
+                        <option value="foto%20gedung.png">foto gedung.png (Default)</option>
+                        <option value="iklan.png">iklan.png</option>
+                        <option value="masjid.png">masjid.png</option>
+                        <option value="Ekstra%20Qiroah.jpg">Ekstra Qiroah.jpg</option>
+                        <option value="Ekstra%20Kaligrafi.jpg">Ekstra Kaligrafi.jpg</option>
+                        <option value="Ekstra%20Pramuka.jpg">Ekstra Pramuka.jpg</option>
+                        <option value="Ekstra%20KTI.jpg">Ekstra KTI.jpg</option>
+                    </select>
+                    <p class="text-xs text-gray-400 mt-1"><i class="fas fa-info-circle mr-1"></i>Pilih salah satu aset gambar yang sudah ada di folder website Anda.</p>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Ringkasan Pendek (Summary)</label>
+                    <textarea id="news-summary" required rows="2" placeholder="Ringkasan singkat maksimal 1 kalimat yang muncul di halaman depan galeri..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-700 transition"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-1">Isi Lengkap Artikel Berita</label>
+                    <textarea id="news-content" required rows="8" placeholder="Tulis isi berita lengkap Anda di sini..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-primary-700 transition"></textarea>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-4 border-t border-gray-100">
+                    <button type="button" onclick="showSection('dashboard')" class="px-5 py-2.5 rounded-xl border border-gray-200 text-gray-700 font-semibold hover:bg-gray-50 transition">Batal</button>
+                    <button type="submit" id="btn-submit" class="bg-primary-700 hover:bg-primary-800 text-white font-bold px-6 py-2.5 rounded-xl transition shadow-md flex items-center">
+                        <span id="submit-text">Simpan & Posting</span>
+                        <i id="submit-spinner" class="hidden fas fa-spinner fa-spin ml-2"></i>
+                    </button>
+                </div>
+            </form>
+        </section>
+
+    </div>
+
+    <!-- Alert Dialog -->
+    <div id="custom-alert" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center">
+            <div id="alert-icon" class="w-12 h-12 rounded-full flex items-center justify-center text-2xl mx-auto mb-3"></div>
+            <h4 id="alert-title" class="font-bold text-gray-900 text-lg">Notifikasi</h4>
+            <p id="alert-msg" class="text-sm text-gray-500 mt-2"></p>
+            <button onclick="closeAlert()" class="mt-5 w-full bg-primary-700 hover:bg-primary-800 text-white py-2 rounded-xl transition font-semibold">Tutup</button>
+        </div>
+    </div>
+
+    <script>
+        // State Management
+        let config = { username: '', repo: '', token: '' };
+        let fileSha = ''; // Diperlukan untuk update file via GitHub API
+        let articlesList = [];
+
+        window.onload = function() {
+            // Muat konfigurasi yang tersimpan sebelumnya di komputer
+            const savedUsername = localStorage.getItem('yq_username');
+            const savedRepo = localStorage.getItem('yq_repo');
+            const savedToken = localStorage.getItem('yq_token');
+
+            if(savedUsername && savedRepo && savedToken) {
+                config.username = savedUsername;
+                config.repo = savedRepo;
+                config.token = savedToken;
+                
+                document.getElementById('github-username').value = config.username;
+                document.getElementById('github-repo').value = config.repo;
+                document.getElementById('github-token').value = config.token;
+
+                showSection('dashboard');
+                fetchArticles();
+            } else {
+                showSection('setup');
+            }
+        };
+
+        function showSection(name) {
+            document.getElementById('setup-section').style.display = name === 'setup' ? 'block' : 'none';
+            document.getElementById('dashboard-section').style.display = name === 'dashboard' ? 'block' : 'none';
+            document.getElementById('form-section').style.display = name === 'form' ? 'block' : 'none';
+            document.getElementById('nav-actions').style.display = name !== 'setup' ? 'flex' : 'none';
+        }
+
+        function saveSetup(e) {
+            e.preventDefault();
+            config.username = document.getElementById('github-username').value.trim();
+            config.repo = document.getElementById('github-repo').value.trim();
+            config.token = document.getElementById('github-token').value.trim();
+
+            localStorage.setItem('yq_username', config.username);
+            localStorage.setItem('yq_repo', config.repo);
+            localStorage.setItem('yq_token', config.token);
+
+            showSection('dashboard');
+            fetchArticles();
+        }
+
+        function logout() {
+            if(confirm('Apakah Anda yakin ingin keluar dari panel admin?')) {
+                localStorage.removeItem('yq_username');
+                localStorage.removeItem('yq_repo');
+                localStorage.removeItem('yq_token');
+                showSection('setup');
+            }
+        }
+
+        // Fetch Data from GitHub
+        async function fetchArticles() {
+            document.getElementById('loading-indicator').classList.remove('hidden');
+            document.getElementById('news-list').innerHTML = '';
+
+            const url = `https://api.github.com/repos/${config.username}/${config.repo}/contents/berita.json`;
+            
+            try {
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `token ${config.token}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if(!response.ok) {
+                    throw new Error('Gagal terhubung. Pastikan Username, Nama Repo, dan Token Anda benar.');
+                }
+
+                const data = await response.json();
+                fileSha = data.sha; // Simpan SHA dari file saat ini
+                
+                // Decode base64 JSON content dari GitHub
+                const decodedContent = decodeURIComponent(escape(atob(data.content)));
+                articlesList = JSON.parse(decodedContent);
+
+                renderArticles();
+            } catch (err) {
+                showAlert('error', 'Koneksi Gagal', err.message);
+                showSection('setup');
+            } finally {
+                document.getElementById('loading-indicator').classList.add('hidden');
+            }
+        }
+
+        function renderArticles() {
+            const container = document.getElementById('news-list');
+            if (articlesList.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-white rounded-xl p-8 text-center text-gray-500 border border-gray-100">
+                        Belum ada postingan artikel. Silakan buat postingan pertama Anda!
+                    </div>`;
+                return;
+            }
+
+            articlesList.forEach(art => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-xl p-4 shadow-sm border border-gray-100 flex items-center justify-between hover:shadow-md transition';
+                card.innerHTML = `
+                    <div class="flex items-center space-x-4 min-w-0 flex-1 mr-4">
+                        <img src="${art.image}" class="w-16 h-16 rounded-lg object-cover flex-shrink-0 bg-slate-100" onerror="this.src='foto%20gedung.png'">
+                        <div class="min-w-0">
+                            <h4 class="font-bold text-gray-900 truncate text-sm sm:text-base">${art.title}</h4>
+                            <p class="text-xs text-gray-500 mt-1 flex items-center">
+                                <i class="fas fa-calendar-alt mr-1"></i> ${art.date} &bull; <i class="fas fa-user-edit mx-1"></i> ${art.author}
+                            </p>
+                        </div>
+                    </div>
+                    <div class="flex space-x-2 flex-shrink-0">
+                        <button onclick="openForm('edit', '${art.id}')" class="text-blue-600 hover:bg-blue-50 w-8 h-8 rounded-full flex items-center justify-center transition" title="Edit Berita">
+                            <i class="fas fa-pencil-alt"></i>
+                        </button>
+                        <button onclick="deleteArticle('${art.id}')" class="text-red-600 hover:bg-red-50 w-8 h-8 rounded-full flex items-center justify-center transition" title="Hapus Berita">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>`;
+                container.appendChild(card);
+            });
+        }
+
+        // Open Form (Add or Edit)
+        function openForm(mode, id = '') {
+            document.getElementById('news-form').reset();
+            
+            if(mode === 'add') {
+                document.getElementById('form-title').innerText = 'Tambah Berita Baru';
+                document.getElementById('edit-id').value = '';
+                
+                // Prefill Tanggal hari ini
+                const tgl = new Date();
+                const namaBulan = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+                document.getElementById('news-date').value = `${String(tgl.getDate()).padStart(2, '0')} ${namaBulan[tgl.getMonth()]} ${tgl.getFullYear()}`;
+                document.getElementById('news-author').value = 'Humas Sekolah';
+                
+                showSection('form');
+            } else if(mode === 'edit') {
+                document.getElementById('form-title').innerText = 'Edit Berita';
+                const art = articlesList.find(a => a.id === id);
+                if(!art) return;
+
+                document.getElementById('edit-id').value = art.id;
+                document.getElementById('news-title').value = art.title;
+                document.getElementById('news-date').value = art.date;
+                document.getElementById('news-author').value = art.author;
+                document.getElementById('news-image').value = art.image;
+                document.getElementById('news-summary').value = art.summary;
+                document.getElementById('news-content').value = art.content.replace(/\\n\\n/g, '\n\n'); // Unescape linebreaks
+
+                showSection('form');
+            }
+        }
+
+        // Submit (Save to GitHub)
+        async function submitNews(e) {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('btn-submit');
+            const submitText = document.getElementById('submit-text');
+            const spinner = document.getElementById('submit-spinner');
+
+            submitBtn.disabled = true;
+            submitText.innerText = 'Menyimpan...';
+            spinner.classList.remove('hidden');
+
+            const id = document.getElementById('edit-id').value;
+            const title = document.getElementById('news-title').value.trim();
+            const date = document.getElementById('news-date').value.trim();
+            const author = document.getElementById('news-author').value.trim();
+            const image = document.getElementById('news-image').value;
+            const summary = document.getElementById('news-summary').value.trim();
+            const rawContent = document.getElementById('news-content').value.trim();
+            const content = rawContent.replace(/\n\n/g, '\\n\\n').replace(/\n/g, '\\n'); // Escape linebreaks
+
+            let updatedArticles = [...articlesList];
+
+            if(id) {
+                // Mode Edit: Cari dan update item
+                updatedArticles = updatedArticles.map(art => {
+                    if(art.id === id) {
+                        return { id, title, date, author, image, summary, content };
+                    }
+                    return art;
+                });
+            } else {
+                // Mode Add: Buat ID unik berdasarkan timestamp
+                const newId = String(Date.now());
+                const newArticle = { id: newId, title, date, author, image, summary, content };
+                updatedArticles.unshift(newArticle); // Taruh di baris paling atas
+            }
+
+            // Upload kembali data baru ke GitHub berita.json
+            const success = await pushJsonToGithub(updatedArticles, `Update berita: ${title}`);
+            
+            submitBtn.disabled = false;
+            submitText.innerText = 'Simpan & Posting';
+            spinner.classList.add('hidden');
+
+            if(success) {
+                showAlert('success', 'Posting Berhasil!', 'Berita Anda telah diterbitkan. Website Anda akan terupdate otomatis dalam waktu sekitar 10 detik.');
+                showSection('dashboard');
+                fetchArticles();
+            }
+        }
+
+        // Delete Article
+        async function deleteArticle(id) {
+            const art = articlesList.find(a => a.id === id);
+            if(!art) return;
+
+            if(confirm(`Apakah Anda yakin ingin menghapus artikel: "${art.title}"?`)) {
+                const updatedArticles = articlesList.filter(a => a.id !== id);
+                const success = await pushJsonToGithub(updatedArticles, `Hapus berita: ${art.title}`);
+                if(success) {
+                    showAlert('success', 'Berhasil Dihapus', 'Artikel berita telah dihapus dari database.');
+                    fetchArticles();
+                }
+            }
+        }
+
+        // Push JSON data back to Github repository
+        async function pushJsonToGithub(dataArray, commitMessage) {
+            const url = `https://api.github.com/repos/${config.username}/${config.repo}/contents/berita.json`;
+            
+            // Encode base64 JSON secara tepat
+            const jsonString = JSON.stringify(dataArray, null, 2);
+            const encodedContent = btoa(unescape(encodeURIComponent(jsonString)));
+
+            const bodyPayload = {
+                message: commitMessage,
+                content: encodedContent,
+                sha: fileSha
+            };
+
+            try {
+                const response = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${config.token}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/vnd.github.v3+json'
+                    },
+                    body: JSON.stringify(bodyPayload)
+                });
+
+                if(!response.ok) {
+                    const errRes = await response.json();
+                    throw new Error(errRes.message || 'Gagal menyimpan perubahan ke GitHub.');
+                }
+
+                return true;
+            } catch (err) {
+                showAlert('error', 'Gagal Mengirim Data', err.message);
+                return false;
+            }
+        }
+
+        // Custom UI Alert System
+        function showAlert(type, title, msg) {
+            const alertBox = document.getElementById('custom-alert');
+            const icon = document.getElementById('alert-icon');
+            const t = document.getElementById('alert-title');
+            const m = document.getElementById('alert-msg');
+
+            t.innerText = title;
+            m.innerText = msg;
+
+            if (type === 'success') {
+                icon.className = 'w-12 h-12 rounded-full flex items-center justify-center text-2xl mx-auto mb-3 bg-green-100 text-green-700';
+                icon.innerHTML = '<i class="fas fa-check-circle"></i>';
+            } else {
+                icon.className = 'w-12 h-12 rounded-full flex items-center justify-center text-2xl mx-auto mb-3 bg-red-100 text-red-700';
+                icon.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+            }
+
+            alertBox.classList.remove('hidden');
+        }
+
+        function closeAlert() {
+            document.getElementById('custom-alert').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
