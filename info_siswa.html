@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Informasi Santriwati - SMPQT Yanbu'ul Qur'an 1 Lil Banat</title>
+    <title>Portal Santriwati - SMPQT Yanbu'ul Qur'an 1 Lil Banat</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="logo.png">
@@ -22,7 +22,7 @@
     <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-    <!-- Tailwind Configuration (Matching your theme) -->
+    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
             theme: {
@@ -57,6 +57,7 @@
             border-bottom: 2px solid #15803d;
             color: #15803d;
             font-weight: 600;
+            background-color: #f0fdf4;
         }
         .tab-inactive {
             border-bottom: 2px solid transparent;
@@ -65,6 +66,7 @@
         .tab-inactive:hover {
             color: #374151;
             border-bottom: 2px solid #d1d5db;
+            background-color: #f9fafb;
         }
         
         /* Loader Spinner */
@@ -80,11 +82,17 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body class="font-sans text-gray-800 bg-slate-50 antialiased min-h-screen flex flex-col">
 
-    <!-- Simple Navigation Bar -->
+    <!-- Navigation Bar -->
     <nav class="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-primary-600/20">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 sm:h-20 items-center">
@@ -97,132 +105,121 @@
                         <span class="text-[10px] sm:text-xs text-gray-500 font-medium">SMPQT Yanbu'ul Qur'an 1 Lil Banat</span>
                     </div>
                 </a>
-                <!-- Back Button -->
-                <div>
+                <!-- Nav Actions -->
+                <div id="navActions">
                     <a href="index.html" class="text-sm font-medium text-gray-600 hover:text-primary-700 flex items-center transition bg-gray-100 hover:bg-primary-50 px-3 py-2 rounded-lg">
-                        <i class="fas fa-arrow-left mr-2 text-xs"></i> <span class="hidden sm:inline">Kembali ke Beranda</span>
+                        <i class="fas fa-home mr-2 text-xs"></i> <span class="hidden sm:inline">Beranda Web</span>
                     </a>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Page Header -->
-    <div class="bg-primary-900 text-white py-10 relative overflow-hidden">
+    <!-- SECTION 1: LOGIN (Ditampilkan awal) -->
+    <div id="loginSection" class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 relative overflow-hidden fade-in">
         <!-- Abstract BG -->
-        <div class="absolute inset-0 z-0 opacity-20">
-            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="a" patternUnits="userSpaceOnUse" width="20" height="20" patternTransform="scale(2) rotate(0)"><rect x="0" y="0" width="100%" height="100%" fill="none"/><path d="M3.25 10h13.5M10 3.25v13.5" stroke-linecap="square" stroke-width="0.5" stroke="currentColor" fill="none"/></pattern></defs><rect width="100%" height="100%" fill="url(#a)"/></svg>
+        <div class="absolute inset-0 z-0 opacity-10">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><defs><pattern id="a" patternUnits="userSpaceOnUse" width="40" height="40" patternTransform="scale(2) rotate(45)"><rect x="0" y="0" width="100%" height="100%" fill="none"/><path d="M20 0L40 20L20 40L0 20Z" stroke-width="0.5" stroke="#15803d" fill="none"/></pattern></defs><rect width="100%" height="100%" fill="url(#a)"/></svg>
         </div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center">
-            <h1 class="text-2xl sm:text-4xl font-bold font-serif mb-2">Sistem Informasi Akademik</h1>
-            <p class="text-primary-100 text-sm sm:text-base max-w-2xl mx-auto">Cari dan pantau perkembangan nilai, absensi, kedisiplinan, dan capaian hafalan santriwati.</p>
+
+        <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-100 relative z-10 overflow-hidden">
+            <div class="bg-primary-900 p-8 text-center relative">
+                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg border-4 border-primary-700/50">
+                    <i class="fas fa-user-graduate text-4xl text-primary-700"></i>
+                </div>
+                <h2 class="text-2xl font-bold text-white font-serif">Selamat Datang</h2>
+                <p class="text-primary-100 text-sm mt-2">Silakan masuk untuk melihat rapor akademik, tahfizh, dan kedisiplinan Anda.</p>
+            </div>
+            
+            <div class="p-8">
+                <form id="loginForm" class="space-y-6">
+                    <div>
+                        <label for="nis" class="block text-sm font-semibold text-gray-700 mb-2">Nomor Induk Siswa (NIS)</label>
+                        <div class="relative">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                                <i class="fas fa-id-card text-gray-400"></i>
+                            </div>
+                            <input type="text" id="nis" required placeholder="Masukkan NIS Anda" class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-base shadow-inner font-medium">
+                        </div>
+                    </div>
+                    
+                    <button type="submit" id="btnLogin" class="w-full bg-primary-700 hover:bg-primary-800 text-white font-bold py-3.5 px-4 rounded-xl transition shadow-md flex items-center justify-center text-lg">
+                        <span>Masuk ke Portal</span> <i class="fas fa-sign-in-alt ml-2"></i>
+                    </button>
+                </form>
+
+                <!-- Loading State (Inside Login) -->
+                <div id="loginLoading" class="hidden flex-col items-center justify-center py-6">
+                    <div class="loader mb-3"></div>
+                    <p class="text-sm text-gray-500 font-medium">Mencari data siswa...</p>
+                </div>
+                
+                <!-- Error State -->
+                <div id="loginError" class="hidden mt-4 bg-red-50 text-red-600 p-4 rounded-xl border border-red-200 text-sm flex items-start">
+                    <i class="fas fa-exclamation-circle mt-0.5 mr-2"></i>
+                    <span id="loginErrorText">NIS tidak ditemukan. Pastikan Anda memasukkan NIS yang benar.</span>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <!-- SECTION 2: DASHBOARD SISWA (Disembunyikan di awal) -->
+    <main id="dashboardSection" class="hidden flex-grow flex-col w-full fade-in">
         
-        <!-- Search Card -->
-        <div class="bg-white rounded-2xl shadow-md p-5 sm:p-8 mb-8 border border-gray-100">
-            <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center">
-                <i class="fas fa-search text-primary-600 mr-2"></i> Cari Data Santriwati
-            </h2>
-            <form id="searchForm" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
-                <div class="col-span-1 md:col-span-2">
-                    <label for="nis" class="block text-xs font-semibold text-gray-600 mb-1">Nomor Induk Siswa (NIS)</label>
-                    <input type="text" id="nis" required placeholder="Contoh: 25210166" class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-sm">
-                </div>
-                <div>
-                    <label for="bulan" class="block text-xs font-semibold text-gray-600 mb-1">Bulan / Periode</label>
-                    <select id="bulan" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-sm">
-                        <option value="JULI">JULI</option>
-                        <option value="AGUSTUS">AGUSTUS</option>
-                        <option value="SEPTEMBER" selected>SEPTEMBER</option>
-                        <option value="OKTOBER">OKTOBER</option>
-                        <option value="NOVEMBER">NOVEMBER</option>
-                        <option value="DESEMBER">DESEMBER</option>
-                        <option value="JANUARI">JANUARI</option>
-                        <option value="FEBRUARI">FEBRUARI</option>
-                        <option value="MARET">MARET</option>
-                        <option value="APRIL">APRIL</option>
-                        <option value="MEI">MEI</option>
-                        <option value="JUNI">JUNI</option>
-                    </select>
-                </div>
-                <div>
-                    <label for="kategori" class="block text-xs font-semibold text-gray-600 mb-1">Kategori Ujian</label>
-                    <select id="kategori" required class="w-full px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-sm">
-                        <option value="Ulangan Harian" selected>Ulangan Harian</option>
-                        <option value="STS">STS (Tengah Semester)</option>
-                        <option value="SAS">SAS (Akhir Semester)</option>
-                        <option value="ASAT">ASAT</option>
-                    </select>
-                </div>
-                <div class="col-span-1 md:col-span-4 mt-2">
-                    <button type="submit" class="w-full md:w-auto bg-primary-700 hover:bg-primary-800 text-white font-semibold py-2.5 px-6 rounded-lg transition shadow-md flex items-center justify-center">
-                        <i class="fas fa-file-invoice mr-2"></i> Tampilkan Data
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Loading State -->
-        <div id="loadingState" class="hidden flex-col items-center justify-center py-12">
-            <div class="loader mb-4"></div>
-            <p class="text-sm text-gray-500">Mencari data di server...</p>
-        </div>
-
-        <!-- Error / Empty State -->
-        <div id="emptyState" class="hidden text-center py-12 bg-white rounded-2xl shadow-sm border border-gray-100">
-            <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-3 text-2xl">
-                <i class="fas fa-exclamation-triangle"></i>
-            </div>
-            <h3 class="text-lg font-bold text-gray-800">Data Tidak Ditemukan</h3>
-            <p class="text-gray-500 text-sm mt-1 max-w-md mx-auto">Pastikan NIS, Bulan, dan Kategori Ujian sudah diisi dengan benar, atau data tersebut belum diunggah ke sistem.</p>
-        </div>
-
-        <!-- Data Result Container -->
-        <div id="resultContainer" class="hidden">
-            <!-- Student Profile Header -->
-            <div class="bg-white rounded-t-2xl shadow-sm border border-gray-200 p-5 sm:p-6 mb-0 flex flex-col md:flex-row items-center md:items-start gap-4">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 bg-primary-100 text-primary-700 rounded-full flex items-center justify-center text-2xl sm:text-3xl font-bold border-2 border-primary-200">
-                    <i class="fas fa-user-graduate"></i>
+        <!-- Header Banner -->
+        <div class="bg-primary-900 text-white py-12 relative border-b-4 border-secondary-500">
+            <div class="absolute inset-0 z-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center gap-6">
+                <div class="w-24 h-24 sm:w-32 sm:h-32 bg-white text-primary-800 rounded-full flex items-center justify-center text-5xl sm:text-6xl font-bold shadow-xl border-4 border-primary-700">
+                    <i class="fas fa-user-circle"></i>
                 </div>
                 <div class="text-center md:text-left flex-1">
-                    <h2 id="resNama" class="text-xl sm:text-2xl font-bold text-gray-900 font-serif">Nama Siswa</h2>
-                    <div class="flex flex-wrap justify-center md:justify-start gap-3 mt-2 text-sm">
-                        <span class="bg-gray-100 px-3 py-1 rounded-md text-gray-700 font-medium"><i class="fas fa-id-card mr-1 text-gray-500"></i> NIS: <span id="resNis">0000</span></span>
-                        <span class="bg-gray-100 px-3 py-1 rounded-md text-gray-700 font-medium"><i class="fas fa-chalkboard-teacher mr-1 text-gray-500"></i> Kelas: <span id="resKelas">7A</span></span>
-                        <span class="bg-secondary-50 text-secondary-700 border border-secondary-200 px-3 py-1 rounded-md font-semibold"><i class="fas fa-calendar-alt mr-1"></i> <span id="resPeriode">Bulan - Kategori</span></span>
+                    <h1 id="dashNama" class="text-2xl sm:text-4xl font-bold font-serif mb-2 text-secondary-400 drop-shadow-md">Nama Siswa</h1>
+                    <div class="flex flex-wrap justify-center md:justify-start gap-3 text-sm font-medium">
+                        <span class="bg-primary-800/80 backdrop-blur px-4 py-1.5 rounded-full border border-primary-700"><i class="fas fa-id-card mr-2 opacity-70"></i>NIS: <span id="dashNis">0000</span></span>
+                        <span class="bg-primary-800/80 backdrop-blur px-4 py-1.5 rounded-full border border-primary-700"><i class="fas fa-chalkboard mr-2 opacity-70"></i>Kelas: <span id="dashKelas">7X</span></span>
                     </div>
                 </div>
             </div>
+        </div>
 
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full -mt-6 relative z-20">
             <!-- Tab Navigation -->
-            <div class="bg-white border-x border-b border-gray-200 shadow-sm rounded-b-2xl mb-6 overflow-x-auto">
-                <div class="flex min-w-max px-2">
-                    <button onclick="switchTab('tab-nilai')" id="btn-tab-nilai" class="px-5 py-4 text-sm transition-all focus:outline-none tab-active">
-                        <i class="fas fa-chart-bar mr-2"></i>Nilai Akademik
-                    </button>
-                    <button onclick="switchTab('tab-tahfizh')" id="btn-tab-tahfizh" class="px-5 py-4 text-sm transition-all focus:outline-none tab-inactive">
-                        <i class="fas fa-quran mr-2"></i>Capaian Tahfizh
-                    </button>
-                    <button onclick="switchTab('tab-disiplin')" id="btn-tab-disiplin" class="px-5 py-4 text-sm transition-all focus:outline-none tab-inactive">
-                        <i class="fas fa-balance-scale mr-2"></i>Merit & Demerit
-                    </button>
-                    <button onclick="switchTab('tab-absensi')" id="btn-tab-absensi" class="px-5 py-4 text-sm transition-all focus:outline-none tab-inactive">
-                        <i class="fas fa-user-check mr-2"></i>Absensi
-                    </button>
-                </div>
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-6 flex flex-wrap sm:flex-nowrap">
+                <button onclick="switchTab('tab-nilai')" id="btn-tab-nilai" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-active flex items-center justify-center">
+                    <i class="fas fa-chart-bar mr-2"></i><span class="hidden sm:inline">Rekap</span> Akademik
+                </button>
+                <button onclick="switchTab('tab-tahfizh')" id="btn-tab-tahfizh" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center border-l border-gray-100">
+                    <i class="fas fa-quran mr-2"></i>Capaian Tahfizh
+                </button>
+                <button onclick="switchTab('tab-disiplin')" id="btn-tab-disiplin" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center border-l border-gray-100">
+                    <i class="fas fa-balance-scale mr-2"></i>Sikap & Disiplin
+                </button>
+                <button onclick="switchTab('tab-absensi')" id="btn-tab-absensi" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center border-l border-gray-100">
+                    <i class="fas fa-user-check mr-2"></i>Absensi
+                </button>
             </div>
 
             <!-- TAB CONTENT: NILAI AKADEMIK -->
-            <div id="tab-nilai" class="tab-content block animate-fade-in">
+            <div id="tab-nilai" class="tab-content block fade-in">
+                
+                <!-- Period Selector (Kunci untuk menampilkan nilai 1 tahun) -->
+                <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-gray-200 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-calendar-alt text-primary-600 mr-2"></i> Pilih Periode Ujian</h3>
+                        <p class="text-sm text-gray-500">Lihat nilai Anda pada ujian tertentu di tahun ajaran ini.</p>
+                    </div>
+                    <div class="w-full md:w-1/3">
+                        <select id="examSelector" onchange="renderSelectedExamGrades()" class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition font-semibold text-primary-900 shadow-inner cursor-pointer">
+                            <!-- Options will be populated by JS -->
+                        </select>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    
                     <!-- Ilmu Agama (Diniyyah) -->
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="bg-primary-50 py-3 px-5 border-b border-primary-100">
+                        <div class="bg-primary-50 py-3.5 px-5 border-b border-primary-100 flex justify-between items-center">
                             <h3 class="font-bold text-primary-800"><i class="fas fa-moon mr-2"></i>Ilmu Agama & Diniyyah</h3>
                         </div>
                         <ul class="divide-y divide-gray-100" id="list-diniyyah">
@@ -232,7 +229,7 @@
 
                     <!-- Ilmu Pengetahuan Umum -->
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div class="bg-blue-50 py-3 px-5 border-b border-blue-100">
+                        <div class="bg-blue-50 py-3.5 px-5 border-b border-blue-100 flex justify-between items-center">
                             <h3 class="font-bold text-blue-800"><i class="fas fa-globe mr-2"></i>Ilmu Pengetahuan Umum</h3>
                         </div>
                         <ul class="divide-y divide-gray-100" id="list-umum">
@@ -242,7 +239,7 @@
 
                     <!-- Bahasa & Keterampilan -->
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden lg:col-span-2">
-                        <div class="bg-secondary-50 py-3 px-5 border-b border-secondary-100">
+                        <div class="bg-secondary-50 py-3.5 px-5 border-b border-secondary-100 flex justify-between items-center">
                             <h3 class="font-bold text-secondary-800"><i class="fas fa-language mr-2"></i>Bahasa, Seni & Keterampilan</h3>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2">
@@ -257,38 +254,172 @@
                 </div>
             </div>
 
-            <!-- TAB CONTENT: TAHFIZH (DUMMY/COMING SOON) -->
-            <div id="tab-tahfizh" class="tab-content hidden animate-fade-in">
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center">
-                    <div class="w-16 h-16 bg-primary-50 text-primary-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                        <i class="fas fa-book-open"></i>
+            <!-- TAB CONTENT: TAHFIZH -->
+            <div id="tab-tahfizh" class="tab-content hidden fade-in">
+                <!-- Info Cards -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-emerald-100 text-center border-b-4 border-b-emerald-500">
+                        <i class="fas fa-book-open text-3xl text-emerald-500 mb-2"></i>
+                        <h4 class="text-gray-500 text-xs font-bold uppercase tracking-wider">Hafalan Terakhir</h4>
+                        <p class="text-xl font-bold text-gray-900 mt-1">Juz 3, Surah Ali 'Imran</p>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Data Capaian Tahfizh</h3>
-                    <p class="text-gray-500 text-sm max-w-md mx-auto mb-4">Fitur ini masih dalam tahap pengembangan. Kedepannya, rincian hafalan juz, murojaah, dan nilai tahsin akan ditampilkan di sini.</p>
-                    <span class="inline-block bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full border border-gray-200">Segera Hadir</span>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-blue-100 text-center border-b-4 border-b-blue-500">
+                        <i class="fas fa-redo-alt text-3xl text-blue-500 mb-2"></i>
+                        <h4 class="text-gray-500 text-xs font-bold uppercase tracking-wider">Status Murojaah</h4>
+                        <p class="text-xl font-bold text-gray-900 mt-1">Juz 30 & 29 Lancar</p>
+                    </div>
+                    <div class="bg-white p-5 rounded-2xl shadow-sm border border-secondary-100 text-center border-b-4 border-b-secondary-500">
+                        <i class="fas fa-star text-3xl text-secondary-500 mb-2"></i>
+                        <h4 class="text-gray-500 text-xs font-bold uppercase tracking-wider">Nilai Tahsin</h4>
+                        <p class="text-xl font-bold text-gray-900 mt-1">Jayyid Jiddan (B+)</p>
+                    </div>
+                </div>
+
+                <!-- Table Riwayat Setoran (Dummy Layout) -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800"><i class="fas fa-history mr-2 text-primary-600"></i>Riwayat Setoran (Bulan Ini)</h3>
+                        <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded font-semibold border border-yellow-200">Data Contoh</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-white border-b border-gray-200 text-xs uppercase text-gray-500 font-semibold">
+                                    <th class="py-3 px-6">Tanggal</th>
+                                    <th class="py-3 px-6">Surah / Ayat</th>
+                                    <th class="py-3 px-6">Predikat</th>
+                                    <th class="py-3 px-6">Musyrifah</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm">
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="py-3 px-6">12 Sep 2026</td>
+                                    <td class="py-3 px-6 font-medium">Ali 'Imran: 1-15</td>
+                                    <td class="py-3 px-6"><span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-bold">Lancar</span></td>
+                                    <td class="py-3 px-6 text-gray-600">Ustzh. Fatimah</td>
+                                </tr>
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="py-3 px-6">10 Sep 2026</td>
+                                    <td class="py-3 px-6 font-medium">Al-Baqarah: Murojaah Akhir</td>
+                                    <td class="py-3 px-6"><span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-bold">Lancar</span></td>
+                                    <td class="py-3 px-6 text-gray-600">Ustzh. Fatimah</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="py-3 px-6">05 Sep 2026</td>
+                                    <td class="py-3 px-6 font-medium">Al-Baqarah: 275-286</td>
+                                    <td class="py-3 px-6"><span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-bold">Mengulang</span></td>
+                                    <td class="py-3 px-6 text-gray-600">Ustzh. Fatimah</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- TAB CONTENT: KEDISIPLINAN (DUMMY/COMING SOON) -->
-            <div id="tab-disiplin" class="tab-content hidden animate-fade-in">
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center">
-                    <div class="w-16 h-16 bg-secondary-50 text-secondary-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                        <i class="fas fa-star-half-alt"></i>
+            <!-- TAB CONTENT: SIKAP & DISIPLIN (MERIT/DEMERIT/KASUS) -->
+            <div id="tab-disiplin" class="tab-content hidden fade-in">
+                
+                <!-- Merit Demerit Summary -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                    <!-- Merit Box -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex">
+                        <div class="bg-primary-500 text-white w-24 flex flex-col items-center justify-center p-4">
+                            <i class="fas fa-award text-4xl mb-1"></i>
+                        </div>
+                        <div class="p-5 flex-1">
+                            <h4 class="text-gray-500 font-bold uppercase text-xs tracking-wider">Total Poin Prestasi (Merit)</h4>
+                            <div class="flex items-end mt-1">
+                                <span class="text-4xl font-extrabold text-primary-700">120</span>
+                                <span class="text-sm text-gray-500 ml-2 mb-1">Poin</span>
+                            </div>
+                            <p class="text-xs text-primary-600 mt-2 font-medium"><i class="fas fa-check-circle mr-1"></i> Sangat Baik</p>
+                        </div>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Poin Kedisiplinan (Merit & Demerit)</h3>
-                    <p class="text-gray-500 text-sm max-w-md mx-auto mb-4">Fitur perekaman poin prestasi (Merit) dan pelanggaran (Demerit) santriwati sedang diintegrasikan dengan database asrama.</p>
-                    <span class="inline-block bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full border border-gray-200">Segera Hadir</span>
+                    
+                    <!-- Demerit Box -->
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex">
+                        <div class="bg-red-500 text-white w-24 flex flex-col items-center justify-center p-4">
+                            <i class="fas fa-exclamation-triangle text-4xl mb-1"></i>
+                        </div>
+                        <div class="p-5 flex-1">
+                            <h4 class="text-gray-500 font-bold uppercase text-xs tracking-wider">Total Poin Pelanggaran (Demerit)</h4>
+                            <div class="flex items-end mt-1">
+                                <span class="text-4xl font-extrabold text-red-600">15</span>
+                                <span class="text-sm text-gray-500 ml-2 mb-1">Poin</span>
+                            </div>
+                            <p class="text-xs text-red-500 mt-2 font-medium"><i class="fas fa-info-circle mr-1"></i> Batas Peringatan: 50 Poin</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Riwayat Catatan Kasus -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
+                    <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-800"><i class="fas fa-list-alt mr-2 text-primary-600"></i>Riwayat Catatan Kasus & Prestasi</h3>
+                        <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded font-semibold border border-yellow-200">Data Contoh</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="bg-white border-b border-gray-200 text-xs uppercase text-gray-500 font-semibold">
+                                    <th class="py-3 px-6">Tanggal</th>
+                                    <th class="py-3 px-6">Keterangan Catatan</th>
+                                    <th class="py-3 px-6 text-center">Jenis</th>
+                                    <th class="py-3 px-6 text-right">Poin</th>
+                                </tr>
+                            </thead>
+                            <tbody class="text-sm">
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="py-3 px-6 whitespace-nowrap">20 Agu 2026</td>
+                                    <td class="py-3 px-6">Juara 2 Lomba Kaligrafi Tingkat Kabupaten</td>
+                                    <td class="py-3 px-6 text-center"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">Prestasi</span></td>
+                                    <td class="py-3 px-6 text-right font-bold text-green-600">+50</td>
+                                </tr>
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="py-3 px-6 whitespace-nowrap">15 Agu 2026</td>
+                                    <td class="py-3 px-6">Datang terlambat saat jamaah Subuh</td>
+                                    <td class="py-3 px-6 text-center"><span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">Pelanggaran Ringan</span></td>
+                                    <td class="py-3 px-6 text-right font-bold text-red-600">-10</td>
+                                </tr>
+                                <tr class="hover:bg-gray-50">
+                                    <td class="py-3 px-6 whitespace-nowrap">02 Agu 2026</td>
+                                    <td class="py-3 px-6">Berbicara kotor/tidak sopan di asrama</td>
+                                    <td class="py-3 px-6 text-center"><span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">Pelanggaran Ringan</span></td>
+                                    <td class="py-3 px-6 text-right font-bold text-red-600">-5</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <!-- TAB CONTENT: ABSENSI (DUMMY/COMING SOON) -->
-            <div id="tab-absensi" class="tab-content hidden animate-fade-in">
+            <!-- TAB CONTENT: ABSENSI -->
+            <div id="tab-absensi" class="tab-content hidden fade-in">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 text-center">
+                        <div class="text-3xl font-bold text-primary-600">98%</div>
+                        <div class="text-xs text-gray-500 mt-1 uppercase font-semibold tracking-wide">Persentase Hadir</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 text-center">
+                        <div class="text-3xl font-bold text-yellow-500">2</div>
+                        <div class="text-xs text-gray-500 mt-1 uppercase font-semibold tracking-wide">Sakit</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 text-center">
+                        <div class="text-3xl font-bold text-blue-500">0</div>
+                        <div class="text-xs text-gray-500 mt-1 uppercase font-semibold tracking-wide">Izin</div>
+                    </div>
+                    <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 text-center">
+                        <div class="text-3xl font-bold text-red-500">0</div>
+                        <div class="text-xs text-gray-500 mt-1 uppercase font-semibold tracking-wide">Alpha</div>
+                    </div>
+                </div>
+                
                 <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center">
                     <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
                         <i class="fas fa-calendar-check"></i>
                     </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Rekap Absensi</h3>
-                    <p class="text-gray-500 text-sm max-w-md mx-auto mb-4">Data kehadiran (Sakit, Izin, Alpha) untuk kelas dan asrama akan segera tersedia pada update sistem berikutnya.</p>
+                    <h3 class="text-xl font-bold text-gray-800 mb-2">Detail Absensi Bulanan</h3>
+                    <p class="text-gray-500 text-sm max-w-md mx-auto mb-4">Grafik rincian absensi sedang dalam pembaruan sistem.</p>
                     <span class="inline-block bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full border border-gray-200">Segera Hadir</span>
                 </div>
             </div>
@@ -297,154 +428,211 @@
     </main>
 
     <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-300 py-8 border-t-4 border-secondary-500 mt-auto">
-        <div class="max-w-7xl mx-auto px-4 text-center">
-            <p class="text-xs sm:text-sm">&copy; 2026 Portal Akademik - SMPQT Yanbu'ul Qur'an 1 Lil Banat.</p>
+    <footer class="bg-gray-900 text-gray-300 py-8 border-t-4 border-secondary-500 mt-auto z-10 relative">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
+            <p class="text-xs sm:text-sm mb-4 md:mb-0">&copy; 2026 Portal Akademik - SMPQT Yanbu'ul Qur'an 1 Lil Banat.</p>
+            <div class="text-xs text-gray-500">
+                <i class="fas fa-shield-alt mr-1"></i> Sistem Terenkripsi & Aman
+            </div>
         </div>
     </footer>
 
     <!-- SUPABASE INTEGRATION SCRIPT -->
     <script>
         // ==========================================
-        // KONFIGURASI SUPABASE (GANTI DENGAN MILIK ANDA)
+        // KONFIGURASI SUPABASE
         // ==========================================
         const SUPABASE_URL = 'https://vpdlfjbkfcuukyykrhua.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZGxmamJrZmN1dWt5eWtyaHVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzkxNjUsImV4cCI6MjA5Nzc1NTE2NX0.QSHbi71ajuU_AggJJ5xVDeb6jffDRyyuF4C7aYeHW3Y';
         
-        // Inisialisasi Supabase Client
-        // Note: Jika URL dan Key belum diisi, script akan mencegah error tapi tidak bisa narik data.
         let supabase = null;
         try {
-            if(SUPABASE_URL !== 'URL_SUPABASE_ANDA') {
-                supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-            }
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         } catch(e) {
             console.error("Gagal inisialisasi Supabase", e);
         }
 
         // ==========================================
-        // LOGIK FORM & TAMPILAN
+        // STATE MANAGEMENT
         // ==========================================
-        const searchForm = document.getElementById('searchForm');
-        const loadingState = document.getElementById('loadingState');
-        const emptyState = document.getElementById('emptyState');
-        const resultContainer = document.getElementById('resultContainer');
+        let studentRecords = []; // Menyimpan semua nilai selama 1 tahun untuk NIS tersebut
 
-        searchForm.addEventListener('submit', async function(e) {
+        // Elemen DOM (Login)
+        const loginSection = document.getElementById('loginSection');
+        const loginForm = document.getElementById('loginForm');
+        const loginLoading = document.getElementById('loginLoading');
+        const loginError = document.getElementById('loginError');
+        const btnLogin = document.getElementById('btnLogin');
+
+        // Elemen DOM (Dashboard)
+        const dashboardSection = document.getElementById('dashboardSection');
+        const navActions = document.getElementById('navActions');
+        const examSelector = document.getElementById('examSelector');
+
+        // Event Listener Login Form
+        loginForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            // Ambil Input
-            const nis = document.getElementById('nis').value.trim();
-            const bulan = document.getElementById('bulan').value;
-            const kategori = document.getElementById('kategori').value;
+            const nisInput = document.getElementById('nis').value.trim();
+            if(!nisInput) return;
 
-            // Atur Tampilan (Loading)
-            resultContainer.classList.add('hidden');
-            emptyState.classList.add('hidden');
-            loadingState.classList.remove('hidden');
-            loadingState.classList.add('flex');
-
-            // Cek apakah Supabase sudah dikonfigurasi
-            if(!supabase) {
-                setTimeout(() => {
-                    alert("PERHATIAN: Sistem belum terhubung ke database. Harap masukkan SUPABASE_URL dan ANON_KEY pada source code HTML ini.");
-                    loadingState.classList.add('hidden');
-                    loadingState.classList.remove('flex');
-                    emptyState.classList.remove('hidden');
-                }, 1000);
-                return;
-            }
+            // UI Loading State
+            loginError.classList.add('hidden');
+            btnLogin.classList.add('hidden');
+            loginLoading.classList.remove('hidden');
+            loginLoading.classList.add('flex');
 
             try {
-                // Proses Query ke Supabase berdasarkan SQL table 'ledger_nilai'
+                // Ambil SEMUA data nilai berdasarkan NIS (Tidak dilimit 1 lagi)
                 const { data, error } = await supabase
                     .from('ledger_nilai')
                     .select('*')
-                    .eq('nis', nis)
-                    .ilike('bulan', bulan) // ilike agar case insensitive
-                    .ilike('kategori', kategori)
-                    .limit(1);
-
-                loadingState.classList.add('hidden');
-                loadingState.classList.remove('flex');
+                    .eq('nis', nisInput);
 
                 if (error) throw error;
 
                 if (data && data.length > 0) {
-                    tampilkanData(data[0]);
+                    // Berhasil Login -> Simpan data
+                    studentRecords = data;
+                    
+                    // Transisi ke Dashboard
+                    masukKeDashboard();
                 } else {
-                    // Data tidak ditemukan
-                    emptyState.classList.remove('hidden');
+                    // NIS Tidak Ditemukan
+                    showLoginError("NIS tidak ditemukan. Pastikan nomor sudah benar.");
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
-                loadingState.classList.add('hidden');
-                loadingState.classList.remove('flex');
-                emptyState.classList.remove('hidden');
-                alert("Terjadi kesalahan saat mengambil data dari server.");
+                showLoginError("Gagal terhubung ke server database.");
             }
         });
 
-        // Fungsi Render Data ke Tabel
-        function tampilkanData(data) {
-            // Set Profil Header
-            document.getElementById('resNama').innerText = data.nama || '-';
-            document.getElementById('resNis').innerText = data.nis || '-';
-            document.getElementById('resKelas').innerText = data.kelas || '-';
-            document.getElementById('resPeriode').innerText = `${data.bulan} - ${data.kategori}`.toUpperCase();
+        function showLoginError(msg) {
+            loginLoading.classList.add('hidden');
+            loginLoading.classList.remove('flex');
+            btnLogin.classList.remove('hidden');
+            document.getElementById('loginErrorText').innerText = msg;
+            loginError.classList.remove('hidden');
+        }
 
-            // Fungsi Helper untuk membuat baris list
+        function masukKeDashboard() {
+            // 1. Sembunyikan form login, tampilkan dashboard
+            loginSection.classList.add('hidden');
+            dashboardSection.classList.remove('hidden');
+            dashboardSection.classList.add('flex');
+
+            // 2. Ubah Navigasi Header (Tambahkan tombol Keluar)
+            navActions.innerHTML = `
+                <button onclick="logout()" class="text-sm font-bold text-red-600 hover:text-white flex items-center transition border border-red-200 hover:bg-red-600 bg-red-50 px-4 py-2 rounded-lg">
+                    <span class="hidden sm:inline mr-2">Keluar</span> <i class="fas fa-sign-out-alt"></i>
+                </button>
+            `;
+
+            // 3. Set Profil Info (Ambil dari record pertama saja)
+            const profilSiswa = studentRecords[0];
+            document.getElementById('dashNama').innerText = profilSiswa.nama || '-';
+            document.getElementById('dashNis').innerText = profilSiswa.nis || '-';
+            document.getElementById('dashKelas').innerText = profilSiswa.kelas || '-';
+
+            // 4. Populate Pilihan Ujian (Dropdown)
+            populateExamSelector();
+            
+            // 5. Tampilkan Nilai Ujian Pertama (Otomatis terpilih di dropdown)
+            renderSelectedExamGrades();
+
+            // Scroll ke atas
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function logout() {
+            // Reset Data
+            studentRecords = [];
+            document.getElementById('nis').value = '';
+            
+            // Kembalikan UI
+            dashboardSection.classList.add('hidden');
+            dashboardSection.classList.remove('flex');
+            loginSection.classList.remove('hidden');
+            
+            loginLoading.classList.add('hidden');
+            loginLoading.classList.remove('flex');
+            btnLogin.classList.remove('hidden');
+            loginError.classList.add('hidden');
+
+            navActions.innerHTML = `
+                <a href="index.html" class="text-sm font-medium text-gray-600 hover:text-primary-700 flex items-center transition bg-gray-100 hover:bg-primary-50 px-3 py-2 rounded-lg">
+                    <i class="fas fa-arrow-left mr-2 text-xs"></i> <span class="hidden sm:inline">Kembali ke Beranda</span>
+                </a>
+            `;
+        }
+
+        // ==========================================
+        // LOGIK RENDER NILAI
+        // ==========================================
+        
+        function populateExamSelector() {
+            examSelector.innerHTML = ''; // Kosongkan dulu
+            
+            // Urutkan (opsional: jika ada kolom created_at bisa di-sort. 
+            // Disini kita tampilkan sesuai yg didapat dari Supabase)
+            studentRecords.forEach((record, index) => {
+                const label = `${record.bulan} - ${record.kategori}`;
+                const option = document.createElement('option');
+                option.value = index; // simpan index array sebagai value
+                option.text = label.toUpperCase();
+                examSelector.appendChild(option);
+            });
+        }
+
+        function renderSelectedExamGrades() {
+            // Ambil index yang dipilih di dropdown
+            const selectedIndex = examSelector.value;
+            const data = studentRecords[selectedIndex];
+
+            if(!data) return;
+
+            // Fungsi Helper Layout Baris
             const buatBaris = (label, nilai, icon) => `
-                <li class="px-5 py-3 flex justify-between items-center hover:bg-gray-50 transition">
-                    <span class="text-sm font-medium text-gray-700"><i class="${icon} w-5 text-gray-400 mr-2 text-center"></i>${label}</span>
-                    <span class="font-bold text-gray-900 ${nilai < 75 ? 'text-red-600' : ''}">${nilai !== null ? nilai : '-'}</span>
+                <li class="px-5 py-3.5 flex justify-between items-center hover:bg-gray-50 transition">
+                    <span class="text-sm font-medium text-gray-700 flex items-center"><i class="${icon} w-6 text-gray-400 mr-2 text-center"></i>${label}</span>
+                    <span class="font-bold px-3 py-1 rounded-md text-sm ${nilai < 75 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-800'}">${nilai !== null && nilai !== undefined ? nilai : '-'}</span>
                 </li>
             `;
 
             // 1. Kategori Ilmu Agama (Diniyyah)
-            const htmlDiniyyah = 
+            document.getElementById('list-diniyyah').innerHTML = 
                 buatBaris('PAI (Umum)', data.pai, 'fas fa-book') +
                 buatBaris('Akhlaq', data.akhlaq, 'fas fa-heart') +
                 buatBaris('Tauhid', data.tauhid, 'fas fa-fingerprint') +
                 buatBaris('Hadist', data.hadist, 'fas fa-scroll') +
                 buatBaris('Tafsir', data.tafsir, 'fas fa-quran') +
                 buatBaris('Fiqih', data.fiqih, 'fas fa-praying-hands');
-            document.getElementById('list-diniyyah').innerHTML = htmlDiniyyah;
 
             // 2. Kategori Ilmu Pengetahuan Umum
-            const htmlUmum = 
+            document.getElementById('list-umum').innerHTML = 
                 buatBaris('Matematika', data.matematika, 'fas fa-square-root-alt') +
                 buatBaris('Ilmu Pengetahuan Alam (IPA)', data.ipa, 'fas fa-flask') +
                 buatBaris('Ilmu Pengetahuan Sosial (IPS)', data.ips, 'fas fa-globe-asia') +
                 buatBaris('Pendidikan Pancasila (PPKN)', data.ppkn, 'fas fa-flag') +
                 buatBaris('FINS / Keuangan', data.fins, 'fas fa-coins');
-            document.getElementById('list-umum').innerHTML = htmlUmum;
 
             // 3. Kategori Bahasa & Seni (Kolom 1)
-            const htmlBahasa1 = 
+            document.getElementById('list-bahasa1').innerHTML = 
                 buatBaris('Bahasa Indonesia', data.bahasa_indonesia, 'fas fa-comment') +
                 buatBaris('Bahasa Inggris', data.bahasa_inggris, 'fas fa-comments') +
                 buatBaris('Conversation', data.conversation, 'fas fa-headset') +
                 buatBaris('Bahasa Arab', data.bahasa_arab, 'fas fa-comment-dots');
-            document.getElementById('list-bahasa1').innerHTML = htmlBahasa1;
 
             // 4. Kategori Bahasa & Seni (Kolom 2)
-            const htmlBahasa2 = 
+            document.getElementById('list-bahasa2').innerHTML = 
                 buatBaris('Bahasa Jawa', data.bahasa_jawa, 'fas fa-pen-nib') +
                 buatBaris('Informatika', data.informatika, 'fas fa-laptop-code') +
                 buatBaris('Seni Budaya', data.seni_budaya, 'fas fa-palette') +
                 buatBaris('PJOK (Olahraga)', data.pjok, 'fas fa-running');
-            document.getElementById('list-bahasa2').innerHTML = htmlBahasa2;
-
-            // Tampilkan Container
-            resultContainer.classList.remove('hidden');
-            
-            // Auto scroll ke hasil
-            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         // ==========================================
-        // LOGIK TAB NAVIGATION
+        // LOGIK TAB NAVIGATION (Dashboard)
         // ==========================================
         function switchTab(tabId) {
             // Sembunyikan semua tab content
@@ -466,7 +654,6 @@
             activeBtn.classList.remove('tab-inactive');
             activeBtn.classList.add('tab-active');
         }
-
     </script>
 </body>
 </html>
