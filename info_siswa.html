@@ -455,16 +455,14 @@
         // ==========================================
         // STATE MANAGEMENT
         // ==========================================
-        let studentRecords = []; // Menyimpan semua nilai selama 1 tahun untuk NIS tersebut
+        let studentRecords = [];
 
-        // Elemen DOM (Login)
         const loginSection = document.getElementById('loginSection');
         const loginForm = document.getElementById('loginForm');
         const loginLoading = document.getElementById('loginLoading');
         const loginError = document.getElementById('loginError');
         const btnLogin = document.getElementById('btnLogin');
 
-        // Elemen DOM (Dashboard)
         const dashboardSection = document.getElementById('dashboardSection');
         const navActions = document.getElementById('navActions');
         const examSelector = document.getElementById('examSelector');
@@ -476,34 +474,45 @@
             const nisInput = document.getElementById('nis').value.trim();
             if(!nisInput) return;
 
-            // UI Loading State
             loginError.classList.add('hidden');
             btnLogin.classList.add('hidden');
             loginLoading.classList.remove('hidden');
             loginLoading.classList.add('flex');
 
             try {
-                // Ambil SEMUA data nilai berdasarkan NIS (Tidak dilimit 1 lagi)
+                // Cek koneksi & ambil data
                 const { data, error } = await supabase
                     .from('ledger_nilai')
                     .select('*')
                     .eq('nis', nisInput);
 
-                if (error) throw error;
+                // JIKA TERJADI ERROR DARI SUPABASE (Bisa karena nama kolom salah)
+                if (error) {
+                    showLoginError("Error Supabase: " + error.message);
+                    console.error("Detail Error:", error);
+                    return;
+                }
 
                 if (data && data.length > 0) {
-                    // Berhasil Login -> Simpan data
+                    // Berhasil Login
                     studentRecords = data;
-                    
-                    // Transisi ke Dashboard
                     masukKeDashboard();
                 } else {
-                    // NIS Tidak Ditemukan
-                    showLoginError("NIS tidak ditemukan. Pastikan nomor sudah benar.");
+                    // Jika data kosong, kita coba cek apakah kolomnya bernama huruf besar 'NIS'
+                    const { data: dataUpper, error: errUpper } = await supabase.from('ledger_nilai').select('*').eq('NIS', nisInput);
+                    
+                    if (dataUpper && dataUpper.length > 0) {
+                        showLoginError("PERBAIKI DATABASE: Nama kolom di Supabase adalah 'NIS' (huruf besar). Tolong ubah menjadi 'nis' (huruf kecil) di menu Table Editor Supabase.");
+                    } else if (errUpper) {
+                        // Jika dicheck dua-duanya tetap error
+                        showLoginError("NIS " + nisInput + " tidak ditemukan di database Anda.");
+                    } else {
+                        showLoginError("NIS " + nisInput + " tidak ditemukan di database Anda.");
+                    }
                 }
             } catch (error) {
                 console.error("Error fetching data:", error);
-                showLoginError("Gagal terhubung ke server database.");
+                showLoginError("Gagal Sistem: " + error.message);
             }
         });
 
@@ -516,40 +525,36 @@
         }
 
         function masukKeDashboard() {
-            // 1. Sembunyikan form login, tampilkan dashboard
             loginSection.classList.add('hidden');
             dashboardSection.classList.remove('hidden');
             dashboardSection.classList.add('flex');
 
-            // 2. Ubah Navigasi Header (Tambahkan tombol Keluar)
             navActions.innerHTML = `
                 <button onclick="logout()" class="text-sm font-bold text-red-600 hover:text-white flex items-center transition border border-red-200 hover:bg-red-600 bg-red-50 px-4 py-2 rounded-lg">
                     <span class="hidden sm:inline mr-2">Keluar</span> <i class="fas fa-sign-out-alt"></i>
                 </button>
             `;
 
-            // 3. Set Profil Info (Ambil dari record pertama saja)
+            // Atasi masalah jika nama kolom pakai huruf besar (Nama vs nama, KELAS vs kelas)
             const profilSiswa = studentRecords[0];
-            document.getElementById('dashNama').innerText = profilSiswa.nama || '-';
-            document.getElementById('dashNis').innerText = profilSiswa.nis || '-';
-            document.getElementById('dashKelas').innerText = profilSiswa.kelas || '-';
+            const namaSiswa = profilSiswa.nama || profilSiswa.Nama || profilSiswa.NAMA || '-';
+            const nisSiswa = profilSiswa.nis || profilSiswa.NIS || '-';
+            const kelasSiswa = profilSiswa.kelas || profilSiswa.Kelas || profilSiswa.KELAS || '-';
 
-            // 4. Populate Pilihan Ujian (Dropdown)
+            document.getElementById('dashNama').innerText = namaSiswa;
+            document.getElementById('dashNis').innerText = nisSiswa;
+            document.getElementById('dashKelas').innerText = kelasSiswa;
+
             populateExamSelector();
-            
-            // 5. Tampilkan Nilai Ujian Pertama (Otomatis terpilih di dropdown)
             renderSelectedExamGrades();
 
-            // Scroll ke atas
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function logout() {
-            // Reset Data
             studentRecords = [];
             document.getElementById('nis').value = '';
             
-            // Kembalikan UI
             dashboardSection.classList.add('hidden');
             dashboardSection.classList.remove('flex');
             loginSection.classList.remove('hidden');
@@ -566,32 +571,28 @@
             `;
         }
 
-        // ==========================================
-        // LOGIK RENDER NILAI
-        // ==========================================
-        
         function populateExamSelector() {
-            examSelector.innerHTML = ''; // Kosongkan dulu
+            examSelector.innerHTML = '';
             
-            // Urutkan (opsional: jika ada kolom created_at bisa di-sort. 
-            // Disini kita tampilkan sesuai yg didapat dari Supabase)
             studentRecords.forEach((record, index) => {
-                const label = `${record.bulan} - ${record.kategori}`;
+                // Atasi masalah jika nama kolom BULAN/KATEGORI huruf besar
+                const bln = record.bulan || record.Bulan || record.BULAN || '-';
+                const ktg = record.kategori || record.Kategori || record.KATEGORI || '-';
+                
+                const label = `${bln} - ${ktg}`;
                 const option = document.createElement('option');
-                option.value = index; // simpan index array sebagai value
+                option.value = index;
                 option.text = label.toUpperCase();
                 examSelector.appendChild(option);
             });
         }
 
         function renderSelectedExamGrades() {
-            // Ambil index yang dipilih di dropdown
             const selectedIndex = examSelector.value;
             const data = studentRecords[selectedIndex];
 
             if(!data) return;
 
-            // Fungsi Helper Layout Baris
             const buatBaris = (label, nilai, icon) => `
                 <li class="px-5 py-3.5 flex justify-between items-center hover:bg-gray-50 transition">
                     <span class="text-sm font-medium text-gray-700 flex items-center"><i class="${icon} w-6 text-gray-400 mr-2 text-center"></i>${label}</span>
@@ -599,49 +600,48 @@
                 </li>
             `;
 
-            // 1. Kategori Ilmu Agama (Diniyyah)
+            // Helper function to safely get value regardless of case (e.g. data.matematika or data.Matematika)
+            const getVal = (key) => {
+                if (data[key] !== undefined) return data[key];
+                if (data[key.toUpperCase()] !== undefined) return data[key.toUpperCase()];
+                // Capitalize first letter (e.g. Matematika)
+                const capKey = key.charAt(0).toUpperCase() + key.slice(1);
+                if (data[capKey] !== undefined) return data[capKey];
+                return '-';
+            }
+
             document.getElementById('list-diniyyah').innerHTML = 
-                buatBaris('PAI (Umum)', data.pai, 'fas fa-book') +
-                buatBaris('Akhlaq', data.akhlaq, 'fas fa-heart') +
-                buatBaris('Tauhid', data.tauhid, 'fas fa-fingerprint') +
-                buatBaris('Hadist', data.hadist, 'fas fa-scroll') +
-                buatBaris('Tafsir', data.tafsir, 'fas fa-quran') +
-                buatBaris('Fiqih', data.fiqih, 'fas fa-praying-hands');
+                buatBaris('PAI (Umum)', getVal('pai'), 'fas fa-book') +
+                buatBaris('Akhlaq', getVal('akhlaq'), 'fas fa-heart') +
+                buatBaris('Tauhid', getVal('tauhid'), 'fas fa-fingerprint') +
+                buatBaris('Hadist', getVal('hadist'), 'fas fa-scroll') +
+                buatBaris('Tafsir', getVal('tafsir'), 'fas fa-quran') +
+                buatBaris('Fiqih', getVal('fiqih'), 'fas fa-praying-hands');
 
-            // 2. Kategori Ilmu Pengetahuan Umum
             document.getElementById('list-umum').innerHTML = 
-                buatBaris('Matematika', data.matematika, 'fas fa-square-root-alt') +
-                buatBaris('Ilmu Pengetahuan Alam (IPA)', data.ipa, 'fas fa-flask') +
-                buatBaris('Ilmu Pengetahuan Sosial (IPS)', data.ips, 'fas fa-globe-asia') +
-                buatBaris('Pendidikan Pancasila (PPKN)', data.ppkn, 'fas fa-flag') +
-                buatBaris('FINS / Keuangan', data.fins, 'fas fa-coins');
+                buatBaris('Matematika', getVal('matematika'), 'fas fa-square-root-alt') +
+                buatBaris('Ilmu Pengetahuan Alam (IPA)', getVal('ipa'), 'fas fa-flask') +
+                buatBaris('Ilmu Pengetahuan Sosial (IPS)', getVal('ips'), 'fas fa-globe-asia') +
+                buatBaris('Pendidikan Pancasila (PPKN)', getVal('ppkn'), 'fas fa-flag') +
+                buatBaris('FINS / Keuangan', getVal('fins'), 'fas fa-coins');
 
-            // 3. Kategori Bahasa & Seni (Kolom 1)
             document.getElementById('list-bahasa1').innerHTML = 
-                buatBaris('Bahasa Indonesia', data.bahasa_indonesia, 'fas fa-comment') +
-                buatBaris('Bahasa Inggris', data.bahasa_inggris, 'fas fa-comments') +
-                buatBaris('Conversation', data.conversation, 'fas fa-headset') +
-                buatBaris('Bahasa Arab', data.bahasa_arab, 'fas fa-comment-dots');
+                buatBaris('Bahasa Indonesia', getVal('bahasa_indonesia'), 'fas fa-comment') +
+                buatBaris('Bahasa Inggris', getVal('bahasa_inggris'), 'fas fa-comments') +
+                buatBaris('Conversation', getVal('conversation'), 'fas fa-headset') +
+                buatBaris('Bahasa Arab', getVal('bahasa_arab'), 'fas fa-comment-dots');
 
-            // 4. Kategori Bahasa & Seni (Kolom 2)
             document.getElementById('list-bahasa2').innerHTML = 
-                buatBaris('Bahasa Jawa', data.bahasa_jawa, 'fas fa-pen-nib') +
-                buatBaris('Informatika', data.informatika, 'fas fa-laptop-code') +
-                buatBaris('Seni Budaya', data.seni_budaya, 'fas fa-palette') +
-                buatBaris('PJOK (Olahraga)', data.pjok, 'fas fa-running');
+                buatBaris('Bahasa Jawa', getVal('bahasa_jawa'), 'fas fa-pen-nib') +
+                buatBaris('Informatika', getVal('informatika'), 'fas fa-laptop-code') +
+                buatBaris('Seni Budaya', getVal('seni_budaya'), 'fas fa-palette') +
+                buatBaris('PJOK (Olahraga)', getVal('pjok'), 'fas fa-running');
         }
 
-        // ==========================================
-        // LOGIK TAB NAVIGATION (Dashboard)
-        // ==========================================
         function switchTab(tabId) {
-            // Sembunyikan semua tab content
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            
-            // Tampilkan tab yang dipilih
             document.getElementById(tabId).classList.remove('hidden');
-
-            // Reset semua tombol tab ke inactive
+            
             const btns = ['btn-tab-nilai', 'btn-tab-tahfizh', 'btn-tab-disiplin', 'btn-tab-absensi'];
             btns.forEach(id => {
                 const btn = document.getElementById(id);
@@ -649,7 +649,6 @@
                 btn.classList.add('tab-inactive');
             });
 
-            // Set tombol yang aktif
             const activeBtn = document.getElementById('btn-' + tabId);
             activeBtn.classList.remove('tab-inactive');
             activeBtn.classList.add('tab-active');
