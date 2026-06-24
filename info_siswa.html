@@ -132,6 +132,7 @@
             </div>
             
             <div class="p-8">
+                <!-- Form menggunakan tag standard agar bisa disubmit dengan 'Enter' -->
                 <form id="loginForm" class="space-y-6">
                     <div>
                         <label for="nis" class="block text-sm font-semibold text-gray-700 mb-2">Nomor Induk Siswa (NIS)</label>
@@ -143,6 +144,7 @@
                         </div>
                     </div>
                     
+                    <!-- Type submit penting untuk memicu event listener form -->
                     <button type="submit" id="btnLogin" class="w-full bg-primary-700 hover:bg-primary-800 text-white font-bold py-3.5 px-4 rounded-xl transition shadow-md flex items-center justify-center text-lg">
                         <span>Masuk ke Portal</span> <i class="fas fa-sign-in-alt ml-2"></i>
                     </button>
@@ -155,9 +157,12 @@
                 </div>
                 
                 <!-- Error State -->
-                <div id="loginError" class="hidden mt-4 bg-red-50 text-red-600 p-4 rounded-xl border border-red-200 text-sm flex items-start">
-                    <i class="fas fa-exclamation-circle mt-0.5 mr-2"></i>
-                    <span id="loginErrorText">NIS tidak ditemukan. Pastikan Anda memasukkan NIS yang benar.</span>
+                <div id="loginError" class="hidden mt-4 bg-red-50 text-red-600 p-4 rounded-xl border border-red-200 text-sm flex flex-col items-start">
+                    <div class="flex items-start">
+                        <i class="fas fa-exclamation-circle mt-0.5 mr-2"></i>
+                        <span id="loginErrorText" class="font-bold">Error Terjadi</span>
+                    </div>
+                    <p id="loginErrorDetail" class="text-xs mt-2 opacity-90 break-words w-full">Detail error akan muncul disini.</p>
                 </div>
             </div>
         </div>
@@ -203,7 +208,7 @@
             <!-- TAB CONTENT: NILAI AKADEMIK -->
             <div id="tab-nilai" class="tab-content block fade-in">
                 
-                <!-- Period Selector (Kunci untuk menampilkan nilai 1 tahun) -->
+                <!-- Period Selector -->
                 <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-gray-200 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
                     <div>
                         <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-calendar-alt text-primary-600 mr-2"></i> Pilih Periode Ujian</h3>
@@ -211,30 +216,26 @@
                     </div>
                     <div class="w-full md:w-1/3">
                         <select id="examSelector" onchange="renderSelectedExamGrades()" class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition font-semibold text-primary-900 shadow-inner cursor-pointer">
-                            <!-- Options will be populated by JS -->
+                            <!-- Options dipopulasi oleh JS -->
                         </select>
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Ilmu Agama (Diniyyah) -->
+                    <!-- Ilmu Agama -->
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                         <div class="bg-primary-50 py-3.5 px-5 border-b border-primary-100 flex justify-between items-center">
                             <h3 class="font-bold text-primary-800"><i class="fas fa-moon mr-2"></i>Ilmu Agama & Diniyyah</h3>
                         </div>
-                        <ul class="divide-y divide-gray-100" id="list-diniyyah">
-                            <!-- Populated by JS -->
-                        </ul>
+                        <ul class="divide-y divide-gray-100" id="list-diniyyah"></ul>
                     </div>
 
-                    <!-- Ilmu Pengetahuan Umum -->
+                    <!-- Ilmu Umum -->
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                         <div class="bg-blue-50 py-3.5 px-5 border-b border-blue-100 flex justify-between items-center">
                             <h3 class="font-bold text-blue-800"><i class="fas fa-globe mr-2"></i>Ilmu Pengetahuan Umum</h3>
                         </div>
-                        <ul class="divide-y divide-gray-100" id="list-umum">
-                            <!-- Populated by JS -->
-                        </ul>
+                        <ul class="divide-y divide-gray-100" id="list-umum"></ul>
                     </div>
 
                     <!-- Bahasa & Keterampilan -->
@@ -243,12 +244,8 @@
                             <h3 class="font-bold text-secondary-800"><i class="fas fa-language mr-2"></i>Bahasa, Seni & Keterampilan</h3>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2">
-                            <ul class="divide-y divide-gray-100" id="list-bahasa1">
-                                <!-- Populated by JS -->
-                            </ul>
-                            <ul class="divide-y divide-gray-100 border-t md:border-t-0 md:border-l border-gray-100" id="list-bahasa2">
-                                <!-- Populated by JS -->
-                            </ul>
+                            <ul class="divide-y divide-gray-100" id="list-bahasa1"></ul>
+                            <ul class="divide-y divide-gray-100 border-t md:border-t-0 md:border-l border-gray-100" id="list-bahasa2"></ul>
                         </div>
                     </div>
                 </div>
@@ -256,7 +253,6 @@
 
             <!-- TAB CONTENT: TAHFIZH -->
             <div id="tab-tahfizh" class="tab-content hidden fade-in">
-                <!-- Info Cards -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-emerald-100 text-center border-b-4 border-b-emerald-500">
                         <i class="fas fa-book-open text-3xl text-emerald-500 mb-2"></i>
@@ -275,7 +271,6 @@
                     </div>
                 </div>
 
-                <!-- Table Riwayat Setoran (Dummy Layout) -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
                         <h3 class="font-bold text-gray-800"><i class="fas fa-history mr-2 text-primary-600"></i>Riwayat Setoran (Bulan Ini)</h3>
@@ -298,18 +293,6 @@
                                     <td class="py-3 px-6"><span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-bold">Lancar</span></td>
                                     <td class="py-3 px-6 text-gray-600">Ustzh. Fatimah</td>
                                 </tr>
-                                <tr class="border-b border-gray-100 hover:bg-gray-50">
-                                    <td class="py-3 px-6">10 Sep 2026</td>
-                                    <td class="py-3 px-6 font-medium">Al-Baqarah: Murojaah Akhir</td>
-                                    <td class="py-3 px-6"><span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-bold">Lancar</span></td>
-                                    <td class="py-3 px-6 text-gray-600">Ustzh. Fatimah</td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="py-3 px-6">05 Sep 2026</td>
-                                    <td class="py-3 px-6 font-medium">Al-Baqarah: 275-286</td>
-                                    <td class="py-3 px-6"><span class="bg-yellow-100 text-yellow-700 px-2 py-1 rounded-full text-xs font-bold">Mengulang</span></td>
-                                    <td class="py-3 px-6 text-gray-600">Ustzh. Fatimah</td>
-                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -318,10 +301,7 @@
 
             <!-- TAB CONTENT: SIKAP & DISIPLIN (MERIT/DEMERIT/KASUS) -->
             <div id="tab-disiplin" class="tab-content hidden fade-in">
-                
-                <!-- Merit Demerit Summary -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                    <!-- Merit Box -->
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex">
                         <div class="bg-primary-500 text-white w-24 flex flex-col items-center justify-center p-4">
                             <i class="fas fa-award text-4xl mb-1"></i>
@@ -336,7 +316,6 @@
                         </div>
                     </div>
                     
-                    <!-- Demerit Box -->
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex">
                         <div class="bg-red-500 text-white w-24 flex flex-col items-center justify-center p-4">
                             <i class="fas fa-exclamation-triangle text-4xl mb-1"></i>
@@ -352,7 +331,6 @@
                     </div>
                 </div>
 
-                <!-- Riwayat Catatan Kasus -->
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
                         <h3 class="font-bold text-gray-800"><i class="fas fa-list-alt mr-2 text-primary-600"></i>Riwayat Catatan Kasus & Prestasi</h3>
@@ -374,18 +352,6 @@
                                     <td class="py-3 px-6">Juara 2 Lomba Kaligrafi Tingkat Kabupaten</td>
                                     <td class="py-3 px-6 text-center"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">Prestasi</span></td>
                                     <td class="py-3 px-6 text-right font-bold text-green-600">+50</td>
-                                </tr>
-                                <tr class="border-b border-gray-100 hover:bg-gray-50">
-                                    <td class="py-3 px-6 whitespace-nowrap">15 Agu 2026</td>
-                                    <td class="py-3 px-6">Datang terlambat saat jamaah Subuh</td>
-                                    <td class="py-3 px-6 text-center"><span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">Pelanggaran Ringan</span></td>
-                                    <td class="py-3 px-6 text-right font-bold text-red-600">-10</td>
-                                </tr>
-                                <tr class="hover:bg-gray-50">
-                                    <td class="py-3 px-6 whitespace-nowrap">02 Agu 2026</td>
-                                    <td class="py-3 px-6">Berbicara kotor/tidak sopan di asrama</td>
-                                    <td class="py-3 px-6 text-center"><span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">Pelanggaran Ringan</span></td>
-                                    <td class="py-3 px-6 text-right font-bold text-red-600">-5</td>
                                 </tr>
                             </tbody>
                         </table>
@@ -413,15 +379,6 @@
                         <div class="text-xs text-gray-500 mt-1 uppercase font-semibold tracking-wide">Alpha</div>
                     </div>
                 </div>
-                
-                <div class="bg-white p-8 rounded-2xl shadow-sm border border-gray-100 text-center">
-                    <div class="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
-                        <i class="fas fa-calendar-check"></i>
-                    </div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">Detail Absensi Bulanan</h3>
-                    <p class="text-gray-500 text-sm max-w-md mx-auto mb-4">Grafik rincian absensi sedang dalam pembaruan sistem.</p>
-                    <span class="inline-block bg-gray-100 text-gray-600 text-xs font-semibold px-3 py-1 rounded-full border border-gray-200">Segera Hadir</span>
-                </div>
             </div>
 
         </div>
@@ -439,9 +396,13 @@
 
     <!-- SUPABASE INTEGRATION SCRIPT -->
     <script>
-        // ==========================================
+        // PELACAK ERROR BAWAAN (Jika ada script bermasalah, akan muncul alert pop-up)
+        window.onerror = function(msg, url, lineNo, columnNo, error) {
+            alert("Sistem mendeteksi kesalahan teknis:\n" + msg + "\nHarap hubungi admin sekolah.");
+            return false;
+        };
+
         // KONFIGURASI SUPABASE
-        // ==========================================
         const SUPABASE_URL = 'https://vpdlfjbkfcuukyykrhua.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZGxmamJrZmN1dWt5eWtyaHVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzkxNjUsImV4cCI6MjA5Nzc1NTE2NX0.QSHbi71ajuU_AggJJ5xVDeb6jffDRyyuF4C7aYeHW3Y';
         
@@ -449,84 +410,87 @@
         try {
             supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         } catch(e) {
-            console.error("Gagal inisialisasi Supabase", e);
+            alert("Gagal memuat sistem keamanan database. Cek koneksi internet Anda.");
         }
 
-        // ==========================================
-        // STATE MANAGEMENT
-        // ==========================================
         let studentRecords = [];
 
+        // DOM Elements
         const loginSection = document.getElementById('loginSection');
         const loginForm = document.getElementById('loginForm');
         const loginLoading = document.getElementById('loginLoading');
         const loginError = document.getElementById('loginError');
         const btnLogin = document.getElementById('btnLogin');
-
         const dashboardSection = document.getElementById('dashboardSection');
         const navActions = document.getElementById('navActions');
         const examSelector = document.getElementById('examSelector');
 
-        // Event Listener Login Form
+        // Fungsi Tampilkan Error UI
+        function showLoginError(title, detail) {
+            loginLoading.classList.add('hidden');
+            loginLoading.classList.remove('flex');
+            btnLogin.classList.remove('hidden');
+            
+            document.getElementById('loginErrorText').innerText = title;
+            document.getElementById('loginErrorDetail').innerText = detail;
+            loginError.classList.remove('hidden');
+        }
+
+        // EVENT LISTENER TOMBOL LOGIN
         loginForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
+            e.preventDefault(); // Mencegah halaman refresh otomatis
             
             const nisInput = document.getElementById('nis').value.trim();
             if(!nisInput) return;
 
+            // Reset Tampilan ke Loading
             loginError.classList.add('hidden');
             btnLogin.classList.add('hidden');
             loginLoading.classList.remove('hidden');
             loginLoading.classList.add('flex');
 
             try {
-                // 1. TEST KONEKSI & CEK APAKAH DATABASE KOSONG
-                const { data: testData, error: testError } = await supabase.from('ledger_nilai').select('*').limit(1);
+                if(!supabase) {
+                    throw new Error("Supabase Client tidak aktif.");
+                }
+
+                // 1. Ambil SELURUH baris data dari tabel (Tanpa Limit)
+                const { data, error } = await supabase.from('ledger_nilai').select('*');
                 
-                if (testError) {
-                    showLoginError("KONEKSI GAGAL: " + testError.message + ". Pastikan RLS sudah di-disable.");
+                // Jika database menolak koneksi (RLS belum disable, dll)
+                if (error) {
+                    showLoginError("Koneksi Database Ditolak", "Pesan Sistem: " + error.message + ". Pastikan RLS di Supabase sudah dimatikan.");
                     return;
                 }
 
-                if (!testData || testData.length === 0) {
-                    showLoginError("DATABASE KOSONG: Tabel 'ledger_nilai' berhasil dihubungi, tapi tidak ada isinya (0 baris). Silakan import ulang file Excel/CSV Anda.");
+                // Jika berhasil konek tapi database kosong
+                if (!data || data.length === 0) {
+                    showLoginError("Database Kosong", "Tabel 'ledger_nilai' berhasil dihubungi, namun tidak ada satupun data di dalamnya. Pastikan proses import CSV sudah berhasil.");
                     return;
                 }
 
-                // 2. AMBIL SEMUA DATA & FILTER MANUAL (Mencegah masalah tipe data angka/teks)
-                const { data, error } = await supabase.from('ledger_nilai').select('*'); 
-                
-                if (data && data.length > 0) {
-                    // Cari baris yang NIS-nya cocok (abaikan spasi dan tipe data)
-                    const matchedData = data.filter(row => {
-                        // Coba cari di kolom nis, NIS, atau Nis
-                        const rowNis = String(row.nis || row.NIS || row.Nis || '').trim();
-                        return rowNis === String(nisInput);
-                    });
+                // 2. Filter data secara manual untuk mencari NIS yang cocok
+                // (Mencegah masalah tipe data teks vs angka di Supabase)
+                const matchedData = data.filter(row => {
+                    const rowNis = String(row.nis || row.NIS || row.Nis || '').trim();
+                    return rowNis === String(nisInput);
+                });
 
-                    if (matchedData.length > 0) {
-                        studentRecords = matchedData;
-                        masukKeDashboard();
-                    } else {
-                        // Jika tidak ketemu, tampilkan salah satu NIS yang ada di database sebagai petunjuk
-                        const contohNis = testData[0].nis || testData[0].NIS || testData[0].Nis || "[Tidak ada kolom NIS]";
-                        showLoginError(`NIS "${nisInput}" tidak ditemukan. Contoh NIS yang tersimpan di database saat ini: ${contohNis}`);
-                    }
+                if (matchedData.length > 0) {
+                    // NIS KETEMU! Simpan ke state
+                    studentRecords = matchedData;
+                    masukKeDashboard();
+                } else {
+                    // NIS TIDAK KETEMU, Tampilkan sample
+                    const contohNis = data[0].nis || data[0].NIS || data[0].Nis || "[Tidak ada di kolom]";
+                    showLoginError("NIS Tidak Ditemukan", `Kami tidak menemukan data untuk NIS "${nisInput}". Pastikan Anda mengetik dengan benar. Contoh NIS yang ada di database saat ini: ${contohNis}`);
                 }
 
-            } catch (error) {
-                console.error("Error fetching data:", error);
-                showLoginError("Gagal Sistem: " + (error.message || "Periksa koneksi internet"));
+            } catch (err) {
+                console.error(err);
+                showLoginError("Sistem Mengalami Kendala", "Gagal menghubungi server database. " + err.message);
             }
         });
-
-        function showLoginError(msg) {
-            loginLoading.classList.add('hidden');
-            loginLoading.classList.remove('flex');
-            btnLogin.classList.remove('hidden');
-            document.getElementById('loginErrorText').innerText = msg;
-            loginError.classList.remove('hidden');
-        }
 
         function masukKeDashboard() {
             loginSection.classList.add('hidden');
@@ -539,19 +503,14 @@
                 </button>
             `;
 
-            // Atasi masalah jika nama kolom pakai huruf besar (Nama vs nama, KELAS vs kelas)
-            const profilSiswa = studentRecords[0];
-            const namaSiswa = profilSiswa.nama || profilSiswa.Nama || profilSiswa.NAMA || '-';
-            const nisSiswa = profilSiswa.nis || profilSiswa.NIS || '-';
-            const kelasSiswa = profilSiswa.kelas || profilSiswa.Kelas || profilSiswa.KELAS || '-';
-
-            document.getElementById('dashNama').innerText = namaSiswa;
-            document.getElementById('dashNis').innerText = nisSiswa;
-            document.getElementById('dashKelas').innerText = kelasSiswa;
+            // Proteksi nama kolom huruf besar/kecil
+            const p = studentRecords[0];
+            document.getElementById('dashNama').innerText = p.nama || p.Nama || p.NAMA || '-';
+            document.getElementById('dashNis').innerText = p.nis || p.NIS || p.Nis || '-';
+            document.getElementById('dashKelas').innerText = p.kelas || p.Kelas || p.KELAS || '-';
 
             populateExamSelector();
             renderSelectedExamGrades();
-
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -577,9 +536,7 @@
 
         function populateExamSelector() {
             examSelector.innerHTML = '';
-            
             studentRecords.forEach((record, index) => {
-                // Atasi masalah jika nama kolom BULAN/KATEGORI huruf besar
                 const bln = record.bulan || record.Bulan || record.BULAN || '-';
                 const ktg = record.kategori || record.Kategori || record.KATEGORI || '-';
                 
@@ -594,7 +551,6 @@
         function renderSelectedExamGrades() {
             const selectedIndex = examSelector.value;
             const data = studentRecords[selectedIndex];
-
             if(!data) return;
 
             const buatBaris = (label, nilai, icon) => `
@@ -604,11 +560,10 @@
                 </li>
             `;
 
-            // Helper function to safely get value regardless of case (e.g. data.matematika or data.Matematika)
+            // Helper ambil nilai (Case Insensitive)
             const getVal = (key) => {
                 if (data[key] !== undefined) return data[key];
                 if (data[key.toUpperCase()] !== undefined) return data[key.toUpperCase()];
-                // Capitalize first letter (e.g. Matematika)
                 const capKey = key.charAt(0).toUpperCase() + key.slice(1);
                 if (data[capKey] !== undefined) return data[capKey];
                 return '-';
@@ -652,7 +607,6 @@
                 btn.classList.remove('tab-active');
                 btn.classList.add('tab-inactive');
             });
-
             const activeBtn = document.getElementById('btn-' + tabId);
             activeBtn.classList.remove('tab-inactive');
             activeBtn.classList.add('tab-active');
