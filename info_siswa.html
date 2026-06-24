@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portal Santriwati - SMPQT Yanbu'ul Qur'an 1 Lil Banat</title>
+    <title>Portal Wali Santriwati - SMPQT Yanbu'ul Qur'an 1 Lil Banat</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="logo.png">
@@ -97,19 +97,19 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 sm:h-20 items-center">
                 <!-- Logo -->
-                <a href="index.html" class="flex-shrink-0 flex items-center group">
+                <a href="#" class="flex-shrink-0 flex items-center group">
                     <img src="logo.png" alt="Logo SMPQT" class="w-10 h-10 sm:w-12 sm:h-12 mr-3 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="hidden w-10 h-10 sm:w-12 sm:h-12 bg-primary-700 rounded-full items-center justify-center text-white font-bold text-lg mr-3 shadow-sm border border-secondary-500">YQ</div>
                     <div class="flex flex-col">
-                        <span class="font-bold text-sm sm:text-base md:text-lg text-primary-900 leading-tight group-hover:text-primary-700 transition">Portal Santriwati</span>
+                        <span class="font-bold text-sm sm:text-base md:text-lg text-primary-900 leading-tight group-hover:text-primary-700 transition">Portal Wali Santriwati</span>
                         <span class="text-[10px] sm:text-xs text-gray-500 font-medium">SMPQT Yanbu'ul Qur'an 1 Lil Banat</span>
                     </div>
                 </a>
                 <!-- Nav Actions -->
                 <div id="navActions">
-                    <a href="index.html" class="text-sm font-medium text-gray-600 hover:text-primary-700 flex items-center transition bg-gray-100 hover:bg-primary-50 px-3 py-2 rounded-lg">
-                        <i class="fas fa-home mr-2 text-xs"></i> <span class="hidden sm:inline">Beranda Web</span>
-                    </a>
+                    <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">
+                        <i class="fas fa-lock mr-1"></i> Area Terenkripsi
+                    </span>
                 </div>
             </div>
         </div>
@@ -125,44 +125,41 @@
         <div class="w-full max-w-md bg-white rounded-3xl shadow-xl border border-gray-100 relative z-10 overflow-hidden">
             <div class="bg-primary-900 p-8 text-center relative">
                 <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg border-4 border-primary-700/50">
-                    <i class="fas fa-user-graduate text-4xl text-primary-700"></i>
+                    <i class="fas fa-users text-4xl text-primary-700"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-white font-serif">Selamat Datang</h2>
-                <p class="text-primary-100 text-sm mt-2">Silakan masuk untuk melihat rapor akademik, tahfizh, dan kedisiplinan Anda.</p>
+                <h2 class="text-2xl font-bold text-white font-serif">Selamat Datang, Bapak/Ibu</h2>
+                <p class="text-primary-100 text-sm mt-2">Silakan masukkan NIS untuk memantau rapor akademik, capaian tahfizh, dan kedisiplinan putri Anda.</p>
             </div>
             
             <div class="p-8">
-                <!-- Form menggunakan tag standard agar bisa disubmit dengan 'Enter' -->
-                <form id="loginForm" class="space-y-6">
+                <!-- FORM DIHAPUS: Diganti dengan div murni agar 100% tidak ada lagi kejadian halaman berkedip/reload -->
+                <div id="loginForm" class="space-y-6">
                     <div>
-                        <label for="nis" class="block text-sm font-semibold text-gray-700 mb-2">Nomor Induk Siswa (NIS)</label>
+                        <label for="nis" class="block text-sm font-semibold text-gray-700 mb-2">Nomor Induk Santriwati (NIS)</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                 <i class="fas fa-id-card text-gray-400"></i>
                             </div>
-                            <input type="text" id="nis" required placeholder="Masukkan NIS Anda" class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-base shadow-inner font-medium">
+                            <!-- Menambahkan onkeypress agar orang tua tetap bisa menekan tombol Enter di HP/Laptop -->
+                            <input type="text" id="nis" required placeholder="Contoh: 25210166" class="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-base shadow-inner font-medium" onkeypress="if(event.key === 'Enter') handleLogin()">
                         </div>
                     </div>
                     
-                    <!-- Type submit penting untuk memicu event listener form -->
-                    <button type="submit" id="btnLogin" class="w-full bg-primary-700 hover:bg-primary-800 text-white font-bold py-3.5 px-4 rounded-xl transition shadow-md flex items-center justify-center text-lg">
-                        <span>Masuk ke Portal</span> <i class="fas fa-sign-in-alt ml-2"></i>
+                    <button type="button" onclick="handleLogin()" id="btnLogin" class="w-full bg-primary-700 hover:bg-primary-800 text-white font-bold py-3.5 px-4 rounded-xl transition shadow-md flex items-center justify-center text-lg">
+                        <span>Cek Rapor Siswa</span> <i class="fas fa-search ml-2"></i>
                     </button>
-                </form>
+                </div>
 
-                <!-- Loading State (Inside Login) -->
+                <!-- Loading State -->
                 <div id="loginLoading" class="hidden flex-col items-center justify-center py-6">
                     <div class="loader mb-3"></div>
-                    <p class="text-sm text-gray-500 font-medium">Mencari data siswa...</p>
+                    <p class="text-sm text-gray-500 font-medium animate-pulse">Menarik data rapor dari server...</p>
                 </div>
                 
                 <!-- Error State -->
-                <div id="loginError" class="hidden mt-4 bg-red-50 text-red-600 p-4 rounded-xl border border-red-200 text-sm flex flex-col items-start">
-                    <div class="flex items-start">
-                        <i class="fas fa-exclamation-circle mt-0.5 mr-2"></i>
-                        <span id="loginErrorText" class="font-bold">Error Terjadi</span>
-                    </div>
-                    <p id="loginErrorDetail" class="text-xs mt-2 opacity-90 break-words w-full">Detail error akan muncul disini.</p>
+                <div id="loginError" class="hidden mt-4 bg-red-50 text-red-600 p-4 rounded-xl border border-red-200 text-sm flex items-start">
+                    <i class="fas fa-exclamation-circle mt-0.5 mr-2"></i>
+                    <span id="loginErrorText" class="leading-relaxed">Error.</span>
                 </div>
             </div>
         </div>
@@ -176,13 +173,14 @@
             <div class="absolute inset-0 z-0 opacity-20 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center gap-6">
                 <div class="w-24 h-24 sm:w-32 sm:h-32 bg-white text-primary-800 rounded-full flex items-center justify-center text-5xl sm:text-6xl font-bold shadow-xl border-4 border-primary-700">
-                    <i class="fas fa-user-circle"></i>
+                    <i class="fas fa-user-graduate"></i>
                 </div>
                 <div class="text-center md:text-left flex-1">
+                    <p class="text-sm text-primary-200 mb-1 font-semibold tracking-wide uppercase">Profil Santriwati</p>
                     <h1 id="dashNama" class="text-2xl sm:text-4xl font-bold font-serif mb-2 text-secondary-400 drop-shadow-md">Nama Siswa</h1>
                     <div class="flex flex-wrap justify-center md:justify-start gap-3 text-sm font-medium">
-                        <span class="bg-primary-800/80 backdrop-blur px-4 py-1.5 rounded-full border border-primary-700"><i class="fas fa-id-card mr-2 opacity-70"></i>NIS: <span id="dashNis">0000</span></span>
-                        <span class="bg-primary-800/80 backdrop-blur px-4 py-1.5 rounded-full border border-primary-700"><i class="fas fa-chalkboard mr-2 opacity-70"></i>Kelas: <span id="dashKelas">7X</span></span>
+                        <span class="bg-primary-800/80 backdrop-blur px-4 py-1.5 rounded-full border border-primary-700 shadow-sm"><i class="fas fa-id-card mr-2 opacity-70"></i>NIS: <span id="dashNis">0000</span></span>
+                        <span class="bg-primary-800/80 backdrop-blur px-4 py-1.5 rounded-full border border-primary-700 shadow-sm"><i class="fas fa-chalkboard mr-2 opacity-70"></i>Kelas: <span id="dashKelas">7X</span></span>
                     </div>
                 </div>
             </div>
@@ -192,7 +190,7 @@
             <!-- Tab Navigation -->
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-6 flex flex-wrap sm:flex-nowrap">
                 <button onclick="switchTab('tab-nilai')" id="btn-tab-nilai" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-active flex items-center justify-center">
-                    <i class="fas fa-chart-bar mr-2"></i><span class="hidden sm:inline">Rekap</span> Akademik
+                    <i class="fas fa-chart-bar mr-2"></i><span class="hidden sm:inline">Rapor</span> Akademik
                 </button>
                 <button onclick="switchTab('tab-tahfizh')" id="btn-tab-tahfizh" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center border-l border-gray-100">
                     <i class="fas fa-quran mr-2"></i>Capaian Tahfizh
@@ -211,8 +209,8 @@
                 <!-- Period Selector -->
                 <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-gray-200 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
                     <div>
-                        <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-calendar-alt text-primary-600 mr-2"></i> Pilih Periode Ujian</h3>
-                        <p class="text-sm text-gray-500">Lihat nilai Anda pada ujian tertentu di tahun ajaran ini.</p>
+                        <h3 class="font-bold text-gray-800 text-lg"><i class="fas fa-calendar-check text-primary-600 mr-2"></i> Pilih Periode Ujian</h3>
+                        <p class="text-sm text-gray-500">Pilih bulan dan kategori ujian untuk melihat rincian nilai putri Anda.</p>
                     </div>
                     <div class="w-full md:w-1/3">
                         <select id="examSelector" onchange="renderSelectedExamGrades()" class="w-full px-4 py-3 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition font-semibold text-primary-900 shadow-inner cursor-pointer">
@@ -223,7 +221,7 @@
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
                     <!-- Ilmu Agama -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
                         <div class="bg-primary-50 py-3.5 px-5 border-b border-primary-100 flex justify-between items-center">
                             <h3 class="font-bold text-primary-800"><i class="fas fa-moon mr-2"></i>Ilmu Agama & Diniyyah</h3>
                         </div>
@@ -231,7 +229,7 @@
                     </div>
 
                     <!-- Ilmu Umum -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
                         <div class="bg-blue-50 py-3.5 px-5 border-b border-blue-100 flex justify-between items-center">
                             <h3 class="font-bold text-blue-800"><i class="fas fa-globe mr-2"></i>Ilmu Pengetahuan Umum</h3>
                         </div>
@@ -239,7 +237,7 @@
                     </div>
 
                     <!-- Bahasa & Keterampilan -->
-                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden lg:col-span-2">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden lg:col-span-2 hover:shadow-md transition">
                         <div class="bg-secondary-50 py-3.5 px-5 border-b border-secondary-100 flex justify-between items-center">
                             <h3 class="font-bold text-secondary-800"><i class="fas fa-language mr-2"></i>Bahasa, Seni & Keterampilan</h3>
                         </div>
@@ -253,54 +251,60 @@
 
             <!-- TAB CONTENT: TAHFIZH -->
             <div id="tab-tahfizh" class="tab-content hidden fade-in">
+                <!-- Info Banner dihapus karena sekarang sudah data asli -->
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-emerald-100 text-center border-b-4 border-b-emerald-500">
                         <i class="fas fa-book-open text-3xl text-emerald-500 mb-2"></i>
-                        <h4 class="text-gray-500 text-xs font-bold uppercase tracking-wider">Hafalan Terakhir</h4>
-                        <p class="text-xl font-bold text-gray-900 mt-1">Juz 3, Surah Ali 'Imran</p>
+                        <h4 class="text-gray-500 text-xs font-bold uppercase tracking-wider">Hafalan Baru (Ziyadah)</h4>
+                        <p id="tahfizh-ziyadah" class="text-xl font-bold text-gray-900 mt-1">-</p>
                     </div>
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-blue-100 text-center border-b-4 border-b-blue-500">
                         <i class="fas fa-redo-alt text-3xl text-blue-500 mb-2"></i>
                         <h4 class="text-gray-500 text-xs font-bold uppercase tracking-wider">Status Murojaah</h4>
-                        <p class="text-xl font-bold text-gray-900 mt-1">Juz 30 & 29 Lancar</p>
+                        <p id="tahfizh-murojaah" class="text-xl font-bold text-gray-900 mt-1">-</p>
                     </div>
+                    <!-- Mengubah Nilai Tahsin menjadi Info Halaqoh berdasarkan spreadsheet -->
                     <div class="bg-white p-5 rounded-2xl shadow-sm border border-secondary-100 text-center border-b-4 border-b-secondary-500">
-                        <i class="fas fa-star text-3xl text-secondary-500 mb-2"></i>
-                        <h4 class="text-gray-500 text-xs font-bold uppercase tracking-wider">Nilai Tahsin</h4>
-                        <p class="text-xl font-bold text-gray-900 mt-1">Jayyid Jiddan (B+)</p>
+                        <i class="fas fa-users text-3xl text-secondary-500 mb-2"></i>
+                        <h4 class="text-gray-500 text-xs font-bold uppercase tracking-wider">Halaqoh / Musyrifah</h4>
+                        <p id="tahfizh-halaqoh" class="text-xl font-bold text-gray-900 mt-1">-</p>
                     </div>
                 </div>
 
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
-                        <h3 class="font-bold text-gray-800"><i class="fas fa-history mr-2 text-primary-600"></i>Riwayat Setoran (Bulan Ini)</h3>
-                        <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded font-semibold border border-yellow-200">Data Contoh</span>
+                        <h3 class="font-bold text-gray-800"><i class="fas fa-history mr-2 text-primary-600"></i>Riwayat Setoran Terbaru</h3>
+                        <span class="bg-green-100 text-green-800 text-xs px-2 py-1 rounded font-semibold border border-green-200">Live Data</span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="bg-white border-b border-gray-200 text-xs uppercase text-gray-500 font-semibold">
                                     <th class="py-3 px-6">Tanggal</th>
-                                    <th class="py-3 px-6">Surah / Ayat</th>
-                                    <th class="py-3 px-6">Predikat</th>
-                                    <th class="py-3 px-6">Musyrifah</th>
+                                    <th class="py-3 px-6">Kegiatan</th>
+                                    <th class="py-3 px-6 text-center">Juz / Pojok</th>
+                                    <th class="py-3 px-6">Keterangan</th>
                                 </tr>
                             </thead>
-                            <tbody class="text-sm">
-                                <tr class="border-b border-gray-100 hover:bg-gray-50">
-                                    <td class="py-3 px-6">12 Sep 2026</td>
-                                    <td class="py-3 px-6 font-medium">Ali 'Imran: 1-15</td>
-                                    <td class="py-3 px-6"><span class="bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-bold">Lancar</span></td>
-                                    <td class="py-3 px-6 text-gray-600">Ustzh. Fatimah</td>
-                                </tr>
+                            <tbody id="tahfizh-tbody" class="text-sm">
+                                <!-- Data tahfizh akan di-render di sini oleh JavaScript -->
                             </tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB CONTENT: SIKAP & DISIPLIN (MERIT/DEMERIT/KASUS) -->
+            <!-- TAB CONTENT: SIKAP & DISIPLIN -->
             <div id="tab-disiplin" class="tab-content hidden fade-in">
+                <!-- Info Banner -->
+                <div class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-xl mb-6 flex items-start text-sm">
+                    <i class="fas fa-info-circle mt-0.5 mr-3 text-blue-500 text-lg"></i>
+                    <div>
+                        <strong class="block font-bold">Informasi:</strong>
+                        Modul Kedisiplinan saat ini menampilkan <i>preview</i> (contoh tampilan). Sistem akan dihubungkan dengan catatan asrama dalam pembaruan berikutnya.
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                     <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden flex">
                         <div class="bg-primary-500 text-white w-24 flex flex-col items-center justify-center p-4">
@@ -334,7 +338,6 @@
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden">
                     <div class="px-6 py-4 border-b border-gray-200 bg-gray-50 flex justify-between items-center">
                         <h3 class="font-bold text-gray-800"><i class="fas fa-list-alt mr-2 text-primary-600"></i>Riwayat Catatan Kasus & Prestasi</h3>
-                        <span class="bg-yellow-100 text-yellow-800 text-xs px-2 py-1 rounded font-semibold border border-yellow-200">Data Contoh</span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
@@ -353,6 +356,12 @@
                                     <td class="py-3 px-6 text-center"><span class="bg-green-100 text-green-700 px-2 py-1 rounded text-xs font-bold">Prestasi</span></td>
                                     <td class="py-3 px-6 text-right font-bold text-green-600">+50</td>
                                 </tr>
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="py-3 px-6 whitespace-nowrap">05 Agu 2026</td>
+                                    <td class="py-3 px-6">Terlambat masuk jamaah shubuh di masjid</td>
+                                    <td class="py-3 px-6 text-center"><span class="bg-red-100 text-red-700 px-2 py-1 rounded text-xs font-bold">Pelanggaran</span></td>
+                                    <td class="py-3 px-6 text-right font-bold text-red-600">-15</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -361,6 +370,14 @@
 
             <!-- TAB CONTENT: ABSENSI -->
             <div id="tab-absensi" class="tab-content hidden fade-in">
+                 <div class="bg-blue-50 border border-blue-200 text-blue-800 px-4 py-3 rounded-xl mb-6 flex items-start text-sm">
+                    <i class="fas fa-info-circle mt-0.5 mr-3 text-blue-500 text-lg"></i>
+                    <div>
+                        <strong class="block font-bold">Informasi:</strong>
+                        Rekapitulasi absensi saat ini menampilkan <i>preview</i> (contoh tampilan). Sinkronisasi dengan database sedang dalam proses pengerjaan.
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                     <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-200 text-center">
                         <div class="text-3xl font-bold text-primary-600">98%</div>
@@ -387,162 +404,189 @@
     <!-- Footer -->
     <footer class="bg-gray-900 text-gray-300 py-8 border-t-4 border-secondary-500 mt-auto z-10 relative">
         <div class="max-w-7xl mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-center md:text-left">
-            <p class="text-xs sm:text-sm mb-4 md:mb-0">&copy; 2026 Portal Akademik - SMPQT Yanbu'ul Qur'an 1 Lil Banat.</p>
-            <div class="text-xs text-gray-500">
-                <i class="fas fa-shield-alt mr-1"></i> Sistem Terenkripsi & Aman
+            <p class="text-xs sm:text-sm mb-4 md:mb-0">&copy; 2026 Portal Akademik Wali Siswa - SMPQT Yanbu'ul Qur'an 1 Lil Banat.</p>
+            <div class="text-xs text-gray-500 bg-gray-800 px-3 py-1.5 rounded-lg">
+                <i class="fas fa-shield-alt mr-1 text-primary-500"></i> Sistem Terenkripsi & Aman
             </div>
         </div>
     </footer>
 
     <!-- SUPABASE INTEGRATION SCRIPT -->
     <script>
-        // PELACAK ERROR BAWAAN (Jika ada script bermasalah, akan muncul alert pop-up)
-        window.onerror = function(msg, url, lineNo, columnNo, error) {
-            alert("Sistem mendeteksi kesalahan teknis:\n" + msg + "\nHarap hubungi admin sekolah.");
-            return false;
-        };
-
+        // ==========================================
         // KONFIGURASI SUPABASE
+        // ==========================================
         const SUPABASE_URL = 'https://vpdlfjbkfcuukyykrhua.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZGxmamJrZmN1dWt5eWtyaHVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzkxNjUsImV4cCI6MjA5Nzc1NTE2NX0.QSHbi71ajuU_AggJJ5xVDeb6jffDRyyuF4C7aYeHW3Y';
         
-        let supabase = null;
-        try {
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-        } catch(e) {
-            alert("Gagal memuat sistem keamanan database. Cek koneksi internet Anda.");
+        // Menggunakan nama variabel 'supabaseClient' (TIDAK 'supabase') untuk mencegah tabrakan "already declared" dari CDN
+        let supabaseClient = null;
+        if (window.supabase) {
+            supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         }
 
-        let studentRecords = [];
+        // ==========================================
+        // STATE MANAGEMENT
+        // ==========================================
+        let studentRecords = []; 
+        let tahfizhRecords = []; // State baru untuk menyimpan riwayat tahfizh
 
-        // DOM Elements
         const loginSection = document.getElementById('loginSection');
-        const loginForm = document.getElementById('loginForm');
-        const loginLoading = document.getElementById('loginLoading');
-        const loginError = document.getElementById('loginError');
-        const btnLogin = document.getElementById('btnLogin');
         const dashboardSection = document.getElementById('dashboardSection');
         const navActions = document.getElementById('navActions');
         const examSelector = document.getElementById('examSelector');
 
-        // Fungsi Tampilkan Error UI
-        function showLoginError(title, detail) {
-            loginLoading.classList.add('hidden');
-            loginLoading.classList.remove('flex');
-            btnLogin.classList.remove('hidden');
-            
-            document.getElementById('loginErrorText').innerText = title;
-            document.getElementById('loginErrorDetail').innerText = detail;
-            loginError.classList.remove('hidden');
+        // ==========================================
+        // FUNGSI PENARIKAN DATA AMAN (OPTIMIZED)
+        // ==========================================
+        async function fetchStudentData(nis) {
+            try {
+                // Tarik Nilai Akademik
+                const responseNilai = await supabaseClient
+                    .from('ledger_nilai')
+                    .select('*')
+                    .ilike('nis', `%${nis}%`); 
+                
+                if (responseNilai.error) throw responseNilai.error;
+                
+                // Tarik Jurnal Tahfizh secara bersamaan, urutkan dari tanggal terbaru
+                try {
+                    const responseTahfizh = await supabaseClient
+                        .from('jurnal_tahfizh')
+                        .select('*')
+                        .ilike('nis', `%${nis}%`)
+                        .order('tanggal', { ascending: false });
+                    
+                    if (!responseTahfizh.error) {
+                        tahfizhRecords = responseTahfizh.data || [];
+                    }
+                } catch(tahfizhErr) {
+                    console.log("Tabel tahfizh belum siap atau error:", tahfizhErr);
+                }
+                
+                return responseNilai.data || [];
+            } catch (error) {
+                console.error("Kesalahan Jaringan/Server:", error);
+                throw new Error("Koneksi ke server database gagal. Silakan coba lagi.");
+            }
         }
 
-        // EVENT LISTENER TOMBOL LOGIN
-        loginForm.addEventListener('submit', async function(e) {
-            e.preventDefault(); // Mencegah halaman refresh otomatis
+        // ==========================================
+        // LOGIN LOGIC
+        // ==========================================
+        async function handleLogin(e) {
+            if(e) e.preventDefault(); 
             
             const nisInput = document.getElementById('nis').value.trim();
             if(!nisInput) return;
 
-            // Reset Tampilan ke Loading
+            const loginError = document.getElementById('loginError');
+            const btnLogin = document.getElementById('btnLogin');
+            const loginLoading = document.getElementById('loginLoading');
+
             loginError.classList.add('hidden');
             btnLogin.classList.add('hidden');
             loginLoading.classList.remove('hidden');
             loginLoading.classList.add('flex');
 
+            const showErr = (msg) => {
+                loginLoading.classList.add('hidden');
+                loginLoading.classList.remove('flex');
+                btnLogin.classList.remove('hidden');
+                document.getElementById('loginErrorText').innerText = msg;
+                loginError.classList.remove('hidden');
+            };
+
+            // Pengecekan pada supabaseClient
+            if(!supabaseClient) {
+                showErr("Sistem error: Server database gagal dimuat. Cek koneksi internet Anda.");
+                return;
+            }
+
             try {
-                if(!supabase) {
-                    throw new Error("Supabase Client tidak aktif.");
-                }
-
-                // 1. Ambil SELURUH baris data dari tabel (Tanpa Limit)
-                const { data, error } = await supabase.from('ledger_nilai').select('*');
-                
-                // Jika database menolak koneksi (RLS belum disable, dll)
-                if (error) {
-                    showLoginError("Koneksi Database Ditolak", "Pesan Sistem: " + error.message + ". Pastikan RLS di Supabase sudah dimatikan.");
-                    return;
-                }
-
-                // Jika berhasil konek tapi database kosong
-                if (!data || data.length === 0) {
-                    showLoginError("Database Kosong", "Tabel 'ledger_nilai' berhasil dihubungi, namun tidak ada satupun data di dalamnya. Pastikan proses import CSV sudah berhasil.");
-                    return;
-                }
-
-                // 2. Filter data secara manual untuk mencari NIS yang cocok
-                // (Mencegah masalah tipe data teks vs angka di Supabase)
-                const matchedData = data.filter(row => {
-                    const rowNis = String(row.nis || row.NIS || row.Nis || '').trim();
-                    return rowNis === String(nisInput);
-                });
+                const matchedData = await fetchStudentData(nisInput);
 
                 if (matchedData.length > 0) {
-                    // NIS KETEMU! Simpan ke state
                     studentRecords = matchedData;
                     masukKeDashboard();
                 } else {
-                    // NIS TIDAK KETEMU, Tampilkan sample
-                    const contohNis = data[0].nis || data[0].NIS || data[0].Nis || "[Tidak ada di kolom]";
-                    showLoginError("NIS Tidak Ditemukan", `Kami tidak menemukan data untuk NIS "${nisInput}". Pastikan Anda mengetik dengan benar. Contoh NIS yang ada di database saat ini: ${contohNis}`);
+                    showErr(`Data rapor untuk NIS "${nisInput}" tidak ditemukan. Pastikan nomor sudah benar.`);
                 }
-
             } catch (err) {
-                console.error(err);
-                showLoginError("Sistem Mengalami Kendala", "Gagal menghubungi server database. " + err.message);
+                showErr("Error teknis: " + err.message);
             }
-        });
+        }
 
+        // ==========================================
+        // DASHBOARD RENDERING
+        // ==========================================
         function masukKeDashboard() {
             loginSection.classList.add('hidden');
             dashboardSection.classList.remove('hidden');
             dashboardSection.classList.add('flex');
 
+            // Ubah tombol navigasi menjadi tombol Keluar
             navActions.innerHTML = `
                 <button onclick="logout()" class="text-sm font-bold text-red-600 hover:text-white flex items-center transition border border-red-200 hover:bg-red-600 bg-red-50 px-4 py-2 rounded-lg">
-                    <span class="hidden sm:inline mr-2">Keluar</span> <i class="fas fa-sign-out-alt"></i>
+                    <span class="hidden sm:inline mr-2">Tutup Rapor</span> <i class="fas fa-sign-out-alt"></i>
                 </button>
             `;
 
-            // Proteksi nama kolom huruf besar/kecil
-            const p = studentRecords[0];
-            document.getElementById('dashNama').innerText = p.nama || p.Nama || p.NAMA || '-';
-            document.getElementById('dashNis').innerText = p.nis || p.NIS || p.Nis || '-';
-            document.getElementById('dashKelas').innerText = p.kelas || p.Kelas || p.KELAS || '-';
+            // Setup Profil Siswa (Toleransi case sensitive dari DB)
+            const profilSiswa = studentRecords[0];
+            document.getElementById('dashNama').innerText = profilSiswa.nama || profilSiswa.Nama || profilSiswa.NAMA || '-';
+            document.getElementById('dashNis').innerText = profilSiswa.nis || profilSiswa.NIS || profilSiswa.Nis || '-';
+            document.getElementById('dashKelas').innerText = profilSiswa.kelas || profilSiswa.Kelas || profilSiswa.KELAS || '-';
 
+            // Populasi Pilihan Ujian dan Render Grafik Nilai
             populateExamSelector();
             renderSelectedExamGrades();
+            
+            // Render Tab Tahfizh
+            renderTahfizhData();
+            
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function logout() {
+            // Bersihkan State demi keamanan perangkat sharing
             studentRecords = [];
+            tahfizhRecords = [];
             document.getElementById('nis').value = '';
             
+            // Kembalikan UI
             dashboardSection.classList.add('hidden');
             dashboardSection.classList.remove('flex');
             loginSection.classList.remove('hidden');
             
+            const loginLoading = document.getElementById('loginLoading');
+            const btnLogin = document.getElementById('btnLogin');
+            const loginError = document.getElementById('loginError');
+
             loginLoading.classList.add('hidden');
             loginLoading.classList.remove('flex');
             btnLogin.classList.remove('hidden');
             loginError.classList.add('hidden');
 
             navActions.innerHTML = `
-                <a href="index.html" class="text-sm font-medium text-gray-600 hover:text-primary-700 flex items-center transition bg-gray-100 hover:bg-primary-50 px-3 py-2 rounded-lg">
-                    <i class="fas fa-arrow-left mr-2 text-xs"></i> <span class="hidden sm:inline">Kembali ke Beranda</span>
-                </a>
+                <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200">
+                    <i class="fas fa-lock mr-1"></i> Area Terenkripsi
+                </span>
             `;
+
+            // Reset tab ke default (Rapor)
+            switchTab('tab-nilai');
         }
 
         function populateExamSelector() {
-            examSelector.innerHTML = '';
+            examSelector.innerHTML = ''; 
             studentRecords.forEach((record, index) => {
                 const bln = record.bulan || record.Bulan || record.BULAN || '-';
                 const ktg = record.kategori || record.Kategori || record.KATEGORI || '-';
-                
                 const label = `${bln} - ${ktg}`;
+                
                 const option = document.createElement('option');
-                option.value = index;
+                option.value = index; 
                 option.text = label.toUpperCase();
                 examSelector.appendChild(option);
             });
@@ -551,23 +595,37 @@
         function renderSelectedExamGrades() {
             const selectedIndex = examSelector.value;
             const data = studentRecords[selectedIndex];
+
             if(!data) return;
 
-            const buatBaris = (label, nilai, icon) => `
-                <li class="px-5 py-3.5 flex justify-between items-center hover:bg-gray-50 transition">
-                    <span class="text-sm font-medium text-gray-700 flex items-center"><i class="${icon} w-6 text-gray-400 mr-2 text-center"></i>${label}</span>
-                    <span class="font-bold px-3 py-1 rounded-md text-sm ${nilai < 75 ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-800'}">${nilai !== null && nilai !== undefined ? nilai : '-'}</span>
-                </li>
-            `;
+            // Template Baris Penilaian
+            const buatBaris = (label, nilai, icon) => {
+                const valStr = (nilai !== null && nilai !== undefined && nilai !== '') ? nilai : '-';
+                const numVal = parseInt(valStr);
+                // Logika Warna: Merah jika di bawah 75, Hijau jika di atas 90, sisanya Abu-abu gelap
+                let badgeClass = 'bg-gray-100 text-gray-800';
+                if(!isNaN(numVal)) {
+                    if (numVal < 75) badgeClass = 'bg-red-100 text-red-700 border border-red-200';
+                    else if (numVal >= 90) badgeClass = 'bg-green-100 text-green-800 border border-green-200';
+                }
 
-            // Helper ambil nilai (Case Insensitive)
+                return `
+                <li class="px-5 py-3.5 flex justify-between items-center hover:bg-gray-50 transition border-l-4 border-transparent hover:border-primary-500">
+                    <span class="text-sm font-medium text-gray-700 flex items-center"><i class="${icon} w-6 text-gray-400 mr-2 text-center"></i>${label}</span>
+                    <span class="font-bold px-3 py-1 rounded-md text-sm ${badgeClass} min-w-[3rem] text-center shadow-sm">${valStr}</span>
+                </li>
+                `;
+            };
+
+            // Fungsi cerdas membaca key kolom DB tanpa peduli Case (huruf besar/kecil)
             const getVal = (key) => {
                 if (data[key] !== undefined) return data[key];
-                if (data[key.toUpperCase()] !== undefined) return data[key.toUpperCase()];
-                const capKey = key.charAt(0).toUpperCase() + key.slice(1);
-                if (data[capKey] !== undefined) return data[capKey];
+                const upper = key.toUpperCase();
+                if (data[upper] !== undefined) return data[upper];
+                const cap = key.charAt(0).toUpperCase() + key.slice(1);
+                if (data[cap] !== undefined) return data[cap];
                 return '-';
-            }
+            };
 
             document.getElementById('list-diniyyah').innerHTML = 
                 buatBaris('PAI (Umum)', getVal('pai'), 'fas fa-book') +
@@ -575,14 +633,14 @@
                 buatBaris('Tauhid', getVal('tauhid'), 'fas fa-fingerprint') +
                 buatBaris('Hadist', getVal('hadist'), 'fas fa-scroll') +
                 buatBaris('Tafsir', getVal('tafsir'), 'fas fa-quran') +
-                buatBaris('Fiqih', getVal('fiqih'), 'fas fa-praying-hands');
+                buatBaris('Fiqih', getVal('fiqih'), 'fas fa-praying-hands') +
+                buatBaris('Nahwu / Qiraatul Kitab', getVal('fins'), 'fas fa-book-open'); // Mengubah label FINS menjadi Nahwu
 
             document.getElementById('list-umum').innerHTML = 
                 buatBaris('Matematika', getVal('matematika'), 'fas fa-square-root-alt') +
                 buatBaris('Ilmu Pengetahuan Alam (IPA)', getVal('ipa'), 'fas fa-flask') +
                 buatBaris('Ilmu Pengetahuan Sosial (IPS)', getVal('ips'), 'fas fa-globe-asia') +
-                buatBaris('Pendidikan Pancasila (PPKN)', getVal('ppkn'), 'fas fa-flag') +
-                buatBaris('FINS / Keuangan', getVal('fins'), 'fas fa-coins');
+                buatBaris('Pendidikan Pancasila (PPKN)', getVal('ppkn'), 'fas fa-flag'); // Menghapus FINS dari list umum
 
             document.getElementById('list-bahasa1').innerHTML = 
                 buatBaris('Bahasa Indonesia', getVal('bahasa_indonesia'), 'fas fa-comment') +
@@ -597,16 +655,105 @@
                 buatBaris('PJOK (Olahraga)', getVal('pjok'), 'fas fa-running');
         }
 
+        // ==========================================
+        // RENDER TAHFIZH
+        // ==========================================
+        function renderTahfizhData() {
+            const tbody = document.getElementById('tahfizh-tbody');
+            tbody.innerHTML = ''; // Kosongkan tabel dulu
+
+            if (tahfizhRecords.length === 0) {
+                document.getElementById('tahfizh-ziyadah').innerText = "Belum Ada Data";
+                document.getElementById('tahfizh-murojaah').innerText = "Belum Ada Data";
+                document.getElementById('tahfizh-halaqoh').innerText = "-";
+                tbody.innerHTML = `<tr><td colspan="4" class="py-6 px-6 text-center text-gray-500 italic">Belum ada riwayat setoran tahfizh yang terekam.</td></tr>`;
+                return;
+            }
+
+            // --- 1. SET KARTU RINGKASAN (Summary Cards) ---
+            // Ambil catatan Ziyadah terbaru
+            const lastZiyadah = tahfizhRecords.find(r => r.kegiatan && r.kegiatan.toLowerCase().includes('ziyadah'));
+            if (lastZiyadah && lastZiyadah.juz_akhir && lastZiyadah.juz_akhir !== '-') {
+                document.getElementById('tahfizh-ziyadah').innerText = `Juz ${lastZiyadah.juz_akhir} Pj. ${lastZiyadah.pojok_akhir || '-'}`;
+            } else {
+                document.getElementById('tahfizh-ziyadah').innerText = "Belum Ziyadah";
+            }
+
+            // Ambil catatan Murojaah terbaru
+            const lastMurojaah = tahfizhRecords.find(r => r.kegiatan && r.kegiatan.toLowerCase().includes('murojaah'));
+            if (lastMurojaah && lastMurojaah.juz_akhir && lastMurojaah.juz_akhir !== '-') {
+                document.getElementById('tahfizh-murojaah').innerText = `Juz ${lastMurojaah.juz_akhir} Pj. ${lastMurojaah.pojok_akhir || '-'}`;
+            } else {
+                document.getElementById('tahfizh-murojaah').innerText = "Belum Murojaah";
+            }
+
+            // Set Halaqoh dari baris data pertama (terbaru)
+            const halaqohName = tahfizhRecords[0].halaqoh || tahfizhRecords[0].Halaqoh || '-';
+            // Sederhanakan nama ustadzah jika terlalu panjang
+            document.getElementById('tahfizh-halaqoh').innerText = halaqohName.replace('Ustdzh. ', '').replace('Ustzh. ', '');
+
+            // --- 2. RENDER TABEL RIWAYAT SETORAN ---
+            tahfizhRecords.forEach(record => {
+                // Format Tanggal (Misal dari "2026-06-24T07:29:50" -> "24 Jun 2026")
+                let tglFormat = "-";
+                if(record.tanggal) {
+                    const dateObj = new Date(record.tanggal);
+                    tglFormat = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                }
+
+                // Warna Label Kegiatan
+                const kgt = (record.kegiatan || '').trim();
+                let badgeClass = "bg-gray-100 text-gray-700";
+                if (kgt.toLowerCase().includes('ziyadah')) badgeClass = "bg-green-100 text-green-700 font-bold border border-green-200";
+                else if (kgt.toLowerCase().includes('murojaah')) badgeClass = "bg-blue-100 text-blue-700 border border-blue-200";
+
+                // Format Juz & Pojok -> "Juz 4 (Pj. 16) - Juz 5 (Pj. 5)"
+                const jAwal = record.juz_awal || '-';
+                const pAwal = record.pojok_awal || '-';
+                const jAkhir = record.juz_akhir || '-';
+                const pAkhir = record.pojok_akhir || '-';
+                
+                let rangeAyat = '-';
+                if(jAwal !== '-' || jAkhir !== '-') {
+                     if (jAwal === jAkhir && pAwal === pAkhir) {
+                         rangeAyat = `Juz ${jAkhir} <span class="text-xs text-gray-500">(Pj. ${pAkhir})</span>`;
+                     } else {
+                         rangeAyat = `Juz ${jAwal} <span class="text-xs text-gray-500">(Pj. ${pAwal})</span> <i class="fas fa-arrow-right mx-1 text-gray-300 text-xs"></i> Juz ${jAkhir} <span class="text-xs text-gray-500">(Pj. ${pAkhir})</span>`;
+                     }
+                }
+
+                // Baris Tabel
+                const row = document.createElement('tr');
+                row.className = "border-b border-gray-100 hover:bg-gray-50";
+                row.innerHTML = `
+                    <td class="py-3 px-6 whitespace-nowrap text-gray-600">${tglFormat}</td>
+                    <td class="py-3 px-6"><span class="px-2 py-1 rounded-full text-xs ${badgeClass}">${kgt}</span></td>
+                    <td class="py-3 px-6 text-center font-medium">${rangeAyat}</td>
+                    <td class="py-3 px-6 text-gray-500 text-xs">${record.keterangan !== '-' ? record.keterangan : ''}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // ==========================================
+        // TAB NAVIGATION LOGIC
+        // ==========================================
         function switchTab(tabId) {
+            // Sembunyikan semua konten tab
             document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(tabId).classList.remove('hidden');
             
+            // Tampilkan tab yang dipilih
+            document.getElementById(tabId).classList.remove('hidden');
+
+            // Reset styling untuk semua tombol tab
             const btns = ['btn-tab-nilai', 'btn-tab-tahfizh', 'btn-tab-disiplin', 'btn-tab-absensi'];
             btns.forEach(id => {
                 const btn = document.getElementById(id);
                 btn.classList.remove('tab-active');
                 btn.classList.add('tab-inactive');
             });
+
+            // Aktifkan styling untuk tombol yang dipilih
             const activeBtn = document.getElementById('btn-' + tabId);
             activeBtn.classList.remove('tab-inactive');
             activeBtn.classList.add('tab-active');
