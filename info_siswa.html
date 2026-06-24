@@ -465,13 +465,13 @@
                     console.log("Tabel tahfizh belum siap atau error:", tahfizhErr);
                 }
 
-                // Tarik Jurnal Kedisiplinan secara bersamaan
+                // Tarik Jurnal Kedisiplinan secara bersamaan (Perbaikan di sini!)
                 try {
                     const responseDisiplin = await supabaseClient
                         .from('jurnal_disiplin')
                         .select('*')
                         .ilike('nis', `%${nis}%`)
-                        .order('tanggal_pelanggaran', { ascending: false });
+                        .order('tanggal_pelanggaran', { ascending: false }); // Urutkan terbaru ke terlama
                     
                     if (!responseDisiplin.error) {
                         disiplinRecords = responseDisiplin.data || [];
@@ -560,7 +560,7 @@
             
             // Render Tab Lainnya
             renderTahfizhData();
-            renderDisiplinData(); // Panggil fungsi render disiplin
+            renderDisiplinData(); // PANGGIL FUNGSI INI AGAR DATA DISIPLIN MUNCUL!
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -794,26 +794,21 @@
 
                 const poin = parseInt(record.poin_pelanggaran) || 0;
                 
-                // Cek jenis (Prestasi vs Pelanggaran)
-                // Kita asumsikan jika nama pelanggarannya mengandung kata "prestasi", "juara", "penghargaan", maka itu prestasi (+)
-                // Jika tidak, diasumsikan sebagai pelanggaran (-)
-                const namaKejadian = (record.nama_pelanggaran || '').toLowerCase();
+                // Logika Penentuan Prestasi vs Pelanggaran langsung dari nilai poin
                 let isPrestasi = false;
-                if(record.jenis === 'Prestasi' || namaKejadian.includes('prestasi') || namaKejadian.includes('penghargaan') || namaKejadian.includes('juara') || namaKejadian.includes('terbaik')) {
+                if (poin > 0) {
                     isPrestasi = true;
-                }
-
-                // Kalkulasi Total
-                if(isPrestasi) {
                     totalMerit += poin;
-                } else {
-                    totalDemerit += poin;
+                } else if (poin < 0) {
+                    // Karena poinnya negatif (contoh: -5), kita harus absolutkan (jadikan 5) saat ditambahkan ke Total Demerit
+                    totalDemerit += Math.abs(poin); 
                 }
 
                 // Styling Baris
                 const badgeClass = isPrestasi ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700";
                 const jenisLabel = isPrestasi ? "Prestasi" : "Pelanggaran";
-                const poinLabel = isPrestasi ? `+${poin}` : `-${poin}`;
+                // Tampilkan poinnya persis seperti apa adanya di database (+2 atau -5)
+                const poinLabel = (poin > 0 ? '+' : '') + poin; 
                 const poinClass = isPrestasi ? "text-green-600" : "text-red-600";
 
                 const row = document.createElement('tr');
