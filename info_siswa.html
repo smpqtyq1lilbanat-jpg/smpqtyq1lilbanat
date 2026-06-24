@@ -430,6 +430,7 @@
         // ==========================================
         let studentRecords = []; 
         let tahfizhRecords = []; // State baru untuk menyimpan riwayat tahfizh
+        let disiplinRecords = []; // State baru untuk riwayat disiplin
 
         const loginSection = document.getElementById('loginSection');
         const dashboardSection = document.getElementById('dashboardSection');
@@ -449,7 +450,7 @@
                 
                 if (responseNilai.error) throw responseNilai.error;
                 
-                // Tarik Jurnal Tahfizh secara bersamaan, urutkan dari tanggal terbaru
+                // Tarik Jurnal Tahfizh secara bersamaan
                 try {
                     const responseTahfizh = await supabaseClient
                         .from('jurnal_tahfizh')
@@ -462,6 +463,21 @@
                     }
                 } catch(tahfizhErr) {
                     console.log("Tabel tahfizh belum siap atau error:", tahfizhErr);
+                }
+
+                // Tarik Jurnal Kedisiplinan secara bersamaan
+                try {
+                    const responseDisiplin = await supabaseClient
+                        .from('jurnal_disiplin')
+                        .select('*')
+                        .ilike('nis', `%${nis}%`)
+                        .order('tanggal_pelanggaran', { ascending: false });
+                    
+                    if (!responseDisiplin.error) {
+                        disiplinRecords = responseDisiplin.data || [];
+                    }
+                } catch(disiplinErr) {
+                    console.log("Tabel disiplin belum siap atau error:", disiplinErr);
                 }
                 
                 return responseNilai.data || [];
@@ -542,8 +558,9 @@
             populateExamSelector();
             renderSelectedExamGrades();
             
-            // Render Tab Tahfizh
+            // Render Tab Lainnya
             renderTahfizhData();
+            renderDisiplinData(); // Panggil fungsi render disiplin
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -552,6 +569,7 @@
             // Bersihkan State demi keamanan perangkat sharing
             studentRecords = [];
             tahfizhRecords = [];
+            disiplinRecords = [];
             document.getElementById('nis').value = '';
             
             // Kembalikan UI
@@ -733,6 +751,88 @@
                 `;
                 tbody.appendChild(row);
             });
+        }
+
+        // ==========================================
+        // RENDER KEDISIPLINAN
+        // ==========================================
+        function renderDisiplinData() {
+            const tbody = document.querySelector('#tab-disiplin tbody');
+            tbody.innerHTML = ''; 
+
+            let totalMerit = 0;
+            let totalDemerit = 0;
+
+            if (disiplinRecords.length === 0) {
+                // Update skor jadi 0
+                document.querySelector('#tab-disiplin .text-primary-700').innerText = '0';
+                document.querySelector('#tab-disiplin .text-red-600').innerText = '0';
+                
+                // Hilangkan banner info preview
+                const infoBanner = document.querySelector('#tab-disiplin .bg-blue-50');
+                if(infoBanner) infoBanner.style.display = 'none';
+
+                tbody.innerHTML = `<tr><td colspan="4" class="py-6 px-6 text-center text-gray-500 italic">Ananda belum memiliki catatan kejadian/prestasi.</td></tr>`;
+                return;
+            }
+
+            // Hilangkan banner info preview karena data sudah live
+            const infoBanner = document.querySelector('#tab-disiplin .bg-blue-50');
+            if(infoBanner) infoBanner.style.display = 'none';
+
+            disiplinRecords.forEach(record => {
+                // Format Tanggal
+                let tglFormat = "-";
+                if(record.tanggal_pelanggaran) {
+                    const dateObj = new Date(record.tanggal_pelanggaran);
+                    if(!isNaN(dateObj.getTime())) {
+                        tglFormat = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
+                    } else {
+                        tglFormat = record.tanggal_pelanggaran; // fallback if invalid date string
+                    }
+                }
+
+                const poin = parseInt(record.poin_pelanggaran) || 0;
+                
+                // Cek jenis (Prestasi vs Pelanggaran)
+                // Kita asumsikan jika nama pelanggarannya mengandung kata "prestasi", "juara", "penghargaan", maka itu prestasi (+)
+                // Jika tidak, diasumsikan sebagai pelanggaran (-)
+                const namaKejadian = (record.nama_pelanggaran || '').toLowerCase();
+                let isPrestasi = false;
+                if(record.jenis === 'Prestasi' || namaKejadian.includes('prestasi') || namaKejadian.includes('penghargaan') || namaKejadian.includes('juara') || namaKejadian.includes('terbaik')) {
+                    isPrestasi = true;
+                }
+
+                // Kalkulasi Total
+                if(isPrestasi) {
+                    totalMerit += poin;
+                } else {
+                    totalDemerit += poin;
+                }
+
+                // Styling Baris
+                const badgeClass = isPrestasi ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700";
+                const jenisLabel = isPrestasi ? "Prestasi" : "Pelanggaran";
+                const poinLabel = isPrestasi ? `+${poin}` : `-${poin}`;
+                const poinClass = isPrestasi ? "text-green-600" : "text-red-600";
+
+                const row = document.createElement('tr');
+                row.className = "border-b border-gray-100 hover:bg-gray-50";
+                row.innerHTML = `
+                    <td class="py-3 px-6 whitespace-nowrap text-gray-600 text-xs">${tglFormat}</td>
+                    <td class="py-3 px-6">
+                        <div class="font-medium text-gray-800">${record.nama_pelanggaran || '-'}</div>
+                        <div class="text-xs text-gray-500 mt-0.5">${record.keterangan || ''}</div>
+                    </td>
+                    <td class="py-3 px-6 text-center"><span class="${badgeClass} px-2 py-1 rounded text-xs font-bold">${jenisLabel}</span></td>
+                    <td class="py-3 px-6 text-right font-bold ${poinClass}">${poinLabel}</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // Update Skor Poin di UI
+            document.querySelector('#tab-disiplin .text-primary-700').innerText = totalMerit;
+            document.querySelector('#tab-disiplin .text-red-600').innerText = totalDemerit;
         }
 
         // ==========================================
