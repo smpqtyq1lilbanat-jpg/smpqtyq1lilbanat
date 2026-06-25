@@ -110,7 +110,7 @@
     <nav class="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 sm:h-20 items-center">
-                <!-- Logo: Diubah linknya menuju website resmi -->
+                <!-- Logo -->
                 <a href="https://www.smpqtyq1lilbanat.sch.id" target="_blank" class="flex-shrink-0 flex items-center group">
                     <img src="logo.png" alt="Logo SMPQT" class="w-10 h-10 sm:w-12 sm:h-12 mr-3 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
                     <div class="hidden w-10 h-10 sm:w-12 sm:h-12 bg-primary-700 rounded-full items-center justify-center text-white font-bold text-lg mr-3 shadow-sm border border-secondary-500">YQ</div>
@@ -476,6 +476,12 @@
         const navActions = document.getElementById('navActions');
         const examSelector = document.getElementById('examSelector');
 
+        // Konstanta Urutan Bulan Ajaran Baru (Juli -> Juni)
+        const monthOrder = {
+            'JULI': 1, 'AGUSTUS': 2, 'SEPTEMBER': 3, 'OKTOBER': 4, 'NOVEMBER': 5, 'DESEMBER': 6,
+            'JANUARI': 7, 'FEBRUARI': 8, 'MARET': 9, 'APRIL': 10, 'MEI': 11, 'JUNI': 12
+        };
+
         // ==========================================
         // FUNGSI BANTUAN TAHUN AJARAN
         // ==========================================
@@ -592,6 +598,15 @@
                             return thn === fallbackTA;
                         });
                     }
+
+                    // Urutkan data berdasarkan kalender akademik (Juli -> Juni)
+                    matchedData.sort((a, b) => {
+                        const blnA = (a.bulan || a.Bulan || a.BULAN || '').toUpperCase();
+                        const blnB = (b.bulan || b.Bulan || b.BULAN || '').toUpperCase();
+                        const scoreA = monthOrder[blnA] || 99;
+                        const scoreB = monthOrder[blnB] || 99;
+                        return scoreA - scoreB;
+                    });
 
                     studentRecords = matchedData;
                     
