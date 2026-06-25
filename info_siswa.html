@@ -193,7 +193,7 @@
                     <i class="fas fa-user-graduate"></i>
                 </div>
                 <div class="text-center md:text-left flex-1">
-                    <span class="inline-block px-3 py-1 bg-primary-800/80 rounded-full text-xs text-primary-100 mb-3 font-semibold tracking-widest uppercase border border-primary-700 backdrop-blur-sm">Arsip Rapor Siswa</span>
+                    <span id="dashTahunAjaran" class="inline-block px-3 py-1 bg-primary-800/80 rounded-full text-xs text-primary-100 mb-3 font-semibold tracking-widest uppercase border border-primary-700 backdrop-blur-sm">Arsip Rapor Siswa</span>
                     <h1 id="dashNama" class="text-3xl sm:text-4xl lg:text-5xl font-bold font-serif mb-4 text-white drop-shadow-md">Nama Siswa</h1>
                     <div class="flex flex-wrap justify-center md:justify-start gap-3 text-sm font-semibold">
                         <span class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 shadow-sm flex items-center"><i class="fas fa-id-card mr-2 text-secondary-400"></i>NIS: <span id="dashNis" class="ml-1">0000</span></span>
@@ -467,12 +467,31 @@
         let studentRecords = []; 
         let tahfizhRecords = []; 
         let disiplinRecords = []; 
+        let allGrades = []; // State baru: Menyimpan semua nilai untuk rata-rata angkatan
         let trendChartInstance = null; // Menyimpan instance chart
+        let tahfizhChartInstance = null; // Tambahan untuk grafik tahfizh
 
         const loginSection = document.getElementById('loginSection');
         const dashboardSection = document.getElementById('dashboardSection');
         const navActions = document.getElementById('navActions');
         const examSelector = document.getElementById('examSelector');
+
+        // ==========================================
+        // FUNGSI BANTUAN TAHUN AJARAN
+        // ==========================================
+        function getTahunAjaranBerjalan() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = now.getMonth(); // 0 = Jan, 7 = Agu
+
+            // Mulai bulan Agustus (index 7) ke atas, masuk Tahun Ajaran baru (Contoh: 2026/2027)
+            // Bulan sebelum Agustus masuk ke TA sebelumnya (Contoh: 2025/2026)
+            if (month >= 7) {
+                return `${year}/${year + 1}`;
+            } else {
+                return `${year - 1}/${year}`;
+            }
+        }
 
         // ==========================================
         // FUNGSI PENARIKAN DATA
@@ -551,9 +570,44 @@
             }
 
             try {
-                const matchedData = await fetchStudentData(nisInput);
-                if (matchedData.length > 0) {
+                const rawMatchedData = await fetchStudentData(nisInput);
+                
+                if (rawMatchedData.length > 0) {
+                    
+                    // --- LOGIK FILTER TAHUN AJARAN ---
+                    const currentTA = getTahunAjaranBerjalan();
+                    
+                    // Filter utama: hanya ambil data untuk Tahun Ajaran berjalan
+                    let matchedData = rawMatchedData.filter(record => {
+                        const thn = record.tahun || record.Tahun || record.TAHUN || '';
+                        return thn === currentTA;
+                    });
+
+                    // Fallback: Jika di TA berjalan belum ada data sama sekali (awal semester),
+                    // sistem akan memunculkan data dari Tahun Ajaran terakhir milik siswa tersebut
+                    if (matchedData.length === 0) {
+                        const fallbackTA = rawMatchedData[rawMatchedData.length - 1].tahun || rawMatchedData[rawMatchedData.length - 1].Tahun || rawMatchedData[rawMatchedData.length - 1].TAHUN || '';
+                        matchedData = rawMatchedData.filter(record => {
+                            const thn = record.tahun || record.Tahun || record.TAHUN || '';
+                            return thn === fallbackTA;
+                        });
+                    }
+
                     studentRecords = matchedData;
+                    
+                    // Menarik semua data nilai untuk grafik perbandingan rata-rata global
+                    try {
+                        const resAll = await supabaseClient.from('ledger_nilai').select('*').limit(5000);
+                        if(!resAll.error) {
+                            // Filter juga rata-rata angkatan sesuai dengan TA yang sedang aktif ditampilkan
+                            const activeTA = studentRecords[0].tahun || studentRecords[0].Tahun || studentRecords[0].TAHUN || currentTA;
+                            allGrades = (resAll.data || []).filter(record => {
+                                const thn = record.tahun || record.Tahun || record.TAHUN || '';
+                                return thn === activeTA;
+                            });
+                        }
+                    } catch(e) { console.log("Gagal memuat rata-rata global"); }
+
                     masukKeDashboard();
                 } else {
                     showErr(`Data rapor untuk NIS "${nisInput}" tidak ditemukan. Pastikan nomor sudah benar.`);
@@ -577,7 +631,11 @@
                 </button>
             `;
 
+            // Data Kelas akan otomatis selalu yang terbaru berkat filter TA di atas
             const profilSiswa = studentRecords[0];
+            const tahunAjaranTampil = profilSiswa.tahun || profilSiswa.Tahun || profilSiswa.TAHUN || getTahunAjaranBerjalan();
+            
+            document.getElementById('dashTahunAjaran').innerText = `Rapor Akademik TA. ${tahunAjaranTampil}`;
             document.getElementById('dashNama').innerText = profilSiswa.nama || profilSiswa.Nama || profilSiswa.NAMA || '-';
             document.getElementById('dashNis').innerText = profilSiswa.nis || profilSiswa.NIS || profilSiswa.Nis || '-';
             document.getElementById('dashKelas').innerText = profilSiswa.kelas || profilSiswa.Kelas || profilSiswa.KELAS || '-';
@@ -666,6 +724,30 @@
                 dataPoints.push(avg);
             });
 
+            // Menghitung Rata-rata Angkatan (Global Average) per periode
+            const globalAveragesByPeriod = {};
+            allGrades.forEach(record => {
+                const bln = record.bulan || record.Bulan || record.BULAN || '';
+                const ktg = record.kategori || record.Kategori || record.KATEGORI || '';
+                const label = `${bln} ${ktg}`.trim() || 'Periode';
+                
+                const avg = parseFloat(calculateAverage(record));
+                if (!isNaN(avg) && avg > 0) {
+                    if (!globalAveragesByPeriod[label]) {
+                        globalAveragesByPeriod[label] = { sum: 0, count: 0 };
+                    }
+                    globalAveragesByPeriod[label].sum += avg;
+                    globalAveragesByPeriod[label].count += 1;
+                }
+            });
+
+            const globalDataPoints = labels.map(label => {
+                if (globalAveragesByPeriod[label] && globalAveragesByPeriod[label].count > 0) {
+                    return (globalAveragesByPeriod[label].sum / globalAveragesByPeriod[label].count).toFixed(1);
+                }
+                return null; // Membiarkan kosong jika tidak ada perbandingan
+            });
+
             if(dataPoints.length > 0) {
                 document.getElementById('avgScoreDisplay').innerText = dataPoints[dataPoints.length - 1];
             }
@@ -678,44 +760,68 @@
                 type: 'line',
                 data: {
                     labels: labels,
-                    datasets: [{
-                        label: 'Rata-Rata Nilai',
-                        data: dataPoints,
-                        borderColor: '#16a34a',
-                        backgroundColor: 'rgba(22, 163, 74, 0.1)',
-                        borderWidth: 3,
-                        pointBackgroundColor: '#ffffff',
-                        pointBorderColor: '#15803d',
-                        pointBorderWidth: 2,
-                        pointRadius: 5,
-                        pointHoverRadius: 7,
-                        fill: true,
-                        tension: 0.3
-                    }]
+                    datasets: [
+                        {
+                            label: 'Nilai Santriwati',
+                            data: dataPoints,
+                            borderColor: '#16a34a', // Hijau
+                            backgroundColor: 'rgba(22, 163, 74, 0.1)',
+                            borderWidth: 3,
+                            pointBackgroundColor: '#ffffff',
+                            pointBorderColor: '#15803d',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 7,
+                            fill: true,
+                            tension: 0.3
+                        },
+                        {
+                            label: 'Rata-Rata Angkatan',
+                            data: globalDataPoints,
+                            borderColor: '#f59e0b', // Oranye/Amber
+                            backgroundColor: 'transparent',
+                            borderWidth: 2,
+                            borderDash: [5, 5], // Garis putus-putus
+                            pointBackgroundColor: '#f59e0b',
+                            pointBorderColor: '#fff',
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            fill: false,
+                            tension: 0.3
+                        }
+                    ]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false },
+                        legend: { 
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                font: { family: 'Inter', size: 12 },
+                                usePointStyle: true,
+                                boxWidth: 8
+                            }
+                        },
                         tooltip: {
                             backgroundColor: '#14532d',
                             titleFont: { family: 'Inter', size: 13 },
                             bodyFont: { family: 'Inter', size: 14, weight: 'bold' },
                             padding: 12,
-                            displayColors: false,
+                            displayColors: true,
                             callbacks: {
                                 label: function(context) {
-                                    return 'Nilai Rata-rata: ' + context.parsed.y;
+                                    return context.dataset.label + ': ' + context.parsed.y;
                                 }
                             }
                         }
                     },
                     scales: {
                         y: {
-                            min: 0,
+                            min: 60,
                             max: 100,
-                            ticks: { stepSize: 20, font: { family: 'Inter' } },
+                            ticks: { stepSize: 10, font: { family: 'Inter' } },
                             grid: { color: '#f1f5f9' },
                             border: { display: false }
                         },
@@ -732,9 +838,14 @@
         function populateExamSelector() {
             examSelector.innerHTML = ''; 
             studentRecords.forEach((record, index) => {
+                const thn = record.tahun || record.Tahun || record.TAHUN || '';
                 const bln = record.bulan || record.Bulan || record.BULAN || '-';
                 const ktg = record.kategori || record.Kategori || record.KATEGORI || '-';
-                const label = `${bln} - ${ktg}`;
+                
+                // Format diperbarui: "TA. 2025/2026 | SEPTEMBER - ULANGAN HARIAN"
+                let label = '';
+                if (thn) label += `TA. ${thn} | `;
+                label += `${bln} - ${ktg}`;
                 
                 const option = document.createElement('option');
                 option.value = index; 
@@ -949,19 +1060,33 @@
         // TAB NAVIGATION LOGIC
         // ==========================================
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-            document.getElementById(tabId).classList.remove('hidden');
+            // Sembunyikan semua konten tab dengan pengecekan aman (null check)
+            document.querySelectorAll('.tab-content').forEach(el => {
+                if (el) el.classList.add('hidden');
+            });
+            
+            // Tampilkan tab yang dipilih (null check)
+            const targetTab = document.getElementById(tabId);
+            if (targetTab) {
+                targetTab.classList.remove('hidden');
+            }
 
+            // Reset styling untuk semua tombol tab (null check)
             const btns = ['btn-tab-nilai', 'btn-tab-tahfizh', 'btn-tab-disiplin', 'btn-tab-absensi'];
             btns.forEach(id => {
                 const btn = document.getElementById(id);
-                btn.classList.remove('tab-active');
-                btn.classList.add('tab-inactive');
+                if (btn) {
+                    btn.classList.remove('tab-active');
+                    btn.classList.add('tab-inactive');
+                }
             });
 
+            // Aktifkan styling untuk tombol yang dipilih (null check)
             const activeBtn = document.getElementById('btn-' + tabId);
-            activeBtn.classList.remove('tab-inactive');
-            activeBtn.classList.add('tab-active');
+            if (activeBtn) {
+                activeBtn.classList.remove('tab-inactive');
+                activeBtn.classList.add('tab-active');
+            }
         }
     </script>
 </body>
