@@ -215,9 +215,6 @@
                 <button onclick="switchTab('tab-disiplin')" id="btn-tab-disiplin" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center border-l border-gray-100">
                     <i class="fas fa-balance-scale mr-2 text-lg"></i>Sikap <span class="hidden sm:inline">& Disiplin</span>
                 </button>
-                <button onclick="switchTab('tab-absensi')" id="btn-tab-absensi" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center border-l border-gray-100">
-                    <i class="fas fa-user-check mr-2 text-lg"></i>Absensi
-                </button>
             </div>
 
             <!-- TAB CONTENT: NILAI AKADEMIK -->
@@ -401,36 +398,6 @@
                                 <!-- Data disiplin akan di-render secara dinamis di sini -->
                             </tbody>
                         </table>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB CONTENT: ABSENSI -->
-            <div id="tab-absensi" class="tab-content hidden fade-in">
-                 <div class="bg-blue-50 border border-blue-200 text-blue-800 px-5 py-4 rounded-2xl mb-8 flex items-start text-sm shadow-sm">
-                    <i class="fas fa-info-circle mt-0.5 mr-3 text-blue-500 text-xl"></i>
-                    <div>
-                        <strong class="block font-bold mb-1 text-base">Informasi Kehadiran:</strong>
-                        Rekapitulasi absensi saat ini menampilkan <i>preview</i> (contoh tampilan). Sinkronisasi dengan database fingerprint sedang dalam proses pengerjaan.
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-6">
-                    <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 text-center flex flex-col justify-center">
-                        <div class="text-4xl font-extrabold text-primary-600 mb-2">98%</div>
-                        <div class="text-xs text-gray-500 uppercase font-bold tracking-widest">Persentase Hadir</div>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 text-center flex flex-col justify-center">
-                        <div class="text-4xl font-extrabold text-yellow-500 mb-2">2</div>
-                        <div class="text-xs text-gray-500 uppercase font-bold tracking-widest">Sakit (Hari)</div>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 text-center flex flex-col justify-center">
-                        <div class="text-4xl font-extrabold text-blue-500 mb-2">0</div>
-                        <div class="text-xs text-gray-500 uppercase font-bold tracking-widest">Izin Resmi</div>
-                    </div>
-                    <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 text-center flex flex-col justify-center">
-                        <div class="text-4xl font-extrabold text-red-500 mb-2">0</div>
-                        <div class="text-xs text-gray-500 uppercase font-bold tracking-widest">Alpha (Bolos)</div>
                     </div>
                 </div>
             </div>
@@ -1087,7 +1054,7 @@
             }
 
             // Reset styling untuk semua tombol tab (null check)
-            const btns = ['btn-tab-nilai', 'btn-tab-tahfizh', 'btn-tab-disiplin', 'btn-tab-absensi'];
+            const btns = ['btn-tab-nilai', 'btn-tab-tahfizh', 'btn-tab-disiplin'];
             btns.forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn) {
