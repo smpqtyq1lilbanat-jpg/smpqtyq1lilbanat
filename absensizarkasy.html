@@ -1,303 +1,204 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Absensi Zarkasy - SMPQ TYQ 1 Lil Banat</title>
-    <!-- Import Supabase -->
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Supabase JS -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <!-- Tailwind Configuration dari Website Utama -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        secondary: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        :root {
-            --primary: #059669; /* Emerald Green khas Pesantren */
-            --primary-hover: #047857;
-            --bg-color: #f0fdf4; /* Hijau sangat muda untuk background luar */
-            --border-color: #d1d5db;
-        }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: var(--bg-color); 
-            margin: 0; 
-            padding: 15px; 
-            color: #333;
-        }
-        .container { 
-            max-width: 500px; 
-            margin: 0 auto; 
-            background: white; 
-            padding: 0 0 30px 0; 
-            border-radius: 12px; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1); 
-            overflow: hidden;
-        }
-        #absensiForm, #message {
-            padding: 0 25px;
-        }
-        .header-title {
-            text-align: center;
-            margin-bottom: 25px;
-            padding: 25px 15px;
-            background-color: var(--primary);
-            color: white;
-        }
-        .header-title h2 { 
-            color: white; 
-            margin: 0 0 5px 0;
-            font-size: 24px;
-        }
-        .header-title p {
-            margin: 0;
-            color: #d1fae5;
-            font-size: 14px;
-            font-weight: 500;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label { 
-            font-weight: 600; 
-            display: block; 
-            margin-bottom: 8px; 
-            font-size: 14px;
-        }
-        select, button { 
-            width: 100%; 
-            padding: 12px; 
-            border-radius: 8px; 
-            border: 1px solid var(--border-color); 
-            box-sizing: border-box; 
-            font-size: 15px; 
-        }
-        select:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+        /* Custom Checkbox & Transition Styles */
+        .peserta-checkbox {
+            accent-color: #15803d; /* primary-700 */
         }
         
-        /* Gaya untuk area daftar peserta */
-        #daftarPesertaContainer {
-            display: none; 
-            margin-top: 20px;
-            border-top: 2px dashed #eee;
-            padding-top: 20px;
-        }
-        
-        .list-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 15px;
-            background: #ecfdf5;
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid #a7f3d0;
-        }
-        
-        .list-header label {
-            margin: 0;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-            color: var(--primary-hover);
-        }
-
-        .checkbox-list {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding-right: 5px;
-        }
-
         .checkbox-item {
-            display: flex;
-            align-items: center;
-            padding: 12px 15px;
-            background: #fdfdfd;
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s, border-color 0.2s;
+            transition: all 0.2s ease-in-out;
         }
-        .checkbox-item:hover {
-            background: #f8fafc;
-            border-color: var(--primary);
+        .checkbox-item:hover:not(.sudah-absen) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border-color: #16a34a; /* primary-600 */
         }
         
-        /* Progress Bar Styles */
-        .progress-wrapper {
-            margin-bottom: 15px;
-            padding: 0 5px;
-        }
-        .progress-stats {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            font-weight: 600;
-            color: var(--primary-hover);
-            margin-bottom: 6px;
-        }
-        .progress-bar-bg {
-            background-color: #d1fae5;
-            border-radius: 10px;
-            height: 8px;
-            width: 100%;
-            overflow: hidden;
-        }
+        /* Progress Bar Animation */
         .progress-bar-fill {
-            background-color: var(--primary);
-            height: 100%;
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-        
-        /* Gaya tambahan untuk peserta yang SUDAH ABSEN */
-        .checkbox-item.sudah-absen {
-            background: #e2e8f0;
-            border-color: #cbd5e1;
-            cursor: not-allowed;
-            opacity: 0.8;
-        }
-        .checkbox-item.sudah-absen:hover {
-            background: #e2e8f0; /* Menghilangkan efek hover */
-            border-color: #cbd5e1;
-        }
-        .sudah-absen-badge {
-            font-size: 11px;
-            background: var(--primary);
-            color: white;
-            padding: 2px 6px;
-            border-radius: 10px;
-            margin-left: 8px;
-            font-weight: normal;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .checkbox-item input[type="checkbox"] {
-            margin-right: 15px;
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            accent-color: var(--primary);
+        /* Custom Scrollbar untuk daftar peserta */
+        #checkboxList::-webkit-scrollbar {
+            width: 6px;
         }
-        .peserta-info {
-            display: flex;
-            flex-direction: column;
+        #checkboxList::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
         }
-        .peserta-nama {
-            font-weight: bold;
-            font-size: 15px;
+        #checkboxList::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
         }
-        .peserta-status {
-            font-size: 12px;
-            color: #666;
-            margin-top: 2px;
+        #checkboxList::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
         }
-
-        button.submit-btn { 
-            background-color: var(--primary); 
-            color: white; 
-            border: none; 
-            margin-top: 20px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            font-size: 16px;
-            padding: 15px;
-            transition: background 0.3s;
-        }
-        button.submit-btn:hover { 
-            background-color: var(--primary-hover); 
-        }
-        button.submit-btn:disabled { 
-            background-color: #6ee7b7; 
-            cursor: not-allowed; 
-        }
-        
-        #message { 
-            margin-top: 15px; 
-            text-align: center; 
-            font-weight: bold; 
-            font-size: 14px;
-            padding: 10px;
-            border-radius: 8px;
-            display: none;
-        }
-        .success { background: #d1fae5; color: #065f46; border: 1px solid #34d399; }
-        .error { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; }
     </style>
 </head>
-<body>
+<body class="font-sans text-gray-800 bg-slate-50 antialiased min-h-screen flex flex-col pt-6 pb-12 px-4 md:px-0">
 
-<div class="container">
-    <div class="header-title">
-        <h2>Absensi Zarkasy</h2>
-        <p>SMPQT Yanbu'ul Qur'an 1 Lil Banat</p>
+    <!-- Main Container Container -->
+    <div class="max-w-xl w-full mx-auto bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
+        
+        <!-- Header Style dari Website Utama -->
+        <div class="bg-primary-900 relative overflow-hidden px-6 py-8 sm:px-8 sm:py-10 text-center">
+            <!-- Decorative Background Shape -->
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-primary-800 rounded-full opacity-50 z-0"></div>
+            <div class="absolute -bottom-8 -left-8 w-24 h-24 bg-primary-800 rounded-full opacity-50 z-0"></div>
+            
+            <div class="relative z-10 flex flex-col items-center">
+                <div class="w-14 h-14 sm:w-16 sm:h-16 bg-white rounded-full flex items-center justify-center text-primary-700 font-bold text-xl sm:text-2xl mb-3 shadow-lg border-2 border-secondary-500">
+                    <i class="fas fa-clipboard-check"></i>
+                </div>
+                <h2 class="text-white font-serif text-2xl sm:text-3xl font-bold mb-1">Absensi Zarkasy</h2>
+                <p class="text-primary-100 text-sm sm:text-base font-medium">SMPQT Yanbu'ul Qur'an 1 Lil Banat</p>
+                <span class="inline-block mt-3 py-1 px-3 rounded-full bg-secondary-500/20 text-secondary-400 font-semibold text-xs border border-secondary-500/30 backdrop-blur-sm">
+                    Sistem Rekapitulasi Rombongan
+                </span>
+            </div>
+        </div>
+
+        <!-- Form Section -->
+        <div class="p-6 sm:p-8">
+            <form id="absensiForm" class="space-y-5">
+                
+                <!-- Input Group 1 -->
+                <div>
+                    <label for="pos" class="block text-sm font-semibold text-gray-700 mb-2">Pos / Checkpoint</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-map-marker-alt text-primary-600"></i>
+                        </div>
+                        <select id="pos" required class="block w-full pl-10 pr-4 py-3 bg-slate-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all cursor-pointer">
+                            <option value="" disabled selected>-- Pilih Lokasi Keberangkatan --</option>
+                            <option value="1. Berangkat">1. Berangkat</option>
+                            <option value="2. Checkout Kudus">2. Checkout Kudus</option>
+                            <option value="3. Checkout Rest Area">3. Checkout Rest Area</option>
+                            <option value="4. Checkout Dusun Semilir">4. Checkout Dusun Semilir</option>
+                            <option value="5. Checkout Wisma">5. Checkout Wisma</option>
+                            <option value="6. Checkout Benteng Fort Willem">6. Checkout Benteng Fort Willem</option>
+                            <option value="7. Checkout Saloka">7. Checkout Saloka</option>
+                            <option value="8. Checkout RM. H. Ismun 4">8. Checkout RM. H. Ismun 4</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Input Group 2 -->
+                <div>
+                    <label for="bis" class="block text-sm font-semibold text-gray-700 mb-2">Pilih Bus Rombongan</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <i class="fas fa-bus text-primary-600"></i>
+                        </div>
+                        <select id="bis" required class="block w-full pl-10 pr-4 py-3 bg-slate-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition-all cursor-pointer">
+                            <option value="" disabled selected>-- Pilih Nomor Bus --</option>
+                            <option value="BUS 1">BUS 1 (Satu)</option>
+                            <option value="BUS 2">BUS 2 (Dua)</option>
+                            <option value="BUS 3">BUS 3 (Tiga)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Area Daftar Peserta (Hidden by Default) -->
+                <div id="daftarPesertaContainer" class="hidden mt-8 pt-6 border-t-2 border-dashed border-gray-200">
+                    
+                    <!-- Header List & Select All -->
+                    <div class="flex justify-between items-center bg-primary-50 px-4 py-3 rounded-xl border border-primary-100 mb-4">
+                        <span class="font-bold text-primary-900 text-sm">Daftar Penumpang</span>
+                        <label class="flex items-center cursor-pointer text-sm font-semibold text-primary-700 hover:text-primary-800 transition">
+                            <input type="checkbox" id="selectAll" class="peserta-checkbox w-4 h-4 mr-2 rounded border-gray-300"> 
+                            Pilih Semua
+                        </label>
+                    </div>
+                    
+                    <!-- Progress Bar -->
+                    <div id="progressWrapper" class="hidden mb-5 px-1">
+                        <div class="flex justify-between text-xs font-bold text-primary-700 mb-2">
+                            <span id="progressText">Hadir: 0/0 Peserta</span>
+                            <span id="progressPercent" class="bg-primary-100 px-2 py-0.5 rounded-full text-primary-800">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-100 rounded-full h-2.5 overflow-hidden border border-gray-200">
+                            <div id="progressBar" class="bg-primary-600 h-2.5 rounded-full progress-bar-fill w-0 shadow-sm"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Container List -->
+                    <div id="checkboxList" class="flex flex-col gap-3 max-h-[400px] overflow-y-auto pr-2 pb-2">
+                        <!-- Checkboxes will be injected here via JS -->
+                    </div>
+                    
+                    <!-- Tombol Submit -->
+                    <button type="submit" id="submitBtn" class="w-full mt-6 bg-primary-700 hover:bg-primary-800 text-white font-semibold py-3.5 sm:py-4 rounded-xl shadow-lg shadow-primary-700/30 transition duration-300 flex justify-center items-center gap-2 text-sm sm:text-base disabled:bg-gray-400 disabled:shadow-none disabled:cursor-not-allowed">
+                        <i class="fas fa-paper-plane"></i> Kirim Data Absensi
+                    </button>
+                </div>
+            </form>
+
+            <!-- Pesan Status -->
+            <div id="message" class="hidden mt-5 p-4 rounded-xl text-center text-sm font-semibold shadow-sm"></div>
+        </div>
+        
+        <!-- Footer Form -->
+        <div class="bg-gray-50 py-4 text-center border-t border-gray-100">
+            <p class="text-[10px] text-gray-500 font-medium">&copy; 2026 Tim IT SMPQT Yanbu'ul Qur'an 1 Lil Banat</p>
+        </div>
     </div>
-    
-    <form id="absensiForm">
-        <div class="form-group">
-            <label for="pos">Pos / Checkpoint</label>
-            <select id="pos" required>
-                <option value="" disabled selected>-- Pilih Pos Pemberhentian --</option>
-                <option value="1. Berangkat">1. Berangkat</option>
-                <option value="2. Checkout Kudus">2. Checkout Kudus</option>
-                <option value="3. Checkout Rest Area">3. Checkout Rest Area</option>
-                <option value="4. Checkout Dusun Semilir">4. Checkout Dusun Semilir</option>
-                <option value="5. Checkout Wisma">5. Checkout Wisma</option>
-                <option value="6. Checkout Benteng Fort Willem">6. Checkout Benteng Fort Willem</option>
-                <option value="7. Checkout Saloka">7. Checkout Saloka</option>
-                <option value="8. Checkout RM. H. Ismun 4">8. Checkout RM. H. Ismun 4</option>
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="bis">Pilih Bus</label>
-            <select id="bis" required>
-                <option value="" disabled selected>-- Pilih Bus --</option>
-                <!-- Opsi Bus -->
-                <option value="BUS 1">BUS 1</option>
-                <option value="BUS 2">BUS 2</option>
-                <option value="BUS 3">BUS 3</option>
-            </select>
-        </div>
-
-        <!-- Area ini akan muncul setelah Bus dipilih -->
-        <div id="daftarPesertaContainer">
-            <div class="list-header">
-                <span style="font-weight: bold;">Daftar Peserta</span>
-                <label>
-                    <input type="checkbox" id="selectAll" style="margin-right: 8px; width: 18px; height: 18px;"> 
-                    Pilih Semua
-                </label>
-            </div>
-            
-            <!-- Tambahan Indikator Progress -->
-            <div class="progress-wrapper" id="progressWrapper" style="display: none;">
-                <div class="progress-stats">
-                    <span id="progressText">Hadir: 0/0</span>
-                    <span id="progressPercent">0%</span>
-                </div>
-                <div class="progress-bar-bg">
-                    <div class="progress-bar-fill" id="progressBar"></div>
-                </div>
-            </div>
-            
-            <div class="checkbox-list" id="checkboxList">
-                <!-- Daftar checkbox peserta akan digenerate di sini oleh JavaScript -->
-            </div>
-            
-            <button type="submit" id="submitBtn" class="submit-btn">Kirim Data Absen</button>
-        </div>
-    </form>
-
-    <div id="message"></div>
-</div>
 
 <script>
-    // GANTI DENGAN URL DAN ANON KEY SUPABASE KAMU
+    // Konfigurasi Supabase
     const supabaseUrl = 'https://vpdlfjbkfcuukyykrhua.supabase.co';
     const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZGxmamJrZmN1dWt5eWtyaHVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzkxNjUsImV4cCI6MjA5Nzc1NTE2NX0.QSHbi71ajuU_AggJJ5xVDeb6jffDRyyuF4C7aYeHW3Y';
-    
-    // PERBAIKAN: Menggunakan variabel supabaseClient agar tidak bentrok
     const supabaseClient = window.supabase.createClient(supabaseUrl, supabaseKey);
 
     const form = document.getElementById('absensiForm');
@@ -311,16 +212,26 @@
 
     // Fungsi untuk menghitung persentase
     function updateProgress() {
-        const totalBoxes = document.querySelectorAll('.peserta-checkbox').length;
-        const checkedBoxes = document.querySelectorAll('.peserta-checkbox:checked').length;
+        const totalBoxes = document.querySelectorAll('.peserta-checkbox-item').length;
+        const checkedBoxes = document.querySelectorAll('.peserta-checkbox-item:checked').length;
         
         if (totalBoxes === 0) return;
         
         const percentage = Math.round((checkedBoxes / totalBoxes) * 100);
         
-        document.getElementById('progressText').innerText = `Hadir: ${checkedBoxes}/${totalBoxes} Peserta`;
+        document.getElementById('progressText').innerHTML = `<i class="fas fa-users mr-1"></i> Hadir: ${checkedBoxes}/${totalBoxes} Peserta`;
         document.getElementById('progressPercent').innerText = `${percentage}%`;
         document.getElementById('progressBar').style.width = `${percentage}%`;
+        
+        // Ganti warna progress bar jika 100%
+        const pb = document.getElementById('progressBar');
+        if (percentage === 100) {
+            pb.classList.remove('bg-primary-600');
+            pb.classList.add('bg-secondary-500'); // Warna Gold kalau komplit
+        } else {
+            pb.classList.remove('bg-secondary-500');
+            pb.classList.add('bg-primary-600');
+        }
     }
 
     // Fungsi utama untuk memuat peserta beserta status absensinya
@@ -328,23 +239,29 @@
         const pos = posSelect.value;
         const bis = bisSelect.value;
 
-        // Pastikan panitia sudah memilih Pos dan Bus
         if (!bis) return;
         if (!pos) {
-            daftarPesertaContainer.style.display = 'block';
-            checkboxList.innerHTML = '<div style="color:#b45309; text-align:center; padding: 20px; font-weight:bold;">⚠️ Mohon pilih Pos / Checkpoint terlebih dahulu.</div>';
+            daftarPesertaContainer.classList.remove('hidden');
+            checkboxList.innerHTML = `
+                <div class="flex flex-col items-center justify-center p-8 text-center text-secondary-600 bg-secondary-50 border border-secondary-200 rounded-xl">
+                    <i class="fas fa-exclamation-triangle text-3xl mb-2"></i>
+                    <p class="text-sm font-semibold">Mohon pilih Pos / Checkpoint terlebih dahulu di bagian atas.</p>
+                </div>`;
             return;
         }
 
-        // Tampilkan loading state
-        daftarPesertaContainer.style.display = 'block';
-        document.getElementById('progressWrapper').style.display = 'none'; // Sembunyikan saat loading
-        checkboxList.innerHTML = '<div style="text-align:center; padding: 20px;">Memuat data peserta dan mencocokkan status absen...</div>';
+        daftarPesertaContainer.classList.remove('hidden');
+        document.getElementById('progressWrapper').classList.add('hidden');
+        checkboxList.innerHTML = `
+            <div class="flex flex-col items-center justify-center p-8 text-center text-primary-600">
+                <i class="fas fa-circle-notch fa-spin text-3xl mb-3"></i>
+                <p class="text-sm font-medium">Sinkronisasi data peserta...</p>
+            </div>`;
         selectAllCheckbox.checked = false;
-        messageDiv.style.display = 'none';
+        messageDiv.classList.add('hidden');
 
         try {
-            // 1. Ambil data semua peserta di bus ini dari tabel 'peserta'
+            // Ambil data peserta
             const { data: dataPeserta, error: errPeserta } = await supabaseClient
                 .from('peserta')
                 .select('*')
@@ -353,7 +270,7 @@
 
             if (errPeserta) throw errPeserta;
 
-            // 2. Ambil data siapa saja yang SUDAH diabsen di bus & pos ini dari tabel 'absensi_zarkasi'
+            // Ambil data absen
             const { data: dataAbsen, error: errAbsen } = await supabaseClient
                 .from('absensi_zarkasi')
                 .select('nama')
@@ -362,104 +279,105 @@
 
             if (errAbsen) throw errAbsen;
 
-            // Buat daftar nama yang sudah absen untuk pencocokan cepat
             const namaYangSudahAbsen = dataAbsen.map(row => row.nama);
 
             if (dataPeserta.length === 0) {
-                checkboxList.innerHTML = '<div style="text-align:center;">Tidak ada peserta di bus ini.</div>';
+                checkboxList.innerHTML = `
+                    <div class="p-6 text-center text-gray-500 bg-gray-50 rounded-xl border border-gray-200">
+                        <i class="fas fa-box-open text-3xl mb-2 opacity-50"></i>
+                        <p class="text-sm font-medium">Tidak ada data peserta untuk bus ini.</p>
+                    </div>`;
                 return;
             }
 
-            // Kosongkan dan buat daftar checkbox
             checkboxList.innerHTML = '';
             
             dataPeserta.forEach((peserta) => {
-                // Cek apakah peserta ini sudah diabsen sebelumnya
                 const isSudahAbsen = namaYangSudahAbsen.includes(peserta.nama);
-                
-                // Simpan data mentah
                 const dataString = JSON.stringify({ nama: peserta.nama, status: peserta.status });
                 
+                // Menentukan icon berdasar status
+                const iconStatus = peserta.status.toLowerCase().includes('ustad') 
+                    ? '<i class="fas fa-chalkboard-teacher mr-1.5 text-secondary-500"></i>' 
+                    : '<i class="fas fa-user-graduate mr-1.5 text-primary-500"></i>';
+
                 const label = document.createElement('label');
-                // Tambahkan class 'sudah-absen' jika memang sudah
-                label.className = `checkbox-item ${isSudahAbsen ? 'sudah-absen' : ''}`;
                 
-                // Jika sudah absen, checkbox otomatis dicentang dan di-disable (dikunci)
+                // Tailwind class styling for items
+                label.className = `checkbox-item flex items-center p-3 sm:p-4 rounded-xl border cursor-pointer ${
+                    isSudahAbsen 
+                    ? 'sudah-absen bg-gray-100 border-gray-200 opacity-70 cursor-not-allowed' 
+                    : 'bg-slate-50 border-gray-200 hover:bg-primary-50'
+                }`;
+                
                 label.innerHTML = `
-                    <input type="checkbox" class="peserta-checkbox" value='${dataString}' ${isSudahAbsen ? 'checked disabled' : ''}>
-                    <div class="peserta-info">
-                        <span class="peserta-nama">
-                            ${peserta.nama} 
-                            ${isSudahAbsen ? '<span class="sudah-absen-badge">✓ Tersimpan</span>' : ''}
+                    <input type="checkbox" class="peserta-checkbox peserta-checkbox-item w-5 h-5 sm:w-6 sm:h-6 rounded border-gray-300 mr-4 flex-shrink-0" value='${dataString}' ${isSudahAbsen ? 'checked disabled' : ''}>
+                    <div class="flex flex-col flex-1">
+                        <div class="flex items-center justify-between flex-wrap gap-2">
+                            <span class="font-bold text-gray-900 text-sm sm:text-base">${peserta.nama}</span>
+                            ${isSudahAbsen ? '<span class="text-[10px] bg-primary-600 text-white px-2 py-0.5 rounded-full font-medium shadow-sm"><i class="fas fa-check mr-1"></i>Tersimpan</span>' : ''}
+                        </div>
+                        <span class="text-xs text-gray-500 font-medium mt-1 flex items-center">
+                            ${iconStatus} ${peserta.status}
                         </span>
-                        <span class="peserta-status">${peserta.status}</span>
                     </div>
                 `;
                 checkboxList.appendChild(label);
             });
 
-            // Tampilkan progress bar dan update nilainya
-            document.getElementById('progressWrapper').style.display = 'block';
+            document.getElementById('progressWrapper').classList.remove('hidden');
             updateProgress();
 
         } catch (error) {
             console.error(error);
-            checkboxList.innerHTML = '<div style="color:red; text-align:center;">Gagal mengambil data dari database. Pastikan koneksi internet stabil.</div>';
+            checkboxList.innerHTML = `
+                <div class="p-6 text-center text-red-600 bg-red-50 rounded-xl border border-red-200">
+                    <i class="fas fa-wifi text-3xl mb-2 opacity-70"></i>
+                    <p class="text-sm font-semibold">Gagal terhubung ke database. Periksa koneksi internet Anda.</p>
+                </div>`;
         }
     }
 
-    // Panggil fungsi loadPeserta setiap kali pilihan Bus ATAU Pos diubah
     bisSelect.addEventListener('change', loadPeserta);
     posSelect.addEventListener('change', () => {
-        // Jika bus sudah dipilih dan pos diganti, load ulang data sesuai pos baru
-        if (bisSelect.value) {
-            loadPeserta();
-        }
+        if (bisSelect.value) loadPeserta();
     });
 
-    // Event listener untuk update persentase saat checkbox individual diklik
     checkboxList.addEventListener('change', (e) => {
-        if (e.target && e.target.classList.contains('peserta-checkbox')) {
+        if (e.target && e.target.classList.contains('peserta-checkbox-item')) {
             updateProgress();
-            
-            // Atur status centang "Pilih Semua" secara otomatis menyesuaikan manual
-            const allEnabled = document.querySelectorAll('.peserta-checkbox:not(:disabled)');
-            const allEnabledChecked = document.querySelectorAll('.peserta-checkbox:not(:disabled):checked');
+            const allEnabled = document.querySelectorAll('.peserta-checkbox-item:not(:disabled)');
+            const allEnabledChecked = document.querySelectorAll('.peserta-checkbox-item:not(:disabled):checked');
             selectAllCheckbox.checked = (allEnabled.length > 0 && allEnabled.length === allEnabledChecked.length);
         }
     });
 
-    // Fitur "Pilih Semua" (Select All)
     selectAllCheckbox.addEventListener('change', (e) => {
         const isChecked = e.target.checked;
-        // Hanya centang/uncentang kotak yang TIDAK disabled (belum absen)
-        const checkboxes = document.querySelectorAll('.peserta-checkbox:not(:disabled)');
+        const checkboxes = document.querySelectorAll('.peserta-checkbox-item:not(:disabled)');
         checkboxes.forEach(cb => {
             cb.checked = isChecked;
         });
-        updateProgress(); // Update persentase setelah "Pilih Semua" diklik
+        updateProgress(); 
     });
 
-    // Fitur saat tombol Submit diklik
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const pos = posSelect.value;
         const bis = bisSelect.value;
-        
-        // AMBIL HANYA yang dicentang DAN belum dikunci (:not(:disabled))
-        const checkedBoxes = document.querySelectorAll('.peserta-checkbox:checked:not(:disabled)');
+        const checkedBoxes = document.querySelectorAll('.peserta-checkbox-item:checked:not(:disabled)');
         
         if (checkedBoxes.length === 0) {
-            alert("Harap centang minimal 1 peserta baru yang hadir! (Yang sudah memiliki badge 'Tersimpan' tidak akan dikirim ulang).");
+            alert("Harap centang minimal 1 peserta baru yang hadir!");
             return;
         }
 
-        submitBtn.innerText = "Mengirim Data...";
+        submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Menyimpan Data...';
         submitBtn.disabled = true;
-        messageDiv.style.display = 'none';
+        messageDiv.classList.add('hidden');
+        messageDiv.className = 'hidden mt-5 p-4 rounded-xl text-center text-sm font-semibold shadow-sm';
 
-        // Siapkan array data untuk dikirim (Bulk Insert)
         const dataToInsert = Array.from(checkedBoxes).map(cb => {
             const peserta = JSON.parse(cb.value);
             return {
@@ -470,24 +388,21 @@
             };
         });
 
-        // Kirim semua data sekaligus ke tabel 'absensi_zarkasi'
         const { error } = await supabaseClient
             .from('absensi_zarkasi')
             .insert(dataToInsert);
 
-        submitBtn.innerText = "Kirim Data Absen";
+        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Data Absensi';
         submitBtn.disabled = false;
 
-        messageDiv.style.display = 'block';
+        messageDiv.classList.remove('hidden');
         if (error) {
             console.error("Error:", error);
-            messageDiv.className = 'error';
-            messageDiv.innerHTML = `Gagal menyimpan: ${error.message}`;
+            messageDiv.classList.add('bg-red-50', 'text-red-700', 'border', 'border-red-200');
+            messageDiv.innerHTML = `<i class="fas fa-times-circle mr-1"></i> Gagal menyimpan: ${error.message}`;
         } else {
-            messageDiv.className = 'success';
-            messageDiv.innerHTML = `✅ Berhasil menyimpan absen untuk ${checkedBoxes.length} orang di ${pos}!`;
-            
-            // Reload daftar peserta agar yang baru saja diabsen otomatis terkunci
+            messageDiv.classList.add('bg-green-50', 'text-green-700', 'border', 'border-green-200');
+            messageDiv.innerHTML = `<i class="fas fa-check-circle mr-1"></i> Berhasil menyimpan absen untuk <b>${checkedBoxes.length}</b> orang di ${pos}!`;
             loadPeserta();
         }
     });
