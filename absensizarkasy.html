@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
 <head>
@@ -294,7 +295,11 @@
             
             dataPeserta.forEach((peserta) => {
                 const isSudahAbsen = namaYangSudahAbsen.includes(peserta.nama);
-                const dataString = JSON.stringify({ nama: peserta.nama, status: peserta.status });
+                
+                // MENGUBAH CARA PENYIMPANAN DATA UNTUK MENCEGAH ERROR TANDA KUTIP
+                // Menyandikan (encode) tanda kutip ganda dan tunggal agar aman dibaca HTML
+                const amanNama = String(peserta.nama).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+                const amanStatus = String(peserta.status).replace(/"/g, '&quot;').replace(/'/g, '&#39;');
                 
                 // Menentukan icon berdasar status
                 const iconStatus = peserta.status.toLowerCase().includes('ustad') 
@@ -303,15 +308,18 @@
 
                 const label = document.createElement('label');
                 
-                // Tailwind class styling for items
                 label.className = `checkbox-item flex items-center p-3 sm:p-4 rounded-xl border cursor-pointer ${
                     isSudahAbsen 
                     ? 'sudah-absen bg-gray-100 border-gray-200 opacity-70 cursor-not-allowed' 
                     : 'bg-slate-50 border-gray-200 hover:bg-primary-50'
                 }`;
                 
+                // KUNCI PERBAIKAN: Menggunakan data-nama dan data-status alih-alih JSON di dalam attribute value
                 label.innerHTML = `
-                    <input type="checkbox" class="peserta-checkbox peserta-checkbox-item w-5 h-5 sm:w-6 sm:h-6 rounded border-gray-300 mr-4 flex-shrink-0" value='${dataString}' ${isSudahAbsen ? 'checked disabled' : ''}>
+                    <input type="checkbox" class="peserta-checkbox peserta-checkbox-item w-5 h-5 sm:w-6 sm:h-6 rounded border-gray-300 mr-4 flex-shrink-0" 
+                           data-nama="${amanNama}" 
+                           data-status="${amanStatus}" 
+                           ${isSudahAbsen ? 'checked disabled' : ''}>
                     <div class="flex flex-col flex-1">
                         <div class="flex items-center justify-between flex-wrap gap-2">
                             <span class="font-bold text-gray-900 text-sm sm:text-base">${peserta.nama}</span>
@@ -361,6 +369,7 @@
         updateProgress(); 
     });
 
+    // Menambahkan try-catch block untuk Submit Form agar tombol tidak pernah stuck
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         
@@ -373,40 +382,53 @@
             return;
         }
 
+        // Tampilkan loading
         submitBtn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Menyimpan Data...';
         submitBtn.disabled = true;
         messageDiv.classList.add('hidden');
         messageDiv.className = 'hidden mt-5 p-4 rounded-xl text-center text-sm font-semibold shadow-sm';
 
-        const dataToInsert = Array.from(checkedBoxes).map(cb => {
-            const peserta = JSON.parse(cb.value);
-            return {
-                nama: peserta.nama,
-                status: peserta.status,
-                nomer_bus: bis,
-                pos_pemberhentian: pos
-            };
-        });
+        try {
+            // Mapping data dari atribut data-nama dan data-status yang sudah aman
+            const dataToInsert = Array.from(checkedBoxes).map(cb => {
+                return {
+                    nama: cb.dataset.nama, // Mengambil data yang bersih
+                    status: cb.dataset.status, // Mengambil data yang bersih
+                    nomer_bus: bis,
+                    pos_pemberhentian: pos
+                };
+            });
 
-        const { error } = await supabaseClient
-            .from('absensi_zarkasi')
-            .insert(dataToInsert);
+            // Kirim ke database
+            const { error } = await supabaseClient
+                .from('absensi_zarkasi')
+                .insert(dataToInsert);
 
-        submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Data Absensi';
-        submitBtn.disabled = false;
+            if (error) throw error; // Lempar ke blok catch jika ada error SQL
 
-        messageDiv.classList.remove('hidden');
-        if (error) {
-            console.error("Error:", error);
-            messageDiv.classList.add('bg-red-50', 'text-red-700', 'border', 'border-red-200');
-            messageDiv.innerHTML = `<i class="fas fa-times-circle mr-1"></i> Gagal menyimpan: ${error.message}`;
-        } else {
+            // JIKA BERHASIL:
+            messageDiv.classList.remove('hidden');
             messageDiv.classList.add('bg-green-50', 'text-green-700', 'border', 'border-green-200');
             messageDiv.innerHTML = `<i class="fas fa-check-circle mr-1"></i> Berhasil menyimpan absen untuk <b>${checkedBoxes.length}</b> orang di ${pos}!`;
-            loadPeserta();
+            loadPeserta(); // Refresh daftar (semua akan jadi abu-abu/terkunci otomatis)
+
+        } catch (error) {
+            // JIKA GAGAL:
+            console.error("Error Sistem:", error);
+            messageDiv.classList.remove('hidden');
+            messageDiv.classList.add('bg-red-50', 'text-red-700', 'border', 'border-red-200');
+            messageDiv.innerHTML = `<i class="fas fa-times-circle mr-1"></i> Gagal menyimpan: ${error.message || "Terjadi kesalahan internal"}`;
+        } finally {
+            // APAPUN YANG TERJADI (Berhasil/Gagal), KEMBALIKAN TOMBOL KE SEMULA
+            // Inilah yang mencegah tombol stuck!
+            submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Kirim Data Absensi';
+            submitBtn.disabled = false;
         }
     });
 </script>
 
 </body>
 </html>
+
+
+```
