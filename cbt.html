@@ -83,8 +83,8 @@
 
     <main class="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden">
         
-        <!-- Area Soal (Kiri) -->
-        <section class="flex-none lg:flex-1 w-auto flex flex-col bg-white lg:m-4 m-2 rounded-lg shadow-sm border lg:overflow-hidden relative">
+        <!-- Area Soal (Kiri pada desktop, Bawah pada mobile) -->
+        <section class="order-2 lg:order-1 flex-none lg:flex-1 w-auto flex flex-col bg-white lg:m-4 m-2 rounded-lg shadow-sm border lg:overflow-hidden relative">
             
             <!-- Header Soal (Nomor & Ukuran Font) -->
             <div class="bg-gray-50 border-b px-6 py-4 flex justify-between items-center">
@@ -128,7 +128,8 @@
             </div>
         </section>
 
-        <aside class="w-auto lg:w-80 flex-none flex flex-col bg-white lg:my-4 mx-2 mb-4 lg:mx-0 lg:mr-4 rounded-lg shadow-sm border lg:overflow-hidden lg:max-h-full">
+        <!-- Sidebar Daftar Soal & Webcam (Kanan pada desktop, Atas pada mobile) -->
+        <aside class="order-1 lg:order-2 w-auto lg:w-80 flex-none flex flex-col bg-white lg:my-4 mx-2 mt-4 mb-2 lg:mx-0 lg:mr-4 rounded-lg shadow-sm border lg:overflow-hidden lg:max-h-full">
             
             <div class="bg-gray-100 border-b p-3 flex flex-col items-center justify-center relative flex-shrink-0">
                 <div class="w-full aspect-video bg-gray-800 rounded overflow-hidden relative shadow-inner border border-gray-300 flex items-center justify-center">
@@ -155,7 +156,7 @@
             </div>
 
             <!-- Grid Nomor Soal -->
-            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar">
+            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-56 lg:max-h-full">
                 <div id="questionGrid" class="grid grid-cols-5 gap-2 sm:gap-3">
                     <!-- Tombol nomor soal akan di-generate lewat JS -->
                 </div>
@@ -756,10 +757,17 @@
             }
 
             // Auto-scroll ke atas saat pindah soal (sangat berguna untuk tampilan Mobile)
-            const mainEl = document.querySelector('main');
-            if (mainEl) mainEl.scrollTop = 0;
-            const contentEl = document.getElementById('questionText').parentElement;
-            if (contentEl) contentEl.scrollTop = 0;
+            if (window.innerWidth < 1024) {
+                // Pada mobile, otomatis scroll/geser ke area soal di bagian bawah setelah memilih nomor
+                const sectionEl = document.querySelector('section');
+                if (sectionEl) {
+                    sectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            } else {
+                // Pada desktop, gulir bagian dalam konten teks soal saja ke atas
+                const contentEl = document.getElementById('questionText').parentElement;
+                if (contentEl) contentEl.scrollTop = 0;
+            }
 
             // Render ulang grid untuk highlight current
             renderGrid();
