@@ -81,10 +81,10 @@
         </div>
     </div>
 
-    <main class="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row overflow-hidden">
+    <main class="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden">
         
         <!-- Area Soal (Kiri) -->
-        <section class="flex-1 flex flex-col bg-white lg:m-4 m-2 rounded-lg shadow-sm border overflow-hidden relative">
+        <section class="flex-none lg:flex-1 w-auto flex flex-col bg-white lg:m-4 m-2 rounded-lg shadow-sm border lg:overflow-hidden relative">
             
             <!-- Header Soal (Nomor & Ukuran Font) -->
             <div class="bg-gray-50 border-b px-6 py-4 flex justify-between items-center">
@@ -98,7 +98,7 @@
             </div>
 
             <!-- Konten Soal -->
-            <div class="p-6 overflow-y-auto custom-scrollbar flex-1">
+            <div class="p-6 lg:overflow-y-auto overflow-x-hidden custom-scrollbar flex-1">
                 <div id="questionText" class="text-base text-gray-800 mb-8 leading-relaxed transition-all duration-200">
                     <!-- Teks soal akan dirender di sini lewat JS -->
                 </div>
@@ -128,7 +128,7 @@
             </div>
         </section>
 
-        <aside class="w-full lg:w-80 flex flex-col bg-white lg:my-4 mx-2 lg:mx-0 lg:mr-4 rounded-lg shadow-sm border overflow-hidden lg:max-h-full">
+        <aside class="w-auto lg:w-80 flex-none flex flex-col bg-white lg:my-4 mx-2 mb-4 lg:mx-0 lg:mr-4 rounded-lg shadow-sm border lg:overflow-hidden lg:max-h-full">
             
             <div class="bg-gray-100 border-b p-3 flex flex-col items-center justify-center relative flex-shrink-0">
                 <div class="w-full aspect-video bg-gray-800 rounded overflow-hidden relative shadow-inner border border-gray-300 flex items-center justify-center">
@@ -754,6 +754,12 @@
                 nextTextMobile.innerText = "Lanjut";
                 nextIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>'; // Arrow icon
             }
+
+            // Auto-scroll ke atas saat pindah soal (sangat berguna untuk tampilan Mobile)
+            const mainEl = document.querySelector('main');
+            if (mainEl) mainEl.scrollTop = 0;
+            const contentEl = document.getElementById('questionText').parentElement;
+            if (contentEl) contentEl.scrollTop = 0;
 
             // Render ulang grid untuk highlight current
             renderGrid();
