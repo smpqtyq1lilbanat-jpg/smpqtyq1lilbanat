@@ -278,12 +278,6 @@
             <h2 class="text-3xl font-extrabold text-gray-900 mb-3">Ujian Selesai!</h2>
             <p class="text-gray-600 mb-8 font-medium leading-relaxed">Alhamdulillah, jawaban Anda telah berhasil diamankan di server pusat panitia.</p>
             
-            <div class="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-2xl p-6 mb-8 shadow-sm">
-                <p class="text-xs text-blue-800 font-bold uppercase tracking-wider mb-2">Nilai Akhir Anda</p>
-                <!-- Menampilkan nilai dengan besar -->
-                <p id="hasilSkorTeks" class="text-6xl font-black text-blue-700 drop-shadow-sm">100</p>
-            </div>
-            
             <button onclick="window.location.reload()" class="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 px-6 rounded-xl transition-colors shadow-xl hover:shadow-2xl flex justify-center items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
                 Keluar Aplikasi
@@ -705,7 +699,6 @@
                     }
 
                     // Pindah Layar Sukses (SPA Mode)
-                    document.getElementById('hasilSkorTeks').textContent = finalScore;
                     document.getElementById('examScreen').classList.remove('flex');
                     document.getElementById('examScreen').classList.add('hidden');
                     document.getElementById('doneScreen').classList.remove('hidden');
