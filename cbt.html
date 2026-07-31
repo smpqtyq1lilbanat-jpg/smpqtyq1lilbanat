@@ -650,15 +650,17 @@
                 showLoading("Menyimpan Jawaban...");
 
                 try {
-                    // 1. Hitung Nilai Akhir
-                    let correctCount = 0;
+                    // 1. Hitung Nilai Akhir (Benar: +4, Kosong: 0, Salah: -1)
+                    let finalScore = 0;
                     for (let i = 0; i < questions.length; i++) {
                         if (answers[i] === answerKey[i]) {
-                            correctCount++;
+                            finalScore += 4; // Benar
+                        } else if (!answers[i]) {
+                            finalScore += 0; // Kosong
+                        } else {
+                            finalScore -= 1; // Salah
                         }
                     }
-                    let finalScore = (correctCount / questions.length) * 100;
-                    finalScore = Math.round(finalScore * 100) / 100; 
 
                     // 2. Rekap Jawaban Peserta (Contoh: ABDCXC...)
                     let stringJawaban = "";
