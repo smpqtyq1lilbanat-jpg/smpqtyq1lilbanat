@@ -4,899 +4,706 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CBT Olimpiade IPA YQBS 1 Pati</title>
+    
+    <!-- CSS Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Library Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f3f4f6;
-        }
-        /* Custom Scrollbar for Daftar Soal */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: #f1f1f1; 
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: #cbd5e1; 
-            border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-            background: #94a3b8; 
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f1f1; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
         /* Radio button styling */
-        .option-radio:checked + div {
-            background-color: #2563eb;
-            color: white;
-            border-color: #2563eb;
-        }
+        .option-radio:checked + div { background-color: #2563eb; color: white; border-color: #2563eb; }
+        /* Glassmorphism Loading */
+        #overlay { backdrop-filter: blur(4px); }
     </style>
 </head>
-<body class="h-screen flex flex-col overflow-hidden text-gray-800">
+<body class="text-gray-800">
 
-    <header class="bg-blue-900 text-white shadow-md z-10 flex-shrink-0">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <!-- Logo & Title -->
+    <!-- 1. TOAST ERROR SYSTEM -->
+    <div id="systemErrorToast" class="hidden fixed top-5 left-1/2 transform -translate-x-1/2 z-[999] bg-red-600 text-white px-6 py-4 rounded-xl shadow-2xl max-w-lg w-[90%] border-l-4 border-red-900">
+        <div class="flex items-start gap-3">
+            <svg class="w-6 h-6 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <div>
+                <h3 class="font-bold text-lg mb-1">Terjadi Kesalahan Sistem!</h3>
+                <p id="systemErrorText" class="text-sm font-mono break-words"></p>
+                <button onclick="document.getElementById('systemErrorToast').classList.add('hidden')" class="mt-3 text-xs underline hover:text-gray-200">Tutup Pesan Ini</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. OVERLAY LOADING GLOBAL -->
+    <div id="overlay" class="hidden fixed inset-0 bg-black bg-opacity-70 z-[100] flex-col items-center justify-center text-white transition-opacity duration-300">
+        <svg class="animate-spin h-12 w-12 mb-4 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        <h2 id="overlayText" class="text-2xl font-bold tracking-wide">Memproses...</h2>
+    </div>
+
+    <!-- 3. LAYAR LOGIN -->
+    <div id="loginScreen" class="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-gray-100 transition-all transform hover:shadow-2xl">
+            <!-- Header Logo -->
+            <div class="bg-blue-900 p-8 text-center relative overflow-hidden">
+                <div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTAgMGw0MCA0ME00MCAwbC00MCA0MCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuMSIvPgo8L3N2Zz4=')]"></div>
+                <!-- Gunakan logo instansi Anda -->
+                <img src="https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/logo.png" alt="Logo Sekolah" class="w-24 mx-auto mb-4 bg-white rounded-full p-2 relative z-10 shadow-lg border-4 border-blue-800">
+                <h2 class="text-3xl font-bold text-white relative z-10 mb-1">Portal Ujian CBT</h2>
+                <p class="text-blue-200 text-sm font-medium relative z-10">Olimpiade IPA SD/MI 2026</p>
+            </div>
+            
+            <!-- Form Input -->
+            <div class="p-8">
+                <div class="mb-5 relative">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2 ml-1">Username (NISN)</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                        <input type="text" id="username" class="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all uppercase font-medium text-gray-800" placeholder="Ketik Username Anda...">
+                    </div>
+                </div>
+
+                <div class="mb-6 relative">
+                    <label class="block text-gray-700 text-sm font-semibold mb-2 ml-1">Password</label>
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                        </div>
+                        <input type="password" id="password" class="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all font-medium tracking-widest text-gray-800" placeholder="••••••••">
+                    </div>
+                </div>
+
+                <!-- Notifikasi Error Login -->
+                <div id="loginError" class="hidden mb-6 p-4 bg-red-50 text-red-600 text-sm rounded-xl border border-red-200 text-center font-medium shadow-sm flex items-center justify-center gap-2">
+                    <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    <span id="loginErrorMsg">Username atau password salah.</span>
+                </div>
+
+                <button id="btnLogin" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md hover:shadow-lg flex justify-center items-center gap-2">
+                    <span>Masuk Ujian IPA</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+            </div>
+        </div>
+        <!-- Logo Event Tambahan (Footer) -->
+        <img src="https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/10%20tahun%20Yqbs.jpg" alt="10 Tahun YQBS" class="w-40 mt-10 opacity-70 hover:opacity-100 transition-opacity drop-shadow-md">
+    </div>
+
+    <!-- 4. LAYAR UJIAN CBT IPA -->
+    <div id="examScreen" class="hidden h-screen flex-col overflow-hidden bg-gray-50 w-full animate-fade-in">
+        
+        <header class="bg-blue-900 text-white shadow-md z-10 flex-shrink-0">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white p-1 rounded">
+                            <img src="https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/logo.png" alt="Logo" class="w-8 h-8 object-contain">
+                        </div>
+                        <div>
+                            <h1 class="text-sm sm:text-lg font-bold leading-tight">CBT Olimpiade IPA</h1>
+                            <p class="text-[10px] sm:text-xs text-blue-200 font-medium">YQBS 1 Pati - Satu Dekade Merajut Asa</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="hidden sm:block text-right">
+                            <p class="text-sm font-bold truncate max-w-[200px]" id="displayNamaSiswa">MEMUAT NAMA...</p>
+                            <p class="text-xs text-blue-300 font-medium tracking-wide" id="displayUsernameSiswa">USERNAME</p>
+                        </div>
+                        <div class="h-10 w-10 bg-blue-700 rounded-full flex items-center justify-center border-2 border-white shadow-md">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="bg-white border-b shadow-sm flex-shrink-0 relative z-0">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <div class="bg-white p-1 rounded">
-                        <svg class="w-8 h-8 text-blue-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
-                        </svg>
-                    </div>
-                    <div>
-                        <h1 class="text-lg font-bold leading-tight">CBT Olimpiade IPA YQBS 1 Pati</h1>
-                        <p class="text-xs text-blue-200">Satu Dekade Merajut Asa</p>
-                    </div>
+                    <span class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded border border-green-400 animate-pulse">AKTIF</span>
+                    <h2 class="text-xs sm:text-sm md:text-base font-bold text-gray-700 truncate hidden sm:block">Babak Penyisihan Nasional (IPA) 2026</h2>
                 </div>
-                <!-- User Info -->
-                <div class="flex items-center gap-4">
-                    <div class="hidden sm:block text-right">
-                        <p class="text-sm font-semibold">Peserta 01</p>
-                        <p class="text-xs text-blue-200">NISN: 1234567890</p>
-                    </div>
-                    <div class="h-10 w-10 bg-blue-700 rounded-full flex items-center justify-center border-2 border-white">
-                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
-                        </svg>
-                    </div>
+                <div class="flex items-center gap-2 bg-red-50 px-4 py-2 rounded-xl border border-red-200 shadow-inner">
+                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span id="timerDisplay" class="text-red-700 font-mono font-bold tracking-widest sm:text-lg text-base">02:00:00</span>
                 </div>
             </div>
         </div>
-    </header>
 
-    <div class="bg-white border-b shadow-sm flex-shrink-0">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-2">
-                <span class="bg-green-100 text-green-800 text-xs font-semibold px-2.5 py-0.5 rounded border border-green-400">Aktif</span>
-                <h2 class="text-sm md:text-base font-semibold text-gray-700">Lomba IPA SD/MI Tingkat Nasional 2026</h2>
-            </div>
-            <div class="flex items-center gap-2 bg-red-50 px-3 py-1.5 rounded-lg border border-red-200">
-                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                </svg>
-                <span id="timerDisplay" class="text-red-700 font-bold tracking-wider">02:00:00</span>
-            </div>
-        </div>
+        <main class="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden relative z-0">
+            
+            <!-- Area Soal -->
+            <section class="order-2 lg:order-1 flex-none lg:flex-1 w-auto flex flex-col bg-white lg:m-4 m-2 rounded-lg shadow-sm border border-gray-200 lg:overflow-hidden relative">
+                <div class="bg-gray-50 border-b px-6 py-4 flex justify-between items-center">
+                    <h3 class="text-lg font-bold text-gray-800" id="questionNumberLabel">SOAL NOMOR 1</h3>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-gray-500 mr-1 hidden sm:inline">Ukuran Font:</span>
+                        <button id="btnZoomOut" class="w-8 h-8 rounded border border-gray-300 bg-white hover:bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-700 shadow-sm transition">-</button>
+                        <button id="btnZoomReset" class="w-8 h-8 rounded border border-gray-300 bg-white hover:bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-700 shadow-sm transition">A</button>
+                        <button id="btnZoomIn" class="w-8 h-8 rounded border border-gray-300 bg-white hover:bg-gray-100 flex items-center justify-center text-lg font-bold text-gray-700 shadow-sm transition">+</button>
+                    </div>
+                </div>
+
+                <div class="p-6 lg:p-8 lg:overflow-y-auto overflow-x-hidden custom-scrollbar flex-1 relative">
+                    <div id="questionText" class="text-base text-gray-800 mb-8 leading-relaxed font-medium transition-all duration-300">
+                        <!-- Konten Soal -->
+                    </div>
+                    <div id="optionsContainer" class="space-y-4">
+                        <!-- Pilihan Ganda -->
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 border-t p-4 flex flex-wrap gap-3 justify-between items-center mt-auto">
+                    <button id="btnPrev" class="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-100 flex items-center gap-2 transition disabled:opacity-40 disabled:cursor-not-allowed">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        <span class="hidden sm:inline">Soal Sebelumnya</span>
+                    </button>
+                    
+                    <button id="btnFlag" class="px-5 py-2.5 border border-yellow-400 bg-yellow-50 text-yellow-800 rounded-lg font-bold hover:bg-yellow-100 flex items-center gap-2 transition shadow-sm">
+                        <input type="checkbox" id="flagCheckbox" class="w-4 h-4 text-yellow-600 rounded cursor-pointer pointer-events-none">
+                        Ragu-ragu
+                    </button>
+                    
+                    <button id="btnNext" class="px-5 py-2.5 bg-blue-600 border border-transparent rounded-lg text-white font-semibold hover:bg-blue-700 flex items-center gap-2 transition shadow-sm">
+                        <span class="hidden sm:inline" id="nextBtnText">Soal Berikutnya</span>
+                        <span class="sm:hidden" id="nextBtnTextMobile">Lanjut</span>
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="nextBtnIcon"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Sidebar Kanan (Kamera & Grid) -->
+            <aside class="order-1 lg:order-2 w-auto lg:w-80 flex-none flex flex-col bg-white lg:my-4 mx-2 mt-4 mb-2 lg:mx-0 lg:mr-4 rounded-lg shadow-sm border border-gray-200 lg:overflow-hidden lg:max-h-full">
+                
+                <div class="bg-gray-900 border-b border-gray-700 p-3 flex flex-col items-center justify-center relative flex-shrink-0">
+                    <div class="w-full aspect-video bg-black rounded overflow-hidden relative shadow-inner border border-gray-600 flex items-center justify-center">
+                        <span id="webcamStatus" class="text-xs text-gray-400 absolute z-10 text-center px-2 font-mono">Meminta akses kamera...</span>
+                        <video id="proctorWebcam" class="w-full h-full object-cover transform scale-x-[-1] relative z-20 opacity-90" autoplay playsinline muted></video>
+                    </div>
+                    <div class="mt-2 flex items-center gap-2 w-full justify-center">
+                        <span id="recordingIndicator" class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse hidden shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span>
+                        <span id="recordingText" class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pengawasan Aktif</span>
+                    </div>
+                </div>
+
+                <div class="bg-blue-900 text-white px-4 py-3 flex justify-between items-center flex-shrink-0 border-t border-blue-800">
+                    <h3 class="font-bold text-sm tracking-wide">DAFTAR SOAL IPA</h3>
+                    <div class="bg-blue-800 px-2 py-0.5 rounded text-xs font-bold shadow-inner" id="answeredCount">0 / 40</div>
+                </div>
+                
+                <div class="p-3 border-b bg-gray-50 flex justify-center gap-4 text-xs text-gray-700 flex-shrink-0 font-bold">
+                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-white border border-gray-400 rounded-sm"></div> Kosong</div>
+                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-blue-600 rounded-sm shadow-sm"></div> Dijawab</div>
+                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-yellow-400 rounded-sm shadow-sm"></div> Ragu</div>
+                </div>
+
+                <div class="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-56 lg:max-h-full bg-gray-50/50">
+                    <div id="questionGrid" class="grid grid-cols-5 gap-2 sm:gap-3">
+                        <!-- Grid Soal JS -->
+                    </div>
+                </div>
+            </aside>
+        </main>
     </div>
 
-    <main class="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden">
-        
-        <!-- Area Soal (Kiri pada desktop, Bawah pada mobile) -->
-        <section class="order-2 lg:order-1 flex-none lg:flex-1 w-auto flex flex-col bg-white lg:m-4 m-2 rounded-lg shadow-sm border lg:overflow-hidden relative">
-            
-            <!-- Header Soal (Nomor & Ukuran Font) -->
-            <div class="bg-gray-50 border-b px-6 py-4 flex justify-between items-center">
-                <h3 class="text-lg font-bold text-gray-800" id="questionNumberLabel">SOAL NOMOR 1</h3>
-                <div class="flex items-center gap-2">
-                    <span class="text-xs text-gray-500 mr-1 hidden sm:inline">Ukuran Font:</span>
-                    <button onclick="changeFontSize(-1)" class="w-8 h-8 rounded border bg-white hover:bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-700">-</button>
-                    <button onclick="changeFontSize(0)" class="w-8 h-8 rounded border bg-white hover:bg-gray-100 flex items-center justify-center text-base font-bold text-gray-700">A</button>
-                    <button onclick="changeFontSize(1)" class="w-8 h-8 rounded border bg-white hover:bg-gray-100 flex items-center justify-center text-lg font-bold text-gray-700">+</button>
+    <!-- 5. MODAL KONFIRMASI -->
+    <div id="submitModal" class="fixed inset-0 bg-black bg-opacity-60 z-[90] hidden flex items-center justify-center backdrop-blur-sm transition-opacity opacity-0" style="transition-duration: 300ms;">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden transform scale-95 transition-transform duration-300" id="modalContent">
+            <div class="bg-red-600 px-6 py-4 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    Konfirmasi Pengumpulan
+                </h3>
+            </div>
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
-            </div>
-
-            <!-- Konten Soal -->
-            <div class="p-6 lg:overflow-y-auto overflow-x-hidden custom-scrollbar flex-1">
-                <div id="questionText" class="text-base text-gray-800 mb-8 leading-relaxed transition-all duration-200">
-                    <!-- Teks soal akan dirender di sini lewat JS -->
-                </div>
-
-                <!-- Pilihan Ganda -->
-                <div id="optionsContainer" class="space-y-3">
-                    <!-- Opsi jawaban akan dirender di sini lewat JS -->
-                </div>
-            </div>
-
-            <div class="bg-gray-50 border-t p-4 flex flex-wrap gap-2 justify-between items-center mt-auto">
-                <button id="btnPrev" onclick="prevQuestion()" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 font-medium hover:bg-gray-100 flex items-center gap-2 transition disabled:opacity-50 disabled:cursor-not-allowed">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
-                    <span class="hidden sm:inline">Soal Sebelumnya</span>
-                </button>
-                
-                <button id="btnFlag" onclick="toggleFlag()" class="px-4 py-2 border border-yellow-400 bg-yellow-50 text-yellow-700 rounded-md font-medium hover:bg-yellow-100 flex items-center gap-2 transition">
-                    <input type="checkbox" id="flagCheckbox" class="w-4 h-4 text-yellow-500 rounded focus:ring-yellow-400 cursor-pointer pointer-events-none">
-                    Ragu-ragu
-                </button>
-                
-                <button id="btnNext" onclick="nextQuestion()" class="px-4 py-2 bg-blue-600 border border-transparent rounded-md text-white font-medium hover:bg-blue-700 flex items-center gap-2 transition">
-                    <span class="hidden sm:inline" id="nextBtnText">Soal Berikutnya</span>
-                    <span class="sm:hidden" id="nextBtnTextMobile">Lanjut</span>
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="nextBtnIcon"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                </button>
-            </div>
-        </section>
-
-        <!-- Sidebar Daftar Soal & Webcam (Kanan pada desktop, Atas pada mobile) -->
-        <aside class="order-1 lg:order-2 w-auto lg:w-80 flex-none flex flex-col bg-white lg:my-4 mx-2 mt-4 mb-2 lg:mx-0 lg:mr-4 rounded-lg shadow-sm border lg:overflow-hidden lg:max-h-full">
-            
-            <div class="bg-gray-100 border-b p-3 flex flex-col items-center justify-center relative flex-shrink-0">
-                <div class="w-full aspect-video bg-gray-800 rounded overflow-hidden relative shadow-inner border border-gray-300 flex items-center justify-center">
-                    <span id="webcamStatus" class="text-xs text-gray-400 absolute z-10 text-center px-2">Meminta akses kamera...</span>
-                    <!-- Kamera dibalik secara horizontal (scale-x-[-1]) layaknya cermin -->
-                    <video id="proctorWebcam" class="w-full h-full object-cover transform scale-x-[-1] relative z-20" autoplay playsinline muted></video>
-                </div>
-                <div class="mt-2 flex items-center gap-2 w-full justify-center">
-                    <span id="recordingIndicator" class="w-2 h-2 rounded-full bg-red-500 animate-pulse hidden"></span>
-                    <span id="recordingText" class="text-xs font-medium text-gray-500">Pengawasan Nonaktif</span>
-                </div>
-            </div>
-
-            <div class="bg-blue-900 text-white px-4 py-3 flex justify-between items-center flex-shrink-0">
-                <h3 class="font-semibold text-sm">Daftar Soal</h3>
-                <svg class="w-5 h-5 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
-            </div>
-            
-            <!-- Keterangan Warna -->
-            <div class="p-3 border-b bg-gray-50 flex justify-center gap-4 text-xs text-gray-700 flex-shrink-0">
-                <div class="flex items-center gap-1"><div class="w-3 h-3 bg-white border border-gray-300 rounded-sm"></div> Belum</div>
-                <div class="flex items-center gap-1"><div class="w-3 h-3 bg-blue-600 rounded-sm"></div> Dijawab</div>
-                <div class="flex items-center gap-1"><div class="w-3 h-3 bg-yellow-400 rounded-sm"></div> Ragu</div>
-            </div>
-
-            <!-- Grid Nomor Soal -->
-            <div class="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-56 lg:max-h-full">
-                <div id="questionGrid" class="grid grid-cols-5 gap-2 sm:gap-3">
-                    <!-- Tombol nomor soal akan di-generate lewat JS -->
-                </div>
-            </div>
-        </aside>
-    </main>
-
-    <div id="submitModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center backdrop-blur-sm transition-opacity">
-        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 overflow-hidden transform scale-95 opacity-0 transition-all" id="modalContent">
-            <div class="bg-blue-900 px-6 py-4 flex items-center justify-between">
-                <h3 class="text-lg font-bold text-white">Konfirmasi Tes</h3>
-                <button onclick="closeModal()" class="text-blue-200 hover:text-white">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                </button>
-            </div>
-            <div class="p-6">
-                <div class="flex items-start gap-4 mb-4">
-                    <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center flex-shrink-0">
-                        <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    </div>
-                    <div>
-                        <h4 class="text-gray-900 font-semibold text-lg">Akhiri Ujian?</h4>
-                        <p class="text-gray-600 mt-1 text-sm">Apakah Anda yakin ingin mengakhiri ujian ini? Anda tidak akan bisa mengubah jawaban setelah menekan tombol Selesai.</p>
-                    </div>
-                </div>
-                <div class="flex justify-end gap-3 mt-6">
-                    <button onclick="closeModal()" class="px-4 py-2 border border-gray-300 rounded text-gray-700 font-medium hover:bg-gray-50 transition">Tidak, Cek Kembali</button>
-                    <button onclick="confirmSubmit()" class="px-4 py-2 bg-blue-600 text-white rounded font-medium hover:bg-blue-700 transition shadow-sm">Ya, Selesai Ujian</button>
+                <h4 class="text-gray-900 font-bold text-xl mb-2">Akhiri Ujian Sekarang?</h4>
+                <p class="text-gray-600 text-sm mb-6 leading-relaxed">Apakah Anda yakin seluruh soal sudah dijawab dengan maksimal? <br><span class="text-red-600 font-semibold">Anda tidak dapat mengubah jawaban setelah mengumpulkan.</span></p>
+                <div class="flex justify-center gap-3">
+                    <button id="btnCancelSubmit" class="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-bold hover:bg-gray-50 transition">Batal, Cek Lagi</button>
+                    <button id="btnConfirmSubmit" class="px-5 py-2.5 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition shadow-md">Ya, Kumpulkan</button>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- 6. LAYAR SELESAI (SPA) -->
+    <div id="doneScreen" class="hidden min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-10 text-center border border-gray-100">
+            <div class="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border-4 border-green-100 relative">
+                <div class="absolute -top-1 -right-1 text-yellow-400 animate-bounce">✨</div>
+                <div class="absolute -bottom-1 -left-1 text-yellow-400 animate-bounce" style="animation-delay: 0.5s;">✨</div>
+                <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Ujian Selesai!</h2>
+            <p class="text-gray-600 mb-8 font-medium leading-relaxed">Alhamdulillah, jawaban Anda telah berhasil diamankan di server pusat panitia.</p>
+            <!-- Tombol Keluar (Refresh Halaman) -->
+            <button onclick="window.location.reload()" class="w-full bg-gray-900 hover:bg-black text-white font-bold py-3.5 px-6 rounded-xl transition shadow-md flex justify-center items-center gap-2">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
+                Keluar Aplikasi
+            </button>
+        </div>
+    </div>
+
+    <!-- MASTER JAVASCRIPT CBT IPA (Anti-Crash) -->
     <script>
-        // Data Soal (Olimpiade IPA 40 Soal)
-        const questions = [
-            {
-                id: 1,
-                text: "Seorang siswa meneliti pengaruh jarak lampu terhadap laju fotosintesis Hydrilla. Saat percobaan diulang, suhu ruangan berubah sehingga jumlah gelembung udara yang dihasilkan tidak stabil. Langkah yang paling tepat agar hasil percobaan hanya dipengaruhi oleh jarak lampu adalah ....",
-                options: [
-                    { key: 'A', value: 'Menambah jumlah tanaman Hydrilla di setiap gelas kimia agar gelembung lebih banyak' },
-                    { key: 'B', value: 'Menjaga suhu air tetap konstan dengan meletakkan penahan panas di antara lampu dan gelas kimia' },
-                    { key: 'C', value: 'Mengubah jenis lampu menjadi lampu warna-warni untuk meningkatkan estetika percobaan' },
-                    { key: 'D', value: 'Mengganti variabel terikat dari jumlah gelembung menjadi perubahan warna daun Hydrilla' }
-                ]
-            },
-            {
-                id: 2,
-                text: "Seorang siswa ingin mengetahui pengaruh jumlah pupuk terhadap pertumbuhan tanaman kacang hijau. Ia menanam empat tanaman yang memiliki jenis, umur, dan ukuran yang sama. Semua tanaman disiram dengan jumlah air yang sama dan diletakkan di tempat yang sama. Perbedaannya hanya pada jumlah pupuk yang diberikan.<br><br>Mengapa langkah tersebut penting dilakukan?",
-                options: [
-                    { key: 'A', value: 'Agar semua tanaman tumbuh dengan tinggi yang sama.' },
-                    { key: 'B', value: 'Agar pengaruh jumlah pupuk terhadap pertumbuhan tanaman dapat diamati dengan lebih tepat.' },
-                    { key: 'C', value: 'Agar tanaman tidak memerlukan sinar matahari.' },
-                    { key: 'D', value: 'Agar waktu pengamatan menjadi lebih singkat.' }
-                ]
-            },
-            {
-                id: 3,
-                text: "Seorang siswa mengukur panjang sebuah pensil menggunakan penggaris. Hasil pengukuran pertama menunjukkan panjang pensil 15,2 cm, sedangkan pengukuran kedua menunjukkan 15,8 cm. Langkah yang paling tepat dilakukan siswa agar memperoleh hasil pengukuran yang lebih meyakinkan adalah ....",
-                options: [
-                    { key: 'A', value: 'Memilih hasil pengukuran yang paling besar.' },
-                    { key: 'B', value: 'Mengulang pengukuran beberapa kali, kemudian menghitung rata-rata hasil pengukuran.' },
-                    { key: 'C', value: 'Menjumlahkan kedua hasil pengukuran.' },
-                    { key: 'D', value: 'Menggunakan hasil pengukuran pertama saja.' }
-                ]
-            },
-            {
-                id: 4,
-                text: "Seorang siwa membuat hipotesis: \"Semakin kasar permukaan bidang miring, maka semakin lama waktu yang dibutuhkan kelereng untuk mencapai dasar.\"<br><br>Untuk membuktikan hipotesis ini melalui percobaan, variabel bebas, variabel terikat, dan variabel kontrol yang harus ditetapkan berturut-turut adalah ....",
-                options: [
-                    { key: 'A', value: 'Waktu tempuh; jenis permukaan bidang; sudut kemiringan bidang' },
-                    { key: 'B', value: 'Jenis permukaan bidang; waktu tempuh kelereng; sudut kemiringan bidang dan massa kelereng' },
-                    { key: 'C', value: 'Sudut kemiringan bidang; massa kelereng; jenis permukaan bidang' },
-                    { key: 'D', value: 'Massa kelereng; Jenis permukaan bidang; waktu tempuh kelereng' }
-                ]
-            },
-            {
-                id: 5,
-                text: "Perhatikan data hasil pengamatan penguapan air berikut!<br>Setiap wadah adalah 100 mL dan diamati selama 2 jam.<br><br><table class=\"w-full text-sm text-left border-collapse border border-gray-300\"><thead><tr class=\"bg-gray-100\"><th class=\"border border-gray-300 px-3 py-2\">Wadah</th><th class=\"border border-gray-300 px-3 py-2\">Luas Permukaan</th><th class=\"border border-gray-300 px-3 py-2\">Sisa Air</th></tr></thead><tbody><tr><td class=\"border border-gray-300 px-3 py-2 text-center\">P</td><td class=\"border border-gray-300 px-3 py-2 text-center\">10 cm&sup2;</td><td class=\"border border-gray-300 px-3 py-2 text-center\">92 mL</td></tr><tr><td class=\"border border-gray-300 px-3 py-2 text-center\">Q</td><td class=\"border border-gray-300 px-3 py-2 text-center\">25 cm&sup2;</td><td class=\"border border-gray-300 px-3 py-2 text-center\">80 mL</td></tr><tr><td class=\"border border-gray-300 px-3 py-2 text-center\">R</td><td class=\"border border-gray-300 px-3 py-2 text-center\">50 cm&sup2;</td><td class=\"border border-gray-300 px-3 py-2 text-center\">60 mL</td></tr><tr><td class=\"border border-gray-300 px-3 py-2 text-center\">S</td><td class=\"border border-gray-300 px-3 py-2 text-center\">100 cm&sup2;</td><td class=\"border border-gray-300 px-3 py-2 text-center\">20 mL</td></tr></tbody></table><br>Berdasarkan data eksperimen di atas, kesimpulan yang paling tepat mengenai hubungan luas permukaan wadah dengan laju penguapan air adalah ....",
-                options: [
-                    { key: 'A', value: 'Laju penguapan berbanding terbalik dengan luas permukaan wadah' },
-                    { key: 'B', value: 'Laju penguapan berbanding lurus dengan luas permukaan wadah' },
-                    { key: 'C', value: 'Sisa air terbanyak diperoleh pada wadah dengan luas permukaan paling besar' },
-                    { key: 'D', value: 'Luas permukaan wadah tidak memengaruhi laju laju penguapan molekul air' }
-                ]
-            },
-            {
-                id: 6,
-                text: "Di sebuah rawa di Kalimantan ditemukan organisme mikroskopis bersel tunggal. Organisme ini memiliki membran inti, bergerak menggunakan flagela, dan memiliki kloroplas sehingga dapat berfotosintesis saat terkena cahaya. Jika suasana gelap, organisme tersebut memperoleh makanan dengan menyerap zat organik dari lingkungannya. Berdasarkan karakteristiknya, organisme tersebut dikelompokkan dalam kingdom ....",
-                options: [
-                    { key: 'A', value: 'Monera, karena bersel tunggal dan mikroba pasif' },
-                    { key: 'B', value: 'Plantae, karena memiliki kloroplas dan melakukan fotosintesis' },
-                    { key: 'C', value: 'Fungi, karena mampu menyerap zat organik dari lingkungan lapuk' },
-                    { key: 'D', value: 'Protista, karena organisme eukariotik bersel tunggal yang dapat berfotosintesis sekaligus memperoleh makanan dari zat organik' }
-                ]
-            },
-            {
-                id: 7,
-                text: "Perhatikan tabel karakter fisik empat jenis hewan vertebrata berikut:<br><br><div class=\"overflow-x-auto\"><table class=\"w-full text-sm text-left border-collapse border border-gray-300\"><thead><tr class=\"bg-gray-100\"><th class=\"border border-gray-300 px-2 py-2\">Hewan</th><th class=\"border border-gray-300 px-2 py-2\">Penutup Tubuh</th><th class=\"border border-gray-300 px-2 py-2\">Ruang Jantung</th><th class=\"border border-gray-300 px-2 py-2\">Suhu Tubuh</th><th class=\"border border-gray-300 px-2 py-2\">Cara Reproduksi</th></tr></thead><tbody><tr><td class=\"border border-gray-300 px-2 py-2 text-center font-bold\">W</td><td class=\"border border-gray-300 px-2 py-2\">Sisik kering</td><td class=\"border border-gray-300 px-2 py-2\">4 (sekat belum sempurna)</td><td class=\"border border-gray-300 px-2 py-2\">Poikiloterm</td><td class=\"border border-gray-300 px-2 py-2\">Ovipar/ovovivipar</td></tr><tr><td class=\"border border-gray-300 px-2 py-2 text-center font-bold\">X</td><td class=\"border border-gray-300 px-2 py-2\">Bulu</td><td class=\"border border-gray-300 px-2 py-2\">4 (sekat sempurna)</td><td class=\"border border-gray-300 px-2 py-2\">Homoioterm</td><td class=\"border border-gray-300 px-2 py-2\">Ovipar</td></tr><tr><td class=\"border border-gray-300 px-2 py-2 text-center font-bold\">Y</td><td class=\"border border-gray-300 px-2 py-2\">Kulit lembap</td><td class=\"border border-gray-300 px-2 py-2\">3</td><td class=\"border border-gray-300 px-2 py-2\">Poikiloterm</td><td class=\"border border-gray-300 px-2 py-2\">Ovipar</td></tr><tr><td class=\"border border-gray-300 px-2 py-2 text-center font-bold\">Z</td><td class=\"border border-gray-300 px-2 py-2\">Rambut</td><td class=\"border border-gray-300 px-2 py-2\">4 (sekat sempurna)</td><td class=\"border border-gray-300 px-2 py-2\">Homoioterm</td><td class=\"border border-gray-300 px-2 py-2\">Vivipar</td></tr></tbody></table></div><br>Berdasarkan data pada tabel di atas, kesimpulan yang paling tepat adalah ....",
-                options: [
-                    { key: 'A', value: 'Hewan W tergolong Amphibia, sedangkan Y tergolong Reptilia' },
-                    { key: 'B', value: 'Hewan X tergolong Aves, sedangkan Z tergolong Mammalia' },
-                    { key: 'C', value: 'Hewan W dan X memiliki keterikatan suhu tubuh konstan (Homoioterm)' },
-                    { key: 'D', value: 'Hewan Y dan Z sama-sama memiliki sekat jantung yang memisahkan darah bersih dan kotor secara sempurna' }
-                ]
-            },
-            {
-                id: 8,
-                text: "Seorang siswa mengamati dua jenis tumbuhan. Didapatkan dua jenis spesies flora lokal: Tumbuhan A memilki pertulangan daun sejajar, tidak memiliki kambium, dan perhiasan bunga kelipatan 3. Sedangkan tumbuhan B memiliki pertulangan daun menyirip, memiliki kambium, dan perhiasan bunga kelipatan 5. Prediksi yang tepat mengenai struktur biji dan akar kedua tumbuhan tersebut adalah ....",
-                options: [
-                    { key: 'A', value: 'Tumbuhan A berkeping biji dua (dikotil) berakar tunggang; Tumbuhan B berkeping biji satu (monokotil) berakar serabut' },
-                    { key: 'B', value: 'Tumbuhan A berkeping biji satu (monokotil) berakar serabut; Tumbuhan B berkeping biji dua (dikotil) berakar tunggang' },
-                    { key: 'C', value: 'Tumbuhan A dan B merupakan anggota Gymnospermae tanpa biji tertutup' },
-                    { key: 'D', value: 'Tumbuhan A tidak memiliki pembuluh xilem, sedangkan Tumbuhan B memilikinya' }
-                ]
-            },
-            {
-                id: 9,
-                text: "Rafflesia arnoldii merupakan tumbuhan endemik Sumatra yang sangat unik. Tumbuhan ini tidak memiliki akar, batang, maupun daun sejati, serta hidup menempel pada akar tumbuhan merambat. Alasan utama mengapa Rafflesia arnoldii dikelompokkan ke dalam Kingdom Plantae dan bukan Fungi adalah ....",
-                options: [
-                    { key: 'A', value: 'Menghasilkan bunga dan biji sebagai alat reproduksi, sehingga termasuk tumbuhan berbunga' },
-                    { key: 'B', value: 'Mampu menyerap nutrisi organik langsung dari sisa-sisa organisme mati' },
-                    { key: 'C', value: 'Tubuhnya tersusun atas benang-benang hifa yang menyerap zat air' },
-                    { key: 'D', value: 'Menghasilkan spora berdinding kitin untuk bertahan di musim kering' }
-                ]
-            },
-            {
-                id: 10,
-                text: "Pembuatan kawasan konservasi Taman Nasional Komodo merupakan bentuk perlindungan hewan endemik Indonesia. Pelestarian ini dilakukan secara in-situ. Mengapa strategi pelestarian in-situ lebih diutamakan untuk menjaga kelangsungan jangka panjang spesies endemik langka daripada metode ex-situ?",
-                options: [
-                    { key: 'A', value: 'In-situ memerlukan biaya buatan yang jauh lebih mahal untuk membangun kandang khusus' },
-                    { key: 'B', value: 'In-situ memungkinkan spesies mempertahankan habitat, perilaku alami, dan proses berkembang biaknya di alam' },
-                    { key: 'C', value: 'Ex-situ menyebabkan hewan tidak bisa bereproduksi sama sekali' },
-                    { key: 'D', value: 'In-situ memindahkan seluruh populasi ke lingkungan buatan manusia yang steril' }
-                ]
-            },
-            {
-                id: 11,
-                text: "Perhatikan diagram skematis jalur peredaran darah manusia berikut!<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/refs/heads/main/soal%20ipa%20nomer%2011.jpg\" class=\"w-full max-w-md mx-auto my-4 rounded-lg shadow-sm border\" alt=\"Gambar Soal 11\"><br>Berdasarkan diagram di atas, pernyataan yang benar mengenai kandungan gas dalam pembuluh darah P dan Q adalah ....",
-                options: [
-                    { key: 'A', value: 'Pembuluh P (Arteri Pulmonalis) kaya akan O&sub2;, sedangkan Pembuluh Q (Vena Pulmonalis) kaya akan CO&sub2;' },
-                    { key: 'B', value: 'Pembuluh P (Vena Pulmonalis) kaya akan CO&sub2;, sedangkan Pembuluh Q (Arteri Pulmonalis) kaya akan O&sub2;' },
-                    { key: 'C', value: 'Pembuluh P (Arteri Pulmonalis) kaya akan CO&sub2;, sedangkan Pembuluh Q (Vena Pulmonalis) kaya akan O&sub2;' },
-                    { key: 'D', value: 'Kedua pembuluh P dan Q memiliki kadar O&sub2; dan CO&sub2; yang relatif seimbang' }
-                ]
-            },
-            {
-                id: 12,
-                text: "Seorang anak mengikuti kegiatan jelajah alam pada siang hari yang sangat panas. Selama kegiatan, ia banyak berkeringat tetapi hanya minum sedikit air. Ketika buang air kecil, volume urine yang dihasilkan lebih sedikit dan warnanya lebih pekat. Kesimpulan yang paling tepat berdasarkan kondisi tersebut adalah ....",
-                options: [
-                    { key: 'A', value: 'Ginjal mengurangi jumlah air yang dikeluarkan agar keseimbangan cairan tubuh tetap terjaga.' },
-                    { key: 'B', value: 'Ginjal mengeluarkan lebih banyak air untuk menurunkan suhu tubuh.' },
-                    { key: 'C', value: 'Kandung kemih menyerap kembali air sehingga urine menjadi lebih pekat.' },
-                    { key: 'D', value: 'Kulit menghentikan proses berkeringat sehingga volume urine berkurang.' }
-                ]
-            },
-            {
-                id: 13,
-                text: "Seorang pasien mengalami gangguan pencernaan dengan gejala lemak dalam makanan tidak dapat dipecah menjadi butiran kecil (diemulsikan) dengan baik, sehingga banyak lemak yang keluar bersama feses. Organ pencernaan yang mengalami kerusakan fungsi atau tersumbat salurannya adalah ....",
-                options: [
-                    { key: 'A', value: 'Lambung, karena kegagalan produksi asam klorida (HCl)' },
-                    { key: 'B', value: 'Hati/Kantung Empedu, karena aliran cairan empedu terganggu' },
-                    { key: 'C', value: 'Usus besar, karena tidak mampu menyerap air secara optimal' },
-                    { key: 'D', value: 'Kelenjar ludah, karena kekurangan enzim ptialin/amilase' }
-                ]
-            },
-            {
-                id: 14,
-                text: "Seorang siswa melakukan percobaan berikut: <br>Tanaman pot disiram air secukupnya. Permukaan atas dan bawah daun diolesi vaselin, lalu ditutup plastik transparan dan diletakkan di bawah terik matahari. Setelah 4 jam, tidak tampak titik-titik air di dinding dalam plastik. Fenomena ini terjadi karena vaselin ....",
-                options: [
-                    { key: 'A', value: 'Menghambat penyerapan foton cahaya matahari oleh klorofil' },
-                    { key: 'B', value: 'Menyumbat stomata sehingga menutup saluran transpirasi dan pertukaran gas' },
-                    { key: 'C', value: 'Merusak sel pembuluh xilem sehingga air tidak dapat naik ke daun' },
-                    { key: 'D', value: 'Mempercepat proses gutasi di malam hari' }
-                ]
-            },
-            {
-                id: 15,
-                text: "Perhatikan gambar berikut.<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/refs/heads/main/soal%20ipa%20nomer%2015.jpg\" class=\"w-full max-w-md mx-auto my-4 rounded-lg shadow-sm border\" alt=\"Gambar Soal 15\"><br>Seorang pasien mengalami kerusakan pada jonjot usus seperti pada gambar Q. Akibat yang paling mungkin terjadi pada pasien tersebut adalah ....",
-                options: [
-                    { key: 'A', value: 'Penyerapan zat makanan menjadi kurang optimal sehingga tubuh mudah kekurangan nutrisi.' },
-                    { key: 'B', value: 'Lambung menghasilkan lebih banyak asam untuk membantu penyerapan makanan.' },
-                    { key: 'C', value: 'Usus besar menyerap seluruh zat makanan yang tidak diserap usus halus.' },
-                    { key: 'D', value: 'Makanan lebih cepat dicerna karena permukaan usus menjadi lebih sempit.' }
-                ]
-            },
-            {
-                id: 16,
-                text: "Perhatikan gambar berikut!<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/refs/heads/main/soal%20ipa%20nomer%2016.jpg\" class=\"w-full max-w-lg mx-auto my-4 rounded-lg shadow-sm border\" alt=\"Gambar Soal 16\"><br>Seorang petani menggunakan pestisida secara berlebihan sehingga sebagian pestisida terbawa air hujan ke sungai. Pestisida tersebut sulit terurai sehingga masuk ke rantai makanan seperti pada gambar.<br><br>Organisme yang diperkirakan memiliki kadar pestisida paling tinggi adalah ....",
-                options: [
-                    { key: 'A', value: 'Alga' },
-                    { key: 'B', value: 'Udang kecil' },
-                    { key: 'C', value: 'Ikan besar' },
-                    { key: 'D', value: 'Elang' }
-                ]
-            },
-            {
-                id: 17,
-                text: "Perhatikan piramida energi suatu ekosistem darat berikut!<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/refs/heads/main/soal%20ipa%20nomer%2017.jpg\" class=\"w-full max-w-md mx-auto my-4 rounded-lg shadow-sm border\" alt=\"Gambar Soal 17\"><br>Jika hanya sekitar 10% energi berpindah ke Tingkat trofik berikutnya, besar energi pada Tingkat trofik IV (X) adalah ....",
-                options: [
-                    { key: 'A', value: '10 Joule; sisa energi terbuang sebagai panas respirasi, metabolisme, dan zat sisa/ekskresi' },
-                    { key: 'B', value: '100 Joule; sisa energi tersimpan abadi di dalam tanah' },
-                    { key: 'C', value: '1 Joule; sisa energi diserap oleh dekomposer tanpa ada yang terbuang sebagai panas' },
-                    { key: 'D', value: '1.000 Joule; energi terus bertambah seiring tingginya posisi trofik' }
-                ]
-            },
-            {
-                id: 18,
-                text: "Akibat perubahan iklim dan pembukaan lahan, populasi serangga pemakan daun di sebuah hutan lindung melonjak drastis secara tiba-tiba. Upaya paling tepat untuk mengendalikan populasi serangga tanpa merusak keseimbangan ekosistem adalah ....",
-                options: [
-                    { key: 'A', value: 'Menyemprotkan pestisida kimia sintetis dosis tinggi ke seluruh area hutan' },
-                    { key: 'B', value: 'Membakar sebagian vegetasi hutan agar habitat serangga musnah' },
-                    { key: 'C', value: 'Melepaskan predator alami serangga seperti burung pemakan serangga, secara terukur' },
-                    { key: 'D', value: 'Menebang semua pohon yang daunnya dimakan oleh serangga tersebut' }
-                ]
-            },
-            {
-                id: 19,
-                text: "Dalam ekosistem padang rumput, terjadi hubungan interaksi antara semut dan pohon Acacia. Semut membuat sarang di dalam duri berongga pohon Acacia dan memakan cairan manis yang dihasilkan tanaman. Sebagai imbalannya, semut menyerang herbivora yang mencoba memakan daun Acacia. Bentuk interaksi ini tergolong ....",
-                options: [
-                    { key: 'A', value: 'Parasitisme, karena semut merugikan struktur duri pohon Acacia' },
-                    { key: 'B', value: 'Komensalisme, karena hanya semut yang diuntungkan tanpa merugikan pohon' },
-                    { key: 'C', value: 'Mutualisme, karena kedua organisme saling mendapatkan keuntungan kelangsungan hidup' },
-                    { key: 'D', value: 'Predasi, karena semut memangsa bagian tumbuh-tumbuhan secara langsung' }
-                ]
-            },
-            {
-                id: 20,
-                text: "Perhatikan hasil pengamatan populasi organisme di sebuah kolam berikut!<br><br><div class=\"overflow-x-auto\"><table class=\"w-full text-sm text-left border-collapse border border-gray-300 mb-4\"><thead><tr class=\"bg-gray-100\"><th class=\"border border-gray-300 px-3 py-2\">Organisme</th><th class=\"border border-gray-300 px-3 py-2\">Sebelum Ikan Predator Dilepas</th><th class=\"border border-gray-300 px-3 py-2\">Setelah Ikan Predator Dilepas</th></tr></thead><tbody><tr><td class=\"border border-gray-300 px-3 py-2\">Ikan kecil</td><td class=\"border border-gray-300 px-3 py-2 text-center\">120</td><td class=\"border border-gray-300 px-3 py-2 text-center\">45</td></tr><tr><td class=\"border border-gray-300 px-3 py-2\">Larva nyamuk</td><td class=\"border border-gray-300 px-3 py-2 text-center\">300</td><td class=\"border border-gray-300 px-3 py-2 text-center\">580</td></tr><tr><td class=\"border border-gray-300 px-3 py-2\">Tumbuhan air</td><td class=\"border border-gray-300 px-3 py-2 text-center\">180</td><td class=\"border border-gray-300 px-3 py-2 text-center\">120</td></tr></tbody></table></div>Berdasarkan hasil pengamatan tersebut, kesimpulan yang paling tepat adalah ....",
-                options: [
-                    { key: 'A', value: 'Bertambahnya ikan predator menyebabkan populasi ikan kecil menurun sehingga larva nyamuk meningkat.' },
-                    { key: 'B', value: 'Bertambahnya ikan predator menyebabkan semua organisme di kolam bertambah.' },
-                    { key: 'C', value: 'Larva nyamuk meningkat karena tumbuhan air bertambah.' },
-                    { key: 'D', value: 'Penurunan tumbuhan air tidak berhubungan dengan perubahan populasi organisme lain.' }
-                ]
-            },
-            {
-                id: 21,
-                text: "Sebuah peti bermassa 20 kg didorong di atas lantai licin tanpa gesekan dengan gaya konstan 40 N selama 4 detik dari keadaan diam. Jarak yang ditempuh peti selama 4 detik adalah .... ",
-                options: [
-                    { key: 'A', value: '8 m' },
-                    { key: 'B', value: '16 m' },
-                    { key: 'C', value: '32 m' },
-                    { key: 'D', value: '80 m' }
-                ]
-            },
-            {
-                id: 22,
-                text: "Tiga gaya bekerja pada sebuah benda di bidang datar seperti gambar berikut.<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/refs/heads/main/soal%20ipa%20nomer%2022.jpg\" class=\"w-full max-w-md mx-auto my-4 rounded-lg shadow-sm border\" alt=\"Gambar Soal 22\"><br>Jika massa benda adalah 6 kg, percepatan yang dialami oleh benda tersebut dan arah geraknya adalah .... ",
-                options: [
-                    { key: 'A', value: '5 m/s&sup2; ke arah kanan' },
-                    { key: 'B', value: '5 m/s&sup2; ke arah kiri' },
-                    { key: 'C', value: '10 m/s&sup2; ke arah kanan' },
-                    { key: 'D', value: '0 m/s&sup2; (benda diam)' }
-                ]
-            },
-            {
-                id: 23,
-                text: "Perhatikan sistem tuas/pengungkit berikut! <br><div class=\"w-full max-w-sm mx-auto h-24 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg flex flex-col items-center justify-center my-4 text-sm text-gray-500 font-medium\"><span>[ Area Gambar Sistem Tuas ]</span></div>Sebuah batu memiliki berat 600 N akan diangkat menggunakan batang besi sepanjang 2 meter. Titik tumpu diletakkan pada jarak 0,5 m dari batu. Besar gaya kuasa minimum (F) yang harus diberikan di ujung lainnya agar batu dapat terangkat adalah .... ",
-                options: [
-                    { key: 'A', value: '150 N' },
-                    { key: 'B', value: '200 N' },
-                    { key: 'C', value: '300 N' },
-                    { key: 'D', value: '600 N' }
-                ]
-            },
-            {
-                id: 24,
-                text: "Dua bola A (massa A = 4 kg) dan bola B (massa B = 1 kg) dijatuhkan bersamaan dari ketinggian 10 m di dalam tabung hampa udara tanpa kecepatan awal. Pernyataan yang tepat mengenai gerak kedua bola tersebut adalah .... ",
-                options: [
-                    { key: 'A', value: 'Bola A sampai di dasar lebih dahulu karena memiliki gaya gravitasi dan massa lebih besar' },
-                    { key: 'B', value: 'Bola B sampai di dasar lebih dahulu karena memiliki hambatan udara lebih kecil' },
-                    { key: 'C', value: 'Kedua bola sampai di dasar pada waktu yang bersamaan karena percepatan gravitasinya sama dan tidak ada hambatan udara' },
-                    { key: 'D', value: 'Waktu jatuh bola A dua kali lipat lebih cepat dibanding bola B' }
-                ]
-            },
-            {
-                id: 25,
-                text: "Sebuah mobil mainan bermassa 2 kg bergerak dengan kecepatan awal 3 m/s. Dika mendorong mobil mainan dengan gaya 4 N searah geraknya hingga berpindah sejauh 5 m. Usaha oleh gaya dorong Dika dan energi kinetik akhir mobil mainan berturut-turut adalah ....",
-                options: [
-                    { key: 'A', value: '20 Joule dan 29 Joule' },
-                    { key: 'B', value: '20 Joule dan 9 Joule' },
-                    { key: 'C', value: '10 Joule dan 19 Joule' },
-                    { key: 'D', value: '40 Joule dan 49 Joule' }
-                ]
-            },
-            {
-                id: 26,
-                text: "Dua gelas kaca saling bertumpuk rapat sehingga sulit dilepaskan (Gelas A berada di dalam Gelas B). Cara yang paling tepat untuk memisahkan kedua gelas tanpa memecahkannya adalah .... ",
-                options: [
-                    { key: 'A', value: 'Tuangkan air panas ke dalam Gelas A dan celupkan Gelas B ke dalam air es' },
-                    { key: 'B', value: 'Tuangkan air es ke dalam Gelas A dan celupkan Gelas B ke dalam wadah berisi air panas' },
-                    { key: 'C', value: 'Panaskan kedua gelas secara bersamaan di atas kompor gas' },
-                    { key: 'D', value: 'Mendinginkan kedua gelas di dalam freezer selama beberapa hari' }
-                ]
-            },
-            {
-                id: 27,
-                text: "Sebuah benda padat tak beraturan dimasukkan ke dalam gelas ukur berisi air 50 mL. Setelah benda dicelupkan, volume air bertambah menjadi 85 mL. Ketika benda tersebut ditimbang pada neraca lengan, massanya menunjukkan angka 280 gram. Massa jenis benda tersebut adalah .... ",
-                options: [
-                    { key: 'A', value: '3,29 g/cm&sup3;' },
-                    { key: 'B', value: '8,00 g/cm&sup3;' },
-                    { key: 'C', value: '5,60 g/cm&sup3;' },
-                    { key: 'D', value: '2,80 g/cm&sup3;' }
-                ]
-            },
-            {
-                id: 28,
-                text: "Perhatikan hasil percobaan berikut!<br>Empat benda dimasukkan ke dalam gelas yang berisi air seperti pada gambar.<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/refs/heads/main/soal%20ipa%20nomer%2028.jpg\" class=\"w-full max-w-lg mx-auto my-4 rounded-lg shadow-sm border\" alt=\"Gambar Soal 28\"><br>Berdasarkan gambar tersebut, urutan massa jenis benda dari yang terbesar hingga terkecil adalah ....",
-                options: [
-                    { key: 'A', value: 'R &ndash; Q &ndash; S &ndash; P' },
-                    { key: 'B', value: 'Q &ndash; R &ndash; S &ndash; P' },
-                    { key: 'C', value: 'R &ndash; S &ndash; Q &ndash; P' },
-                    { key: 'D', value: 'S &ndash; R &ndash; Q &ndash; P' }
-                ]
-            },
-            {
-                id: 29,
-                text: "Tabel hasil pengujian asam-basa beberapa larutan menggunakan kertas lakmus:<br><br><table class=\"w-full text-sm text-left border-collapse border border-gray-300 mb-4\"><thead><tr class=\"bg-gray-100\"><th class=\"border border-gray-300 px-3 py-2\">Larutan</th><th class=\"border border-gray-300 px-3 py-2\">Warna Lakmus Merah Setelah Dicelupkan</th><th class=\"border border-gray-300 px-3 py-2\">Warna Lakmus Biru Setelah Dicelupkan</th></tr></thead><tbody><tr><td class=\"border border-gray-300 px-3 py-2 text-center font-bold\">P</td><td class=\"border border-gray-300 px-3 py-2 text-red-600 font-medium\">Merah</td><td class=\"border border-gray-300 px-3 py-2 text-red-600 font-medium\">Merah</td></tr><tr><td class=\"border border-gray-300 px-3 py-2 text-center font-bold\">Q</td><td class=\"border border-gray-300 px-3 py-2 text-blue-600 font-medium\">Biru</td><td class=\"border border-gray-300 px-3 py-2 text-blue-600 font-medium\">Biru</td></tr><tr><td class=\"border border-gray-300 px-3 py-2 text-center font-bold\">R</td><td class=\"border border-gray-300 px-3 py-2 text-red-600 font-medium\">Merah</td><td class=\"border border-gray-300 px-3 py-2 text-blue-600 font-medium\">Biru</td></tr><tr><td class=\"border border-gray-300 px-3 py-2 text-center font-bold\">S</td><td class=\"border border-gray-300 px-3 py-2 text-blue-600 font-medium\">Biru</td><td class=\"border border-gray-300 px-3 py-2 text-blue-600 font-medium\">Biru</td></tr></tbody></table>Berdasarkan data tabel di atas, kelompok larutan yang bersifat basa ditunjukkan oleh .... ",
-                options: [
-                    { key: 'A', value: 'Larutan P dan R' },
-                    { key: 'B', value: 'Larutan Q dan S' },
-                    { key: 'C', value: 'Larutan P saja' },
-                    { key: 'D', value: 'Larutan R saja' }
-                ]
-            },
-            {
-                id: 30,
-                text: "Pembakaran kayu menghasilkan abu dan asap, sedangkan pemanasan lilin hingga meleleh lalu membeku kembali merupakan dua fenomena perubahan wujud/zat yang berbeda. Kesimpulan analisis yang tepat adalah .... ",
-                options: [
-                    { key: 'A', value: 'Pembakaran kayu adalah perubahan fisika; Pelelehan lilin adalah perubahan kimia' },
-                    { key: 'B', value: 'Pembakaran kayu adalah perubahan kimia karena menghasilkan zat baru yang ireversibel; Pelelehan lilin adalah perubahan fisika karena tidak menghasilkan zat baru' },
-                    { key: 'C', value: 'Kedua proses merupakan perubahan kimia karena sama-sama melibatkan energi panas' },
-                    { key: 'D', value: 'Kedua proses merupakan perubahan fisika karena sifat molekul dasarnya tetap sama' }
-                ]
-            },
-            {
-                id: 31,
-                text: "Perhatikan skema konfigurasi sakelar dan lampu berikut!<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/refs/heads/main/soal%20ipa%20nomer%2031.jpg\" class=\"w-full max-w-md mx-auto my-4 rounded-lg shadow-sm border\" alt=\"Gambar Soal 31\"><br>Jika Sakelar S1 ditutup dan Sakelar S2 dibuka, keadaan yang terjadi pada ketiga lampu adalah ....",
-                options: [
-                    { key: 'A', value: 'Lampu L1, L2, dan L3 semuanya menyala dengan kecerahan sama' },
-                    { key: 'B', value: 'Lampu L1 dan L2 menyala, sedangkan Lampu L3 padam' },
-                    { key: 'C', value: 'Lampu L3 menyala, sedangkan L1 dan L2 padam' },
-                    { key: 'D', value: 'Semua lampu padam karena terjadi hubungan arus pendek (korsleting)' }
-                ]
-            },
-            {
-                id: 32,
-                text: "Sebuah benda bermassa 2 kg berada di tepi meja setinggi 1,5 m dari lantai. Jika percepatan gravitasi bumi g = 10 m/s&sup2;, berapa energi potensial benda terhadap lantai? Saat benda berada pada ketinggian 0,5 m di atas lantai, berapakah energi kinetiknya? (Abaikan gesekan udara).",
-                options: [
-                    { key: 'A', value: 'Energi Potensial Awal = 30 Joule; Energi Kinetik = 20 Joule' },
-                    { key: 'B', value: 'Energi Potensial Awal = 30 Joule; Energi Kinetik = 10 Joule' },
-                    { key: 'C', value: 'Energi Potensial Awal = 15 Joule; Energi Kinetik = 30 Joule' },
-                    { key: 'D', value: 'Energi Potensial Awal = 20 Joule; Energi Kinetik = 20 Joule' }
-                ]
-            },
-            {
-                id: 33,
-                text: "Empat batang yang terbuat dari aluminium, tembaga, kaca, dan kayu memiliki ukuran dan panjang yang sama. Salah satu ujung dari setiap batang diletakkan di atas api secara bersamaan, sedangkan ujung lainnya diberi mentega. Mentega yang akan meleleh paling cepat dan mekanisme perpindahan kalor yang terjadi pada batang tersebut berturut-turut adalah ....",
-                options: [
-                    { key: 'A', value: 'Batang Kayu; Radiasi' },
-                    { key: 'B', value: 'Batang Tembaga; Konduksi' },
-                    { key: 'C', value: 'Batang Kaca; Konveksi' },
-                    { key: 'D', value: 'Batang Aluminium; Evaporasi' }
-                ]
-            },
-            {
-                id: 34,
-                text: "Sebuah panel surya yang dipasang di atap rumah menerima energi matahari sebesar 1.000 Joule setiap detik. Jika efisiensi panel surya tersebut adalah 18%, besar energi listrik yang dapat dihasilkan oleh panel surya tersebut selama 1 menit adalah ....",
-                options: [
-                    { key: 'A', value: '180 Joule' },
-                    { key: 'B', value: '1.800 Joule' },
-                    { key: 'C', value: '10.800 Joule' },
-                    { key: 'D', value: '60.000 Joule' }
-                ]
-            },
-            {
-                id: 35,
-                text: "Sebuah magnet batang dipotong menjadi dua bagian yang sama panjang tepat di tengah-tengah antara kutub Utara (U) dan Selatan (S). Analisis yang paling tepat mengenai sifat kemagnetan hasil potongan tersebut adalah ....",
-                options: [
-                    { key: 'A', value: 'Potongan pertama hanya memiliki kutub Utara saja, dan potongan kedua hanya memiliki kutub Selatan saja' },
-                    { key: 'B', value: 'Sifat kemagnetannya hilang sama sekali dari kedua potongan tersebut' },
-                    { key: 'C', value: 'Masing-masing potongan akan membentuk magnet baru yang utuh lengkap dengan kutub Utara dan kutub Selatan' },
-                    { key: 'D', value: 'Kedua bagian akan saling tolak-menolak jika didekatkan pada bekas lokasi potongan' }
-                ]
-            },
-            {
-                id: 36,
-                text: "Perhatikan gambar konfigurasi kedudukan Matahari, Bumi, dan Bulan berikut!<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/refs/heads/main/soal%20ipa%20nomer%2036.jpg\" class=\"w-full max-w-md mx-auto my-4 rounded-lg shadow-sm border\" alt=\"Gambar Soal 36\"><br>Analisis fenomena pasang surut air laut di Bumi ketika Bulan berada di Posisi X dibandingkan dengan Posisi Y adalah ....",
-                options: [
-                    { key: 'A', value: 'Di posisi X terjadi Pasang Perbani (air laut surut terendah); di posisi Y terjadi Pasang Purnama' },
-                    { key: 'B', value: 'Di posisi X terjadi Pasang Purnama (pasang air laut tertinggi) karena gaya gravitasi Bulan dan Matahari saling memperkuat; di posisi Y terjadi Pasang Perbani' },
-                    { key: 'C', value: 'Pasang air laut di posisi X dan Y sama besar karena jarak Bulan ke Bumi konstan' },
-                    { key: 'D', value: 'Di posisi X tidak terjadi pasang air laut sama sekali karena terhalang oleh bayangan Bumi' }
-                ]
-            },
-            {
-                id: 37,
-                text: "Perhatikan beberapa fenomena berikut:<br><ol class=\"list-decimal pl-5 mt-2 space-y-1 mb-4\"><li>Terjadinya gerak semu harian Matahari dari timur ke barat.</li><li>Perbedaan lamanya waktu siang dan malam di berbagai belahan bumi.</li><li>Pergantian siang dan malam.</li><li>Perubahan rasi bintang yang tampak di langit dari bulan ke bulan.</li></ol>Dampak yang secara khusus diakibatkan oleh Revolusi Bumi mengelilingi Matahari ditunjukkan oleh nomor ....",
-                options: [
-                    { key: 'A', value: '1 dan 3' },
-                    { key: 'B', value: '2 dan 4' },
-                    { key: 'C', value: '1 dan 2' },
-                    { key: 'D', value: '3 dan 4' }
-                ]
-            },
-            {
-                id: 38,
-                text: "Hukum Kepler III menyatakan semakin jauh letak planet dari Matahari, maka semakin lama waktu yang diperlukan untuk mengelilingi Matahari. Berdasarkan prinsip tersebut, urutan planet dari periode revolusi tercepat hingga terlama adalah ....",
-                options: [
-                    { key: 'A', value: 'Neptunus &minus; Saturnus &minus; Mars &minus; Bumi &minus; Merkurius' },
-                    { key: 'B', value: 'Merkurius &minus; Venus &minus; Bumi &minus; Mars &minus; Jupiter' },
-                    { key: 'C', value: 'Yupiter &minus; Mars &minus; Bumi &minus; Venus &minus; Merkurius' },
-                    { key: 'D', value: 'Bumi &minus; Mars &minus; Merkurius &minus; Venus &minus; Saturnus' }
-                ]
-            },
-            {
-                id: 39,
-                text: "Atmosfer Bumi tersusun atas beberapa lapisan: Troposfer, Stratosfer, Mesosfer, Termosfer, dan Eksosfer. Lapisan yang menjadi tempat berlangsungnya semua fenomena cuaca (seperti hujan, awan, angin) serta lapisan yang mengandung ozon (O&sub3;) penyerap sinar ultraviolet berturut-turut adalah ....",
-                options: [
-                    { key: 'A', value: 'Troposfer dan Stratosfer' },
-                    { key: 'B', value: 'Stratosfer dan Mesosfer' },
-                    { key: 'C', value: 'Termosfer dan Eksosfer' },
-                    { key: 'D', value: 'Troposfer dan Termosfer' }
-                ]
-            },
-            {
-                id: 40,
-                text: "Fenomena Gerhana Matahari Total terjadi ketika Bumi, Bulan, dan Matahari berada pada satu garis lurus. Mengapa wilayah di Bumi yang dapat menyaksikan Gerhana Matahari Total jalurnya sangat sempit dibandingkan wilayah yang menyaksikan Gerhana Bulan Total?",
-                options: [
-                    { key: 'A', value: 'Karena piringan Bulan memancarkan cahayanya sendiri yang membias di atmosfer bumi' },
-                    { key: 'B', value: 'Ukuran Bulan jauh lebih kecil dari Bumi, sehingga bayangan inti (umbra) Bulan yang jatuh di permukaan bumi mencakup area yang sangat sempit' },
-                    { key: 'C', value: 'Karena gerhana matahari hanya terjadi pada saat bulan separuh' },
-                    { key: 'D', value: 'Kecepatan rotasi bumi melambat secara drastis saat terjadi gerhana matahari' }
-                ]
-            }
-        ];
+        (function() {
+            'use strict';
 
-        // State Variabel
-        let currentIndex = 0;
-        let answers = {}; // { 0: 'B', 1: 'A', ... }
-        let flagged = new Set(); // Menyimpan index soal yang ditandai ragu-ragu
-        let baseFontSize = 16; // Ukuran font default (16px / text-base)
-        
-        // Konstanta Class Ukuran Font
-        const fontClasses = ['text-sm', 'text-base', 'text-lg', 'text-xl', 'text-2xl'];
-        let fontClassIndex = 1; // Default text-base
+            // SISTEM PENANGKAP ERROR GLOBAL
+            window.onerror = function(msg, url, lineNo, columnNo, error) {
+                const toast = document.getElementById('systemErrorToast');
+                const text = document.getElementById('systemErrorText');
+                if(toast && text) {
+                    text.innerHTML = `Info: ${msg} <br>L: ${lineNo} C: ${columnNo}`;
+                    toast.classList.remove('hidden');
+                }
+                return false; 
+            };
 
-        // Inisialisasi Aplikasi
-        function initApp() {
-            startTimer(120 * 60); // 120 menit
-            renderGrid();
-            loadQuestion(0);
-            initWebcam(); // Panggil fungsi kamera
-        }
-
-        function initWebcam() {
-            const video = document.getElementById('proctorWebcam');
-            const status = document.getElementById('webcamStatus');
-            const indicator = document.getElementById('recordingIndicator');
-            const recText = document.getElementById('recordingText');
-
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                // Meminta izin video
-                navigator.mediaDevices.getUserMedia({ video: true })
-                    .then(function(stream) {
-                        video.srcObject = stream;
-                        status.style.display = 'none'; // Sembunyikan teks
-                        indicator.classList.remove('hidden'); // Munculkan titik merah
-                        recText.innerText = 'Pengawasan Aktif';
-                        recText.classList.replace('text-gray-500', 'text-red-600');
-                    })
-                    .catch(function(error) {
-                        console.warn("Kamera tidak diizinkan atau tidak ditemukan:", error);
-                        status.innerText = "Kamera diblokir / tidak ditemukan";
-                        status.classList.replace('text-gray-400', 'text-red-400');
-                    });
-            } else {
-                status.innerText = "Browser tidak mendukung akses kamera";
-                status.classList.replace('text-gray-400', 'text-red-400');
-            }
-        }
-
-        function renderGrid() {
-            const grid = document.getElementById('questionGrid');
-            grid.innerHTML = '';
+            // KONFIGURASI SUPABASE
+            const SUPABASE_URL = 'https://lsxwhwptaehjbszlupin.supabase.co'; 
+            const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzeHdod3B0YWVoamJzemx1cGluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyMTEyOTAsImV4cCI6MjEwMDc4NzI5MH0.ksDlmFGVqTsMQ14kth84UdH_imOTdkC308kcfYVOiBQ';
             
-            questions.forEach((q, index) => {
-                const btn = document.createElement('button');
-                btn.className = `w-full aspect-square min-h-[35px] flex items-center justify-center text-sm sm:text-base font-semibold rounded border transition-all duration-200 relative focus:outline-none `;
+            let supabaseClient;
+            if (window.supabase) {
+                supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            } else {
+                throw new Error("Library Supabase gagal dimuat.");
+            }
+
+            // DATA SOAL IPA (40 Soal)
+            const questions = [
+                { id: 1, text: "Seorang siswa meneliti pengaruh jarak lampu terhadap laju fotosintesis Hydrilla. Saat percobaan diulang, suhu ruangan berubah sehingga jumlah gelembung udara yang dihasilkan tidak stabil. Langkah yang paling tepat agar hasil percobaan hanya dipengaruhi oleh jarak lampu adalah ....", options: [{ key: 'A', value: 'Menambah jumlah tanaman Hydrilla di setiap gelas kimia agar gelembung lebih banyak' }, { key: 'B', value: 'Menjaga suhu air tetap konstan dengan meletakkan penahan panas di antara lampu dan gelas kimia' }, { key: 'C', value: 'Mengubah jenis lampu menjadi lampu warna-warni untuk meningkatkan estetika percobaan' }, { key: 'D', value: 'Mengganti variabel terikat dari jumlah gelembung menjadi perubahan warna daun Hydrilla' }] },
+                { id: 2, text: "Seorang siswa ingin mengetahui pengaruh jumlah pupuk terhadap pertumbuhan tanaman kacang hijau. Ia menanam empat tanaman yang memiliki jenis, umur, dan ukuran yang sama. Semua tanaman disiram dengan jumlah air yang sama dan diletakkan di tempat yang sama. Perbedaannya hanya pada jumlah pupuk yang diberikan.<br><br>Mengapa langkah tersebut penting dilakukan?", options: [{ key: 'A', value: 'Agar semua tanaman tumbuh dengan tinggi yang sama.' }, { key: 'B', value: 'Agar pengaruh jumlah pupuk terhadap pertumbuhan tanaman dapat diamati dengan lebih tepat.' }, { key: 'C', value: 'Agar tanaman tidak memerlukan sinar matahari.' }, { key: 'D', value: 'Agar waktu pengamatan menjadi lebih singkat.' }] },
+                { id: 3, text: "Seorang siswa mengukur panjang sebuah pensil menggunakan penggaris. Hasil pengukuran pertama menunjukkan panjang pensil 15,2 cm, sedangkan pengukuran kedua menunjukkan 15,8 cm. Langkah yang paling tepat dilakukan siswa agar memperoleh hasil pengukuran yang lebih meyakinkan adalah ....", options: [{ key: 'A', value: 'Memilih hasil pengukuran yang paling besar.' }, { key: 'B', value: 'Mengulang pengukuran beberapa kali, kemudian menghitung rata-rata hasil pengukuran.' }, { key: 'C', value: 'Menjumlahkan kedua hasil pengukuran.' }, { key: 'D', value: 'Menggunakan hasil pengukuran pertama saja.' }] },
+                { id: 4, text: "Seorang siwa membuat hipotesis: \"Semakin kasar permukaan bidang miring, maka semakin lama waktu yang dibutuhkan kelereng untuk mencapai dasar.\"<br><br>Untuk membuktikan hipotesis ini melalui percobaan, variabel bebas, variabel terikat, dan variabel kontrol yang harus ditetapkan berturut-turut adalah ....", options: [{ key: 'A', value: 'Waktu tempuh; jenis permukaan bidang; sudut kemiringan bidang' }, { key: 'B', value: 'Jenis permukaan bidang; waktu tempuh kelereng; sudut kemiringan bidang dan massa kelereng' }, { key: 'C', value: 'Sudut kemiringan bidang; massa kelereng; jenis permukaan bidang' }, { key: 'D', value: 'Massa kelereng; Jenis permukaan bidang; waktu tempuh kelereng' }] },
+                { id: 5, text: "Perhatikan data hasil pengamatan penguapan air berikut!<br>Setiap wadah adalah 100 mL dan diamati selama 2 jam.<br><br><table class=\"w-full text-sm text-left border-collapse border border-gray-300\"><thead><tr class=\"bg-gray-100\"><th class=\"border border-gray-300 px-3 py-2\">Wadah</th><th class=\"border border-gray-300 px-3 py-2\">Luas Permukaan</th><th class=\"border border-gray-300 px-3 py-2\">Sisa Air</th></tr></thead><tbody><tr><td class=\"border border-gray-300 px-3 py-2 text-center\">P</td><td class=\"border border-gray-300 px-3 py-2 text-center\">10 cm&sup2;</td><td class=\"border border-gray-300 px-3 py-2 text-center\">92 mL</td></tr><tr><td class=\"border border-gray-300 px-3 py-2 text-center\">Q</td><td class=\"border border-gray-300 px-3 py-2 text-center\">25 cm&sup2;</td><td class=\"border border-gray-300 px-3 py-2 text-center\">80 mL</td></tr><tr><td class=\"border border-gray-300 px-3 py-2 text-center\">R</td><td class=\"border border-gray-300 px-3 py-2 text-center\">50 cm&sup2;</td><td class=\"border border-gray-300 px-3 py-2 text-center\">60 mL</td></tr><tr><td class=\"border border-gray-300 px-3 py-2 text-center\">S</td><td class=\"border border-gray-300 px-3 py-2 text-center\">100 cm&sup2;</td><td class=\"border border-gray-300 px-3 py-2 text-center\">20 mL</td></tr></tbody></table><br>Berdasarkan data eksperimen di atas, kesimpulan yang paling tepat mengenai hubungan luas permukaan wadah dengan laju penguapan air adalah ....", options: [{ key: 'A', value: 'Laju penguapan berbanding terbalik dengan luas permukaan wadah' }, { key: 'B', value: 'Laju penguapan berbanding lurus dengan luas permukaan wadah' }, { key: 'C', value: 'Sisa air terbanyak diperoleh pada wadah dengan luas permukaan paling besar' }, { key: 'D', value: 'Luas permukaan wadah tidak memengaruhi laju penguapan molekul air' }] },
+                { id: 6, text: "Di sebuah rawa di Kalimantan ditemukan organisme mikroskopis bersel tunggal. Organisme ini memiliki membran inti, bergerak menggunakan flagela, dan memiliki kloroplas sehingga dapat berfotosintesis saat terkena cahaya. Jika suasana gelap, organisme tersebut memperoleh makanan dengan menyerap zat organik dari lingkungannya. Berdasarkan karakteristiknya, organisme tersebut dikelompokkan dalam kingdom ....", options: [{ key: 'A', value: 'Monera, karena bersel tunggal dan mikroba pasif' }, { key: 'B', value: 'Plantae, karena memiliki kloroplas dan melakukan fotosintesis' }, { key: 'C', value: 'Fungi, karena mampu menyerap zat organik dari lingkungan lapuk' }, { key: 'D', value: 'Protista, karena organisme eukariotik bersel tunggal yang dapat berfotosintesis' }] },
+                { id: 7, text: "Perhatikan tabel karakter fisik empat jenis hewan vertebrata berikut:<br><br><div class=\"overflow-x-auto\"><table class=\"w-full text-sm text-left border-collapse border border-gray-300\"><thead><tr class=\"bg-gray-100\"><th class=\"border border-gray-300 px-2 py-2\">Hewan</th><th class=\"border border-gray-300 px-2 py-2\">Penutup Tubuh</th><th class=\"border border-gray-300 px-2 py-2\">Ruang Jantung</th><th class=\"border border-gray-300 px-2 py-2\">Suhu Tubuh</th><th class=\"border border-gray-300 px-2 py-2\">Cara Reproduksi</th></tr></thead><tbody><tr><td class=\"border border-gray-300 px-2 py-2 text-center font-bold\">W</td><td class=\"border border-gray-300 px-2 py-2\">Sisik kering</td><td class=\"border border-gray-300 px-2 py-2\">4 (sekat belum sempurna)</td><td class=\"border border-gray-300 px-2 py-2\">Poikiloterm</td><td class=\"border border-gray-300 px-2 py-2\">Ovipar/ovovivipar</td></tr><tr><td class=\"border border-gray-300 px-2 py-2 text-center font-bold\">X</td><td class=\"border border-gray-300 px-2 py-2\">Bulu</td><td class=\"border border-gray-300 px-2 py-2\">4 (sekat sempurna)</td><td class=\"border border-gray-300 px-2 py-2\">Homoioterm</td><td class=\"border border-gray-300 px-2 py-2\">Ovipar</td></tr><tr><td class=\"border border-gray-300 px-2 py-2 text-center font-bold\">Y</td><td class=\"border border-gray-300 px-2 py-2\">Kulit lembap</td><td class=\"border border-gray-300 px-2 py-2\">3</td><td class=\"border border-gray-300 px-2 py-2\">Poikiloterm</td><td class=\"border border-gray-300 px-2 py-2\">Ovipar</td></tr><tr><td class=\"border border-gray-300 px-2 py-2 text-center font-bold\">Z</td><td class=\"border border-gray-300 px-2 py-2\">Rambut</td><td class=\"border border-gray-300 px-2 py-2\">4 (sekat sempurna)</td><td class=\"border border-gray-300 px-2 py-2\">Homoioterm</td><td class=\"border border-gray-300 px-2 py-2\">Vivipar</td></tr></tbody></table></div><br>Berdasarkan data pada tabel di atas, kesimpulan yang paling tepat adalah ....", options: [{ key: 'A', value: 'Hewan W tergolong Amphibia, sedangkan Y tergolong Reptilia' }, { key: 'B', value: 'Hewan X tergolong Aves, sedangkan Z tergolong Mammalia' }, { key: 'C', value: 'Hewan W dan X memiliki suhu tubuh konstan (Homoioterm)' }, { key: 'D', value: 'Hewan Y dan Z memiliki sekat jantung sempurna' }] },
+                { id: 8, text: "Seorang siswa mengamati dua jenis tumbuhan. Ditemukan dua jenis flora: Tumbuhan A memilki pertulangan daun sejajar, tidak memiliki kambium, dan perhiasan bunga kelipatan 3. Sedangkan tumbuhan B memiliki pertulangan daun menyirip, memiliki kambium, dan perhiasan bunga kelipatan 5. Prediksi yang tepat mengenai struktur biji dan akar kedua tumbuhan tersebut adalah ....", options: [{ key: 'A', value: 'Tumbuhan A berkeping biji satu (monokotil) berakar serabut; Tumbuhan B berkeping biji dua (dikotil) berakar tunggang' }, { key: 'B', value: 'Tumbuhan A berkeping biji dua (dikotil) berakar tunggang; Tumbuhan B berkeping biji satu (monokotil) berakar serabut' }, { key: 'C', value: 'Tumbuhan A dan B merupakan anggota Gymnospermae' }, { key: 'D', value: 'Tumbuhan A tidak memiliki pembuluh xilem' }] },
+                { id: 9, text: "Rafflesia arnoldii merupakan tumbuhan endemik Sumatra yang sangat unik. Tumbuhan ini tidak memiliki akar, batang, maupun daun sejati, serta hidup menempel pada akar tumbuhan merambat. Alasan utama mengapa Rafflesia arnoldii dikelompokkan ke dalam Kingdom Plantae dan bukan Fungi adalah ....", options: [{ key: 'A', value: 'Menghasilkan bunga dan biji sebagai alat reproduksi' }, { key: 'B', value: 'Mampu menyerap nutrisi organik langsung dari sisa organisme' }, { key: 'C', value: 'Tubuhnya tersusun atas hifa' }, { key: 'D', value: 'Menghasilkan spora berdinding kitin' }] },
+                { id: 10, text: "Pembuatan kawasan konservasi Taman Nasional Komodo merupakan bentuk perlindungan hewan endemik. Pelestarian ini dilakukan secara in-situ. Mengapa strategi pelestarian in-situ lebih diutamakan untuk menjaga kelangsungan spesies endemik daripada metode ex-situ?", options: [{ key: 'A', value: 'In-situ memerlukan biaya buatan yang jauh lebih mahal' }, { key: 'B', value: 'In-situ memungkinkan spesies mempertahankan habitat dan perilaku alami ekosistem aslinya' }, { key: 'C', value: 'Ex-situ menyebabkan hewan tidak bisa bereproduksi' }, { key: 'D', value: 'In-situ memindahkan populasi ke lingkungan steril' }] },
+                { id: 11, text: "Perhatikan diagram skematis jalur peredaran darah manusia berikut!<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/soal%20ipa%20nomer%2011.jpg\" class=\"w-full max-w-md mx-auto my-4 rounded shadow border\" alt=\"Soal 11\"><br>Berdasarkan diagram di atas, pernyataan yang benar mengenai kandungan gas dalam pembuluh darah P (menuju paru-paru) dan Q (kembali dari paru-paru) adalah ....", options: [{ key: 'A', value: 'Pembuluh P kaya akan CO&sub2;, sedangkan Pembuluh Q kaya akan O&sub2;' }, { key: 'B', value: 'Pembuluh P kaya akan O&sub2;, sedangkan Pembuluh Q kaya akan CO&sub2;' }, { key: 'C', value: 'Kedua pembuluh P dan Q memiliki kadar O&sub2; yang tinggi' }, { key: 'D', value: 'Kadar gas di pembuluh P dan Q selalu sama' }] },
+                { id: 12, text: "Seorang anak mengikuti kegiatan jelajah alam pada siang hari yang panas. Selama kegiatan, ia banyak berkeringat tetapi hanya minum sedikit air. Ketika buang air kecil, volume urine yang dihasilkan sedikit dan warnanya pekat. Kesimpulan yang paling tepat berdasarkan kondisi tersebut adalah ....", options: [{ key: 'A', value: 'Ginjal menyerap kembali banyak air (reabsorpsi maksimal) agar cairan tubuh terjaga.' }, { key: 'B', value: 'Ginjal mengeluarkan air untuk menurunkan suhu tubuh.' }, { key: 'C', value: 'Kandung kemih menyerap racun tubuh.' }, { key: 'D', value: 'Kulit menghentikan proses berkeringat.' }] },
+                { id: 13, text: "Seorang pasien mengalami gangguan pencernaan dengan gejala lemak dalam makanan tidak dapat dipecah menjadi butiran kecil (diemulsikan), sehingga banyak lemak terbuang bersama feses. Organ pencernaan yang tersumbat salurannya adalah ....", options: [{ key: 'A', value: 'Lambung (asam klorida)' }, { key: 'B', value: 'Hati / Kantung Empedu (cairan empedu)' }, { key: 'C', value: 'Usus besar (penyerapan air)' }, { key: 'D', value: 'Kelenjar ludah (amilase)' }] },
+                { id: 14, text: "Percobaan: Tanaman disiram secukupnya. Permukaan atas dan bawah daun diolesi vaselin tebal, ditutup plastik, diletakkan di terik matahari. Setelah 4 jam, tidak tampak embun/titik air di dalam plastik. Fenomena ini terjadi karena vaselin ....", options: [{ key: 'A', value: 'Menghambat penyerapan foton' }, { key: 'B', value: 'Menyumbat stomata daun sehingga mencegah transpirasi' }, { key: 'C', value: 'Merusak pembuluh xilem' }, { key: 'D', value: 'Mempercepat proses gutasi' }] },
+                { id: 15, text: "Perhatikan gambar berikut.<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/soal%20ipa%20nomer%2015.jpg\" class=\"w-full max-w-sm mx-auto my-4 rounded shadow border\" alt=\"Soal 15\"><br>Seorang pasien mengalami kerusakan pada jonjot usus halus (villi). Akibat yang paling mungkin terjadi pada pasien tersebut adalah ....", options: [{ key: 'A', value: 'Lambung menghasilkan lebih banyak asam' }, { key: 'B', value: 'Usus besar mengambil alih penyerapan gizi' }, { key: 'C', value: 'Makanan lebih cepat hancur' }, { key: 'D', value: 'Penyerapan sari-sari makanan menjadi sangat menurun/kurang optimal' }] },
+                { id: 16, text: "Perhatikan gambar berikut!<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/soal%20ipa%20nomer%2016.jpg\" class=\"w-full max-w-md mx-auto my-4 rounded shadow border\" alt=\"Soal 16\"><br>Pestisida yang terbawa air sungai sulit terurai sehingga masuk ke rantai makanan. Organisme yang diperkirakan mengalami akumulasi pestisida paling tinggi (biomagnifikasi) adalah ....", options: [{ key: 'A', value: 'Elang (Konsumen Puncak)' }, { key: 'B', value: 'Ikan besar' }, { key: 'C', value: 'Udang kecil' }, { key: 'D', value: 'Alga' }] },
+                { id: 17, text: "Perhatikan piramida energi suatu ekosistem darat berikut!<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/soal%20ipa%20nomer%2017.jpg\" class=\"w-full max-w-sm mx-auto my-4 rounded shadow border\" alt=\"Soal 17\"><br>Jika energi Produsen adalah 10.000 Joule, dan hanya sekitar 10% energi berpindah ke tingkat trofik berikutnya, besar energi pada Konsumen Tingkat III (puncak) adalah ....", options: [{ key: 'A', value: '1.000 Joule' }, { key: 'B', value: '100 Joule' }, { key: 'C', value: '10 Joule' }, { key: 'D', value: '1 Joule' }] },
+                { id: 18, text: "Akibat perubahan iklim, populasi ulat bulu di hutan melonjak drastis. Upaya biologis paling tepat untuk mengendalikan populasi tersebut tanpa merusak ekosistem adalah ....", options: [{ key: 'A', value: 'Menyemprotkan insektisida dosis tinggi' }, { key: 'B', value: 'Membakar sebagian vegetasi hutan' }, { key: 'C', value: 'Melepaskan burung pemakan ulat secara terukur' }, { key: 'D', value: 'Menebang pohon yang dihinggapi ulat' }] },
+                { id: 19, text: "Dalam ekosistem padang rumput, semut membuat sarang di duri pohon Acacia dan memakan cairan manis pohon. Sebagai imbalannya, semut melindungi pohon dengan menggigit herbivora pemakan daun. Interaksi ini tergolong ....", options: [{ key: 'A', value: 'Mutualisme, karena saling menguntungkan kelangsungan hidup keduanya' }, { key: 'B', value: 'Komensalisme, karena hanya semut yang diuntungkan' }, { key: 'C', value: 'Parasitisme, karena semut merusak duri' }, { key: 'D', value: 'Amensalisme, karena pohon tidak terpengaruh' }] },
+                { id: 20, text: "Sebuah kolam awalnya berisi 120 ikan kecil, 300 larva nyamuk, dan 180 tumbuhan air. Setelah dimasukkan ikan predator, ikan kecil tersisa 45 ekor, larva nyamuk menjadi 580 ekor, dan tumbuhan air 120 buah. Kesimpulan yang tepat adalah ....", options: [{ key: 'A', value: 'Bertambahnya ikan predator mengurangi populasi ikan kecil, sehingga larva nyamuk meledak' }, { key: 'B', value: 'Ikan predator juga memakan tumbuhan air' }, { key: 'C', value: 'Larva nyamuk memakan tumbuhan air secara langsung' }, { key: 'D', value: 'Penurunan tumbuhan air disebabkan bertambahnya larva nyamuk' }] },
+                { id: 21, text: "Sebuah peti bermassa 20 kg didorong di lantai licin (tanpa gesekan) dengan gaya konstan 40 N dari keadaan diam. Jarak yang ditempuh peti selama 4 detik adalah .... (Petunjuk: a = F/m, s = &frac12;at&sup2;)", options: [{ key: 'A', value: '8 m' }, { key: 'B', value: '16 m' }, { key: 'C', value: '32 m' }, { key: 'D', value: '80 m' }] },
+                { id: 22, text: "Tiga gaya bekerja pada benda 6 kg: F1 = 15 N (ke kiri), F2 = 30 N (ke kanan), F3 = 15 N (ke kanan). Percepatan yang dialami benda tersebut dan arah geraknya adalah ....", options: [{ key: 'A', value: '5 m/s&sup2; ke arah kanan' }, { key: 'B', value: '10 m/s&sup2; ke arah kiri' }, { key: 'C', value: '5 m/s&sup2; ke arah kiri' }, { key: 'D', value: '0 m/s&sup2; (diam)' }] },
+                { id: 23, text: "Sebuah batu seberat 600 N akan diangkat dengan pengungkit 2 meter. Titik tumpu berjarak 0,5 m dari batu. Besar gaya kuasa minimum di ujung lainnya agar batu terangkat adalah ....", options: [{ key: 'A', value: '150 N' }, { key: 'B', value: '200 N' }, { key: 'C', value: '300 N' }, { key: 'D', value: '600 N' }] },
+                { id: 24, text: "Bola besi (4 kg) dan bola plastik (1 kg) dijatuhkan bersamaan dari ketinggian 10 m di dalam ruang hampa udara. Pernyataan yang tepat adalah ....", options: [{ key: 'A', value: 'Bola besi sampai lebih dahulu' }, { key: 'B', value: 'Bola plastik sampai lebih dahulu' }, { key: 'C', value: 'Kedua bola jatuh bersamaan karena tidak ada hambatan udara' }, { key: 'D', value: 'Bola besi jatuh dua kali lebih cepat' }] },
+                { id: 25, text: "Mobil mainan bermassa 2 kg bergerak dengan kecepatan awal 3 m/s (EK awal = 9 J). Tiba-tiba Dika mendorong searah dengan gaya 4 N sejauh 5 m. Berapakah Energi Kinetik akhir mobil mainan tersebut?", options: [{ key: 'A', value: '29 Joule' }, { key: 'B', value: '20 Joule' }, { key: 'C', value: '9 Joule' }, { key: 'D', value: '49 Joule' }] },
+                { id: 26, text: "Dua gelas kaca saling bertumpuk (Gelas A di dalam Gelas B) dan macet. Cara paling aman memisahkannya berdasarkan konsep pemuaian adalah ....", options: [{ key: 'A', value: 'Menuangkan air panas ke Gelas A dan air es ke Gelas B' }, { key: 'B', value: 'Menuangkan air es ke dalam Gelas A dan merendam Gelas B di air panas' }, { key: 'C', value: 'Membakar ujung gelas' }, { key: 'D', value: 'Memasukkan ke dalam kulkas semalaman' }] },
+                { id: 27, text: "Batu dimasukkan ke gelas ukur, air naik dari 50 mL menjadi 85 mL. Massa batu ditimbang = 280 gram. Berapa massa jenis batu tersebut?", options: [{ key: 'A', value: '3,29 g/cm&sup3;' }, { key: 'B', value: '5,60 g/cm&sup3;' }, { key: 'C', value: '2,80 g/cm&sup3;' }, { key: 'D', value: '8,00 g/cm&sup3;' }] },
+                { id: 28, text: "Empat benda P, Q, R, S dimasukkan ke cairan. Benda P mengapung (muncul sebagian besar), Q melayang di tengah, R tenggelam ke dasar, S mengapung (tapi lebih tenggelam dari P). Urutan massa jenis benda dari terbesar hingga terkecil adalah ....", options: [{ key: 'A', value: 'P - S - Q - R' }, { key: 'B', value: 'R - Q - S - P' }, { key: 'C', value: 'Q - R - P - S' }, { key: 'D', value: 'S - R - Q - P' }] },
+                { id: 29, text: "Tabel uji lakmus:<br>P: Lakmus merah tetap Merah, biru jadi Merah<br>Q: Lakmus merah jadi Biru, biru tetap Biru<br>R: Lakmus merah jadi Biru, biru jadi Biru<br>Larutan yang bersifat Basa adalah ....", options: [{ key: 'A', value: 'P dan Q' }, { key: 'B', value: 'Q dan R' }, { key: 'C', value: 'P saja' }, { key: 'D', value: 'R saja' }] },
+                { id: 30, text: "Pembakaran kayu vs Pelelehan lilin. Kesimpulan jenis perubahannya adalah ....", options: [{ key: 'A', value: 'Keduanya perubahan fisika' }, { key: 'B', value: 'Kayu (Kimia), Lilin (Fisika)' }, { key: 'C', value: 'Kayu (Fisika), Lilin (Kimia)' }, { key: 'D', value: 'Keduanya perubahan kimia' }] },
+                { id: 31, text: "Sebuah rangkaian dengan sumber baterai bercabang dua. Cabang atas ada sakelar S1 dan lampu L1. Cabang bawah ada sakelar S2 dan lampu L2. Jika S1 ditutup dan S2 dibuka, maka ...", options: [{ key: 'A', value: 'L1 menyala, L2 padam' }, { key: 'B', value: 'L1 padam, L2 menyala' }, { key: 'C', value: 'Keduanya menyala redup' }, { key: 'D', value: 'Keduanya padam' }] },
+                { id: 32, text: "Benda 2 kg di tepi meja setinggi 1,5 m (g=10). Energi Potensialnya adalah 30 J. Jika benda jatuh dan sekarang berada di ketinggian 0,5 m, berapakah Energi Kinetiknya saat itu? (Petunjuk: Hukum Kekekalan Energi Mekanik)", options: [{ key: 'A', value: '20 Joule' }, { key: 'B', value: '10 Joule' }, { key: 'C', value: '30 Joule' }, { key: 'D', value: '15 Joule' }] },
+                { id: 33, text: "Empat batang logam: Aluminium, Tembaga, Kaca, Kayu diuji dengan api di ujungnya. Mentega di ujung lainnya akan meleleh paling cepat pada batang .... dengan metode ....", options: [{ key: 'A', value: 'Kayu; Radiasi' }, { key: 'B', value: 'Kaca; Konveksi' }, { key: 'C', value: 'Tembaga; Konduksi' }, { key: 'D', value: 'Aluminium; Evaporasi' }] },
+                { id: 34, text: "Panel surya menerima energi matahari 1.000 J/detik. Efisiensinya 18%. Besar energi listrik yang dihasilkan selama 1 menit (60 detik) adalah ....", options: [{ key: 'A', value: '1.800 Joule' }, { key: 'B', value: '180 Joule' }, { key: 'C', value: '10.800 Joule' }, { key: 'D', value: '60.000 Joule' }] },
+                { id: 35, text: "Sebuah magnet batang (U-S) dipotong tepat di tengah. Bagaimana sifat potongan tersebut?", options: [{ key: 'A', value: 'Satu bagian menjadi U saja, bagian lain S saja' }, { key: 'B', value: 'Keduanya membentuk magnet baru utuh (masing-masing punya U dan S)' }, { key: 'C', value: 'Sifat magnet langsung hilang' }, { key: 'D', value: 'Menjadi non-magnetik seketika' }] },
+                { id: 36, text: "Gerhana Matahari Total areanya sangat sempit dibandingkan Gerhana Bulan Total. Hal ini karena ....", options: [{ key: 'A', value: 'Cahaya bulan sangat redup' }, { key: 'B', value: 'Ukuran fisik Bulan jauh lebih kecil dari Bumi sehingga umbra (bayangan intinya) yang jatuh ke bumi kecil' }, { key: 'C', value: 'Bulan bergerak terlalu cepat' }, { key: 'D', value: 'Hanya terjadi siang hari' }] },
+                { id: 37, text: "Fenomena mana yang merupakan akibat langsung dari REVOLUSI Bumi mengelilingi Matahari? <br>1) Gerak semu harian<br>2) Perbedaan lama siang & malam<br>3) Siang dan malam berganti<br>4) Perubahan rasi bintang", options: [{ key: 'A', value: '1 dan 3' }, { key: 'B', value: '2 dan 4' }, { key: 'C', value: '1 dan 2' }, { key: 'D', value: '3 dan 4' }] },
+                { id: 38, text: "Urutan planet dengan periode revolusi dari tercepat hingga terlama adalah ....", options: [{ key: 'A', value: 'Merkurius - Venus - Bumi - Mars - Jupiter' }, { key: 'B', value: 'Jupiter - Mars - Bumi - Venus - Merkurius' }, { key: 'C', value: 'Bumi - Mars - Jupiter - Saturnus - Venus' }, { key: 'D', value: 'Neptunus - Uranus - Saturnus - Jupiter - Mars' }] },
+                { id: 39, text: "Lapisan atmosfer tempat terjadinya cuaca (hujan/awan) dan lapisan pelindung dari sinar UV (Ozon) berturut-turut adalah ....", options: [{ key: 'A', value: 'Troposfer dan Stratosfer' }, { key: 'B', value: 'Stratosfer dan Mesosfer' }, { key: 'C', value: 'Termosfer dan Eksosfer' }, { key: 'D', value: 'Troposfer dan Termosfer' }] },
+                { id: 40, text: "Adaptasi morfologi bentuk paruh burung elang yang tajam dan melengkung bertujuan untuk ....", options: [{ key: 'A', value: 'Menangkap serangga yang terbang' }, { key: 'B', value: 'Mencabik-cabik daging mangsanya' }, { key: 'C', value: 'Memecah biji-bijian keras' }, { key: 'D', value: 'Mengisap nektar bunga' }] }
+            ];
+
+            // KUNCI JAWABAN IPA (+4 Benar, -1 Salah)
+            const answerKey = {
+                0:'B', 1:'B', 2:'B', 3:'B', 4:'B', 5:'D', 6:'B', 7:'A', 8:'A', 9:'B',
+                10:'A', 11:'A', 12:'B', 13:'B', 14:'D', 15:'A', 16:'C', 17:'C', 18:'A', 19:'A',
+                20:'B', 21:'A', 22:'B', 23:'C', 24:'A', 25:'B', 26:'D', 27:'B', 28:'B', 29:'B',
+                30:'A', 31:'A', 32:'C', 33:'C', 34:'B', 35:'B', 36:'B', 37:'A', 38:'A', 39:'B'
+            };
+
+            // STATE APLIKASI
+            let activeUserId = null;
+            let timerInterval = null;
+            let currentIndex = 0;
+            let answers = {}; 
+            let flagged = new Set();
+            let fontClassIndex = 1;
+            const fontClasses = ['text-sm', 'text-base', 'text-lg', 'text-xl'];
+            let startTime = null;
+
+            // FUNGSI UI PENDUKUNG
+            function showLoading(text) {
+                document.getElementById('overlayText').textContent = text;
+                const overlay = document.getElementById('overlay');
+                overlay.classList.remove('hidden');
+                overlay.classList.add('flex');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            }
+
+            function hideLoading() {
+                const overlay = document.getElementById('overlay');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => {
+                    overlay.classList.remove('flex');
+                    overlay.classList.add('hidden');
+                }, 300);
+            }
+
+            function showError(msg) {
+                const errBox = document.getElementById('loginError');
+                document.getElementById('loginErrorMsg').textContent = msg;
+                errBox.classList.remove('hidden');
+            }
+
+            // PROSES LOGIN SUPABASE
+            async function handleLogin() {
+                const rawUser = document.getElementById('username').value.trim();
+                const rawPass = document.getElementById('password').value.trim();
                 
-                // Styling berdasarkan state (Aktif, Dijawab, Ragu, Kosong)
-                if (index === currentIndex) {
-                    btn.classList.add('ring-2', 'ring-blue-500', 'ring-offset-1');
+                if (!rawUser || !rawPass) {
+                    showError("Nisn dan Password harus diisi!");
+                    return;
                 }
 
-                if (flagged.has(index)) {
-                    // Ragu-ragu (Kuning)
-                    btn.classList.add('bg-yellow-400', 'text-yellow-900', 'border-yellow-500');
-                    if (answers[index]) {
-                        // Jika ragu tapi sudah diisi, kasih penanda kecil
-                        btn.innerHTML = `${index + 1}<span class="absolute bottom-0 right-0 w-2 h-2 bg-blue-600 rounded-tl-sm"></span>`;
-                    } else {
-                        btn.innerText = index + 1;
+                // Paksa HURUF BESAR sesuai struktur database Excel Anda
+                const userUpper = rawUser.toUpperCase();
+                const passUpper = rawPass.toUpperCase();
+
+                document.getElementById('loginError').classList.add('hidden');
+                showLoading("Mencocokkan Data...");
+
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('peserta')
+                        .select('id, nama, username, status_ujian')
+                        .eq('username', userUpper)
+                        .eq('password', passUpper)
+                        .single();
+
+                    if (error) {
+                        throw new Error("Akun tidak ditemukan. Cek ejaan huruf.");
                     }
-                } else if (answers[index]) {
-                    // Sudah dijawab (Biru)
-                    btn.classList.add('bg-blue-600', 'text-white', 'border-blue-700');
-                    btn.innerText = index + 1;
+
+                    if (data.status_ujian === 'selesai') {
+                        throw new Error("Anda sudah menyelesaikan ujian ini.");
+                    }
+
+                    activeUserId = data.id;
+                    
+                    document.getElementById('displayNamaSiswa').textContent = data.nama;
+                    document.getElementById('displayUsernameSiswa').textContent = data.username;
+
+                    document.getElementById('loginScreen').classList.add('hidden');
+                    document.getElementById('examScreen').classList.remove('hidden');
+                    document.getElementById('examScreen').classList.add('flex');
+                    
+                    initExam();
+
+                } catch (err) {
+                    showError(err.message);
+                } finally {
+                    hideLoading();
+                }
+            }
+
+            // INISIALISASI UJIAN
+            function initExam() {
+                currentIndex = 0;
+                answers = {};
+                flagged.clear();
+                startTime = new Date(); // Catat detik mula
+                
+                startTimer(120 * 60); // 120 Menit = 7200 detik
+                initWebcam();
+                renderGrid();
+                loadQuestion(0);
+            }
+
+            // KAMERA PENGAWAS
+            function initWebcam() {
+                const video = document.getElementById('proctorWebcam');
+                const status = document.getElementById('webcamStatus');
+                const indicator = document.getElementById('recordingIndicator');
+                
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    navigator.mediaDevices.getUserMedia({ video: true })
+                        .then(stream => {
+                            video.srcObject = stream;
+                            status.style.display = 'none';
+                            indicator.classList.remove('hidden');
+                        })
+                        .catch(err => {
+                            status.innerText = "Kamera Diblokir";
+                            status.classList.add('text-red-400');
+                        });
+                }
+            }
+
+            function startTimer(durationInSeconds) {
+                let timer = durationInSeconds;
+                const display = document.getElementById('timerDisplay');
+                
+                if (timerInterval) clearInterval(timerInterval);
+
+                timerInterval = setInterval(function () {
+                    let h = parseInt(timer / 3600, 10);
+                    let m = parseInt((timer % 3600) / 60, 10);
+                    let s = parseInt(timer % 60, 10);
+
+                    display.textContent = `${h < 10 ? "0"+h : h}:${m < 10 ? "0"+m : m}:${s < 10 ? "0"+s : s}`;
+
+                    if (--timer < 0) {
+                        clearInterval(timerInterval);
+                        display.textContent = "WAKTU HABIS";
+                        handleFinalSubmit(); 
+                    } else if (timer < 300) {
+                        display.classList.add('text-red-700', 'animate-pulse');
+                    }
+                }, 1000);
+            }
+
+            // RENDER SOAL & PILIHAN
+            function loadQuestion(index) {
+                currentIndex = index;
+                const q = questions[index];
+                
+                document.getElementById('questionNumberLabel').innerText = `SOAL NOMOR ${index + 1}`;
+                
+                const qText = document.getElementById('questionText');
+                qText.innerHTML = q.text;
+                qText.className = `text-gray-800 mb-8 leading-relaxed font-medium transition-all ${fontClasses[fontClassIndex]}`;
+                
+                const optContainer = document.getElementById('optionsContainer');
+                optContainer.innerHTML = '';
+                
+                q.options.forEach(opt => {
+                    const isSelected = answers[index] === opt.key;
+                    
+                    const label = document.createElement('label');
+                    label.className = `relative flex items-start gap-4 p-4 lg:p-5 border-2 rounded-xl cursor-pointer transition-all ${isSelected ? 'border-blue-500 bg-blue-50 shadow-sm' : 'border-gray-200 hover:bg-gray-50'}`;
+                    
+                    const radio = document.createElement('input');
+                    radio.type = 'radio';
+                    radio.name = `q_${index}`;
+                    radio.value = opt.key;
+                    radio.className = 'sr-only option-radio';
+                    radio.checked = isSelected;
+                    radio.onchange = () => {
+                        answers[currentIndex] = opt.key;
+                        loadQuestion(currentIndex); 
+                    };
+                    
+                    const box = document.createElement('div');
+                    box.className = `flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg font-bold border-2 transition-all ${isSelected ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 text-gray-500 bg-white'}`;
+                    box.innerText = opt.key;
+                    
+                    const span = document.createElement('span');
+                    span.className = 'mt-1 flex-1 text-gray-700 leading-relaxed';
+                    span.innerHTML = opt.value;
+                    
+                    label.appendChild(radio);
+                    label.appendChild(box);
+                    label.appendChild(span);
+                    optContainer.appendChild(label);
+                });
+
+                document.getElementById('btnPrev').disabled = (currentIndex === 0);
+                
+                const isFlagged = flagged.has(index);
+                document.getElementById('flagCheckbox').checked = isFlagged;
+                const btnFlag = document.getElementById('btnFlag');
+                if(isFlagged) {
+                    btnFlag.classList.add('bg-yellow-100', 'border-yellow-500', 'text-yellow-900');
+                    btnFlag.classList.remove('bg-yellow-50', 'text-yellow-800', 'border-yellow-400');
                 } else {
-                    // Belum dijawab (Putih)
-                    btn.classList.add('bg-white', 'text-gray-700', 'border-gray-300', 'hover:bg-gray-50');
-                    btn.innerText = index + 1;
+                    btnFlag.classList.add('bg-yellow-50', 'text-yellow-800', 'border-yellow-400');
+                    btnFlag.classList.remove('bg-yellow-100', 'border-yellow-500', 'text-yellow-900');
                 }
 
-                btn.onclick = () => loadQuestion(index);
-                grid.appendChild(btn);
-            });
-        }
-
-        function loadQuestion(index) {
-            currentIndex = index;
-            const q = questions[index];
-            
-            // Update Label Header
-            document.getElementById('questionNumberLabel').innerText = `SOAL NOMOR ${index + 1}`;
-            
-            // Update Teks Soal
-            document.getElementById('questionText').innerHTML = q.text;
-            
-            // Update Pilihan Ganda
-            const optionsContainer = document.getElementById('optionsContainer');
-            optionsContainer.innerHTML = '';
-            
-            q.options.forEach(opt => {
-                const isSelected = answers[index] === opt.key;
-                
-                // Label Wrapper
-                const label = document.createElement('label');
-                label.className = `relative flex items-start gap-4 p-4 border rounded-lg cursor-pointer transition-all ${isSelected ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:bg-gray-50'}`;
-                
-                // Radio Input (Hidden but accessible)
-                const radio = document.createElement('input');
-                radio.type = 'radio';
-                radio.name = `question_${index}`;
-                radio.value = opt.key;
-                radio.className = 'sr-only option-radio'; // Sembunyikan radio default
-                radio.checked = isSelected;
-                radio.onchange = () => selectOption(opt.key);
-                
-                // Custom Radio UI (Kotak Huruf A/B/C/D)
-                const box = document.createElement('div');
-                box.className = `flex-shrink-0 w-8 h-8 flex items-center justify-center rounded font-bold border-2 transition-colors ${isSelected ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-400 text-gray-600 bg-white'}`;
-                box.innerText = opt.key;
-                
-                // Teks Opsi
-                const span = document.createElement('span');
-                span.className = 'mt-1 flex-1 text-gray-700';
-                span.innerHTML = opt.value;
-                
-                label.appendChild(radio);
-                label.appendChild(box);
-                label.appendChild(span);
-                optionsContainer.appendChild(label);
-            });
-
-            // Update State Tombol Bawah
-            document.getElementById('btnPrev').disabled = currentIndex === 0;
-            
-            // Update status Ragu-ragu checkbox
-            const isFlagged = flagged.has(index);
-            document.getElementById('flagCheckbox').checked = isFlagged;
-            const btnFlag = document.getElementById('btnFlag');
-            if(isFlagged){
-                 btnFlag.classList.add('bg-yellow-100', 'border-yellow-500');
-            } else {
-                 btnFlag.classList.remove('bg-yellow-100', 'border-yellow-500');
-            }
-
-            // Update Tombol Next / Selesai
-            const btnNext = document.getElementById('btnNext');
-            const nextText = document.getElementById('nextBtnText');
-            const nextTextMobile = document.getElementById('nextBtnTextMobile');
-            const nextIcon = document.getElementById('nextBtnIcon');
-
-            if (currentIndex === questions.length - 1) {
-                btnNext.classList.remove('bg-blue-600', 'hover:bg-blue-700');
-                btnNext.classList.add('bg-green-600', 'hover:bg-green-700');
-                nextText.innerText = "Selesai Ujian";
-                nextTextMobile.innerText = "Selesai";
-                nextIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>'; // Check icon
-            } else {
-                btnNext.classList.add('bg-blue-600', 'hover:bg-blue-700');
-                btnNext.classList.remove('bg-green-600', 'hover:bg-green-700');
-                nextText.innerText = "Soal Berikutnya";
-                nextTextMobile.innerText = "Lanjut";
-                nextIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>'; // Arrow icon
-            }
-
-            // Auto-scroll ke atas saat pindah soal (sangat berguna untuk tampilan Mobile)
-            if (window.innerWidth < 1024) {
-                // Pada mobile, otomatis scroll/geser ke area soal di bagian bawah setelah memilih nomor
-                const sectionEl = document.querySelector('section');
-                if (sectionEl) {
-                    sectionEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                const btnNext = document.getElementById('btnNext');
+                if (currentIndex === questions.length - 1) {
+                    btnNext.classList.replace('bg-blue-600', 'bg-green-600');
+                    btnNext.classList.replace('hover:bg-blue-700', 'hover:bg-green-700');
+                    document.getElementById('nextBtnText').innerText = "Selesai Ujian";
+                    document.getElementById('nextBtnTextMobile').innerText = "Selesai";
+                    document.getElementById('nextBtnIcon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
+                } else {
+                    btnNext.classList.replace('bg-green-600', 'bg-blue-600');
+                    btnNext.classList.replace('hover:bg-green-700', 'hover:bg-blue-700');
+                    document.getElementById('nextBtnText').innerText = "Soal Berikutnya";
+                    document.getElementById('nextBtnTextMobile').innerText = "Lanjut";
+                    document.getElementById('nextBtnIcon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>';
                 }
-            } else {
-                // Pada desktop, gulir bagian dalam konten teks soal saja ke atas
+
+                renderGrid();
+                updateCounter();
+
                 const contentEl = document.getElementById('questionText').parentElement;
                 if (contentEl) contentEl.scrollTop = 0;
             }
 
-            // Render ulang grid untuk highlight current
-            renderGrid();
-        }
-
-        function selectOption(key) {
-            answers[currentIndex] = key;
-            // Re-render konten untuk mengupdate style radio & kotak hijau/biru
-            loadQuestion(currentIndex); 
-        }
-
-        function toggleFlag() {
-            if (flagged.has(currentIndex)) {
-                flagged.delete(currentIndex);
-            } else {
-                flagged.add(currentIndex);
-            }
-            loadQuestion(currentIndex);
-        }
-
-        function prevQuestion() {
-            if (currentIndex > 0) {
-                loadQuestion(currentIndex - 1);
-            }
-        }
-
-        function nextQuestion() {
-            if (currentIndex < questions.length - 1) {
-                loadQuestion(currentIndex + 1);
-            } else {
-                showModal();
-            }
-        }
-
-        // Fitur Ubah Ukuran Font Teks Soal
-        function changeFontSize(step) {
-            const el = document.getElementById('questionText');
-            // Hapus class font sebelumnya
-            el.classList.remove(fontClasses[fontClassIndex]);
-            
-            if (step === 1 && fontClassIndex < fontClasses.length - 1) {
-                fontClassIndex++;
-            } else if (step === -1 && fontClassIndex > 0) {
-                fontClassIndex--;
-            } else if (step === 0) {
-                fontClassIndex = 1; // Kembali ke normal (text-base)
-            }
-            
-            // Tambahkan class font baru
-            el.classList.add(fontClasses[fontClassIndex]);
-        }
-
-        function startTimer(durationInSeconds) {
-            let timer = durationInSeconds;
-            const display = document.getElementById('timerDisplay');
-            
-            const interval = setInterval(function () {
-                let hours = parseInt(timer / 3600, 10);
-                let minutes = parseInt((timer % 3600) / 60, 10);
-                let seconds = parseInt(timer % 60, 10);
-
-                hours = hours < 10 ? "0" + hours : hours;
-                minutes = minutes < 10 ? "0" + minutes : minutes;
-                seconds = seconds < 10 ? "0" + seconds : seconds;
-
-                display.textContent = hours + ":" + minutes + ":" + seconds;
-
-                if (--timer < 0) {
-                    clearInterval(interval);
-                    // Force submit ketika waktu habis
-                    display.textContent = "00:00:00";
-                    forceSubmit();
-                }
+            function renderGrid() {
+                const grid = document.getElementById('questionGrid');
+                grid.innerHTML = '';
                 
-                // Ganti warna jadi merah berkedip saat sisa < 5 menit
-                if(timer < 300) {
-                    display.classList.add('animate-pulse');
-                }
-            }, 1000);
-        }
+                questions.forEach((q, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = `w-full aspect-square flex items-center justify-center text-sm font-bold rounded-lg border-2 transition-all relative `;
+                    
+                    if (index === currentIndex) btn.classList.add('ring-2', 'ring-blue-600', 'ring-offset-1');
 
-        const modal = document.getElementById('submitModal');
-        const modalContent = document.getElementById('modalContent');
+                    if (flagged.has(index)) {
+                        btn.classList.add('bg-yellow-400', 'text-yellow-900', 'border-yellow-500');
+                        if (answers[index]) btn.innerHTML = `${index + 1}<span class="absolute -top-1 -right-1 w-3 h-3 bg-blue-600 border border-white rounded-full"></span>`;
+                        else btn.innerText = index + 1;
+                    } else if (answers[index]) {
+                        btn.classList.add('bg-blue-600', 'text-white', 'border-blue-700');
+                        btn.innerText = index + 1;
+                    } else {
+                        btn.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
+                        btn.innerText = index + 1;
+                    }
 
-        function showModal() {
-            modal.classList.remove('hidden');
-            // Sedikit delay agar animasi masuk berjalan mulus
-            setTimeout(() => {
-                modalContent.classList.remove('scale-95', 'opacity-0');
-                modalContent.classList.add('scale-100', 'opacity-100');
-            }, 10);
-        }
-
-        function closeModal() {
-            modalContent.classList.remove('scale-100', 'opacity-100');
-            modalContent.classList.add('scale-95', 'opacity-0');
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 200);
-        }
-
-        function confirmSubmit() {
-            closeModal();
-            // Ganti konten dengan pesan terima kasih / skor (Simulasi)
-            document.querySelector('main').innerHTML = `
-                <div class="flex-1 m-4 bg-white rounded-lg shadow-sm border flex flex-col items-center justify-center p-8 text-center">
-                    <svg class="w-20 h-20 text-green-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    <h2 class="text-2xl font-bold text-gray-800 mb-2">Ujian Selesai</h2>
-                    <p class="text-gray-600 mb-6">Terima kasih telah mengikuti Lomba Matematika SD/MI Tingkat Nasional 2026. Jawaban Anda telah tersimpan di sistem.</p>
-                    <button onclick="location.reload()" class="px-6 py-2 bg-blue-600 text-white rounded-md font-medium hover:bg-blue-700 transition">Kembali ke Beranda</button>
-                </div>
-            `;
-            document.getElementById('timerDisplay').closest('.bg-red-50').style.display = 'none'; // Sembunyikan timer
-            
-            const video = document.getElementById('proctorWebcam');
-            if (video && video.srcObject) {
-                const tracks = video.srcObject.getTracks();
-                tracks.forEach(track => track.stop()); // Matikan lampu webcam hardware
+                    btn.onclick = () => loadQuestion(index);
+                    grid.appendChild(btn);
+                });
             }
-        }
 
-        function forceSubmit() {
-            alert("Waktu habis! Ujian otomatis diakhiri."); // Alert pengecualian kecil hanya untuk force close, tapi diganti dengan UI Modal yang lebih rapi:
-            confirmSubmit();
-        }
+            function updateCounter() {
+                const answered = Object.keys(answers).length;
+                document.getElementById('answeredCount').innerText = `${answered} / ${questions.length}`;
+            }
 
-        // Jalankan saat dokumen dirender
-        window.onload = initApp;
+            // PENGUMPULAN KE DATABASE (Olimpiade IPA)
+            async function handleFinalSubmit() {
+                document.getElementById('submitModal').classList.add('hidden');
+                clearInterval(timerInterval); 
+                showLoading("Menyimpan Jawaban IPA...");
 
+                try {
+                    let finalScore = 0;
+                    let detailJawaban = "";
+
+                    // Hitung +4, 0, -1 dan Rekap Jawaban
+                    for (let i = 0; i < questions.length; i++) {
+                        let ans = answers[i];
+                        if (!ans) {
+                            detailJawaban += "X"; // Kosong
+                            // finalScore += 0;
+                        } else {
+                            detailJawaban += ans;
+                            if (ans === answerKey[i]) {
+                                finalScore += 4; // Benar
+                            } else {
+                                finalScore -= 1; // Salah
+                            }
+                        }
+                    }
+
+                    // Waktu Pengerjaan (Lama Mengerjakan)
+                    const endTime = new Date(); 
+                    const diffInSeconds = Math.floor((endTime - startTime) / 1000);
+                    const h = Math.floor(diffInSeconds / 3600).toString().padStart(2, '0');
+                    const m = Math.floor((diffInSeconds % 3600) / 60).toString().padStart(2, '0');
+                    const s = Math.floor(diffInSeconds % 60).toString().padStart(2, '0');
+                    const lamaWaktu = `${h}:${m}:${s}`; 
+
+                    // Update Supabase
+                    const { error } = await supabaseClient
+                        .from('peserta')
+                        .update({ 
+                            nilai_akhir: finalScore, 
+                            status_ujian: 'selesai',
+                            lama_pengerjaan: lamaWaktu,
+                            detail_jawaban: detailJawaban,
+                            waktu_pengumpulan: endTime.toISOString() // Timestamp akurat
+                        })
+                        .eq('id', activeUserId);
+
+                    if (error) throw error;
+
+                    // Matikan Kamera
+                    const video = document.getElementById('proctorWebcam');
+                    if (video && video.srcObject) {
+                        video.srcObject.getTracks().forEach(track => track.stop());
+                    }
+
+                    // UI Selesai (SPA)
+                    document.getElementById('examScreen').classList.remove('flex');
+                    document.getElementById('examScreen').classList.add('hidden');
+                    document.getElementById('doneScreen').classList.remove('hidden');
+                    
+                    // Reset Field (Supaya aman jika layar di klik keluar)
+                    activeUserId = null;
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+
+                } catch (err) {
+                    alert("GAGAL MENYIMPAN! Koneksi terputus. Panggil panitia: " + err.message);
+                } finally {
+                    hideLoading();
+                }
+            }
+
+            // MENGHUBUNGKAN EVENT LISTENER
+            document.addEventListener('DOMContentLoaded', () => {
+                document.getElementById('btnLogin').addEventListener('click', handleLogin);
+                document.getElementById('password').addEventListener('keypress', e => { if (e.key === 'Enter') handleLogin(); });
+
+                document.getElementById('btnZoomOut').addEventListener('click', () => {
+                    if (fontClassIndex > 0) fontClassIndex--; loadQuestion(currentIndex);
+                });
+                document.getElementById('btnZoomReset').addEventListener('click', () => {
+                    fontClassIndex = 1; loadQuestion(currentIndex);
+                });
+                document.getElementById('btnZoomIn').addEventListener('click', () => {
+                    if (fontClassIndex < fontClasses.length - 1) fontClassIndex++; loadQuestion(currentIndex);
+                });
+
+                document.getElementById('btnPrev').addEventListener('click', () => {
+                    if(currentIndex > 0) loadQuestion(currentIndex - 1);
+                });
+                
+                document.getElementById('btnFlag').addEventListener('click', () => {
+                    if(flagged.has(currentIndex)) flagged.delete(currentIndex);
+                    else flagged.add(currentIndex);
+                    loadQuestion(currentIndex);
+                });
+                
+                document.getElementById('btnNext').addEventListener('click', () => {
+                    if(currentIndex < questions.length - 1) {
+                        loadQuestion(currentIndex + 1);
+                    } else {
+                        const modal = document.getElementById('submitModal');
+                        const modalContent = document.getElementById('modalContent');
+                        modal.classList.remove('hidden');
+                        setTimeout(() => { modal.classList.remove('opacity-0'); modalContent.classList.remove('scale-95'); }, 10);
+                    }
+                });
+
+                document.getElementById('btnCancelSubmit').addEventListener('click', () => {
+                    const modal = document.getElementById('submitModal');
+                    const modalContent = document.getElementById('modalContent');
+                    modal.classList.add('opacity-0'); modalContent.classList.add('scale-95');
+                    setTimeout(() => modal.classList.add('hidden'), 300);
+                });
+
+                document.getElementById('btnConfirmSubmit').addEventListener('click', handleFinalSubmit);
+            });
+        })(); 
     </script>
 </body>
 </html>
