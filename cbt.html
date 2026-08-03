@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CBT Olimpiade Matematika YQBS 1 Pati</title>
+    <title>Portal Simulasi Ujian CBT 2026</title>
     
     <!-- CSS Tailwind -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,12 +26,12 @@
 </head>
 <body class="text-gray-800">
 
-    <!-- 1. TOAST ERROR SYSTEM (Jika Terjadi Syntax Error) -->
+    <!-- 1. TOAST ERROR SYSTEM -->
     <div id="systemErrorToast" class="hidden fixed top-5 left-1/2 transform -translate-x-1/2 z-[999] bg-red-600 text-white px-6 py-4 rounded-xl shadow-2xl max-w-lg w-[90%] border-l-4 border-red-900">
         <div class="flex items-start gap-3">
             <svg class="w-6 h-6 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
             <div>
-                <h3 class="font-bold text-lg mb-1">System Error!</h3>
+                <h3 class="font-bold text-lg mb-1" id="systemErrorTitle">Pemberitahuan Sistem</h3>
                 <p id="systemErrorText" class="text-sm font-mono break-words"></p>
                 <button onclick="document.getElementById('systemErrorToast').classList.add('hidden')" class="mt-3 text-xs underline hover:text-gray-200">Tutup Pesan Ini</button>
             </div>
@@ -47,17 +47,15 @@
         <h2 id="overlayText" class="text-2xl font-bold tracking-wide">Memproses...</h2>
     </div>
 
-    <!-- 3. LAYAR LOGIN -->
+    <!-- 3. LAYAR LOGIN UNIFIED -->
     <div id="loginScreen" class="min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
         <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden border border-gray-100 transition-all transform hover:shadow-2xl">
             <!-- Header Logo -->
             <div class="bg-blue-900 p-8 text-center relative overflow-hidden">
-                <!-- Ornamen Latar Belakang -->
                 <div class="absolute inset-0 opacity-10 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wIDBoNDB2NDBIMHoiIGZpbGw9Im5vbmUiLz4KPHBhdGggZD0iTTAgMGw0MCA0ME00MCAwbC00MCA0MCIgc3Ryb2tlPSIjZmZmIiBzdHJva2Utd2lkdGg9IjEiIG9wYWNpdHk9IjAuMSIvPgo8L3N2Zz4=')]"></div>
-                <!-- Gambar Logo Asli -->
-                <img src="https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/logo.png" alt="Logo Sekolah" class="w-24 mx-auto mb-4 bg-white rounded-full p-2 relative z-10 shadow-lg border-4 border-blue-800">
-                <h2 class="text-3xl font-bold text-white relative z-10 mb-1">Portal Ujian CBT</h2>
-                <p class="text-blue-200 text-sm font-medium relative z-10">Olimpiade Matematika SD/MI 2026</p>
+                <img src="https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/logo.png" alt="Logo Sekolah" class="w-24 mx-auto mb-4 bg-white rounded-full p-2 relative z-10 shadow-lg border-4 border-blue-800" onerror="this.src='https://placehold.co/100?text=LOGO'">
+                <h2 class="text-3xl font-bold text-white relative z-10 mb-1">Simulasi Ujian CBT</h2>
+                <p class="text-blue-200 text-sm font-medium relative z-10">Latihan Olimpiade SD/MI 2026</p>
             </div>
             
             <!-- Form Input -->
@@ -78,8 +76,6 @@
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
                         </div>
-                        <!-- Input type diubah sementara ke 'text' saat uppercase agar titiknya tidak terlihat aneh, 
-                             namun praktik terbaik menggunakan type='password' dan mengandalkan font bawaan untuk menyembunyikan (bullet/dot). -->
                         <input type="password" id="password" class="w-full pl-10 pr-4 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:border-blue-500 focus:bg-white focus:ring-2 focus:ring-blue-200 focus:outline-none transition-all uppercase font-medium tracking-widest text-gray-800" placeholder="••••••••">
                     </div>
                 </div>
@@ -87,34 +83,93 @@
                 <!-- Notifikasi Error Login -->
                 <div id="loginError" class="hidden mb-6 p-4 bg-red-50 text-red-600 text-sm rounded-xl border border-red-200 text-center font-medium shadow-sm flex items-center justify-center gap-2">
                     <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    <span id="loginErrorMsg">Username salah.</span>
+                    <span id="loginErrorMsg">Username atau password salah.</span>
                 </div>
 
                 <button id="btnLogin" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-md hover:shadow-lg flex justify-center items-center gap-2">
-                    <span>Masuk Ujian Sekarang</span>
+                    <span>Masuk Simulasi</span>
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                </button>
+                
+                <p class="text-xs text-center text-gray-500 mt-5 bg-gray-100 p-2 rounded-lg border border-gray-200">Gunakan Username: <b class="text-gray-800">SIMULASI</b> <br> Password: <b class="text-gray-800">MTK123</b> atau <b class="text-gray-800">IPA123</b> untuk mencoba.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3.5 LAYAR PETUNJUK & KONFIRMASI DATA -->
+    <div id="instructionScreen" class="hidden min-h-screen flex-col items-center justify-center p-4 bg-gray-50">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl overflow-hidden border border-gray-100">
+            <div class="bg-blue-900 p-6 text-center border-b-4 border-blue-600">
+                <h2 class="text-2xl font-bold text-white tracking-wide">Konfirmasi Data & Petunjuk Ujian</h2>
+            </div>
+            <div class="p-6 md:p-8 flex flex-col md:flex-row gap-8">
+                <!-- Kiri: Data Diri -->
+                <div class="flex-1 space-y-4">
+                    <h3 class="text-lg font-bold text-gray-800 border-b-2 border-gray-200 pb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                        Data Peserta
+                    </h3>
+                    <div class="grid grid-cols-3 gap-y-3 text-sm">
+                        <div class="text-gray-500 font-semibold">Nama</div>
+                        <div class="col-span-2 font-bold text-gray-900" id="instNama">-</div>
+                        
+                        <div class="text-gray-500 font-semibold">Username/NISN</div>
+                        <div class="col-span-2 font-bold text-gray-900" id="instNisn">-</div>
+                        
+                        <div class="text-gray-500 font-semibold">Asal Sekolah</div>
+                        <div class="col-span-2 font-bold text-gray-900" id="instSekolah">-</div>
+                        
+                        <div class="text-gray-500 font-semibold">Pendamping</div>
+                        <div class="col-span-2 font-bold text-gray-900" id="instGuru">-</div>
+                        
+                        <div class="text-gray-500 font-semibold">Mata Pelajaran</div>
+                        <div class="col-span-2 font-bold text-blue-700 bg-blue-50 px-2 py-1 rounded inline-block w-max" id="instMapel">-</div>
+                    </div>
+                </div>
+                <!-- Kanan: Petunjuk -->
+                <div class="flex-1 space-y-4">
+                    <h3 class="text-lg font-bold text-gray-800 border-b-2 border-gray-200 pb-2 flex items-center gap-2">
+                        <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Petunjuk & Penilaian
+                    </h3>
+                    <ul class="text-sm text-gray-700 space-y-3 list-decimal pl-4 leading-relaxed font-medium">
+                        <li>Awali kegiatan dengan berdoa. Kerjakan dengan teliti dan jujur.</li>
+                        <li>Waktu pengerjaan soal simulasi adalah <b class="text-red-600">120 Menit</b>. Waktu baru akan berjalan setelah Anda menekan tombol "Mulai Ujian".</li>
+                        <li><b>Sistem Penilaian (Sistem Olimpiade):</b>
+                            <div class="bg-gray-100 p-2 mt-2 rounded border border-gray-200">
+                                <ul class="list-disc pl-5 text-gray-800">
+                                    <li>Jawaban Benar: <b class="text-green-600">+4 Poin</b></li>
+                                    <li>Kosong: <b>0 Poin</b></li>
+                                    <li>Jawaban Salah: <b class="text-red-600">-1 Poin</b></li>
+                                </ul>
+                            </div>
+                        </li>
+                        <li class="bg-yellow-50 p-2 border border-yellow-200 rounded text-yellow-800">Ujian diawasi secara otomatis melalui kamera. Pastikan wajah selalu terlihat di layar.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="bg-gray-50 p-5 md:p-6 border-t border-gray-200 flex justify-center">
+                <button id="btnStartExam" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-8 rounded-xl transition-all shadow-md hover:shadow-lg flex items-center gap-2 animate-bounce hover:animate-none">
+                    Mulai Simulasi Sekarang
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                 </button>
             </div>
         </div>
-        
-        <!-- Logo Tambahan (Footer) -->
-        <img src="https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/10%20tahun%20Yqbs.jpg" alt="10 Tahun YQBS" class="w-40 mt-10 opacity-70 hover:opacity-100 transition-opacity drop-shadow-md">
     </div>
 
-    <!-- 4. LAYAR UJIAN CBT -->
+    <!-- 4. LAYAR UJIAN CBT DYNAMIC -->
     <div id="examScreen" class="hidden h-screen flex-col overflow-hidden bg-gray-50 w-full animate-fade-in">
         
-        <!-- Header Ujian -->
         <header class="bg-blue-900 text-white shadow-md z-10 flex-shrink-0">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <div class="flex items-center gap-3">
-                        <div class="bg-white p-1 rounded-lg shadow-inner">
-                            <img src="https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/logo.png" alt="Logo" class="w-8 h-8 object-contain">
+                        <div class="bg-white p-1 rounded">
+                            <img src="https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/logo.png" alt="Logo" class="w-8 h-8 object-contain" onerror="this.src='https://placehold.co/50?text=LOGO'">
                         </div>
                         <div>
-                            <h1 class="text-sm sm:text-lg font-bold leading-tight">CBT Olimpiade Matematika</h1>
-                            <p class="text-[10px] sm:text-xs text-blue-200 font-medium">YQBS 1 Pati - Satu Dekade Merajut Asa</p>
+                            <h1 class="text-sm sm:text-lg font-bold leading-tight" id="examHeaderTitle">CBT Simulasi Olimpiade</h1>
+                            <p class="text-[10px] sm:text-xs text-blue-200 font-medium">Platform Latihan Mandiri</p>
                         </div>
                     </div>
                     <div class="flex items-center gap-4">
@@ -130,257 +185,196 @@
             </div>
         </header>
 
-        <!-- Bar Waktu & Status -->
         <div class="bg-white border-b shadow-sm flex-shrink-0 relative z-0">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
                 <div class="flex items-center gap-3">
-                    <span class="flex h-3 w-3 relative">
-                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                      <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
-                    </span>
-                    <h2 class="text-xs sm:text-sm md:text-base font-bold text-gray-700 truncate hidden sm:block">Babak Penyisihan Nasional 2026</h2>
+                    <span class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-0.5 rounded border border-green-400 animate-pulse">AKTIF</span>
+                    <h2 class="text-xs sm:text-sm md:text-base font-bold text-gray-700 truncate hidden sm:block" id="examSubtitle">Simulasi Latihan 2026</h2>
                 </div>
                 <div class="flex items-center gap-2 bg-red-50 px-4 py-2 rounded-xl border border-red-200 shadow-inner">
-                    <svg class="w-5 h-5 text-red-600 animate-pulse" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     <span id="timerDisplay" class="text-red-700 font-mono font-bold tracking-widest sm:text-lg text-base">02:00:00</span>
                 </div>
             </div>
         </div>
 
-        <!-- Area Konten Ujian (Kiri: Soal, Kanan: Sidebar) -->
         <main class="flex-1 max-w-7xl mx-auto w-full flex flex-col lg:flex-row overflow-y-auto lg:overflow-hidden relative z-0">
             
-            <!-- KOTAK SOAL -->
-            <section class="order-2 lg:order-1 flex-none lg:flex-1 w-auto flex flex-col bg-white lg:m-4 m-2 rounded-2xl shadow-md border border-gray-200 lg:overflow-hidden relative">
-                
-                <!-- Toolbar Atas Soal -->
+            <section class="order-2 lg:order-1 flex-none lg:flex-1 w-auto flex flex-col bg-white lg:m-4 m-2 rounded-lg shadow-sm border border-gray-200 lg:overflow-hidden relative">
                 <div class="bg-gray-50 border-b px-6 py-4 flex justify-between items-center">
-                    <div class="flex items-center gap-3">
-                        <div class="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold text-sm shadow-sm" id="questionNumberBadge">1</div>
-                        <h3 class="text-lg font-bold text-gray-800" id="questionNumberLabel">SOAL NOMOR 1</h3>
-                    </div>
-                    
-                    <div class="flex items-center gap-1 bg-white p-1 rounded-lg border shadow-sm">
-                        <button id="btnZoomOut" class="w-8 h-8 rounded hover:bg-gray-100 flex items-center justify-center font-bold text-gray-600 transition-colors">-</button>
-                        <span class="text-xs font-semibold text-gray-400 px-1 select-none">Aa</span>
-                        <button id="btnZoomIn" class="w-8 h-8 rounded hover:bg-gray-100 flex items-center justify-center font-bold text-gray-600 transition-colors">+</button>
+                    <h3 class="text-lg font-bold text-gray-800" id="questionNumberLabel">SOAL NOMOR 1</h3>
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs text-gray-500 mr-1 hidden sm:inline">Ukuran Font:</span>
+                        <button id="btnZoomOut" class="w-8 h-8 rounded border border-gray-300 bg-white hover:bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-700 shadow-sm transition">-</button>
+                        <button id="btnZoomReset" class="w-8 h-8 rounded border border-gray-300 bg-white hover:bg-gray-100 flex items-center justify-center text-sm font-bold text-gray-700 shadow-sm transition">A</button>
+                        <button id="btnZoomIn" class="w-8 h-8 rounded border border-gray-300 bg-white hover:bg-gray-100 flex items-center justify-center text-lg font-bold text-gray-700 shadow-sm transition">+</button>
                     </div>
                 </div>
 
-                <!-- Teks Soal & Pilihan -->
                 <div class="p-6 lg:p-8 lg:overflow-y-auto overflow-x-hidden custom-scrollbar flex-1 relative">
-                    <div id="questionText" class="text-base text-gray-800 mb-8 leading-relaxed font-medium transition-all duration-300">
-                        <!-- Konten di-inject via JS -->
-                    </div>
-                    <div id="optionsContainer" class="space-y-4">
-                        <!-- Pilihan Ganda di-inject via JS -->
-                    </div>
+                    <div id="questionText" class="text-base text-gray-800 mb-8 leading-relaxed font-medium transition-all duration-300"></div>
+                    <div id="optionsContainer" class="space-y-4"></div>
                 </div>
 
-                <!-- Navigasi Bawah -->
                 <div class="bg-gray-50 border-t p-4 flex flex-wrap gap-3 justify-between items-center mt-auto">
-                    <button id="btnPrev" class="px-5 py-2.5 border border-gray-300 rounded-xl text-gray-700 font-semibold hover:bg-white hover:shadow-sm flex items-center gap-2 transition-all disabled:opacity-40 disabled:cursor-not-allowed">
+                    <button id="btnPrev" class="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-100 flex items-center gap-2 transition disabled:opacity-40 disabled:cursor-not-allowed">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
                         <span class="hidden sm:inline">Sebelumnya</span>
                     </button>
                     
-                    <button id="btnFlag" class="px-5 py-2.5 border border-yellow-400 bg-yellow-50 text-yellow-800 rounded-xl font-bold hover:bg-yellow-100 flex items-center gap-2 transition-all shadow-sm">
-                        <input type="checkbox" id="flagCheckbox" class="w-5 h-5 text-yellow-600 rounded focus:ring-yellow-500 cursor-pointer pointer-events-none">
+                    <button id="btnFlag" class="px-5 py-2.5 border border-yellow-400 bg-yellow-50 text-yellow-800 rounded-lg font-bold hover:bg-yellow-100 flex items-center gap-2 transition shadow-sm">
+                        <input type="checkbox" id="flagCheckbox" class="w-4 h-4 text-yellow-600 rounded cursor-pointer pointer-events-none">
                         Ragu-ragu
                     </button>
                     
-                    <button id="btnNext" class="px-5 py-2.5 bg-blue-600 border border-transparent rounded-xl text-white font-semibold hover:bg-blue-700 flex items-center gap-2 transition-all shadow-md hover:shadow-lg">
-                        <span class="hidden sm:inline" id="nextBtnText">Selanjutnya</span>
+                    <button id="btnNext" class="px-5 py-2.5 bg-blue-600 border border-transparent rounded-lg text-white font-semibold hover:bg-blue-700 flex items-center gap-2 transition shadow-sm">
+                        <span class="hidden sm:inline" id="nextBtnText">Berikutnya</span>
                         <span class="sm:hidden" id="nextBtnTextMobile">Lanjut</span>
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="nextBtnIcon"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
                     </button>
                 </div>
             </section>
 
-            <!-- SIDEBAR KANAN -->
-            <aside class="order-1 lg:order-2 w-auto lg:w-[320px] flex-none flex flex-col bg-white lg:my-4 mx-2 mt-4 mb-2 lg:mx-0 lg:mr-4 rounded-2xl shadow-md border border-gray-200 lg:overflow-hidden lg:max-h-full">
-                
-                <!-- Webcam Box -->
-                <div class="bg-gray-900 p-2 flex flex-col items-center justify-center relative flex-shrink-0">
-                    <div class="w-full aspect-video bg-black rounded-lg overflow-hidden relative shadow-inner border border-gray-700 flex items-center justify-center">
-                        <span id="webcamStatus" class="text-xs text-gray-400 absolute z-10 text-center px-4 font-mono">Meminta Akses Kamera...</span>
+            <aside class="order-1 lg:order-2 w-auto lg:w-80 flex-none flex flex-col bg-white lg:my-4 mx-2 mt-4 mb-2 lg:mx-0 lg:mr-4 rounded-lg shadow-sm border border-gray-200 lg:overflow-hidden lg:max-h-full">
+                <div class="bg-gray-900 border-b border-gray-700 p-3 flex flex-col items-center justify-center relative flex-shrink-0">
+                    <div class="w-full aspect-video bg-black rounded overflow-hidden relative shadow-inner border border-gray-600 flex items-center justify-center">
+                        <span id="webcamStatus" class="text-xs text-gray-400 absolute z-10 text-center px-2 font-mono">Meminta akses kamera...</span>
                         <video id="proctorWebcam" class="w-full h-full object-cover transform scale-x-[-1] relative z-20 opacity-90" autoplay playsinline muted></video>
                     </div>
-                    <div class="mt-2 flex items-center gap-2 w-full justify-center bg-gray-800 py-1.5 rounded-md border border-gray-700">
+                    <div class="mt-2 flex items-center gap-2 w-full justify-center">
                         <span id="recordingIndicator" class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse hidden shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span>
                         <span id="recordingText" class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pengawasan Aktif</span>
                     </div>
                 </div>
 
-                <!-- Judul Grid Soal -->
-                <div class="bg-blue-900 text-white px-5 py-3.5 flex justify-between items-center flex-shrink-0 border-t border-blue-800">
-                    <h3 class="font-bold text-sm tracking-wide uppercase">Navigasi Soal</h3>
-                    <div class="bg-blue-800 px-2 py-0.5 rounded text-xs font-bold shadow-inner" id="answeredCount">0 / 40</div>
+                <div class="bg-blue-900 text-white px-4 py-3 flex justify-between items-center flex-shrink-0 border-t border-blue-800">
+                    <h3 class="font-bold text-sm tracking-wide">DAFTAR SOAL</h3>
+                    <div class="bg-blue-800 px-2 py-0.5 rounded text-xs font-bold shadow-inner" id="answeredCount">0 / 10</div>
                 </div>
                 
-                <!-- Legenda Warna -->
-                <div class="p-3 border-b bg-gray-50 flex justify-center gap-5 text-xs text-gray-600 flex-shrink-0 font-bold">
-                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-white border-2 border-gray-300 rounded-sm"></div> Kosong</div>
+                <div class="p-3 border-b bg-gray-50 flex justify-center gap-4 text-xs text-gray-700 flex-shrink-0 font-bold">
+                    <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-white border border-gray-400 rounded-sm"></div> Kosong</div>
                     <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-blue-600 rounded-sm shadow-sm"></div> Dijawab</div>
                     <div class="flex items-center gap-1.5"><div class="w-3 h-3 bg-yellow-400 rounded-sm shadow-sm"></div> Ragu</div>
                 </div>
 
-                <!-- Grid Kotak Nomor -->
-                <div class="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-48 lg:max-h-full bg-gray-50/50">
-                    <div id="questionGrid" class="grid grid-cols-5 gap-2 sm:gap-3">
-                        <!-- Tombol grid digenerate via JS -->
-                    </div>
+                <div class="p-4 flex-1 overflow-y-auto custom-scrollbar max-h-56 lg:max-h-full bg-gray-50/50">
+                    <div id="questionGrid" class="grid grid-cols-5 gap-2 sm:gap-3"></div>
                 </div>
             </aside>
         </main>
     </div>
 
-    <!-- 5. MODAL KONFIRMASI KUMPULKAN -->
-    <div id="submitModal" class="fixed inset-0 bg-gray-900 bg-opacity-60 z-[90] hidden flex items-center justify-center backdrop-blur-sm transition-opacity opacity-0" style="transition-duration: 300ms;">
-        <div class="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 overflow-hidden transform scale-95 transition-transform duration-300" id="modalContent">
-            <!-- Header Modal -->
-            <div class="bg-red-600 px-6 py-4 flex items-center justify-between relative overflow-hidden">
-                <div class="absolute inset-0 opacity-20 bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCI+CjxwYXRoIGQ9Ik0wIDBoNDB2NDB2SDB6IiBmaWxsPSJub25lIi8+CjxwYXRoIGQ9Ik0wIDBsNDAgNDBNNDAgMGwtNDAgNDAiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxIi8+Cjwvc3ZnPg==')]"></div>
-                <h3 class="text-xl font-bold text-white relative z-10 flex items-center gap-2">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
-                    Peringatan Akhir!
+    <!-- 5. MODAL KONFIRMASI -->
+    <div id="submitModal" class="fixed inset-0 bg-black bg-opacity-60 z-[90] hidden flex items-center justify-center backdrop-blur-sm transition-opacity opacity-0" style="transition-duration: 300ms;">
+        <div class="bg-white rounded-xl shadow-2xl max-w-md w-full mx-4 overflow-hidden transform scale-95 transition-transform duration-300" id="modalContent">
+            <div class="bg-red-600 px-6 py-4 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-white flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    Konfirmasi Pengumpulan
                 </h3>
             </div>
-            
-            <!-- Body Modal -->
-            <div class="p-8 text-center">
-                <div class="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-                    <svg class="w-10 h-10 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div class="p-6 text-center">
+                <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 </div>
-                <h4 class="text-gray-900 font-bold text-2xl mb-2">Akhiri Ujian Sekarang?</h4>
-                <p class="text-gray-600 text-sm leading-relaxed mb-6 font-medium">Apakah Anda yakin seluruh soal (termasuk yang ragu-ragu) sudah terjawab dengan benar? <br><br> <span class="text-red-600 font-bold">Anda tidak dapat kembali mengerjakan setelah menekan tombol Kumpulkan.</span></p>
-                
-                <div class="flex flex-col sm:flex-row justify-center gap-3 mt-4">
-                    <button id="btnCancelSubmit" class="w-full sm:w-auto px-6 py-3 border-2 border-gray-300 rounded-xl text-gray-700 font-bold hover:bg-gray-50 transition-colors focus:ring-4 focus:ring-gray-100">Batal, Cek Lagi</button>
-                    <button id="btnConfirmSubmit" class="w-full sm:w-auto px-6 py-3 bg-red-600 text-white rounded-xl font-bold hover:bg-red-700 transition-colors shadow-lg hover:shadow-xl focus:ring-4 focus:ring-red-300 flex justify-center items-center gap-2">
-                        <span>Ya, Kumpulkan</span>
-                    </button>
+                <h4 class="text-gray-900 font-bold text-xl mb-2">Akhiri Simulasi Sekarang?</h4>
+                <p class="text-gray-600 text-sm mb-6 leading-relaxed">Apakah Anda yakin seluruh soal sudah dijawab dengan maksimal? <br><span class="text-red-600 font-semibold">Ini adalah simulasi, jawaban Anda akan dinilai namun tidak mempengaruhi hasil lomba.</span></p>
+                <div class="flex justify-center gap-3">
+                    <button id="btnCancelSubmit" class="px-5 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-bold hover:bg-gray-50 transition">Batal</button>
+                    <button id="btnConfirmSubmit" class="px-5 py-2.5 bg-red-600 text-white rounded-lg font-bold hover:bg-red-700 transition shadow-md">Ya, Kumpulkan</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- 6. LAYAR SELESAI (SUKSES) -->
-    <div id="doneScreen" class="hidden min-h-screen flex items-center justify-center p-4 bg-gray-100">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-10 text-center border border-gray-200 transform transition-all">
-            <div class="w-28 h-28 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border-4 border-green-100 relative">
-                <!-- Partikel Bintang (Animasi Sederhana) -->
-                <div class="absolute -top-2 -right-2 text-yellow-400 animate-bounce">✨</div>
-                <div class="absolute -bottom-2 -left-2 text-yellow-400 animate-bounce" style="animation-delay: 0.5s;">✨</div>
-                <svg class="w-14 h-14 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+    <!-- 6. LAYAR SELESAI -->
+    <div id="doneScreen" class="hidden min-h-screen flex flex-col items-center justify-center p-4 bg-gray-50">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md p-10 text-center border border-gray-100">
+            <div class="w-24 h-24 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border-4 border-green-100 relative">
+                <div class="absolute -top-1 -right-1 text-yellow-400 animate-bounce">✨</div>
+                <div class="absolute -bottom-1 -left-1 text-yellow-400 animate-bounce" style="animation-delay: 0.5s;">✨</div>
+                <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
             </div>
-            
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-3">Ujian Selesai!</h2>
-            <p class="text-gray-600 mb-8 font-medium leading-relaxed">Alhamdulillah, jawaban Anda telah berhasil diamankan di server pusat panitia.</p>
-            
-            <button onclick="window.location.reload()" class="w-full bg-gray-900 hover:bg-black text-white font-bold py-4 px-6 rounded-xl transition-colors shadow-xl hover:shadow-2xl flex justify-center items-center gap-2">
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Simulasi Selesai!</h2>
+            <p class="text-gray-600 mb-8 font-medium leading-relaxed">Alhamdulillah, Anda telah berhasil menyelesaikan latihan ujian ini dengan baik.</p>
+            <button onclick="window.location.reload()" class="w-full bg-gray-900 hover:bg-black text-white font-bold py-3.5 px-6 rounded-xl transition shadow-md flex justify-center items-center gap-2">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path></svg>
-                Keluar Aplikasi
+                Kembali ke Awal
             </button>
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- MASTER JAVASCRIPT (ANTI-CRASH) -->
-    <!-- ========================================== -->
+    <!-- JAVASCRIPT MASTER -->
     <script>
-        // Membungkus seluruh kode dalam IIFE (Immediately Invoked Function Expression)
-        // Ini memastikan tidak ada konflik variabel "already declared" saat Preview di-refresh!
         (function() {
             'use strict';
 
-            // 1. SISTEM PENANGKAP ERROR GLOBAL
-            // Jika ada syntax error sekecil apa pun, akan dimunculkan di layar, tidak sekadar mati.
             window.onerror = function(msg, url, lineNo, columnNo, error) {
                 const toast = document.getElementById('systemErrorToast');
                 const text = document.getElementById('systemErrorText');
                 if(toast && text) {
-                    text.innerHTML = `Pesan: ${msg} <br>Baris: ${lineNo} <br>Kolom: ${columnNo}`;
+                    document.getElementById('systemErrorTitle').innerText = "Terjadi Kesalahan Sistem!";
+                    text.innerHTML = `Info: ${msg} <br>L: ${lineNo} C: ${columnNo}`;
                     toast.classList.remove('hidden');
                 }
                 return false; 
             };
 
-            // 2. INISIALISASI SUPABASE (SINGLETON)
             const SUPABASE_URL = 'https://lsxwhwptaehjbszlupin.supabase.co'; 
             const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxzeHdod3B0YWVoamJzemx1cGluIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODUyMTEyOTAsImV4cCI6MjEwMDc4NzI5MH0.ksDlmFGVqTsMQ14kth84UdH_imOTdkC308kcfYVOiBQ';
-            
             let supabaseClient;
             if (window.supabase) {
                 supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
             } else {
-                throw new Error("Library Supabase gagal dimuat. Periksa koneksi internet.");
+                console.warn("Library Supabase gagal dimuat. Mode Simulasi Offline Aktif.");
             }
 
-            // 3. DATABASE SOAL LENGKAP (40 SOAL)
-            // JSON telah disusun rapi, kutip ganda/tunggal telah di-escape agar tidak merusak script.
-            const questions = [
-                { id: 1, text: "Urutan bilangan dari terkecil: 234, 243, 324, 342, 423, 432. Bilangan yang berada di posisi ke-4 adalah...", options: [{ key: 'A', value: '243' }, { key: 'B', value: '324' }, { key: 'C', value: '342' }, { key: 'D', value: '423' }] },
-                { id: 2, text: "Jika 30% dari suatu bilangan adalah 60, maka bilangan tersebut adalah...", options: [{ key: 'A', value: '100' }, { key: 'B', value: '150' }, { key: 'C', value: '200' }, { key: 'D', value: '250' }] },
-                { id: 3, text: "Dua buah lampu menyala bergantian. Lampu A menyala setiap 12 detik, lampu B setiap 18 detik. Kedua lampu akan menyala bersamaan setiap berapa detik?", options: [{ key: 'A', value: '30 detik' }, { key: 'B', value: '36 detik' }, { key: 'C', value: '42 detik' }, { key: 'D', value: '48 detik' }] },
-                { id: 4, text: "Perhatikan pola segitiga bilangan:<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/soal%20nomer%204.jpg\" alt=\"Soal 4\" class=\"my-4 max-w-full max-h-[300px] object-contain rounded shadow-sm border\"><br>Bilangan yang tepat untuk menggantikan tanda ? adalah...", options: [{ key: 'A', value: '12' }, { key: 'B', value: '16' }, { key: 'C', value: '20' }, { key: 'D', value: '24' }] },
-                { id: 5, text: "Jika A + A = 8.<br>A + B + B = 14<br>B + C = 13<br><br>Berapakah nilai C ?", options: [{ key: 'A', value: '4' }, { key: 'B', value: '5' }, { key: 'C', value: '8' }, { key: 'D', value: '10' }] },
-                { id: 6, text: "Perhatikan pola dibawah ini.<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/soal%20nomer%206.jpg\" alt=\"Soal 6\" class=\"mt-4 mb-2 max-w-full max-h-[150px] object-contain rounded shadow-sm border\"><br>Nilai dari A + B adalah...", options: [{ key: 'A', value: '18' }, { key: 'B', value: '19' }, { key: 'C', value: '20' }, { key: 'D', value: '21' }] },
-                { id: 7, text: "Jika 5<sup>n</sup> + 5<sup>n</sup> + 5<sup>n</sup> + 5<sup>n</sup> + 5<sup>n</sup> = 5<sup>20</sup><br><br>Maka nilai dari n adalah...", options: [{ key: 'A', value: '40' }, { key: 'B', value: '19' }, { key: 'C', value: '41' }, { key: 'D', value: '18' }] },
-                { id: 8, text: "22 windu + 2 abad + 192 minggu - 222 tahun - 24 bulan = …..tahun", options: [{ key: 'A', value: '148' }, { key: 'B', value: '150' }, { key: 'C', value: '152' }, { key: 'D', value: '156' }] },
-                { id: 9, text: "Faktorisasi prima dari bilangan 1.000 adalah ........", options: [{ key: 'A', value: '2&sup3; x 5&sup2;' }, { key: 'B', value: '2&sup3; x 5&sup3;' }, { key: 'C', value: '2&sup2; x 3&sup3; x 5&sup2;' }, { key: 'D', value: '2&sup3; x 3&sup2; x 5&sup3;' }] },
-                { id: 10, text: "Sepotong daging dalam kulkas bersuhu &ndash; 3&deg;C. Daging tersebut dipanaskan di atas api, sehingga suhunya rata &ndash; rata naik 8&deg;C setiap 2 menit. Suhu daging setelah dipanaskan selama 6 menit adalah &hellip;.", options: [{ key: 'A', value: '14&deg;C' }, { key: 'B', value: '21&deg;C' }, { key: 'C', value: '24&deg;C' }, { key: 'D', value: '27&deg;C' }] },
-                { id: 11, text: "Jika A = 12346789 - 12345678 + 1234567 - 123456 + 12345 - 1234 + 123 - 12 + 1<br><br>Ada berapa angka 1 dalam A?", options: [{ key: 'A', value: '1' }, { key: 'B', value: '2' }, { key: 'C', value: '5' }, { key: 'D', value: '9' }] },
-                { id: 12, text: "Perhatikan gambar di berikut. Misalkan ADEN dan BMDF adalah persegi serta F adalah titik tengah AD. Luas segitiga CDE adalah 12 satuan luas. Tentukan luas segitiga ABC ....<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/soal%20nomer%2012.jpg\" alt=\"Soal 12\" class=\"mt-4 max-w-full max-h-[300px] object-contain rounded shadow-sm border\">", options: [{ key: 'A', value: '6 satuan luas' }, { key: 'B', value: '10 satuan luas' }, { key: 'C', value: '12 satuan luas' }, { key: 'D', value: '16 satuan luas' }] },
-                { id: 13, text: "Dua buah dadu (bermata 1-6) dilempar bersamaan kemudian hasilnya dikalikan. Maka peluang hasil kalinya habis dibagi 6 adalah ...", options: [{ key: 'A', value: '1/6' }, { key: 'B', value: '5/12' }, { key: 'C', value: '1/4' }, { key: 'D', value: '1/3' }] },
-                { id: 14, text: "Perhatikan kubus-kubus di bawah ini.<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/soal%20nomer%2014.jpg\" alt=\"Soal 14\" class=\"mt-4 max-w-full max-h-[250px] object-contain rounded shadow-sm border\"><br>Tentukan pasangan huruf-huruf yang berseberangan adalah ....", options: [{ key: 'A', value: 'Y dengan D' }, { key: 'B', value: 'Z dengan K' }, { key: 'C', value: 'N dengan Y' }, { key: 'D', value: 'F dengan K' }] },
-                { id: 15, text: "Amir is three years older than Yusuf. Yusuf is four years younger than Ibrahim. When Ibrahim is 22 years old, Amir's age is ....", options: [{ key: 'A', value: '20 years' }, { key: 'B', value: '21 years' }, { key: 'C', value: '24 years' }, { key: 'D', value: '25 years' }] },
-                { id: 16, text: "Batang korek api disusun dengan dengan susunan seperti pada gambar berikut.<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/soal%20nomer%2016.jpg\" alt=\"Soal 16\" class=\"mt-4 max-w-full max-h-[200px] object-contain rounded shadow-sm border\"><br>Jika pola tersebut terus berlanjut, Tentukan total banyak batang korek api yang dibutuhkan sampai susunan ke-20 adalah ... batang.", options: [{ key: 'A', value: '560 batang' }, { key: 'B', value: '650 batang' }, { key: 'C', value: '680 batang' }, { key: 'D', value: '690 batang' }] },
-                { id: 17, text: "A box contains a total of 30 red, blue, and green pencils. There are 6 times as many blue pencils as green ones, and fewer red pencils than green ones. How many blue pencils are there in the box?", options: [{ key: 'A', value: '27 pencils' }, { key: 'B', value: '26 pencils' }, { key: 'C', value: '25 pencils' }, { key: 'D', value: '24 pencils' }] },
-                { id: 18, text: "Pukul 06.15 Amir berangkat ke sekolah naik sepeda dengan kecepatan 10 km/jam. Jika jarak rumah Amir ke sekolah adalah 3 km, maka Amir tiba di sekolah pada pukul &hellip;.", options: [{ key: 'A', value: '06.24' }, { key: 'B', value: '06.33' }, { key: 'C', value: '06.44' }, { key: 'D', value: '06.55' }] },
-                { id: 19, text: "Terdapat 10 kartu bilangan prima pertama. Banyaknya cara mengambil 2 kartu sehingga jumlah bilangan dari kedua kartu tersebut bernilai ganjil adalah &hellip; cara.", options: [{ key: 'A', value: '90' }, { key: 'B', value: '10' }, { key: 'C', value: '9' }, { key: 'D', value: '5' }] },
-                { id: 20, text: "Sarah punya beberapa pulpen. Dia membeli 34 pulpen. Dia kemudian melemparkan 29 pulpen karena rusak. Pada akhirnya, dia memiliki 64 pulpen. Berapa banyak pena yang dimiliki Sarah mula-mula?", options: [{ key: 'A', value: '63' }, { key: 'B', value: '59' }, { key: 'C', value: '50' }, { key: 'D', value: '49' }] },
-                { id: 21, text: "Sebuah tim cerdas cermat terdiri dari 3 siswa yang dipilih dari 4 siswa terbaik di kelas. Banyak tim berbeda yang mungkin dapat dibentuk adalah &hellip;.", options: [{ key: 'A', value: '4' }, { key: 'B', value: '6' }, { key: 'C', value: '12' }, { key: 'D', value: '24' }] },
-                { id: 22, text: "Suhu udara di Antartika tanggal 16 Mei 2025 pukul 04.00 mencapai &minus;48&deg;C, dua jam kemudian suhu udara mengalami kenaikan sebesar 2 derajat Celsius dan dua jam kemudian suhu mengalami penurunan sebesar 3 derajat Celsius. Suhu udara di Antartika tanggal 16 Mei 2025 ....", options: [{ key: 'A', value: 'Pukul 06.00 mencapai -50&deg;C' }, { key: 'B', value: 'Pukul 08.00 mencapai -47&deg;C' }, { key: 'C', value: 'Pukul 06.00 mencapai -46&deg;C' }, { key: 'D', value: 'Pukul 08.00 mencapai -43&deg;C' }] },
-                { id: 23, text: "Bilangan genap lima angka akan disusun dari angka- angka 1, 2, 3, dan 5, dengan ketentuan sebagai berikut:<br>- semua angka harus digunakan<br>- angka 5 boleh muncul maksimal dua kali<br>- angka 2 hanya muncul satu kali.<br><br>Banyak susunan bilangan genap yang mungkin adalah &hellip;.", options: [{ key: 'A', value: '12' }, { key: 'B', value: '24' }, { key: 'C', value: '36' }, { key: 'D', value: '42' }] },
-                { id: 24, text: "Misalkan x adalah suatu pecahan. Jika pembilang dari x ditambah 3 maka nilainya menjadi 2/3. Jika penyebut dari x dikurangi 1 maka nilainya menjadi 1/2. Nilai x adalah ....", options: [{ key: 'A', value: '2/3' }, { key: 'B', value: '7/15' }, { key: 'C', value: '4/7' }, { key: 'D', value: '8/15' }] },
-                { id: 25, text: "Dika sedang mencoba menyetel jam wekernya untuk besok pagi. Dia membutuhkan 30 menit untuk bersiap-siap ke sekolah dan dia membutuhkan waktu 10 menit untuk bersepeda ke sekolah. Jika sekolah dimulai pukul 06:55 pagi, jam berapa dia harus mengatur jam wekernya?", options: [{ key: 'A', value: '06.30' }, { key: 'B', value: '06.25' }, { key: 'C', value: '06.20' }, { key: 'D', value: '06.15' }] },
-                { id: 26, text: "Sasha mengundang banyak anak ke pesta ulang tahunnya. Setengah dari tamunya berasal dari lingkungan rumahnya. Setengah sisanya adalah teman sekelasnya dan sisanya tamu yang datang adalah 10 teman dekatnya. Berapa banyak tamu yang dia undang?", options: [{ key: 'A', value: '36' }, { key: 'B', value: '40' }, { key: 'C', value: '45' }, { key: 'D', value: '50' }] },
-                { id: 27, text: "A number is first subtracted by 8. The difference is then multiplied by 8. The product is then divided by 8. The final result is still 8. What is the number?", options: [{ key: 'A', value: '16' }, { key: 'B', value: '22' }, { key: 'C', value: '26' }, { key: 'D', value: '30' }] },
-                { id: 28, text: "Amanda punya beberapa stikers. Ia memberikan 10 kurang dari setengah stikers nya ke Shanti. Kemudian, dia memberi 6 lebih dari setengah sisanya untuk Cindy. Akhirnya, dia memberikan 30 stikers kepada sepupunya dan tersisa 40 stikers. Berapa banyak stikers yang dia miliki pada awalnya?", options: [{ key: 'A', value: '270' }, { key: 'B', value: '276' }, { key: 'C', value: '282' }, { key: 'D', value: '296' }] },
-                { id: 29, text: "Sepuluh anak membentuk kelompok bermain yang masing-masing terdiri dari empat anak dan enam anak. Rata-rata usia kelompok empat anak adalah 6 tahun, dan rata-rata usia kelompok enam anak adalah 6,5 tahun. Jika satu anak dari masing-masing kelompok ditukarkan, maka rata-rata usia kedua kelompok sama. Selisih usia kedua anak yang ditukarkan adalah &hellip; tahun.", options: [{ key: 'A', value: '1,2' }, { key: 'B', value: '1,0' }, { key: 'C', value: '0,5' }, { key: 'D', value: '0,25' }] },
-                { id: 30, text: "Pada hari Minggu, setengah dari semua buku dikeluarkan. 87 buku lainnya dikeluarkan pada hari esoknya. Jika masih ada 43 buku di perpustakaan, berapa jumlah buku mula-mula di perpustakaan?", options: [{ key: 'A', value: '250' }, { key: 'B', value: '256' }, { key: 'C', value: '260' }, { key: 'D', value: '264' }] },
-                { id: 31, text: "Sebuah pesawat berangkat dari kota A pada hari Sabtu pukul 08.20 waktu setempat. Pesawat tersebut tiba di kota B pada hari Minggu pukul 06.35 waktu setempat. Waktu tempuh penerbangan tersebut adalah 14 jam 15 menit. Perbedaan waktu antara kota A dan kota B adalah ... jam.", options: [{ key: 'A', value: '8' }, { key: 'B', value: '9' }, { key: 'C', value: '11' }, { key: 'D', value: '12' }] },
-                { id: 32, text: "Diketahui ABCD suatu persegi. Jika luas daerah DHJK adalah 9 cm&sup2;, maka panjang sisi persegi ABCD adalah &hellip; cm.<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/soal%20nomer%2032.jpg\" alt=\"Soal 32\" class=\"mt-4 max-w-full max-h-[300px] object-contain rounded shadow-sm border\">", options: [{ key: 'A', value: '5' }, { key: 'B', value: '6' }, { key: 'C', value: '8' }, { key: 'D', value: '9' }] },
-                { id: 33, text: "Banyak siswa SD Permata Bunda kelas VIA adalah 45 siswa, sementara banyak siswa kelas VIB adalah 40 siswa. Perbandingan rata-rata uang jajan siswa kelas VIA dengan rata-rata uang jajan siswa kelas VIB adalah 2 : 3. Bila rata-rata uang jajan siswa pada kedua kelas adalah Rp 7.000,00. Maka rata- rata uang jajan siswa kelas VIB adalah&hellip; rupiah.", options: [{ key: 'A', value: 'Rp 7.500,00' }, { key: 'B', value: 'Rp 6.500,00' }, { key: 'C', value: 'Rp 6.000,00' }, { key: 'D', value: 'Rp 5.500,00' }] },
-                { id: 34, text: "Perhatikan tabel berikut ini :<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/soal%20nomer%2034.jpg\" alt=\"Soal 34\" class=\"mt-4 max-w-full max-h-[300px] object-contain rounded shadow-sm border\"><br>Bilangan 42 dan 71 terletak di kolom ....", options: [{ key: 'A', value: 'A dan B' }, { key: 'B', value: 'A dan E' }, { key: 'C', value: 'B dan A' }, { key: 'D', value: 'C dan A' }] },
-                { id: 35, text: "Perhatikan deretan huruf-huruf berikut ini :<br><br>M, A, T, E, M, A, T, I, K, A, M, A, T, E, M, A, T, I, K, A, M, A, T, . . . .<br><br>Jika deretan huruf-huruf di atas diteruskan, maka huruf ke-63 dan huruf ke-95 adalah huruf . . . .", options: [{ key: 'A', value: 'A dan E' }, { key: 'B', value: 'A dan T' }, { key: 'C', value: 'M dan E' }, { key: 'D', value: 'T dan M' }] },
-                { id: 36, text: "The ratio of Budi's math score to his science score is 7 : 5. If the difference between his math score and science score is 26, then Budi's math score is ....", options: [{ key: 'A', value: '93' }, { key: 'B', value: '91' }, { key: 'C', value: '86' }, { key: 'D', value: '81' }] },
-                { id: 37, text: "Bangun manakah yang memiliki simetri putar lebih dari satu tetapi tidak memiliki simetri lipat? ....", options: [{ key: 'A', value: 'Jajar genjang' }, { key: 'B', value: 'Lingkaran' }, { key: 'C', value: 'Persegi' }, { key: 'D', value: 'Segitiga sama sisi' }] },
-                { id: 38, text: "Dari gambar di bawah ini, garis BD memotong persegi Panjang secara diagonal. Luas daerah b adalah 20% dari luas ABCD. Luas daerah a adalah 45 cm&sup2;.<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/soal%20nomer%2038.jpg\" alt=\"Soal 38\" class=\"mt-4 max-w-full max-h-[250px] object-contain rounded shadow-sm border\"><br>Berapakah luas dari persegi Panjang ABCD.", options: [{ key: 'A', value: '40 cm&sup2;' }, { key: 'B', value: '46 cm&sup2;' }, { key: 'C', value: '60 cm&sup2;' }, { key: 'D', value: '72 cm&sup2;' }] },
-                { id: 39, text: "Di dalam sebuah persegi besar terdapat sebuah persegi sedang. Di dalam persegi sedang terdapat sebuah persegi kecil. Diketahui bahwa luas daerah yang diarsir adalah 63 cm&sup2;. Perbandingan keliling persegi besar, persegi sedang, dan persegi kecil berturut-turut adalah 5 : 4 : 3.<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/soal%20nomer%2039.jpg\" alt=\"Soal 39\" class=\"mt-4 max-w-full max-h-[250px] object-contain rounded shadow-sm border\"><br>Berapa cm jumlah keliling ketiga persegi tersebut?", options: [{ key: 'A', value: '72' }, { key: 'B', value: '96' }, { key: 'C', value: '144' }, { key: 'D', value: '192' }] },
-                { id: 40, text: "Perhatikan gambar di bawah ini!<br><img src=\"https://raw.githubusercontent.com/smpqtyq1lilbanat-jpg/smpqtyq1lilbanat/main/soal%20nomer%2040.jpg\" alt=\"Soal 40\" class=\"mt-4 max-w-full max-h-[300px] object-contain rounded shadow-sm border\"><br>Besar sudut ACB adalah ...", options: [{ key: 'A', value: '75 &deg;' }, { key: 'B', value: '65 &deg;' }, { key: 'C', value: '45 &deg;' }, { key: 'D', value: '35 &deg;' }] }
+            // SOAL SIMULASI MATEMATIKA (PENGGANTI SOAL ASLI)
+            const mtkQuestions = [
+                { id: 1, text: "Hasil dari penjumlahan 15 + 25 adalah...", options: [{ key: 'A', value: '30' }, { key: 'B', value: '35' }, { key: 'C', value: '40' }, { key: 'D', value: '45' }] },
+                { id: 2, text: "Berapakah hasil kali dari 8 &times; 7?", options: [{ key: 'A', value: '54' }, { key: 'B', value: '56' }, { key: 'C', value: '62' }, { key: 'D', value: '64' }] },
+                { id: 3, text: "Jika 100 dibagi dengan 4, maka hasilnya adalah...", options: [{ key: 'A', value: '25' }, { key: 'B', value: '20' }, { key: 'C', value: '30' }, { key: 'D', value: '50' }] },
+                { id: 4, text: "Bangun datar yang memiliki 4 sisi sama panjang dan 4 sudut siku-siku dinamakan...", options: [{ key: 'A', value: 'Persegi Panjang' }, { key: 'B', value: 'Trapesium' }, { key: 'C', value: 'Layang-layang' }, { key: 'D', value: 'Persegi' }] },
+                { id: 5, text: "Berapakah &frac12; dari nilai 50?", options: [{ key: 'A', value: '15' }, { key: 'B', value: '25' }, { key: 'C', value: '30' }, { key: 'D', value: '35' }] },
+                { id: 6, text: "Hasil dari perpangkatan 3&sup2; adalah...", options: [{ key: 'A', value: '6' }, { key: 'B', value: '8' }, { key: 'C', value: '9' }, { key: 'D', value: '12' }] },
+                { id: 7, text: "Dalam satuan waktu, 1 Jam setara dengan berapa menit?", options: [{ key: 'A', value: '60' }, { key: 'B', value: '100' }, { key: 'C', value: '3600' }, { key: 'D', value: '24' }] },
+                { id: 8, text: "Berat suatu benda adalah 2 Kilogram (kg), berat tersebut sama dengan ... gram.", options: [{ key: 'A', value: '200' }, { key: 'B', value: '2000' }, { key: 'C', value: '20' }, { key: 'D', value: '20000' }] },
+                { id: 9, text: "Berapakah besar derajat sudut siku-siku?", options: [{ key: 'A', value: '45&deg;' }, { key: 'B', value: '60&deg;' }, { key: 'C', value: '180&deg;' }, { key: 'D', value: '90&deg;' }] },
+                { id: 10, text: "Hasil pengurangan dari 50 - 15 adalah...", options: [{ key: 'A', value: '25' }, { key: 'B', value: '30' }, { key: 'C', value: '35' }, { key: 'D', value: '40' }] }
             ];
 
-            // Kunci Jawaban
-            const answerKey = {
-                0:'D', 1:'C', 2:'B', 3:'B', 4:'C', 5:'A', 6:'B', 7:'D', 8:'B', 9:'B',
-                10:'B', 11:'C', 12:'B', 13:'A', 14:'B', 15:'D', 16:'D', 17:'B', 18:'C', 19:'B',
-                20:'A', 21:'C', 22:'C', 23:'B', 24:'D', 25:'B', 26:'A', 27:'B', 28:'A', 29:'C',
-                30:'A', 31:'B', 32:'B', 33:'D', 34:'D', 35:'B', 36:'A', 37:'C', 38:'C', 39:'B'
-            };
+            const mtkAnswerKey = { 0:'C', 1:'B', 2:'A', 3:'D', 4:'B', 5:'C', 6:'A', 7:'B', 8:'D', 9:'C' };
 
-            // 4. STATE APLIKASI
+            // SOAL SIMULASI IPA (PENGGANTI SOAL ASLI)
+            const ipaQuestions = [
+                { id: 1, text: "Gas utama yang dibutuhkan manusia dan hewan untuk bernapas adalah...", options: [{ key: 'A', value: 'Oksigen' }, { key: 'B', value: 'Karbon Dioksida' }, { key: 'C', value: 'Nitrogen' }, { key: 'D', value: 'Hidrogen' }] },
+                { id: 2, text: "Planet dalam tata surya kita yang letaknya paling dekat dengan matahari adalah...", options: [{ key: 'A', value: 'Bumi' }, { key: 'B', value: 'Venus' }, { key: 'C', value: 'Merkurius' }, { key: 'D', value: 'Mars' }] },
+                { id: 3, text: "Hewan yang memakan daging dan memangsa hewan lain dikelompokkan sebagai...", options: [{ key: 'A', value: 'Herbivora' }, { key: 'B', value: 'Karnivora' }, { key: 'C', value: 'Omnivora' }, { key: 'D', value: 'Insektivora' }] },
+                { id: 4, text: "Proses pembuatan makanan pada tumbuhan hijau dengan bantuan klorofil dan sinar matahari disebut...", options: [{ key: 'A', value: 'Respirasi' }, { key: 'B', value: 'Transpirasi' }, { key: 'C', value: 'Metamorfosis' }, { key: 'D', value: 'Fotosintesis' }] },
+                { id: 5, text: "Air murni yang dipanaskan akan mulai mendidih pada suhu...", options: [{ key: 'A', value: '50&deg;C' }, { key: 'B', value: '90&deg;C' }, { key: 'C', value: '100&deg;C' }, { key: 'D', value: '0&deg;C' }] },
+                { id: 6, text: "Alat indra pada manusia yang berfungsi secara khusus untuk penglihatan adalah...", options: [{ key: 'A', value: 'Mata' }, { key: 'B', value: 'Telinga' }, { key: 'C', value: 'Hidung' }, { key: 'D', value: 'Kulit' }] },
+                { id: 7, text: "Peristiwa perubahan wujud dari benda cair menjadi gas dinamakan...", options: [{ key: 'A', value: 'Membeku' }, { key: 'B', value: 'Menguap' }, { key: 'C', value: 'Mencair' }, { key: 'D', value: 'Menyublim' }] },
+                { id: 8, text: "Dari benda-benda berikut, manakah yang dapat ditarik kuat oleh magnet?", options: [{ key: 'A', value: 'Plastik' }, { key: 'B', value: 'Kertas' }, { key: 'C', value: 'Kayu' }, { key: 'D', value: 'Besi' }] },
+                { id: 9, text: "Sumber energi cahaya dan panas yang paling besar bagi bumi adalah...", options: [{ key: 'A', value: 'Matahari' }, { key: 'B', value: 'Bulan' }, { key: 'C', value: 'Bintang' }, { key: 'D', value: 'Listrik' }] },
+                { id: 10, text: "Hewan air seperti ikan dapat bernapas di dalam air menggunakan organ pernapasan berupa...", options: [{ key: 'A', value: 'Paru-paru' }, { key: 'B', value: 'Trakea' }, { key: 'C', value: 'Insang' }, { key: 'D', value: 'Kulit' }] }
+            ];
+
+            const ipaAnswerKey = { 0:'A', 1:'C', 2:'B', 3:'D', 4:'C', 5:'A', 6:'B', 7:'D', 8:'A', 9:'C' };
+
             let activeUserId = null;
+            let activeSubject = '';
+            let activeQuestions = [];
+            let activeAnswerKey = {};
+            
             let timerInterval = null;
             let currentIndex = 0;
             let answers = {}; 
             let flagged = new Set();
             let fontClassIndex = 1;
-            const fontClasses = ['text-sm', 'text-base', 'text-lg', 'text-xl', 'text-2xl'];
-            let startTime = null; // Menyiapkan variabel untuk mencatat waktu mulai ujian
+            const fontClasses = ['text-sm', 'text-base', 'text-lg', 'text-xl'];
+            let startTime = null;
 
-            // 5. FUNGSI LOGIKA
             function showLoading(text) {
                 document.getElementById('overlayText').textContent = text;
                 const overlay = document.getElementById('overlay');
@@ -404,17 +398,15 @@
                 errBox.classList.remove('hidden');
             }
 
-            // PROSES LOGIN UTAMA
             async function handleLogin() {
                 const rawUser = document.getElementById('username').value.trim();
                 const rawPass = document.getElementById('password').value.trim();
                 
                 if (!rawUser || !rawPass) {
-                    showError("Username dan Password wajib diisi!");
+                    showError("NISN dan Password harus diisi!");
                     return;
                 }
 
-                // Wajib Huruf Besar Semua
                 const userUpper = rawUser.toUpperCase();
                 const passUpper = rawPass.toUpperCase();
 
@@ -422,51 +414,101 @@
                 showLoading("Mencocokkan Data...");
 
                 try {
-                    const { data, error } = await supabaseClient
-                        .from('peserta')
-                        .select('id, nama, username, status_ujian')
-                        .eq('username', userUpper)
-                        .eq('password', passUpper)
-                        .single();
+                    // Deteksi Mata Pelajaran dari Password
+                    if (passUpper.startsWith('MTK')) {
+                        activeSubject = 'Matematika';
+                        activeQuestions = mtkQuestions;
+                        activeAnswerKey = mtkAnswerKey;
+                        document.getElementById('examHeaderTitle').innerText = 'CBT Simulasi Matematika';
+                        document.getElementById('examSubtitle').innerText = 'Latihan Ujian Matematika SD/MI';
+                    } else if (passUpper.startsWith('IPA')) {
+                        activeSubject = 'IPA';
+                        activeQuestions = ipaQuestions;
+                        activeAnswerKey = ipaAnswerKey;
+                        document.getElementById('examHeaderTitle').innerText = 'CBT Simulasi IPA';
+                        document.getElementById('examSubtitle').innerText = 'Latihan Ujian IPA SD/MI';
+                    } else {
+                        throw new Error("Password simulasi tidak valid. Harus diawali dengan 'MTK' atau 'IPA'.");
+                    }
 
-                    if (error) {
-                        console.error("Supabase Error:", error);
-                        throw new Error("Username atau Password salah!");
+                    let data;
+
+                    // MODE BYPASS UNTUK SIMULASI LATIHAN
+                    if (userUpper === 'SIMULASI') {
+                        data = {
+                            id: 'dummy-simulasi-123',
+                            nama: 'Peserta Uji Coba Simulasi',
+                            username: 'SIMULASI',
+                            status_ujian: 'belum',
+                            asal_sekolah: 'Sekolah Demonstrasi CBT',
+                            guru_pendamping: 'Bapak/Ibu Pengawas'
+                        };
+                        await new Promise(r => setTimeout(r, 800)); // Fake loading delay
+                    } else {
+                        // MODE ASLI KE SUPABASE
+                        if(!supabaseClient) throw new Error("Gagal menyambung ke server. Gunakan user 'SIMULASI' untuk ujicoba.");
+                        
+                        const result = await supabaseClient
+                            .from('peserta')
+                            .select('id, nama, username, status_ujian, asal_sekolah, guru_pendamping')
+                            .eq('username', userUpper)
+                            .eq('password', passUpper)
+                            .single();
+
+                        if (result.error) {
+                            throw new Error("Akun tidak ditemukan. Cek ejaan Username & Password.");
+                        }
+                        data = result.data;
                     }
 
                     if (data.status_ujian === 'selesai') {
                         throw new Error("Anda sudah menyelesaikan dan mengumpulkan ujian ini.");
                     }
 
-                    // --- SUKSES LOGIN ---
+                    // Sukses Login
                     activeUserId = data.id;
-                    
-                    // Set Data ke Header Ujian
                     document.getElementById('displayNamaSiswa').textContent = data.nama;
                     document.getElementById('displayUsernameSiswa').textContent = data.username;
 
-                    // Pindah Layar Animasi
+                    // Masukkan Data ke Layar Konfirmasi & Petunjuk
+                    document.getElementById('instNama').textContent = data.nama;
+                    document.getElementById('instNisn').textContent = data.username;
+                    document.getElementById('instSekolah').textContent = data.asal_sekolah || '-';
+                    document.getElementById('instGuru').textContent = data.guru_pendamping || '-';
+                    document.getElementById('instMapel').textContent = activeSubject;
+
+                    // Pindah ke Layar Petunjuk
                     document.getElementById('loginScreen').classList.add('hidden');
-                    document.getElementById('examScreen').classList.remove('hidden');
-                    document.getElementById('examScreen').classList.add('flex');
-                    
-                    // Jalankan Mesin Ujian
-                    initExam();
+                    document.getElementById('instructionScreen').classList.remove('hidden');
+                    document.getElementById('instructionScreen').classList.add('flex');
 
                 } catch (err) {
                     showError(err.message);
                 } finally {
                     hideLoading();
                 }
+            } 
+
+            function startRealExam() {
+                // Sembunyikan layar petunjuk
+                document.getElementById('instructionScreen').classList.remove('flex');
+                document.getElementById('instructionScreen').classList.add('hidden');
+                
+                // Munculkan layar ujian
+                document.getElementById('examScreen').classList.remove('hidden');
+                document.getElementById('examScreen').classList.add('flex');
+                
+                // Jalankan inisialisasi ujian
+                initExam();
             }
 
-            // FUNGSI MESIN UJIAN
             function initExam() {
-                // Reset State
                 currentIndex = 0;
                 answers = {};
                 flagged.clear();
-                startTime = new Date(); // Mencatat detik pertama saat soal muncul di layar
+                startTime = new Date();
+                
+                document.getElementById('answeredCount').innerText = `0 / ${activeQuestions.length}`;
                 
                 startTimer(120 * 60); // 120 Menit
                 initWebcam();
@@ -479,19 +521,18 @@
                 const status = document.getElementById('webcamStatus');
                 const indicator = document.getElementById('recordingIndicator');
                 const recText = document.getElementById('recordingText');
-
+                
                 if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                     navigator.mediaDevices.getUserMedia({ video: true })
-                        .then(function(stream) {
+                        .then(stream => {
                             video.srcObject = stream;
                             status.style.display = 'none';
                             indicator.classList.remove('hidden');
-                            recText.innerText = 'Pengawasan Aktif';
                             recText.classList.replace('text-gray-400', 'text-green-400');
                         })
-                        .catch(function(error) {
-                            status.innerText = "Kamera diblokir";
-                            status.classList.replace('text-gray-400', 'text-red-400');
+                        .catch(err => {
+                            status.innerText = "Kamera Tidak Tersedia";
+                            status.classList.add('text-red-400');
                         });
                 }
             }
@@ -507,35 +548,33 @@
                     let m = parseInt((timer % 3600) / 60, 10);
                     let s = parseInt(timer % 60, 10);
 
-                    h = h < 10 ? "0" + h : h;
-                    m = m < 10 ? "0" + m : m;
-                    s = s < 10 ? "0" + s : s;
-
-                    display.textContent = h + ":" + m + ":" + s;
+                    display.textContent = `${h < 10 ? "0"+h : h}:${m < 10 ? "0"+m : m}:${s < 10 ? "0"+s : s}`;
 
                     if (--timer < 0) {
                         clearInterval(timerInterval);
-                        display.textContent = "00:00:00";
-                        // Waktu habis, paksa submit
-                        handleFinalSubmit(); 
+                        display.textContent = "WAKTU HABIS";
+                        
+                        const toast = document.getElementById('systemErrorToast');
+                        document.getElementById('systemErrorTitle').innerText = "WAKTU HABIS!";
+                        document.getElementById('systemErrorText').innerText = "Sistem akan mengumpulkan jawaban Anda secara otomatis.";
+                        toast.classList.remove('hidden');
+                        
+                        setTimeout(() => handleFinalSubmit(), 3000);
                     } else if (timer < 300) {
                         display.classList.add('text-red-700', 'animate-pulse');
                     }
                 }, 1000);
             }
 
-            // RENDER UI SOAL
             function loadQuestion(index) {
                 currentIndex = index;
-                const q = questions[index];
+                const q = activeQuestions[index];
                 
-                document.getElementById('questionNumberBadge').innerText = index + 1;
                 document.getElementById('questionNumberLabel').innerText = `SOAL NOMOR ${index + 1}`;
                 
                 const qText = document.getElementById('questionText');
                 qText.innerHTML = q.text;
-                // Pastikan class font teraplikasi
-                qText.className = `text-gray-800 mb-8 leading-relaxed font-medium transition-all duration-300 ${fontClasses[fontClassIndex]}`;
+                qText.className = `text-gray-800 mb-8 leading-relaxed font-medium transition-all ${fontClasses[fontClassIndex]}`;
                 
                 const optContainer = document.getElementById('optionsContainer');
                 optContainer.innerHTML = '';
@@ -544,7 +583,7 @@
                     const isSelected = answers[index] === opt.key;
                     
                     const label = document.createElement('label');
-                    label.className = `relative flex items-start gap-4 p-4 lg:p-5 border-2 rounded-xl cursor-pointer transition-all duration-200 ${isSelected ? 'border-blue-500 bg-blue-50/50 shadow-sm' : 'border-gray-200 hover:bg-gray-50 hover:border-blue-200'}`;
+                    label.className = `relative flex items-start gap-4 p-4 lg:p-5 border-2 rounded-xl cursor-pointer transition-all ${isSelected ? 'border-blue-500 bg-blue-50 shadow-sm' : 'border-gray-200 hover:bg-gray-50'}`;
                     
                     const radio = document.createElement('input');
                     radio.type = 'radio';
@@ -552,18 +591,17 @@
                     radio.value = opt.key;
                     radio.className = 'sr-only option-radio';
                     radio.checked = isSelected;
-                    // Event saat radio ditekan
-                    radio.onchange = function() {
+                    radio.onchange = () => {
                         answers[currentIndex] = opt.key;
-                        loadQuestion(currentIndex); // Re-render for styling
+                        loadQuestion(currentIndex); 
                     };
                     
                     const box = document.createElement('div');
-                    box.className = `flex-shrink-0 w-8 h-8 lg:w-9 lg:h-9 flex items-center justify-center rounded-lg font-bold border-2 transition-all duration-200 ${isSelected ? 'bg-blue-600 border-blue-600 text-white shadow-md' : 'border-gray-300 text-gray-500 bg-white'}`;
+                    box.className = `flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg font-bold border-2 transition-all ${isSelected ? 'bg-blue-600 border-blue-600 text-white' : 'border-gray-300 text-gray-500 bg-white'}`;
                     box.innerText = opt.key;
                     
                     const span = document.createElement('span');
-                    span.className = 'mt-1 lg:mt-1.5 flex-1 text-gray-700 leading-relaxed';
+                    span.className = 'mt-1 flex-1 text-gray-700 leading-relaxed';
                     span.innerHTML = opt.value;
                     
                     label.appendChild(radio);
@@ -572,7 +610,6 @@
                     optContainer.appendChild(label);
                 });
 
-                // Update Navigasi
                 document.getElementById('btnPrev').disabled = (currentIndex === 0);
                 
                 const isFlagged = flagged.has(index);
@@ -582,30 +619,30 @@
                     btnFlag.classList.add('bg-yellow-100', 'border-yellow-500', 'text-yellow-900');
                     btnFlag.classList.remove('bg-yellow-50', 'text-yellow-800', 'border-yellow-400');
                 } else {
-                    btnFlag.classList.remove('bg-yellow-100', 'border-yellow-500', 'text-yellow-900');
                     btnFlag.classList.add('bg-yellow-50', 'text-yellow-800', 'border-yellow-400');
+                    btnFlag.classList.remove('bg-yellow-100', 'border-yellow-500', 'text-yellow-900');
                 }
 
-                // Update Tombol Next/Kumpulkan
                 const btnNext = document.getElementById('btnNext');
-                if (currentIndex === questions.length - 1) {
+                if (currentIndex === activeQuestions.length - 1) {
                     btnNext.classList.replace('bg-blue-600', 'bg-green-600');
                     btnNext.classList.replace('hover:bg-blue-700', 'hover:bg-green-700');
-                    document.getElementById('nextBtnText').innerText = "Selesai Ujian";
+                    document.getElementById('nextBtnText').innerText = "Selesai Simulasi";
                     document.getElementById('nextBtnTextMobile').innerText = "Selesai";
                     document.getElementById('nextBtnIcon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>';
                 } else {
                     btnNext.classList.replace('bg-green-600', 'bg-blue-600');
                     btnNext.classList.replace('hover:bg-green-700', 'hover:bg-blue-700');
-                    document.getElementById('nextBtnText').innerText = "Selanjutnya";
+                    document.getElementById('nextBtnText').innerText = "Berikutnya";
                     document.getElementById('nextBtnTextMobile').innerText = "Lanjut";
                     document.getElementById('nextBtnIcon').innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>';
                 }
 
                 renderGrid();
-                updateCounter();
+                
+                const answeredCount = Object.keys(answers).length;
+                document.getElementById('answeredCount').innerText = `${answeredCount} / ${activeQuestions.length}`;
 
-                // Auto Scroll to Top Content
                 const contentEl = document.getElementById('questionText').parentElement;
                 if (contentEl) contentEl.scrollTop = 0;
             }
@@ -614,21 +651,21 @@
                 const grid = document.getElementById('questionGrid');
                 grid.innerHTML = '';
                 
-                questions.forEach((q, index) => {
+                activeQuestions.forEach((q, index) => {
                     const btn = document.createElement('button');
-                    btn.className = `w-full aspect-square flex items-center justify-center text-sm font-bold rounded-lg border-2 transition-all duration-200 relative focus:outline-none focus:ring-2 focus:ring-blue-400 `;
+                    btn.className = `w-full aspect-square flex items-center justify-center text-sm font-bold rounded-lg border-2 transition-all relative `;
                     
-                    if (index === currentIndex) btn.classList.add('ring-2', 'ring-blue-600', 'ring-offset-2');
+                    if (index === currentIndex) btn.classList.add('ring-2', 'ring-blue-600', 'ring-offset-1');
 
                     if (flagged.has(index)) {
                         btn.classList.add('bg-yellow-400', 'text-yellow-900', 'border-yellow-500');
                         if (answers[index]) btn.innerHTML = `${index + 1}<span class="absolute -top-1 -right-1 w-3 h-3 bg-blue-600 border border-white rounded-full"></span>`;
                         else btn.innerText = index + 1;
                     } else if (answers[index]) {
-                        btn.classList.add('bg-blue-600', 'text-white', 'border-blue-700', 'shadow-sm');
+                        btn.classList.add('bg-blue-600', 'text-white', 'border-blue-700');
                         btn.innerText = index + 1;
                     } else {
-                        btn.classList.add('bg-white', 'text-gray-700', 'border-gray-300', 'hover:bg-gray-100');
+                        btn.classList.add('bg-white', 'text-gray-700', 'border-gray-300');
                         btn.innerText = index + 1;
                     }
 
@@ -637,62 +674,53 @@
                 });
             }
 
-            function updateCounter() {
-                const answered = Object.keys(answers).length;
-                document.getElementById('answeredCount').innerText = `${answered} / ${questions.length}`;
-            }
-
-            // PROSES SUBMIT KE DATABASE
             async function handleFinalSubmit() {
-                // Tutup modal jika ada
                 document.getElementById('submitModal').classList.add('hidden');
-                clearInterval(timerInterval); // Stop waktu
-                showLoading("Menyimpan Jawaban...");
+                clearInterval(timerInterval); 
+                showLoading("Menyelesaikan Simulasi...");
 
                 try {
-                    // 1. Hitung Nilai Akhir (Benar: +4, Kosong: 0, Salah: -1)
                     let finalScore = 0;
-                    for (let i = 0; i < questions.length; i++) {
-                        if (answers[i] === answerKey[i]) {
-                            finalScore += 4; // Benar
-                        } else if (!answers[i]) {
-                            finalScore += 0; // Kosong
+                    let detailJawaban = "";
+
+                    // Hitung poin simulasi
+                    for (let i = 0; i < activeQuestions.length; i++) {
+                        let ans = answers[i];
+                        if (!ans) {
+                            detailJawaban += "X"; // Kosong
                         } else {
-                            finalScore -= 1; // Salah
+                            detailJawaban += ans;
+                            if (ans === activeAnswerKey[i]) {
+                                finalScore += 4; // Benar
+                            } else {
+                                finalScore -= 1; // Salah
+                            }
                         }
                     }
 
-                    // 2. Rekap Jawaban Peserta (Contoh: ABDCXC...)
-                    let stringJawaban = "";
-                    for (let i = 0; i < questions.length; i++) {
-                        // Jika soal dijawab, ambil hurufnya. Jika dikosongi, catat sebagai "X".
-                        stringJawaban += answers[i] ? answers[i] : "X"; 
-                    }
-
-                    // 3. Hitung Lama Pengerjaan Ujian
-                    const endTime = new Date(); // Catat waktu saat tombol submit ditekan
+                    const endTime = new Date(); 
                     const diffInSeconds = Math.floor((endTime - startTime) / 1000);
-                    // Format ke HH:MM:SS
                     const h = Math.floor(diffInSeconds / 3600).toString().padStart(2, '0');
                     const m = Math.floor((diffInSeconds % 3600) / 60).toString().padStart(2, '0');
                     const s = Math.floor(diffInSeconds % 60).toString().padStart(2, '0');
-                    const waktuDihabiskan = `${h}:${m}:${s}`; // Output contoh: "01:25:10"
+                    const lamaWaktu = `${h}:${m}:${s}`; 
 
-                    // 4. Update Supabase
-                    const waktuSelesai = new Date().toISOString(); // Mengambil timestamp saat ini
-
-                    const { error } = await supabaseClient
-                        .from('peserta')
-                        .update({ 
-                            nilai_akhir: finalScore, 
-                            status_ujian: 'selesai',
-                            lama_pengerjaan: waktuDihabiskan,
-                            detail_jawaban: stringJawaban,
-                            waktu_pengumpulan: waktuSelesai
-                        })
-                        .eq('id', activeUserId);
-
-                    if (error) throw error;
+                    // Bypass update supabase jika ini akun simulasi
+                    if (activeUserId !== 'dummy-simulasi-123' && supabaseClient) {
+                        const { error } = await supabaseClient
+                            .from('peserta')
+                            .update({ 
+                                nilai_akhir: finalScore, 
+                                status_ujian: 'selesai',
+                                lama_pengerjaan: lamaWaktu,
+                                detail_jawaban: detailJawaban,
+                                waktu_pengumpulan: endTime.toISOString() 
+                            })
+                            .eq('id', activeUserId);
+                        if (error) throw error;
+                    } else {
+                        await new Promise(r => setTimeout(r, 1000)); // Simulasi delay loading
+                    }
 
                     // Matikan Kamera
                     const video = document.getElementById('proctorWebcam');
@@ -700,40 +728,46 @@
                         video.srcObject.getTracks().forEach(track => track.stop());
                     }
 
-                    // Pindah Layar Sukses (SPA Mode)
+                    // Tampilkan UI Selesai
                     document.getElementById('examScreen').classList.remove('flex');
                     document.getElementById('examScreen').classList.add('hidden');
                     document.getElementById('doneScreen').classList.remove('hidden');
+                    
+                    // Bersihkan Field Login untuk keamanan
+                    activeUserId = null;
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
 
                 } catch (err) {
-                    alert("GAGAL MENYIMPAN! Jaringan terputus. Panggil panitia: " + err.message);
+                    const toast = document.getElementById('systemErrorToast');
+                    document.getElementById('systemErrorTitle').innerText = "Gagal Mengumpulkan!";
+                    document.getElementById('systemErrorText').innerText = err.message;
+                    toast.classList.remove('hidden');
                 } finally {
                     hideLoading();
                 }
             }
 
-            // MENGHUBUNGKAN EVENT LISTENER KE TOMBOL (Mencegah masalah onclick inline)
             document.addEventListener('DOMContentLoaded', () => {
                 
-                // Event Layar Login
+                // Event Login
                 document.getElementById('btnLogin').addEventListener('click', handleLogin);
+                document.getElementById('password').addEventListener('keypress', e => { if (e.key === 'Enter') handleLogin(); });
                 
-                // Form submit dengan Enter
-                document.getElementById('password').addEventListener('keypress', function (e) {
-                    if (e.key === 'Enter') handleLogin();
-                });
+                // Event Mulai Ujian Real (Dari Layar Petunjuk)
+                document.getElementById('btnStartExam').addEventListener('click', startRealExam);
 
-                // Event Toolbar Font
+                // Event Navigasi
                 document.getElementById('btnZoomOut').addEventListener('click', () => {
-                    if (fontClassIndex > 0) fontClassIndex--;
-                    loadQuestion(currentIndex);
+                    if (fontClassIndex > 0) fontClassIndex--; loadQuestion(currentIndex);
+                });
+                document.getElementById('btnZoomReset').addEventListener('click', () => {
+                    fontClassIndex = 1; loadQuestion(currentIndex);
                 });
                 document.getElementById('btnZoomIn').addEventListener('click', () => {
-                    if (fontClassIndex < fontClasses.length - 1) fontClassIndex++;
-                    loadQuestion(currentIndex);
+                    if (fontClassIndex < fontClasses.length - 1) fontClassIndex++; loadQuestion(currentIndex);
                 });
 
-                // Event Navigasi Bawah
                 document.getElementById('btnPrev').addEventListener('click', () => {
                     if(currentIndex > 0) loadQuestion(currentIndex - 1);
                 });
@@ -745,33 +779,26 @@
                 });
                 
                 document.getElementById('btnNext').addEventListener('click', () => {
-                    if(currentIndex < questions.length - 1) {
+                    if(currentIndex < activeQuestions.length - 1) {
                         loadQuestion(currentIndex + 1);
                     } else {
-                        // Buka Modal Konfirmasi
                         const modal = document.getElementById('submitModal');
                         const modalContent = document.getElementById('modalContent');
                         modal.classList.remove('hidden');
-                        setTimeout(() => {
-                            modal.classList.remove('opacity-0');
-                            modalContent.classList.remove('scale-95');
-                        }, 10);
+                        setTimeout(() => { modal.classList.remove('opacity-0'); modalContent.classList.remove('scale-95'); }, 10);
                     }
                 });
 
-                // Event Modal Konfirmasi
                 document.getElementById('btnCancelSubmit').addEventListener('click', () => {
                     const modal = document.getElementById('submitModal');
                     const modalContent = document.getElementById('modalContent');
-                    modal.classList.add('opacity-0');
-                    modalContent.classList.add('scale-95');
+                    modal.classList.add('opacity-0'); modalContent.classList.add('scale-95');
                     setTimeout(() => modal.classList.add('hidden'), 300);
                 });
 
                 document.getElementById('btnConfirmSubmit').addEventListener('click', handleFinalSubmit);
             });
-
-        })(); // End of IIFE
+        })(); 
     </script>
 </body>
 </html>
