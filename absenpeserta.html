@@ -95,7 +95,7 @@
 
         <!-- FILTER & KONTROL -->
         <div class="bg-white p-4 rounded-t-xl border border-gray-200 border-b-0 flex flex-col sm:flex-row justify-between items-center gap-4 no-print">
-            <div class="flex gap-2 w-full sm:w-auto">
+            <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                 <select id="filterMapel" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none w-full sm:w-auto font-medium">
                     <option value="Semua">Semua Mata Pelajaran</option>
                     <option value="Olimpiade Matematika">Olimpiade Matematika</option>
@@ -106,16 +106,24 @@
                     <option value="selesai">Selesai Ujian</option>
                     <option value="belum">Belum / Sedang Ujian</option>
                 </select>
+                <!-- Opsi Sortir Baru -->
+                <select id="sortData" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block p-2.5 outline-none w-full sm:w-auto font-medium">
+                    <option value="nama_asc">Urutkan: Nama (A-Z)</option>
+                    <option value="nilai_desc">Nilai: Tertinggi - Terendah</option>
+                    <option value="nilai_asc">Nilai: Terendah - Tertinggi</option>
+                    <option value="waktu_desc">Waktu: Terbaru - Terlama</option>
+                    <option value="waktu_asc">Waktu: Terlama - Terbaru</option>
+                </select>
             </div>
             
-            <div class="flex gap-2 w-full sm:w-auto">
+            <div class="flex gap-2 w-full sm:w-auto mt-2 sm:mt-0">
                 <button onclick="fetchData()" class="flex items-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg text-sm font-semibold transition border border-gray-300">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     Refresh
                 </button>
                 <button onclick="window.print()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-lg text-sm font-semibold transition shadow-sm">
                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path></svg>
-                    Cetak Absensi / PDF
+                    Cetak
                 </button>
             </div>
         </div>
@@ -186,11 +194,10 @@
             tableBody.innerHTML = `<tr><td colspan="7" class="px-6 py-8 text-center"><svg class="animate-spin h-6 w-6 mx-auto mb-2 text-blue-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Menyegarkan data...</td></tr>`;
 
             try {
-                // Ambil semua data peserta, urutkan berdasarkan nama
+                // Ambil semua data peserta
                 const { data, error } = await supabaseClient
                     .from('peserta')
-                    .select('*')
-                    .order('nama', { ascending: true });
+                    .select('*');
 
                 if (error) throw error;
                 
@@ -231,6 +238,7 @@
         function renderTable() {
             const mapelFilter = document.getElementById('filterMapel').value;
             const statusFilter = document.getElementById('filterStatus').value;
+            const sortFilter = document.getElementById('sortData').value;
             const tableBody = document.getElementById('tableBody');
             
             tableBody.innerHTML = '';
@@ -250,6 +258,35 @@
                 }
                 
                 return matchMapel && matchStatus;
+            });
+
+            // Proses Sortir Data
+            filteredData.sort((a, b) => {
+                const nilaiA = a.nilai_akhir !== null ? a.nilai_akhir : -1;
+                const nilaiB = b.nilai_akhir !== null ? b.nilai_akhir : -1;
+                const waktuA = a.waktu_pengumpulan ? new Date(a.waktu_pengumpulan).getTime() : 0;
+                const waktuB = b.waktu_pengumpulan ? new Date(b.waktu_pengumpulan).getTime() : 0;
+                const namaA = a.nama ? a.nama.toLowerCase() : '';
+                const namaB = b.nama ? b.nama.toLowerCase() : '';
+
+                if (sortFilter === 'nilai_desc') {
+                    return nilaiB - nilaiA;
+                } else if (sortFilter === 'nilai_asc') {
+                    // Mendorong peserta yang belum selesai (nilai = -1) ke paling bawah jika disortir dari yang terkecil
+                    if (nilaiA === -1 && nilaiB !== -1) return 1;
+                    if (nilaiB === -1 && nilaiA !== -1) return -1;
+                    return nilaiA - nilaiB;
+                } else if (sortFilter === 'waktu_desc') {
+                    return waktuB - waktuA;
+                } else if (sortFilter === 'waktu_asc') {
+                    // Mendorong peserta yang belum selesai (waktu = 0) ke paling bawah
+                    if (waktuA === 0 && waktuB !== 0) return 1;
+                    if (waktuB === 0 && waktuA !== 0) return -1;
+                    return waktuA - waktuB;
+                } else {
+                    // Default: Nama (A-Z)
+                    return namaA.localeCompare(namaB);
+                }
             });
 
             if (filteredData.length === 0) {
@@ -299,9 +336,10 @@
             });
         }
 
-        // Event Listener untuk Filter Dropdown
+        // Event Listener untuk Filter & Sortir Dropdown
         document.getElementById('filterMapel').addEventListener('change', renderTable);
         document.getElementById('filterStatus').addEventListener('change', renderTable);
+        document.getElementById('sortData').addEventListener('change', renderTable); // Tambahan event listener untuk pengurutan
 
         // Jalankan fetch pertama kali saat web dibuka
         window.onload = fetchData;
