@@ -104,6 +104,17 @@
                     <span id="summaryTotal">Rp 0</span>
                 </div>
             </div>
+            
+            <div class="mt-4 p-4 bg-blue-50 border border-blue-200 rounded-md">
+                <h3 class="text-sm font-semibold text-blue-800 mb-2">Informasi Pembayaran & Konfirmasi</h3>
+                <p class="text-sm text-gray-700">Silakan transfer pembayaran ke rekening berikut:</p>
+                <p class="font-bold text-gray-800 mt-1">Bank BNI: 1932928873</p>
+                <p class="text-sm text-gray-700">A.n: Anisa Ika Wulandari</p>
+                
+                <p class="text-sm text-gray-700 mt-3">Setelah klik kirim pesanan, mohon konfirmasi bukti transfer ke WhatsApp:</p>
+                <p class="font-bold text-gray-800 mt-1">+62 889-5880-420 (Ustadzah Atik)</p>
+            </div>
+
             <button type="submit" id="btnSubmit" class="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-blue-700 transition shadow-md flex justify-center items-center">
                 <span>Kirim Pesanan</span>
                 <div id="submitSpinner" class="hidden ml-2 animate-spin rounded-full h-5 w-5 border-t-2 border-white border-solid"></div>
@@ -192,6 +203,24 @@
             pemesanAlamat.removeAttribute('required');
         }
         calculateTotal();
+    }
+
+    function updateStudentInfo(id) {
+        const selectVal = document.getElementById(`select-siswa-${id}`).value;
+        const infoDiv = document.getElementById(`info-siswa-${id}`);
+        const namaField = document.getElementById(`nama-sertifikat-${id}`);
+        const medaliField = document.getElementById(`peringkat-medali-${id}`);
+
+        if (selectVal !== "") {
+            const siswaData = dataSiswaGlobal[selectVal];
+            namaField.value = siswaData.nama;
+            medaliField.value = `${siswaData.medali} (${siswaData.peringkat})`;
+            infoDiv.classList.remove('hidden');
+        } else {
+            namaField.value = "";
+            medaliField.value = "";
+            infoDiv.classList.add('hidden');
+        }
     }
 
     function addStudent() {
@@ -379,6 +408,9 @@
             if(result.status === 'success') {
                 alert(result.message);
                 
+                // Peringatkan pengguna untuk transfer
+                alert("Silakan transfer ke BNI 1932928873 A.n Anisa Ika Wulandari dan konfirmasi ke WhatsApp +62 889-5880-420 (Ustadzah Atik)");
+
                 // Reset Form
                 document.getElementById('orderForm').reset();
                 
