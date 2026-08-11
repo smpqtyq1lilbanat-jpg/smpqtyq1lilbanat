@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form Order Medali & Sertifikat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Select2 untuk dropdown yang bisa dicari -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <style>
+        body { background-color: #f3f4f6; font-family: 'Inter', sans-serif; }
+        .student-block { transition: all 0.3s ease; }
+        /* Style untuk menyesuaikan Select2 dengan Tailwind */
+        .select2-container .select2-selection--single {
+            height: 42px !important;
+            border: 1px solid #d1d5db !important;
+            border-radius: 0.375rem !important;
+            padding-top: 5px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            top: 7px !important;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+<div id="loadingOverlay" class="fixed inset-0 bg-white bg-opacity-90 z-50 flex flex-col items-center justify-center">
+    <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-600 border-solid"></div>
+    <p class="mt-4 text-gray-700 font-semibold" id="loadingText">Mengambil data dari Spreadsheet...</p>
+</div>
+
+<div class="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden hidden" id="mainContent">
+    <div class="bg-blue-600 text-white p-6 text-center">
+        <h1 class="text-2xl font-bold">Formulir Pemesanan Medali & Sertifikat</h1>
+        <p class="text-sm mt-2 opacity-90">Silakan isi data pemesan dan pilih siswa pemenang</p>
+    </div>
+
+    <form id="orderForm" class="p-6 md:p-8 space-y-8" onsubmit="event.preventDefault(); submitOrder();">
+        
+        <section>
+            <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">1. Informasi Pemesan</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Nama Pemesan / Pendamping</label>
+                    <input type="text" id="pemesanNama" required class="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Masukkan nama lengkap">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Asal Sekolah</label>
+                    <input type="text" id="pemesanSekolah" required class="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Contoh: SD Muhammadiyah...">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">No. WhatsApp</label>
+                    <input type="tel" id="pemesanWA" required class="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" placeholder="0812xxxxxx">
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2 class="text-xl font-semibold text-gray-800 border-b pb-2 mb-4">2. Metode Pengiriman</h2>
+            <div class="space-y-3">
+                <label class="flex items-center space-x-3 cursor-pointer">
+                    <input type="radio" name="pengiriman" value="pickup" class="w-5 h-5 text-blue-600 focus:ring-blue-500" checked onchange="toggleAddress()">
+                    <span class="text-gray-700 font-medium">Ambil Sendiri / Pickup <span class="text-green-600 text-sm">(Gratis)</span></span>
+                </label>
+                <label class="flex items-center space-x-3 cursor-pointer">
+                    <input type="radio" name="pengiriman" value="dikirim" class="w-5 h-5 text-blue-600 focus:ring-blue-500" onchange="toggleAddress()">
+                    <span class="text-gray-700 font-medium">Dikirim ke Alamat <span class="text-orange-500 text-sm">(Packing + Ongkir <span id="labelOngkir">Rp 0</span>)</span></span>
+                </label>
+            </div>
+            
+            <div id="alamatBox" class="mt-4 hidden">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Alamat Lengkap Pengiriman</label>
+                <textarea id="pemesanAlamat" rows="3" class="w-full border border-gray-300 rounded-md p-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Masukkan alamat lengkap beserta RT/RW, Desa, Kecamatan, Kabupaten, dan Kodepos"></textarea>
+            </div>
+        </section>
+
+        <section>
+            <div class="flex justify-between items-center border-b pb-2 mb-4">
+                <h2 class="text-xl font-semibold text-gray-800">3. Daftar Siswa & Pesanan</h2>
+                <button type="button" onclick="addStudent()" class="bg-blue-100 text-blue-700 px-3 py-1 rounded-md text-sm font-semibold hover:bg-blue-200 transition">+ Tambah Siswa</button>
+            </div>
+            
+            <div id="studentContainer" class="space-y-4">
+                <!-- Siswa akan ditambahkan di sini oleh JavaScript -->
+            </div>
+        </section>
+
+        <section class="bg-gray-50 p-6 rounded-lg border border-gray-200">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4">Ringkasan Biaya</h2>
+            <div class="space-y-2 text-sm text-gray-600">
+                <div class="flex justify-between">
+                    <span>Total Item Dipilih:</span>
+                    <span id="summaryItems" class="font-medium text-gray-800">0 item</span>
+                </div>
+                <div class="flex justify-between">
+                    <span>Biaya Pengiriman:</span>
+                    <span id="summaryOngkir" class="font-medium text-gray-800">Rp 0</span>
+                </div>
+                <hr class="my-2">
+                <div class="flex justify-between text-lg font-bold text-gray-900">
+                    <span>Total Keseluruhan:</span>
+                    <span id="summaryTotal">Rp 0</span>
+                </div>
+            </div>
+            <button type="submit" id="btnSubmit" class="mt-6 w-full bg-blue-600 text-white py-3 rounded-lg font-bold text-lg hover:bg-blue-700 transition shadow-md flex justify-center items-center">
+                <span>Kirim Pesanan</span>
+                <div id="submitSpinner" class="hidden ml-2 animate-spin rounded-full h-5 w-5 border-t-2 border-white border-solid"></div>
+            </button>
+        </section>
+    </form>
+</div>
+
+<script>
+    // URL Web App Google Apps Script Anda 
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw1FNnNkik-jCMIB2eQcfpE2h77TRO9fM5ohretbguNeK77gUa8iux8sjV6F2vHcRfPJw/exec'; 
+
+    let prices = {
+        medali: 0,
+        lanyard: 0,
+        sertifikat: 0,
+        ongkir: 0
+    };
+
+    let dataSiswaGlobal = [];
+    let studentCount = 0;
+
+    function formatRupiah(number) {
+        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+    }
+
+    // Panggil API saat halaman dimuat
+    $(document).ready(async function() {
+        if (!SCRIPT_URL || SCRIPT_URL.includes('URL_WEB_APP_ANDA_DISINI')) {
+            onDataError({message: "URL Web App Apps Script (SCRIPT_URL) belum diatur di dalam kode HTML. Harap ganti terlebih dahulu."});
+            return;
+        }
+
+        try {
+            // Mengambil data menggunakan fetch API
+            const response = await fetch(SCRIPT_URL + '?action=getData');
+            if (!response.ok) {
+                 throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            onDataLoaded(data);
+        } catch (error) {
+            console.error("Fetch Error:", error);
+            onDataError(error);
+        }
+    });
+
+    function onDataLoaded(data) {
+        // Set prices dari database
+        prices = data.harga || { medali: 0, lanyard: 0, sertifikat: 0, ongkir: 0 };
+        document.getElementById('labelOngkir').innerText = formatRupiah(prices.ongkir);
+        
+        // Set Data Siswa
+        dataSiswaGlobal = data.siswa || [];
+
+        if(dataSiswaGlobal.length === 0) {
+             alert("Peringatan: Data siswa kosong dari Spreadsheet. Cek apakah format Sheet 'Daftar Nama' sudah benar.");
+        }
+
+        // Sembunyikan loading overlay, tampilkan konten form
+        document.getElementById('loadingOverlay').classList.add('hidden');
+        document.getElementById('mainContent').classList.remove('hidden');
+
+        // Tambahkan blok siswa pertama
+        addStudent();
+        calculateTotal();
+    }
+
+    function onDataError(error) {
+        const errorMsg = "Gagal mengambil data dari Spreadsheet. Pastikan URL Web App sudah benar, dan koneksi internet stabil.\nDetail: " + error.message;
+        alert(errorMsg);
+        document.getElementById('loadingText').innerText = "Gagal memuat sistem. Silakan muat ulang halaman.";
+        document.querySelector('.animate-spin').classList.add('hidden');
+    }
+
+    function toggleAddress() {
+        const method = document.querySelector('input[name="pengiriman"]:checked').value;
+        const alamatBox = document.getElementById('alamatBox');
+        const pemesanAlamat = document.getElementById('pemesanAlamat');
+        
+        if (method === 'dikirim') {
+            alamatBox.classList.remove('hidden');
+            pemesanAlamat.setAttribute('required', 'required');
+        } else {
+            alamatBox.classList.add('hidden');
+            pemesanAlamat.removeAttribute('required');
+        }
+        calculateTotal();
+    }
+
+    function addStudent() {
+        studentCount++;
+        
+        // Buat opsi dropdown dari Data Siswa
+        let optionsHTML = '<option value="">-- Cari Nama Siswa --</option>';
+        dataSiswaGlobal.forEach((s, index) => {
+            optionsHTML += `<option value="${index}">${s.nama} (${s.sekolah}) - ${s.medali}</option>`;
+        });
+
+        const studentHTML = `
+            <div class="student-block bg-white p-4 rounded-lg border border-gray-200 shadow-sm relative student-item" id="student-${studentCount}" data-id="${studentCount}">
+                ${studentCount > 1 ? `<button type="button" onclick="removeStudent(${studentCount})" class="absolute top-2 right-2 text-red-500 hover:text-red-700 text-sm font-medium">Hapus</button>` : ''}
+                
+                <div class="mb-4">
+                    <label class="block text-xs font-medium text-gray-700 mb-1">Pilih Siswa</label>
+                    <select id="select-siswa-${studentCount}" class="select2-siswa w-full" required onchange="updateStudentInfo(${studentCount})">
+                        ${optionsHTML}
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3 hidden" id="info-siswa-${studentCount}">
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Nama di Sertifikat</label>
+                        <input type="text" id="nama-sertifikat-${studentCount}" readonly class="w-full bg-gray-100 border border-gray-300 rounded p-2 text-sm text-gray-700">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-500 mb-1">Medali (Peringkat)</label>
+                        <input type="text" id="peringkat-medali-${studentCount}" readonly class="w-full bg-gray-100 border border-gray-300 rounded p-2 text-sm text-gray-700">
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-3 rounded border border-gray-100">
+                    <p class="text-xs font-semibold text-gray-700 mb-2">Pilih Item yang Dipesan:</p>
+                    <div class="flex flex-wrap gap-4">
+                        <label class="flex items-center space-x-2 text-sm cursor-pointer">
+                            <input type="checkbox" id="cb-medali-${studentCount}" class="item-checkbox w-4 h-4 text-blue-600 rounded" data-price="${prices.medali}" onchange="calculateTotal()">
+                            <span id="label-medali-${studentCount}">Medali <span class="text-gray-500">(${formatRupiah(prices.medali)})</span></span>
+                        </label>
+                        <label class="flex items-center space-x-2 text-sm cursor-pointer">
+                            <input type="checkbox" id="cb-lanyard-${studentCount}" class="item-checkbox w-4 h-4 text-blue-600 rounded" data-price="${prices.lanyard}" onchange="calculateTotal()">
+                            <span id="label-lanyard-${studentCount}">Lanyard <span class="text-gray-500">(${formatRupiah(prices.lanyard)})</span></span>
+                        </label>
+                        <label class="flex items-center space-x-2 text-sm cursor-pointer">
+                            <input type="checkbox" id="cb-sertifikat-${studentCount}" class="item-checkbox w-4 h-4 text-blue-600 rounded" data-price="${prices.sertifikat}" onchange="calculateTotal()">
+                            <span id="label-sertifikat-${studentCount}">Sertifikat <span class="text-gray-500">(${formatRupiah(prices.sertifikat)})</span></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        $('#studentContainer').append(studentHTML);
+        
+        // Inisialisasi Select2
+        $(`#select-siswa-${studentCount}`).select2({
+            placeholder: "-- Cari Nama Siswa --",
+            allowClear: true
+        });
+    }
+
+    function updateStudentInfo(id) {
+        const select = document.getElementById(`select-siswa-${id}`);
+        const selectedIndex = select.value;
+        const infoDiv = document.getElementById(`info-siswa-${id}`);
+        
+        if (selectedIndex !== "") {
+            const siswaData = dataSiswaGlobal[selectedIndex];
+            document.getElementById(`nama-sertifikat-${id}`).value = siswaData.nama;
+            document.getElementById(`peringkat-medali-${id}`).value = siswaData.medali;
+            infoDiv.classList.remove('hidden');
+        } else {
+            infoDiv.classList.add('hidden');
+        }
+    }
+
+    function removeStudent(id) {
+        document.getElementById(`student-${id}`).remove();
+        calculateTotal();
+    }
+
+    function calculateTotal() {
+        let total = 0;
+        let itemCount = 0;
+
+        // Hitung total dari checkbox item
+        const checkboxes = document.querySelectorAll('.item-checkbox');
+        checkboxes.forEach(cb => {
+            if (cb.checked) {
+                const itemPrice = parseInt(cb.getAttribute('data-price')) || 0;
+                total += itemPrice;
+                itemCount++;
+            }
+        });
+
+        // Hitung Ongkir
+        let ongkir = 0;
+        const method = document.querySelector('input[name="pengiriman"]:checked').value;
+        if (method === 'dikirim') {
+            ongkir = prices.ongkir;
+            total += ongkir;
+        }
+
+        // Update tampilan HTML
+        document.getElementById('summaryItems').innerText = itemCount + ' item';
+        document.getElementById('summaryOngkir').innerText = formatRupiah(ongkir);
+        document.getElementById('summaryTotal').innerText = formatRupiah(total);
+    }
+
+    async function submitOrder() {
+        const btnSubmit = document.getElementById('btnSubmit');
+        const spinner = document.getElementById('submitSpinner');
+        
+        // 1. Kumpulkan Data Form
+        let orderData = {
+            pemesan: {
+                nama: document.getElementById('pemesanNama').value,
+                sekolah: document.getElementById('pemesanSekolah').value,
+                wa: document.getElementById('pemesanWA').value
+            },
+            pengiriman: {
+                metode: document.querySelector('input[name="pengiriman"]:checked').value,
+                alamat: document.getElementById('pemesanAlamat').value
+            },
+            students: [],
+            grandTotal: document.getElementById('summaryTotal').innerText
+        };
+
+        const studentBlocks = document.querySelectorAll('.student-item');
+        let isValid = true;
+
+        studentBlocks.forEach(block => {
+            const id = block.getAttribute('data-id');
+            const selectVal = document.getElementById(`select-siswa-${id}`).value;
+            
+            if(selectVal === "") {
+                isValid = false;
+                alert("Terdapat baris siswa yang belum dipilih. Harap pilih nama siswa atau hapus baris yang tidak digunakan.");
+                return; // Memutus foreach
+            }
+
+            const siswaData = dataSiswaGlobal[selectVal];
+            
+            const pesanMedali = document.getElementById(`cb-medali-${id}`).checked;
+            const pesanLanyard = document.getElementById(`cb-lanyard-${id}`).checked;
+            const pesanSertifikat = document.getElementById(`cb-sertifikat-${id}`).checked;
+            
+            let subtotal = 0;
+            if(pesanMedali) subtotal += prices.medali;
+            if(pesanLanyard) subtotal += prices.lanyard;
+            if(pesanSertifikat) subtotal += prices.sertifikat;
+
+            orderData.students.push({
+                nama: siswaData.nama,
+                medali: siswaData.medali,
+                pesanMedali: pesanMedali,
+                pesanLanyard: pesanLanyard,
+                pesanSertifikat: pesanSertifikat,
+                subtotal: subtotal
+            });
+        });
+
+        if(!isValid) return;
+        
+        if(orderData.students.length === 0) {
+            alert("Harap tambahkan minimal 1 siswa.");
+            return;
+        }
+
+        // Cek apakah ada item yang dipilih sama sekali
+        let hasItem = orderData.students.some(s => s.pesanMedali || s.pesanLanyard || s.pesanSertifikat);
+        if(!hasItem) {
+            alert("Harap pilih minimal 1 item (Medali/Lanyard/Sertifikat) untuk dipesan pada siswa yang dipilih.");
+            return;
+        }
+
+        // 2. Kirim Data ke API Apps Script via Fetch POST
+        btnSubmit.disabled = true;
+        spinner.classList.remove('hidden');
+
+        try {
+            // Menggunakan content-type 'text/plain' 
+            // Ini adalah trik umum menghindari masalah CORS preflight request (OPTIONS) saat POST ke Apps Script
+            const response = await fetch(SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8',
+                },
+                body: JSON.stringify(orderData)
+            });
+            
+            const result = await response.json();
+
+            btnSubmit.disabled = false;
+            spinner.classList.add('hidden');
+            
+            if(result.status === 'success') {
+                alert(result.message);
+                
+                // Reset Form
+                document.getElementById('orderForm').reset();
+                
+                // Bersihkan daftar siswa dan kembalikan 1 blok kosong
+                document.getElementById('studentContainer').innerHTML = '';
+                studentCount = 0;
+                
+                // Kembalikan UI Pengiriman ke default (Pickup / Ambil Sendiri)
+                document.querySelector('input[name="pengiriman"][value="pickup"]').checked = true;
+                document.getElementById('alamatBox').classList.add('hidden');
+                document.getElementById('pemesanAlamat').removeAttribute('required');
+
+                addStudent();
+                calculateTotal();
+            } else {
+                alert("Server mengembalikan error: " + result.message);
+            }
+        } catch (error) {
+            btnSubmit.disabled = false;
+            spinner.classList.add('hidden');
+            alert("Gagal mengirim pesanan. Periksa koneksi internet Anda atau pastikan URL Web App sudah dikonfigurasi dengan benar.\nDetail: " + error.message);
+        }
+    }
+</script>
+
+</body>
+</html>
