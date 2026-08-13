@@ -4,363 +4,304 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cek & Download Sertifikat Peserta</title>
-    <!-- Tailwind CSS dari CDN untuk styling yang mudah dan cepat -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            /* Latar belakang yang lembut */
-            background-color: #f3f4f6; 
+            background-color: #f8fafc; 
         }
-        /* Efek loading sederhana */
         .loader {
-            border: 4px solid #f3f3f3; /* Light grey */
-            border-top: 4px solid #3b82f6; /* Blue */
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3b82f6;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 20px;
+            height: 20px;
             animation: spin 1s linear infinite;
         }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+        .loader-white {
+            border-top-color: #ffffff;
         }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen text-gray-800">
+<body class="min-h-screen text-slate-800">
 
-    <div class="container mx-auto px-4 py-12 max-w-4xl">
+    <div class="container mx-auto px-4 py-8 md:py-12 max-w-5xl">
         
         <!-- Header -->
-        <div class="text-center mb-10">
-            <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-2">Portal Download Sertifikat</h1>
-            <p class="text-gray-600">Lomba semarak 1 dekade YQBS 1 Pati</p>
+        <div class="text-center mb-8 md:mb-10">
+            <h1 class="text-2xl md:text-4xl font-bold text-blue-700 mb-2">Portal Download Sertifikat</h1>
+            <p class="text-slate-600 text-sm md:text-base">Lomba semarak 1 dekade YQBS 1 Pati</p>
         </div>
 
         <!-- Card Pencarian -->
-        <div class="bg-white rounded-xl shadow-md p-6 md:p-8 mb-8 border border-gray-100">
-            <h2 class="text-xl font-semibold mb-4 text-gray-700">Cari Data Sekolah</h2>
-            <p class="text-sm text-gray-500 mb-4">Silakan masukkan NPSN sekolah Anda untuk melihat dan mengunduh sertifikat seluruh peserta dari sekolah Anda.</p>
+        <div class="bg-white rounded-xl shadow-sm p-6 mb-8 border border-slate-200">
+            <h2 class="text-lg font-semibold mb-2 text-slate-800">Cari Data Sekolah</h2>
+            <p class="text-sm text-slate-500 mb-5">Silakan masukkan NPSN sekolah Anda untuk melihat dan mengunduh sertifikat seluruh peserta dari sekolah Anda.</p>
             
-            <form id="searchForm" class="flex flex-col sm:flex-row gap-4">
+            <form id="searchForm" class="flex flex-col sm:flex-row gap-3">
                 <input 
                     type="text" 
                     id="npsnInput" 
                     placeholder="Masukkan NPSN (Contoh: 20362216)" 
-                    class="flex-grow px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-shadow"
+                    class="flex-grow px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm md:text-base"
                     required
                 >
                 <button 
                     type="submit" 
                     id="searchBtn"
-                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-6 rounded-lg transition-colors flex justify-center items-center gap-2"
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2.5 px-6 rounded-lg transition-colors flex justify-center items-center gap-2 whitespace-nowrap"
                 >
                     <span id="btnText">Cari Peserta</span>
-                    <div id="loadingSpinner" class="loader hidden"></div>
+                    <div id="loadingSpinner" class="loader loader-white hidden"></div>
                 </button>
             </form>
-            <div id="errorMsg" class="text-red-500 text-sm mt-3 hidden"></div>
+            <div id="errorMsg" class="text-red-500 text-sm mt-3 hidden font-medium"></div>
         </div>
 
-        <!-- Area Hasil Pencarian (Awalnya disembunyikan) -->
+        <!-- Area Hasil Pencarian -->
         <div id="resultContainer" class="hidden">
             
             <!-- Info Sekolah -->
-            <div class="bg-blue-50 border border-blue-200 rounded-xl p-5 mb-6">
-                <div class="flex items-start md:items-center justify-between flex-col md:flex-row gap-4">
-                    <div>
-                        <h3 class="text-lg font-bold text-blue-900" id="schoolName">Nama Sekolah</h3>
-                        <p class="text-sm text-blue-700">NPSN: <span id="schoolNpsn" class="font-semibold"></span></p>
-                    </div>
-                    <div class="bg-blue-100 text-blue-800 text-sm font-semibold px-3 py-1 rounded-full">
-                        <span id="totalStudents">0</span> Peserta
-                    </div>
+            <div class="bg-blue-50 border border-blue-100 rounded-xl p-4 md:p-5 mb-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+                <div>
+                    <h3 class="text-lg font-bold text-blue-900" id="schoolName">Nama Sekolah</h3>
+                    <p class="text-sm text-blue-700 mt-1">NPSN: <span id="schoolNpsn" class="font-semibold"></span></p>
+                </div>
+                <div class="bg-blue-100 text-blue-800 text-sm font-semibold px-4 py-1.5 rounded-full whitespace-nowrap">
+                    <span id="totalStudents">0</span> Peserta
                 </div>
             </div>
 
             <!-- Tabel Daftar Peserta -->
-            <div class="bg-white rounded-xl shadow-md overflow-hidden border border-gray-100">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                 <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
+                    <table class="w-full text-left border-collapse whitespace-nowrap md:whitespace-normal">
                         <thead>
-                            <tr class="bg-gray-50 border-b border-gray-200 text-gray-600 text-sm uppercase tracking-wider">
-                                <th class="p-4 font-semibold">No</th>
-                                <th class="p-4 font-semibold">Nama Peserta</th>
-                                <th class="p-4 font-semibold hidden md:table-cell">Lomba</th>
-                                <th class="p-4 font-semibold">Penghargaan</th>
-                                <th class="p-4 font-semibold text-center">Aksi</th>
+                            <tr class="bg-slate-50 border-b border-slate-200 text-slate-600 text-xs md:text-sm uppercase tracking-wider">
+                                <th class="px-4 py-3 font-semibold">No</th>
+                                <th class="px-4 py-3 font-semibold">Nama Peserta</th>
+                                <th class="px-4 py-3 font-semibold">Lomba</th>
+                                <th class="px-4 py-3 font-semibold">Penghargaan</th>
+                                <th class="px-4 py-3 font-semibold text-center">Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="studentTableBody" class="text-sm">
-                            <!-- Data akan disisipkan di sini oleh JavaScript -->
+                        <tbody id="studentTableBody" class="text-sm text-slate-700">
+                            <!-- Data akan disisipkan di sini -->
                         </tbody>
                     </table>
                 </div>
             </div>
             
-            <!-- Tombol Aksi Tambahan -->
-            <div class="mt-6 text-center">
-                <!-- Fitur Opsional: Download semua sekaligus (butuh script tambahan jika dari Drive) -->
-            <p class="text-sm text-gray-500">Klik tombol "Download" pada masing-masing nama untuk menyimpan sertifikat.</p>
+            <p class="mt-4 text-center text-sm text-slate-500">Klik tombol "Download" pada masing-masing nama untuk menyimpan sertifikat.</p>
         </div>
     </div>
 
-</div>
-
-<!-- Modal Form Revisi -->
-<div id="revisiModal" class="fixed inset-0 z-50 hidden bg-black bg-opacity-50 flex justify-center items-center p-4">
-    <div class="bg-white rounded-xl shadow-xl w-full max-w-md overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50">
-            <h3 class="text-lg font-semibold text-gray-800">Ajukan Revisi Sertifikat</h3>
-            <button onclick="closeModal()" class="text-gray-400 hover:text-gray-600 focus:outline-none">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-            </button>
-        </div>
-        <form id="revisiForm" class="p-6">
-            <!-- Hidden inputs untuk menyimpan data asal tanpa terlihat user -->
-            <input type="hidden" id="revNamaAsal">
-            <input type="hidden" id="revLomba">
-            
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-700 mb-1">Nama Asal (Di Sertifikat)</label>
-                <input type="text" id="displayNamaAsal" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-600" disabled>
-            </div>
-            
-            <div class="mb-4">
-                <label for="revNamaBaru" class="block text-sm font-medium text-gray-700 mb-1">Nama Benar (Usulan)</label>
-                <input type="text" id="revNamaBaru" placeholder="Masukkan perbaikan nama peserta..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500" required>
-            </div>
-            
-            <div class="mb-6">
-                <label for="revKeterangan" class="block text-sm font-medium text-gray-700 mb-1">Keterangan (Opsional)</label>
-                <textarea id="revKeterangan" rows="2" placeholder="Contoh: Typo huruf belakang, tidak ada spasi..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500 focus:border-yellow-500"></textarea>
-            </div>
-            
-            <div class="flex justify-end gap-3">
-                <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">Batal</button>
-                <button type="submit" id="btnSubmitRevisi" class="px-4 py-2 text-sm font-medium text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg transition-colors flex items-center justify-center gap-2">
-                    <span id="revBtnText">Kirim Revisi</span>
-                    <div id="revLoading" class="loader !w-4 !h-4 !border-2 hidden" style="border-top-color: #fff;"></div>
+    <!-- Modal Form Revisi -->
+    <div id="revisiModal" class="fixed inset-0 z-50 hidden bg-slate-900/50 backdrop-blur-sm flex justify-center items-center p-4 transition-opacity">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden">
+            <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                <h3 class="text-lg font-semibold text-slate-800">Ajukan Revisi Sertifikat</h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600 focus:outline-none transition-colors">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                 </button>
             </div>
-        </form>
+            <form id="revisiForm" class="p-6">
+                <input type="hidden" id="revNamaAsal">
+                <input type="hidden" id="revLomba">
+                
+                <div class="mb-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1.5">Nama Asal (Di Sertifikat)</label>
+                    <input type="text" id="displayNamaAsal" class="w-full px-3 py-2 border border-slate-200 rounded-lg bg-slate-50 text-slate-500" disabled>
+                </div>
+                
+                <div class="mb-4">
+                    <label for="revNamaBaru" class="block text-sm font-medium text-slate-700 mb-1.5">Nama Benar (Usulan)</label>
+                    <input type="text" id="revNamaBaru" placeholder="Ketik nama yang benar..." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-shadow" required>
+                </div>
+                
+                <div class="mb-6">
+                    <label for="revKeterangan" class="block text-sm font-medium text-slate-700 mb-1.5">Keterangan (Opsional)</label>
+                    <textarea id="revKeterangan" rows="2" placeholder="Contoh: Typo, kurang spasi, dll." class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition-shadow"></textarea>
+                </div>
+                
+                <div class="flex justify-end gap-3">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 text-sm font-medium text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors">Batal</button>
+                    <button type="submit" id="btnSubmitRevisi" class="px-4 py-2 text-sm font-medium text-white bg-amber-500 hover:bg-amber-600 rounded-lg transition-colors flex items-center justify-center gap-2">
+                        <span id="revBtnText">Kirim Revisi</span>
+                        <div id="revLoading" class="loader loader-white !w-4 !h-4 hidden"></div>
+                    </button>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzbGJPhKl0xYSjU-RfxQ1U3kE2X4-PgYjpzFwfVeHV0ocNB5CCjZijYYtTSniyLsd0O/exec';
-    
-    // Element References
-    const searchForm = document.getElementById('searchForm');
-    const npsnInput = document.getElementById('npsnInput');
-    const searchBtn = document.getElementById('searchBtn');
+    <script>
+        // URL API ANDA YANG ASLI
+        const API_URL = 'https://script.google.com/macros/s/AKfycbzbGJPhKl0xYSjU-RfxQ1U3kE2X4-PgYjpzFwfVeHV0ocNB5CCjZijYYtTSniyLsd0O/exec';
+        
+        // Element References
+        const searchForm = document.getElementById('searchForm');
+        const npsnInput = document.getElementById('npsnInput');
+        const searchBtn = document.getElementById('searchBtn');
         const btnText = document.getElementById('btnText');
         const loadingSpinner = document.getElementById('loadingSpinner');
         const errorMsg = document.getElementById('errorMsg');
-        
         const resultContainer = document.getElementById('resultContainer');
-        const schoolNameEl = document.getElementById('schoolName');
-        const schoolNpsnEl = document.getElementById('schoolNpsn');
-        const totalStudentsEl = document.getElementById('totalStudents');
         const studentTableBody = document.getElementById('studentTableBody');
+        const revisiModal = document.getElementById('revisiModal');
 
-        // Fungsi Menangani Form Submit
+        // Fungsi JSONP (Anti CORS Block)
+        function fetchJSONP(url) {
+            return new Promise((resolve, reject) => {
+                const callbackName = 'jsonp_callback_' + Math.round(100000 * Math.random());
+                const script = document.createElement('script');
+                script.src = `${url}${url.includes('?') ? '&' : '?'}callback=${callbackName}`;
+                
+                window[callbackName] = function(data) {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    resolve(data);
+                };
+                script.onerror = function() {
+                    delete window[callbackName];
+                    document.body.removeChild(script);
+                    reject(new Error("Gagal mengambil data. Pastikan Apps Script berjalan dan URL benar."));
+                };
+                document.body.appendChild(script);
+            });
+        }
+
+        // Handle Form Search
         searchForm.addEventListener('submit', async function(e) {
-            e.preventDefault(); // Mencegah reload halaman
-            
+            e.preventDefault();
             const npsn = npsnInput.value.trim();
             if (!npsn) return;
 
-            // Reset UI
             errorMsg.classList.add('hidden');
             resultContainer.classList.add('hidden');
             studentTableBody.innerHTML = '';
             
-            // Tampilkan Loading
             btnText.classList.add('hidden');
             loadingSpinner.classList.remove('hidden');
             searchBtn.disabled = true;
-            searchBtn.classList.add('opacity-75', 'cursor-not-allowed');
+            searchBtn.classList.add('opacity-75');
 
-        try {
-            // Panggil API (Google Apps Script)
-            const response = await fetch(`${API_URL}?npsn=${encodeURIComponent(npsn)}`);
+            try {
+                // Request menggunakan JSONP
+                const data = await fetchJSONP(`${API_URL}?npsn=${encodeURIComponent(npsn)}`);
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+                if (data.status === 'success' && data.data) {
+                    document.getElementById('schoolName').textContent = data.asal_sekolah || 'Nama Sekolah Tidak Tersedia';
+                    document.getElementById('schoolNpsn').textContent = data.npsn;
+                    document.getElementById('totalStudents').textContent = data.data.length;
 
-            const data = await response.json();
-
-                if (data.status === 'success') {
-                    // Update UI Info Sekolah
-                    schoolNameEl.textContent = data.asal_sekolah || 'Nama Sekolah Tidak Tersedia';
-                    schoolNpsnEl.textContent = data.npsn;
-                    totalStudentsEl.textContent = data.data.length;
-
-                    // Buat baris tabel untuk setiap peserta
                     data.data.forEach((student, index) => {
                         const tr = document.createElement('tr');
-                        tr.className = 'border-b border-gray-100 hover:bg-gray-50 transition-colors';
+                        tr.className = 'border-b border-slate-100 hover:bg-slate-50 transition-colors';
                         
-                        // Menentukan warna badge berdasarkan peran/medali (opsional, berdasarkan gambar)
-                        let badgeColor = 'bg-gray-100 text-gray-800';
-                        if (student.peran.toLowerCase().includes('emas')) {
-                            badgeColor = 'bg-yellow-100 text-yellow-800 border-yellow-200';
-                        } else if (student.peran.toLowerCase().includes('perak')) {
-                            badgeColor = 'bg-gray-200 text-gray-700 border-gray-300'; // Silver
-                        } else if (student.peran.toLowerCase().includes('perunggu')) {
-                            badgeColor = 'bg-orange-100 text-orange-800 border-orange-200'; // Bronze
-                        }
-
-                        // Ekstrak URL mentah jika link_sertifikat berformat =HYPERLINK("url", "text")
-                        let urlSertifikat = student.link_sertifikat;
-                        // Jika berisi teks rumus hyperlink, coba diekstrak. Biasanya GAS mengambil hasil evaluasi teksnya.
-                        // Jika script GAS mengambil nilai 'hyperlink' mentah, ini mungkin tidak perlu jika kolom URL sudah bersih.
+                        let badgeColor = 'bg-slate-100 text-slate-700';
+                        const peranLower = (student.peran || "").toLowerCase();
+                        if (peranLower.includes('emas')) badgeColor = 'bg-amber-100 text-amber-800 border border-amber-200';
+                        else if (peranLower.includes('perak')) badgeColor = 'bg-slate-200 text-slate-800 border border-slate-300';
+                        else if (peranLower.includes('perunggu')) badgeColor = 'bg-orange-100 text-orange-800 border border-orange-200';
 
                         tr.innerHTML = `
-                            <td class="p-4 text-gray-600">${index + 1}</td>
-                            <td class="p-4 font-medium text-gray-900">${student.nama}</td>
-                            <td class="p-4 text-gray-600 hidden md:table-cell">${student.lomba}</td>
-                            <td class="p-4">
-                            <td class="p-4 text-center space-y-2 md:space-y-0 md:space-x-2 flex-col md:flex-row flex justify-center items-center">
-                                ${urlSertifikat && urlSertifikat.trim() !== '' ? 
-                                    `<a href="${urlSertifikat}" target="_blank" class="inline-flex items-center justify-center bg-green-500 hover:bg-green-600 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm transition-colors w-full md:w-auto">
-                                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-                                        Download
-                                    </a>` 
-                                    : 
-                                    `<span class="text-xs text-gray-400 italic block mb-2 md:mb-0">Link belum tersedia</span>`
-                                }
-                                <button onclick="openModal(this)" data-nama="${escapeHtml(student.nama)}" data-lomba="${escapeHtml(student.lomba)}" class="inline-flex items-center justify-center bg-yellow-500 hover:bg-yellow-600 text-white text-xs font-semibold px-3 py-2 rounded-lg shadow-sm transition-colors w-full md:w-auto">
-                                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                                    Revisi
-                                </button>
+                            <td class="px-4 py-3">${index + 1}</td>
+                            <td class="px-4 py-3 font-medium text-slate-900">${escapeHtml(student.nama)}</td>
+                            <td class="px-4 py-3">${escapeHtml(student.lomba)}</td>
+                            <td class="px-4 py-3"><span class="px-2.5 py-1 rounded-full text-xs font-semibold ${badgeColor}">${escapeHtml(student.peran)}</span></td>
+                            <td class="px-4 py-3">
+                                <div class="flex justify-center items-center gap-2">
+                                    ${student.link_sertifikat && student.link_sertifikat.trim() !== '' ? 
+                                        `<a href="${student.link_sertifikat}" target="_blank" class="inline-flex items-center bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-medium px-3 py-1.5 rounded-md transition-colors">
+                                            <svg class="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                                            Download
+                                        </a>` 
+                                        : `<span class="text-xs text-slate-400 italic">Belum tersedia</span>`
+                                    }
+                                    <button onclick="openModal(this)" data-nama="${escapeHtml(student.nama)}" data-lomba="${escapeHtml(student.lomba)}" class="inline-flex items-center bg-amber-500 hover:bg-amber-600 text-white text-xs font-medium px-3 py-1.5 rounded-md transition-colors">
+                                        Revisi
+                                    </button>
+                                </div>
                             </td>
                         `;
                         studentTableBody.appendChild(tr);
                     });
-
-                    // Tampilkan container hasil
                     resultContainer.classList.remove('hidden');
-                } else if (data.status === 'not_found') {
-                    showError('Data peserta untuk NPSN ' + npsn + ' tidak ditemukan.');
                 } else {
-                showError(data.message || 'Terjadi kesalahan saat mengambil data.');
-            }
-
-        } catch (error) {
-            console.error("Fetch Error Detail:", error);
-            // Pesan error diperbarui
-            showError(`Gagal mengambil data: ${error.message}. Pastikan koneksi internet lancar dan script Google Apps sudah di-deploy dengan akses "Anyone".`);
-        } finally {
-            // Sembunyikan Loading
+                    showError(data.message || `Data tidak ditemukan untuk NPSN ${npsn}`);
+                }
+            } catch (error) {
+                showError(error.message);
+            } finally {
                 btnText.classList.remove('hidden');
                 loadingSpinner.classList.add('hidden');
                 searchBtn.disabled = false;
-                searchBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                searchBtn.classList.remove('opacity-75');
             }
         });
 
-        // Helper function untuk menampilkan error
-        function showError(message) {
-            errorMsg.textContent = message;
+        // Helper functions
+        function showError(msg) {
+            errorMsg.textContent = msg;
             errorMsg.classList.remove('hidden');
-            resultContainer.classList.add('hidden');
         }
-
-        // Helper fungsi escape HTML untuk atribut tabel agar tidak error jika ada nama unik
+        
         function escapeHtml(unsafe) {
             if(!unsafe) return "";
-            return unsafe.toString()
-                 .replace(/&/g, "&amp;")
-                 .replace(/</g, "&lt;")
-                 .replace(/>/g, "&gt;")
-                 .replace(/"/g, "&quot;")
-                 .replace(/'/g, "&#039;");
+            return unsafe.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
         }
 
-        const revisiModal = document.getElementById('revisiModal');
-        const revisiForm = document.getElementById('revisiForm');
-        
-        function openModal(btnElement) {
-            const nama = btnElement.getAttribute('data-nama');
-            const lomba = btnElement.getAttribute('data-lomba');
-            
-            // Set value ke dalam form modal
-            document.getElementById('revNamaAsal').value = nama;
-            document.getElementById('displayNamaAsal').value = nama; // Tampilan Disabled
-            document.getElementById('revLomba').value = lomba;
-            
-            // Kosongkan isian yang akan diketik
+        // Modal Logic
+        function openModal(btn) {
+            document.getElementById('revNamaAsal').value = btn.getAttribute('data-nama');
+            document.getElementById('displayNamaAsal').value = btn.getAttribute('data-nama');
+            document.getElementById('revLomba').value = btn.getAttribute('data-lomba');
             document.getElementById('revNamaBaru').value = '';
             document.getElementById('revKeterangan').value = '';
-            
-            // Munculkan Modal
             revisiModal.classList.remove('hidden');
         }
 
         function closeModal() {
             revisiModal.classList.add('hidden');
         }
+        revisiModal.addEventListener('click', e => { if(e.target === revisiModal) closeModal(); });
 
-        // Jika area gelap di luar modal diklik, tutup modal
-        revisiModal.addEventListener('click', function(e) {
-            if(e.target === revisiModal) {
-                closeModal();
-            }
-        });
-
-        // Tangani saat form revisi di-submit (diklik tombol 'Kirim')
-        revisiForm.addEventListener('submit', async function(e) {
+        // Handle Revisi Submit
+        document.getElementById('revisiForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            const btn = document.getElementById('btnSubmitRevisi');
+            const txt = document.getElementById('revBtnText');
+            const ldr = document.getElementById('revLoading');
             
-            const btnSubmitRevisi = document.getElementById('btnSubmitRevisi');
-            const revBtnText = document.getElementById('revBtnText');
-            const revLoading = document.getElementById('revLoading');
-            
-            // Kumpulkan Data Formulir
-            const requestData = {
-                npsn: schoolNpsnEl.textContent,
-                sekolah: schoolNameEl.textContent,
+            btn.disabled = true; btn.classList.add('opacity-75');
+            txt.textContent = 'Mengirim...'; ldr.classList.remove('hidden');
+
+            const params = new URLSearchParams({
+                action: 'revisi',
+                npsn: document.getElementById('schoolNpsn').textContent,
+                sekolah: document.getElementById('schoolName').textContent,
                 namaAsal: document.getElementById('revNamaAsal').value,
                 namaBaru: document.getElementById('revNamaBaru').value,
                 lomba: document.getElementById('revLomba').value,
                 keterangan: document.getElementById('revKeterangan').value
-            };
-
-            // Beri visual Loading di Tombol
-            btnSubmitRevisi.disabled = true;
-            btnSubmitRevisi.classList.add('opacity-75', 'cursor-not-allowed');
-            revBtnText.textContent = 'Mengirim...';
-            revLoading.classList.remove('hidden');
+            });
 
             try {
-                // Post data ke GAS endpoint yang sama
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(requestData)
-                });
-                
-                const result = await response.json();
-                
-                if(result.status === 'success') {
-                    // Tampilkan notifikasi (alert) dan tutup
-                    alert('Revisi berhasil diajukan! Data sudah terkirim ke panitia.');
+                const res = await fetchJSONP(`${API_URL}?${params.toString()}`);
+                if(res.status === 'success') {
+                    alert('Revisi berhasil dikirim ke panitia!');
                     closeModal();
                 } else {
-                    alert('Gagal: ' + result.message);
+                    alert('Gagal: ' + res.message);
                 }
             } catch(error) {
-                console.error("Terjadi error saat mengirim revisi:", error);
-                alert('Gagal mengirim revisi. Pastikan koneksi internet Anda lancar.');
+                alert('Gagal terhubung. Pastikan internet lancar.');
             } finally {
-                // Kembalikan ke state awal
-                btnSubmitRevisi.disabled = false;
-                btnSubmitRevisi.classList.remove('opacity-75', 'cursor-not-allowed');
-                revBtnText.textContent = 'Kirim Revisi';
-                revLoading.classList.add('hidden');
+                btn.disabled = false; btn.classList.remove('opacity-75');
+                txt.textContent = 'Kirim Revisi'; ldr.classList.add('hidden');
             }
         });
     </script>
