@@ -102,22 +102,19 @@
             <!-- Tombol Aksi Tambahan -->
             <div class="mt-6 text-center">
                 <!-- Fitur Opsional: Download semua sekaligus (butuh script tambahan jika dari Drive) -->
-                <p class="text-sm text-gray-500">Klik tombol "Download" pada masing-masing nama untuk menyimpan sertifikat.</p>
-            </div>
+            <p class="text-sm text-gray-500">Klik tombol "Download" pada masing-masing nama untuk menyimpan sertifikat.</p>
         </div>
-
     </div>
 
-    <script>
-        //        const API_URL = 'https://script.google.com/macros/s/AKfycbzbGJPhKl0xYSjU-RfxQ1U3kE2X4-PgYjpzFwfVeHV0ocNB5CCjZijYYtTSniyLsd0O/exec';
-        
-        // Element References
-        //        const searchForm = document.getElementById('searchForm');
-        
-        // Element References
-        const searchForm = document.getElementById('searchForm');
-        const npsnInput = document.getElementById('npsnInput');
-        const searchBtn = document.getElementById('searchBtn');
+</div>
+
+<script>
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzbGJPhKl0xYSjU-RfxQ1U3kE2X4-PgYjpzFwfVeHV0ocNB5CCjZijYYtTSniyLsd0O/exec';
+    
+    // Element References
+    const searchForm = document.getElementById('searchForm');
+    const npsnInput = document.getElementById('npsnInput');
+    const searchBtn = document.getElementById('searchBtn');
         const btnText = document.getElementById('btnText');
         const loadingSpinner = document.getElementById('loadingSpinner');
         const errorMsg = document.getElementById('errorMsg');
@@ -146,23 +143,15 @@
             searchBtn.disabled = true;
             searchBtn.classList.add('opacity-75', 'cursor-not-allowed');
 
-            try {
-                // Panggil API (Google Apps Script)
-                // Menggunakan fetch untuk mengambil data
-                // Catatan: Karena Google Script bisa mengembalikan redirect atau format khusus CORS,
-                // kita ambil datanya.
-                const response = await fetch(`${API_URL}?npsn=${encodeURIComponent(npsn)}`, {
-                    method: 'GET',
-                    // Terkadang 'mode: no-cors' diperlukan jika CORS di GAS ketat, 
-                    // TAPI 'no-cors' tidak akan membiarkan kita membaca response body.
-                    // Jika script dideploy dengan akses "Anyone", GET request biasa biasanya bekerja.
-                });
+        try {
+            // Panggil API (Google Apps Script)
+            const response = await fetch(`${API_URL}?npsn=${encodeURIComponent(npsn)}`);
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-                const data = await response.json();
+            const data = await response.json();
 
                 if (data.status === 'success') {
                     // Update UI Info Sekolah
@@ -218,15 +207,15 @@
                 } else if (data.status === 'not_found') {
                     showError('Data peserta untuk NPSN ' + npsn + ' tidak ditemukan.');
                 } else {
-                    showError(data.message || 'Terjadi kesalahan saat mengambil data.');
-                }
+                showError(data.message || 'Terjadi kesalahan saat mengambil data.');
+            }
 
-            } catch (error) {
-                console.error("Fetch Error:", error);
-                // Pesan error ramah pengguna karena masalah CORS umum terjadi jika GAS belum disetting 'Anyone'
-                showError('Gagal terhubung ke database. Pastikan URL API sudah benar dan script diatur agar bisa diakses Publik (Anyone).');
-            } finally {
-                // Sembunyikan Loading
+        } catch (error) {
+            console.error("Fetch Error Detail:", error);
+            // Pesan error diperbarui
+            showError(`Gagal mengambil data: ${error.message}. Pastikan koneksi internet lancar dan script Google Apps sudah di-deploy dengan akses "Anyone".`);
+        } finally {
+            // Sembunyikan Loading
                 btnText.classList.remove('hidden');
                 loadingSpinner.classList.add('hidden');
                 searchBtn.disabled = false;
