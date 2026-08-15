@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Supervisi Akademik</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Library untuk Download PDF langsung -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
+    .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+    .indicator-row:nth-child(even) { background-color: #f9fafb; }
+    input[type="radio"]:checked + label { background-color: #3b82f6; color: white; border-color: #3b82f6; }
+    .tab-active { border-bottom: 3px solid #3b82f6; color: #3b82f6; font-weight: 700; }
+
+    /* Gaya Khusus Cetak / PDF */
+    @media print {
+      @page { size: A4; margin: 0; }
+      .no-print { display: none !important; }
+      .print-only { display: block !important; }
+    }
+    
+    .print-a4 {
+      background: white;
+      width: 210mm; /* Standar Lebar A4 */
+      min-height: 297mm;
+      padding: 15mm 15mm; /* Mengatur margin dalam dokumen */
+      margin: 0 auto;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .signature-table {
+      width: 100%;
+      margin-top: 40px;
+      border-collapse: collapse;
+      border: none !important;
+    }
+    .signature-table td {
+      border: none !important;
+      text-align: center;
+      vertical-align: top;
+      width: 33.33%;
+      padding: 10px 5px;
+    }
+
+    .name-line {
+      border-bottom: 1.5px solid black;
+      display: inline-block;
+      min-width: 140px;
+      margin-top: 60px;
+      font-weight: bold;
+      padding-bottom: 2px;
+      white-space: nowrap;
+    }
+    
+    .print-only { display: none; }
+    
+    /* Perbaikan tabel rincian agar teks tidak terpotong di PDF */
+    .detail-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+    .detail-table td { padding: 4px 8px; font-size: 11px; border: 1px solid #000; }
+    .detail-table th { padding: 6px 8px; background-color: #f3f4f6; font-size: 11px; border: 1px solid #000; text-align: left; }
+    .detail-table .text-center { text-align: center; }
+
+    /* Utilitas Pemutus Halaman untuk html2pdf */
+    .html2pdf__page-break {
+      display: block;
+      height: 0;
+      page-break-before: always;
+    }
+  </style>
+</head>
+<body class="p-4 md:p-8">
+
+  <div class="max-w-4xl mx-auto">
+    <!-- Header & Tabs -->
+    <div class="mb-6 text-center no-print">
+      <h1 class="text-3xl font-bold text-gray-800">Sistem Supervisi Guru</h1>
+      <div class="flex justify-center mt-6 space-x-4 md:space-x-8 border-b border-gray-200">
+        <button onclick="switchTab('form')" id="tab-form" class="pb-3 px-2 md:px-4 tab-active transition-all">Input Penilaian</button>
+        <button onclick="switchTab('history')" id="tab-history" class="pb-3 px-2 md:px-4 text-gray-500 hover:text-blue-600 transition-all">Riwayat Data</button>
+        <button onclick="switchTab('detail')" id="tab-detail" class="pb-3 px-2 md:px-4 text-gray-500 hover:text-blue-600 transition-all hidden">Detail Laporan</button>
+      </div>
+    </div>
+
+    <!-- TAB: FORM PENILAIAN -->
+    <div id="content-form">
+      <form id="supervisiForm" class="space-y-6">
+        <div class="card p-6">
+          <h2 class="text-lg font-semibold mb-4 border-b pb-2 flex items-center">
+            <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-2 text-sm no-print">1</span>
+            Identitas Supervisi
+          </h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Hari / Tanggal</label>
+              <input type="date" id="tanggal" name="tanggal" required class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Unit</label>
+              <select id="unit" name="unit" required onchange="filterData()" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                <option value="">Pilih Unit...</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Nama Guru</label>
+              <select id="namaGuru" name="namaGuru" required class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                <option value="">Pilih Unit dulu...</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Nama Supervisor</label>
+              <select id="supervisor" name="supervisor" required class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                <option value="">Pilih Supervisor...</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Nama Kepala Sekolah</label>
+              <input type="text" id="kepalaSekolah" name="kepalaSekolah" readonly placeholder="Otomatis..." class="mt-1 block w-full bg-gray-50 border border-gray-300 rounded-md p-2 font-semibold">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Mata Pelajaran</label>
+              <input type="text" id="mapel" name="mapel" required placeholder="Contoh: Matematika" class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700">Kelas / Semester</label>
+              <select id="kelas" name="kelas" required class="mt-1 block w-full border border-gray-300 rounded-md p-2">
+                <option value="">Pilih Unit dulu...</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="card p-6">
+          <div class="flex justify-between items-center mb-4 border-b pb-2">
+            <h2 class="text-lg font-semibold">2. Kegiatan Pendahuluan</h2>
+            <span class="text-sm font-bold text-green-700 bg-green-50 px-3 py-1 rounded-full" id="label-nilai-p">0.00</span>
+          </div>
+          <div id="section-pendahuluan" class="space-y-4"></div>
+        </div>
+
+        <div class="card p-6">
+          <div class="flex justify-between items-center mb-4 border-b pb-2">
+            <h2 class="text-lg font-semibold">3. Kegiatan Inti</h2>
+            <span class="text-sm font-bold text-purple-700 bg-purple-50 px-3 py-1 rounded-full" id="label-nilai-i">0.00</span>
+          </div>
+          <div id="section-inti" class="space-y-4"></div>
+        </div>
+
+        <div class="card p-6">
+          <div class="flex justify-between items-center mb-4 border-b pb-2">
+            <h2 class="text-lg font-semibold">4. Kegiatan Penutup</h2>
+            <span class="text-sm font-bold text-orange-700 bg-orange-50 px-3 py-1 rounded-full" id="label-nilai-t">0.00</span>
+          </div>
+          <div id="section-penutup" class="space-y-4"></div>
+        </div>
+
+        <div class="card p-6 bg-gray-800 text-white">
+          <h2 class="text-lg font-semibold mb-4 border-b border-gray-700 pb-2">Hasil Akhir</h2>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="space-y-2">
+              <div class="flex justify-between"><span>Rata-rata:</span><span class="font-bold text-yellow-400" id="final-rata-rata">0.00</span></div>
+              <div class="flex justify-between"><span>Kategori:</span><span class="font-bold uppercase tracking-wider" id="final-kategori">-</span></div>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-300">Catatan Supervisor</label>
+              <textarea id="catatan" name="catatan" rows="3" class="mt-1 block w-full bg-gray-700 border border-gray-600 rounded-md p-2 text-white"></textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col md:flex-row gap-4 no-print">
+          <button type="submit" id="btnSubmit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-lg shadow-lg">SIMPAN DATA KE LOG</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- TAB: RIWAYAT -->
+    <div id="content-history" class="hidden">
+      <div class="card p-6 overflow-x-auto">
+        <h2 class="text-xl font-bold mb-6 text-gray-800 border-b pb-4">Riwayat Penilaian Terakhir</h2>
+        <table class="w-full text-left text-xs whitespace-nowrap">
+          <thead>
+            <tr class="border-b-2 border-gray-100 text-gray-500 uppercase font-bold">
+              <th class="py-3 px-2 border-none">Tanggal</th>
+              <th class="py-3 px-2 border-none">Nama Guru</th>
+              <th class="py-3 px-2 text-center bg-blue-50 border-none">Rata-rata</th>
+              <th class="py-3 px-2 text-center border-none">Kategori</th>
+              <th class="py-3 px-2 text-center border-none">Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="history-body"></tbody>
+        </table>
+        <div id="history-empty" class="py-12 text-center text-gray-400 hidden">Belum ada data riwayat.</div>
+      </div>
+    </div>
+
+    <!-- TAB: DETAIL LAPORAN -->
+    <div id="content-detail" class="hidden">
+      <div class="flex justify-center overflow-x-auto no-print mb-4 p-2">
+        <p class="text-xs text-gray-500 italic">Pratinjau tampilan PDF A4 di bawah ini:</p>
+      </div>
+      
+      <div id="printable-area-container" class="bg-gray-200 p-2 md:p-8 rounded-lg overflow-x-auto no-print">
+         <div id="printable-area" class="print-a4 shadow-2xl mx-auto">
+            <!-- Rendered via JS -->
+         </div>
+      </div>
+
+      <div class="mt-8 flex justify-center gap-4 no-print">
+        <button onclick="switchTab('history')" class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-3 px-8 rounded-lg transition">KEMBALI KE RIWAYAT</button>
+        <button onclick="downloadPDF()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-lg flex items-center shadow-lg transition">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" /></svg>
+          UNDUH LAPORAN (PDF)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div id="loading" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50 no-print">
+    <div class="bg-white p-6 rounded-lg shadow-xl text-center">
+      <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+      <p class="mt-4 font-medium text-gray-700">Memproses...</p>
+    </div>
+  </div>
+
+  <script>
+    // ==========================================
+    // PENTING: MASUKKAN URL WEB APP ANDA DI SINI
+    // ==========================================
+    const GAS_URL = "ISI_URL_WEB_APP_ANDA_DISINI"; 
+    
+    let masterData = { teachers: [], classes: [], units: [], principals: [], supervisors: [] };
+    let currentHistory = [];
+    let selectedGuruName = "Laporan";
+    const indicators = {
+      p: ["Guru membuka dengan salam/berdoa", "Guru mengecek kehadiran murid", "Guru melakukan kegiatan alfa zone (ice breaking/ fun story/brain game wamer/ scene setting pre teach)", "Guru melakukan kegiatan penilaian formatif awal pembelajaran (refleksi awal/diagnostik kognitif)", "Guru menyampaikan pertanyaan pemantik", "Guru menyampaikan tujuan pembelajaran", "Guru menyampaikan manfaat materi pembelajaran dalam kehidupan sehari-hari"],
+      i: ["Guru melakukan kegiatan yang mendorong murid bekerja/ belajar secara berkolaborasi/ interaktif.", "Guru melakukan kegiatan yang mendorong murid untuk terampil berkomunikasi (tanya jawab/diskusi/presentasi/debat/pidato/bercerita/wawancara/refleksi)", "Guru melakukan kegiatan pembelajaran yang mendorong murid untuk bernalar kritis (PBL/PrBL/STEAM/Discovery/mini riset)", "Guru melakukan kegiatan pembentukan/penguatan profil lulusan", "Guru melakukan kegiatan yang mengarah pada pencapaian branding sekolah", "Guru melakukan kegiatan Pendidikan Perubahan Iklim (PPI)", "Guru melakukan kegiatan pembelajaran berdiferensiasi (Mindful)", "Guru memberdayakan/melibatkan lingkungan sekitar murid (meaningful, mindful, joyful)", "Guru melakukan kemitraan pembelajaran dengan pihak internal /eksternal sekolah", "Guru memanfaatkan lingkungan virtual (Digital: GF, GC, drive, Canva, YouTube, dll)", "Guru mengembangkan budaya belajar reflektif-kolaboratif/interaktif"],
+      t: ["Guru meminta murid melakukan refleksi akhir", "Guru membimbing murid membuat kesimpulan", "Guru memotivasi murid dan menyampaikan tindak lanjut", "Guru bersama murid merancang pembelajaran berikutnya", "Guru menutup dengan berdoa"]
+    };
+
+    window.onload = () => { renderIndicators(); loadInitial(); };
+
+    function loadInitial() {
+      showLoading(true);
+      fetch(`${GAS_URL}?action=getInitialData`)
+        .then(response => response.json())
+        .then(data => {
+          masterData = data;
+          populateUnits(data.units);
+          populateSupervisors(data.supervisors);
+          showLoading(false);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          alert("Gagal memuat data dari Spreadsheet. Pastikan URL Web App sudah benar.");
+          showLoading(false);
+        });
+    }
+
+    function switchTab(tab) {
+      document.getElementById('content-form').classList.toggle('hidden', tab !== 'form');
+      document.getElementById('content-history').classList.toggle('hidden', tab !== 'history');
+      document.getElementById('content-detail').classList.toggle('hidden', tab !== 'detail');
+      document.getElementById('tab-form').classList.toggle('tab-active', tab === 'form');
+      document.getElementById('tab-history').classList.toggle('tab-active', tab === 'history');
+      document.getElementById('tab-detail').classList.toggle('tab-active', tab === 'detail');
+      if (tab === 'history') fetchHistory();
+    }
+
+    function fetchHistory() {
+      const body = document.getElementById('history-body');
+      body.innerHTML = '<tr><td colspan="5" class="py-8 text-center animate-pulse">Memuat...</td></tr>';
+      
+      fetch(`${GAS_URL}?action=getHistoryData`)
+        .then(response => response.json())
+        .then(data => {
+          currentHistory = data; 
+          renderHistory(data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          body.innerHTML = '<tr><td colspan="5" class="py-8 text-center text-red-500">Gagal memuat riwayat.</td></tr>';
+        });
+    }
+
+    function renderHistory(data) {
+      const body = document.getElementById('history-body');
+      body.innerHTML = '';
+      if (!data || data.length === 0) { document.getElementById('history-empty').classList.remove('hidden'); return; }
+      document.getElementById('history-empty').classList.add('hidden');
+      data.forEach((item, index) => {
+        const tr = document.createElement('tr');
+        tr.className = 'border-b border-gray-50 hover:bg-gray-50 transition cursor-pointer';
+        tr.onclick = () => viewDetail(index);
+        tr.innerHTML = `
+          <td class="py-4 px-2">${item.tanggal}</td>
+          <td class="py-4 px-2 font-semibold">${item.nama}</td>
+          <td class="py-4 px-2 text-center"><span class="bg-blue-600 text-white px-3 py-1 rounded-full font-bold">${item.rataRata}</span></td>
+          <td class="py-4 px-2 text-center"><span class="text-[10px] uppercase px-2 py-1 rounded bg-green-100 text-green-800 font-extrabold shadow-sm">${item.kategori}</span></td>
+          <td class="py-4 px-2 text-center"><button class="text-blue-600 hover:text-blue-800 font-bold text-xs uppercase underline">Detail</button></td>
+        `;
+        body.appendChild(tr);
+      });
+    }
+
+    function viewDetail(index) {
+      const item = currentHistory[index];
+      selectedGuruName = item.nama;
+      const area = document.getElementById('printable-area');
+      
+      const renderTableRows = (sectionKey, scores) => indicators[sectionKey].map((text, idx) => `
+        <tr>
+          <td class="text-left">${idx + 1}. ${text}</td>
+          <td class="text-center font-bold text-blue-700">${scores[idx] || '-'}</td>
+        </tr>
+      `).join('');
+
+      area.innerHTML = `
+        <div class="text-center border-b-4 border-double border-black mb-6 pb-2">
+          <h1 class="text-xl font-bold uppercase" style="margin-bottom:2px">Laporan Hasil Supervisi Akademik</h1>
+          <p class="text-sm font-medium">Instrumen Pengamatan Pembelajaran Di Kelas</p>
+        </div>
+
+        <table style="width:100%; font-size: 11px; margin-bottom: 20px; border: none !important">
+          <tr>
+            <td style="width:15%; font-weight:bold; border:none">Nama Guru</td><td style="width:35%; border:none">: ${item.nama}</td>
+            <td style="width:20%; font-weight:bold; border:none">Kelas / Semester</td><td style="width:30%; border:none">: ${item.kelas}</td>
+          </tr>
+          <tr>
+            <td style="font-weight:bold; border:none">Unit</td><td style="border:none">: ${item.unit}</td>
+            <td style="font-weight:bold; border:none">Hari / Tanggal</td><td style="border:none">: ${item.tanggal}</td>
+          </tr>
+          <tr>
+            <td style="font-weight:bold; border:none">Mata Pelajaran</td><td style="border:none">: ${item.mapel}</td>
+            <td style="border:none"></td><td style="border:none"></td>
+          </tr>
+        </table>
+
+        <div class="space-y-4">
+          <section>
+            <h3 class="text-xs font-bold bg-gray-100 p-1 border-l-4 border-green-600 mb-1">I. KEGIATAN PENDAHULUAN (Nilai: ${item.pendahuluan})</h3>
+            <table class="detail-table">
+              <thead><tr><th style="width:85%">Indikator Pengamatan</th><th class="text-center">Skor</th></tr></thead>
+              <tbody>${renderTableRows('p', item.pScores)}</tbody>
+            </table>
+          </section>
+
+          <section>
+            <h3 class="text-xs font-bold bg-gray-100 p-1 border-l-4 border-purple-600 mb-1">II. KEGIATAN INTI (Nilai: ${item.inti})</h3>
+            <table class="detail-table">
+              <thead><tr><th style="width:85%">Indikator Pengamatan</th><th class="text-center">Skor</th></tr></thead>
+              <tbody>${renderTableRows('i', item.iScores)}</tbody>
+            </table>
+          </section>
+
+          <section>
+            <h3 class="text-xs font-bold bg-gray-100 p-1 border-l-4 border-orange-600 mb-1">III. KEGIATAN PENUTUP (Nilai: ${item.penutup})</h3>
+            <table class="detail-table">
+              <thead><tr><th style="width:85%">Indikator Pengamatan</th><th class="text-center">Skor</th></tr></thead>
+              <tbody>${renderTableRows('t', item.tScores)}</tbody>
+            </table>
+          </section>
+        </div>
+
+        <!-- PAGE BREAK SEBELUM RINGKASAN RATA-RATA -->
+        <div class="html2pdf__page-break"></div>
+
+        <div style="margin-top: 20px; display: flex; justify-content: space-between; align-items: center; background-color: #f9fafb; padding: 15px; border: 1.5px solid black; border-radius: 4px;">
+          <div><p class="text-sm font-bold">Rata-rata Akhir: <span class="text-xl ml-2 underline" style="color:#1d4ed8">${item.rataRata}</span></p></div>
+          <div class="text-right"><p class="text-sm font-bold uppercase">Kategori: <span class="text-lg ml-2 border-2 border-black px-3 py-1 bg-white">${item.kategori}</span></p></div>
+        </div>
+
+        <div style="margin-top: 15px; padding: 10px; border: 1px dashed #666; font-size: 11px; font-style: italic;">
+          <p style="font-weight:bold; font-style: normal; text-decoration: underline; margin-bottom: 4px">Catatan Supervisor:</p>
+          ${item.catatan || '-'}
+        </div>
+
+        <table class="signature-table">
+          <tr>
+            <td>
+              <p class="text-xs font-bold" style="margin-bottom: 60px">Guru Yang Disupervisi,</p>
+              <p class="name-line">${item.nama}</p>
+            </td>
+            <td>
+              <p class="text-xs font-bold" style="margin-bottom: 60px">Mengetahui,<br>Kepala Sekolah</p>
+              <p class="name-line">${item.kepalaSekolah}</p>
+            </td>
+            <td>
+              <p class="text-xs font-bold" style="margin-bottom: 60px">Supervisor,</p>
+              <p class="name-line">${item.supervisor}</p>
+            </td>
+          </tr>
+        </table>
+      `;
+      switchTab('detail');
+    }
+
+    function downloadPDF() {
+      const element = document.getElementById('printable-area');
+      const filename = 'Laporan_Supervisi_' + selectedGuruName.replace(/\s+/g, '_') + '.pdf';
+      
+      const opt = {
+        margin:       [0, 0, 0, 0], 
+        filename:     filename,
+        image:        { type: 'jpeg', quality: 1.0 },
+        html2canvas:  { 
+          scale: 2, 
+          useCORS: true, 
+          letterRendering: true,
+          scrollY: 0, 
+          windowWidth: document.documentElement.offsetWidth
+        },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+
+      showLoading(true);
+      html2pdf().set(opt).from(element).save().then(() => {
+        showLoading(false);
+      }).catch(err => {
+        showLoading(false);
+        console.error(err);
+        alert("Gagal mengunduh PDF. Silakan coba lagi.");
+      });
+    }
+
+    function renderIndicators() {
+      ['p', 'i', 't'].forEach(key => {
+        const container = document.getElementById(`section-${key === 'p' ? 'pendahuluan' : (key === 'i' ? 'inti' : 'penutup')}`);
+        indicators[key].forEach((text, i) => {
+          const div = document.createElement('div');
+          div.className = 'indicator-row flex flex-col md:flex-row md:items-center justify-between p-3 rounded-lg border border-gray-100';
+          div.innerHTML = `
+            <label class="text-xs text-gray-700 md:max-w-xl mb-2 md:mb-0">${i+1}. ${text}</label>
+            <div class="flex space-x-2">
+              ${[1, 2, 3].map(v => `
+                <input type="radio" id="${key}${i+1}_${v}" name="${key}${i+1}" value="${v}" required onchange="calculateAll()" class="hidden peer">
+                <label for="${key}${i+1}_${v}" class="cursor-pointer flex items-center justify-center w-8 h-8 rounded border text-xs peer-checked:bg-blue-600 peer-checked:text-white transition">${v}</label>
+              `).join('')}
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      });
+    }
+
+    function populateUnits(units) {
+      const select = document.getElementById('unit');
+      units.forEach(u => select.add(new Option(u, u)));
+    }
+
+    function populateSupervisors(svs) {
+      const select = document.getElementById('supervisor');
+      svs.forEach(s => select.add(new Option(s, s)));
+    }
+
+    function filterData() {
+      const unit = document.getElementById('unit').value;
+      const gS = document.getElementById('namaGuru'); const kS = document.getElementById('kelas');
+      const ksInput = document.getElementById('kepalaSekolah');
+      gS.innerHTML = '<option value="">Pilih Guru...</option>'; kS.innerHTML = '<option value="">Pilih Kelas...</option>';
+      masterData.teachers.filter(t => t.unit === unit).forEach(t => gS.add(new Option(t.name, t.name)));
+      masterData.classes.filter(c => c.unit === unit).forEach(c => kS.add(new Option(c.name, c.name)));
+      const principal = masterData.principals.find(p => p.unit === unit);
+      ksInput.value = principal ? principal.name : "";
+    }
+
+    function calculateAll() {
+      const getSum = (key, count) => {
+        let s = 0;
+        for (let i = 1; i <= count; i++) {
+          const r = document.getElementsByName(`${key}${i}`);
+          for (let radio of r) if (radio.checked) s += parseInt(radio.value);
+        }
+        return s;
+      };
+      const p = ((getSum('p', indicators.p.length) / (indicators.p.length * 3)) * 100).toFixed(2);
+      const i = ((getSum('i', indicators.i.length) / (indicators.i.length * 3)) * 100).toFixed(2);
+      const t = ((getSum('t', indicators.t.length) / (indicators.t.length * 3)) * 100).toFixed(2);
+      document.getElementById('label-nilai-p').innerText = p;
+      document.getElementById('label-nilai-i').innerText = i;
+      document.getElementById('label-nilai-t').innerText = t;
+      const avg = ((parseFloat(p) + parseFloat(i) + parseFloat(t)) / 3).toFixed(2);
+      document.getElementById('final-rata-rata').innerText = avg;
+      let cat = "-";
+      if (avg >= 91) cat = "Baik Sekali"; else if (avg >= 84) cat = "Baik"; else if (avg >= 74) cat = "Cukup"; else if (avg > 0) cat = "Kurang";
+      document.getElementById('final-kategori').innerText = cat;
+    }
+
+    document.getElementById('supervisiForm').onsubmit = (e) => {
+      e.preventDefault();
+      showLoading(true);
+      const fd = new FormData(e.target);
+      const payload = Object.fromEntries(fd.entries());
+      payload.nilaiPendahuluan = document.getElementById('label-nilai-p').innerText;
+      payload.nilaiInti = document.getElementById('label-nilai-i').innerText;
+      payload.nilaiPenutup = document.getElementById('label-nilai-t').innerText;
+      payload.rataRata = document.getElementById('final-rata-rata').innerText;
+      payload.kategori = document.getElementById('final-kategori').innerText;
+      
+      // Menggunakan fetch POST text/plain untuk menghindari limitasi CORS dari Google Apps Script
+      fetch(GAS_URL, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+          'Content-Type': 'text/plain;charset=utf-8',
+        }
+      })
+      .then(response => response.json())
+      .then(result => {
+        showLoading(false);
+        if(result.success) {
+          alert('Data berhasil disimpan!');
+          document.getElementById('supervisiForm').reset();
+          calculateAll(); // Reset skor
+          switchTab('history');
+        } else {
+          alert('Gagal menyimpan: ' + result.message);
+        }
+      })
+      .catch(error => {
+        showLoading(false);
+        console.error('Error:', error);
+        alert('Terjadi kesalahan saat mengirim data.');
+      });
+    };
+
+    function showLoading(s) { document.getElementById('loading').classList.toggle('hidden', !s); }
+  </script>
+</body>
+</html>
