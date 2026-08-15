@@ -11,7 +11,13 @@
     body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; }
     .card { background: white; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
     .indicator-row:nth-child(even) { background-color: #f9fafb; }
-    input[type="radio"]:checked + label { color: #2563eb; border-color: #2563eb; font-weight: 700; background-color: transparent; }
+    /* Memperbarui gaya untuk radio yang dipilih agar hanya teks dan border yang biru */
+    input[type="radio"]:checked + label { 
+      color: #3b82f6 !important; /* Warna teks biru */
+      border-color: #3b82f6 !important; /* Warna garis batas biru */
+      background-color: transparent !important; /* Background transparan */
+      font-weight: 700; 
+    }
     .tab-active { border-bottom: 3px solid #3b82f6; color: #3b82f6; font-weight: 700; }
 
     /* Gaya Khusus Cetak / PDF */
@@ -432,12 +438,13 @@
         indicators[key].forEach((text, i) => {
           const div = document.createElement('div');
           div.className = 'indicator-row flex flex-col md:flex-row md:items-center justify-between p-3 rounded-lg border border-gray-100';
+          /* Memperbarui class Tailwind pada label agar tidak memiliki background biru secara default saat di check (dihandle oleh CSS) */
           div.innerHTML = `
             <label class="text-xs text-gray-700 md:max-w-xl mb-2 md:mb-0">${i+1}. ${text}</label>
             <div class="flex space-x-2">
               ${[1, 2, 3].map(v => `
                 <input type="radio" id="${key}${i+1}_${v}" name="${key}${i+1}" value="${v}" required onchange="calculateAll()" class="hidden peer">
-                <label for="${key}${i+1}_${v}" class="cursor-pointer flex items-center justify-center w-8 h-8 rounded border text-xs text-gray-500 bg-white peer-checked:text-blue-600 peer-checked:border-blue-600 transition">${v}</label>
+                <label for="${key}${i+1}_${v}" class="cursor-pointer flex items-center justify-center w-8 h-8 rounded border text-xs text-gray-500 bg-white transition">${v}</label>
               `).join('')}
             </div>
           `;
