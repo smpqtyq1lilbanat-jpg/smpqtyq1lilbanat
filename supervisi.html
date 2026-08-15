@@ -3,6 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Supervisi Akademik</title>
+
+  <!-- PWA Meta Tags -->
+  <meta name="theme-color" content="#3b82f6">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3135/3135810.png">
+  <link rel="manifest" href="manifest.json">
+
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Library untuk Download PDF langsung -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -535,6 +543,14 @@
     };
 
     function showLoading(s) { document.getElementById('loading').classList.toggle('hidden', !s); }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('PWA Service Worker terdaftar'))
+          .catch(err => console.log('PWA Service Worker gagal didaftarkan:', err));
+      });
+    }
   </script>
 </body>
 </html>
