@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Capaian Tahfidz - Live</title>
+    
+    <!-- Tailwind CSS untuk Styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js untuk Grafik -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- FontAwesome untuk Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Supabase JS Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: #f8fafc; 
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .tab-active { 
+            border-bottom: 2px solid #4f46e5; 
+            color: #4f46e5; 
+            font-weight: 600; 
+            background-color: #ffffff;
+        }
+        .tab-inactive { 
+            color: #64748b; 
+            background-color: #f8fafc;
+        }
+        .hide { display: none !important; }
+        
+        .table-container { max-height: 550px; overflow-y: auto; }
+        .table-container thead th { position: sticky; top: 0; background-color: #f8fafc; z-index: 10; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);}
+        
+        .glass-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+            border: 1px solid #f1f5f9;
+        }
+
+        /* Pulse animation for live indicator */
+        .pulse-dot {
+            animation: pulse-animation 2s infinite;
+        }
+        @keyframes pulse-animation {
+            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
+            70% { box-shadow: 0 0 0 6px rgba(34, 197, 94, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 h-screen flex flex-col overflow-hidden">
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="fixed inset-0 bg-slate-900 bg-opacity-50 backdrop-blur-sm z-50 flex flex-col justify-center items-center text-white transition-opacity duration-300">
+        <i class="fas fa-circle-notch fa-spin text-5xl mb-4 text-indigo-500"></i>
+        <h2 class="text-2xl font-semibold mb-2">Sinkronisasi Database</h2>
+        <p class="text-slate-300" id="loading-text">Menghubungkan ke Supabase...</p>
+    </div>
+
+    <!-- Header / Navbar -->
+    <nav class="bg-white border-b border-slate-200 px-6 py-4 flex-shrink-0 z-20 shadow-sm">
+        <div class="flex justify-between items-center max-w-7xl mx-auto w-full">
+            <div class="flex items-center gap-3">
+                <div class="bg-indigo-600 text-white p-2.5 rounded-lg shadow-md">
+                    <i class="fas fa-book-quran text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800 leading-tight">Dashboard Tahfidz</h1>
+                    <p class="text-xs text-slate-500 font-medium">Monitoring Capaian Santri</p>
+                </div>
+            </div>
+            
+            <div class="flex gap-4 items-center">
+                <!-- Filters -->
+                <div class="flex items-center bg-slate-50 rounded-lg p-1 border border-slate-200 shadow-inner">
+                    <div class="pl-3 pr-2 text-slate-400">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <select id="filterBulan" class="bg-transparent border-none text-sm font-medium focus:ring-0 cursor-pointer py-1.5 pr-8 text-slate-700" onchange="processData()">
+                        <option value="07">Juli</option>
+                        <option value="08">Agustus</option>
+                        <option value="09">September</option>
+                        <option value="10">Oktober</option>
+                        <option value="11">November</option>
+                        <option value="12">Desember</option>
+                        <option value="01">Januari</option>
+                        <option value="02">Februari</option>
+                        <option value="03">Maret</option>
+                        <option value="04">April</option>
+                        <option value="05">Mei</option>
+                        <option value="06">Juni</option>
+                        <option value="all">Total (Satu Tahun)</option>
+                    </select>
+                </div>
+
+                <div class="flex items-center bg-slate-50 rounded-lg p-1 border border-slate-200 shadow-inner">
+                    <div class="pl-3 pr-2 text-slate-400">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                    <select id="filterKelas" class="bg-transparent border-none text-sm font-medium focus:ring-0 cursor-pointer py-1.5 pr-8 text-slate-700" onchange="processData()">
+                        <option value="all">Semua Kelas</option>
+                        <option value="7">Kelas 7</option>
+                        <option value="8">Kelas 8</option>
+                        <option value="9">Kelas 9</option>
+                    </select>
+                </div>
+
+                <!-- Live Indicator -->
+                <div class="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full border border-emerald-200 shadow-sm ml-2">
+                    <div class="w-2.5 h-2.5 bg-emerald-500 rounded-full pulse-dot"></div>
+                    <span class="text-xs font-bold tracking-wide">LIVE</span>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content Area -->
+    <main class="flex-grow overflow-y-auto p-6 max-w-7xl mx-auto w-full flex flex-col gap-6">
+        
+        <!-- Top Summary Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+            <!-- Card 1: Total Santri -->
+            <div class="glass-card p-5 relative overflow-hidden group hover:border-indigo-200 transition-colors">
+                <div class="absolute -right-6 -top-6 text-indigo-50 opacity-50 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-users text-9xl"></i>
+                </div>
+                <div class="relative z-10">
+                    <div class="text-sm font-semibold text-slate-500 mb-1 flex items-center gap-2">
+                        <i class="fas fa-user-graduate text-indigo-500"></i> Total Santri Aktif
+                    </div>
+                    <div class="text-3xl font-bold text-slate-800 mt-2" id="stat-total-santri">0</div>
+                    <div class="text-xs text-slate-400 mt-2">Berdasarkan filter kelas</div>
+                </div>
+            </div>
+
+            <!-- Card 2: Rata-rata Ziyadah -->
+            <div class="glass-card p-5 relative overflow-hidden group hover:border-emerald-200 transition-colors">
+                <div class="absolute -right-6 -top-6 text-emerald-50 opacity-50 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-book-open text-9xl"></i>
+                </div>
+                <div class="relative z-10">
+                    <div class="text-sm font-semibold text-slate-500 mb-1 flex items-center gap-2">
+                        <i class="fas fa-book-open text-emerald-500"></i> Rata-rata Ziyadah
+                    </div>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <div class="text-3xl font-bold text-slate-800" id="stat-avg-juz">0</div>
+                        <div class="text-sm font-medium text-slate-500" id="stat-avg-pojok">Pojok 0</div>
+                    </div>
+                    <div class="text-xs text-slate-400 mt-2">Capaian tertinggi santri saat ini</div>
+                </div>
+            </div>
+
+            <!-- Card 3: Rata-rata Murojaah -->
+            <div class="glass-card p-5 relative overflow-hidden group hover:border-blue-200 transition-colors">
+                <div class="absolute -right-6 -top-6 text-blue-50 opacity-50 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-redo text-9xl"></i>
+                </div>
+                <div class="relative z-10">
+                    <div class="text-sm font-semibold text-slate-500 mb-1 flex items-center gap-2">
+                        <i class="fas fa-redo text-blue-500"></i> Rata-rata Murojaah
+                    </div>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <div class="text-3xl font-bold text-slate-800" id="stat-avg-murojaah">0</div>
+                        <div class="text-sm font-medium text-slate-500">Pojok</div>
+                    </div>
+                    <div class="text-xs text-slate-400 mt-2" id="text-murojaah-period">Pada bulan terpilih</div>
+                </div>
+            </div>
+
+            <!-- Card 4: Capai Target -->
+            <div class="glass-card p-5 relative overflow-hidden group hover:border-amber-200 transition-colors">
+                <div class="absolute -right-6 -top-6 text-amber-50 opacity-50 group-hover:scale-110 transition-transform">
+                    <i class="fas fa-trophy text-9xl"></i>
+                </div>
+                <div class="relative z-10">
+                    <div class="text-sm font-semibold text-slate-500 mb-1 flex items-center gap-2">
+                        <i class="fas fa-trophy text-amber-500"></i> Capai Target Lembaga
+                    </div>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <div class="text-3xl font-bold text-slate-800" id="stat-target-percent">0%</div>
+                        <div class="text-sm font-medium text-slate-500"><span id="stat-target-count">0</span> Santri</div>
+                    </div>
+                    <div class="w-full bg-slate-100 rounded-full h-1.5 mt-3 overflow-hidden">
+                        <div class="bg-amber-500 h-1.5 rounded-full transition-all duration-1000" id="stat-target-bar" style="width: 0%"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Chart Section -->
+            <div class="glass-card p-5 lg:col-span-1 flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="font-bold text-slate-700">Persentase Capai Target</h3>
+                    <div class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">Per Kelas</div>
+                </div>
+                <div class="flex-grow relative w-full min-h-[250px]">
+                    <canvas id="targetChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Tables Section -->
+            <div class="glass-card flex flex-col lg:col-span-2 overflow-hidden">
+                <!-- Tabs -->
+                <div class="flex border-b border-slate-200 bg-slate-50/50">
+                    <button class="px-6 py-3.5 tab-active w-1/2 focus:outline-none transition-colors text-sm" id="tab-santri" onclick="switchTab('santri')">
+                        <i class="fas fa-user-graduate mr-2"></i> Capaian Detail Santri
+                    </button>
+                    <button class="px-6 py-3.5 tab-inactive w-1/2 focus:outline-none transition-colors text-sm border-l border-slate-200" id="tab-halaqoh" onclick="switchTab('halaqoh')">
+                        <i class="fas fa-users-rectangle mr-2"></i> Rekapitulasi Halaqoh
+                    </button>
+                </div>
+
+                <!-- Panel Santri -->
+                <div id="panel-santri" class="p-0 table-container flex-grow bg-white">
+                    <table class="min-w-full text-sm text-left whitespace-nowrap">
+                        <thead class="text-xs text-slate-500 uppercase bg-slate-50/80 border-b border-slate-200">
+                            <tr>
+                                <th scope="col" class="px-5 py-3.5 font-semibold">Nama Santri</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold">Kls / Halaqoh</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold">Capaian Ziyadah</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold">Murojaah</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body-santri" class="divide-y divide-slate-100">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Panel Halaqoh -->
+                <div id="panel-halaqoh" class="p-0 table-container flex-grow bg-white hide">
+                    <table class="min-w-full text-sm text-left whitespace-nowrap">
+                        <thead class="text-xs text-slate-500 uppercase bg-slate-50/80 border-b border-slate-200">
+                            <tr>
+                                <th scope="col" class="px-5 py-3.5 font-semibold">Nama Halaqoh</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold text-center">Jml Santri</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold">Avg Ziyadah</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold">Avg Murojaah</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold text-center">Capai Target</th>
+                                <th scope="col" class="px-5 py-3.5 font-semibold text-center">Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-body-halaqoh" class="divide-y divide-slate-100">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Detail Halaqoh -->
+    <div id="modalHalaqoh" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex justify-center items-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-11/12 max-w-4xl rounded-2xl shadow-2xl flex flex-col max-h-[85vh] transform scale-95 transition-transform duration-300" id="modalContent">
+            <div class="flex justify-between items-center p-5 border-b border-slate-100 bg-slate-50/50 rounded-t-2xl">
+                <div class="flex items-center gap-3">
+                    <div class="bg-indigo-100 text-indigo-600 p-2 rounded-lg">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-bold text-slate-800" id="modalTitle">Detail Halaqoh</h3>
+                        <p class="text-xs text-slate-500" id="modalSubtitle">Daftar santri dan capaiannya</p>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-rose-500 hover:bg-rose-50 p-2 rounded-lg transition-colors focus:outline-none">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            
+            <div class="p-0 overflow-y-auto flex-grow table-container bg-white rounded-b-2xl">
+                 <table class="min-w-full text-sm text-left whitespace-nowrap">
+                    <thead class="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0 border-b border-slate-100">
+                        <tr>
+                            <th scope="col" class="px-5 py-3 font-semibold">Nama Santri</th>
+                            <th scope="col" class="px-5 py-3 font-semibold">Kelas</th>
+                            <th scope="col" class="px-5 py-3 font-semibold">Capaian Ziyadah</th>
+                            <th scope="col" class="px-5 py-3 font-semibold">Total Murojaah</th>
+                            <th scope="col" class="px-5 py-3 font-semibold">Status Target</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modal-table-body" class="divide-y divide-slate-100">
+                        <!-- Data injected by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- 1. SETUP SUPABASE ---
+        const SUPABASE_URL = 'https://vpdlfjbkfcuukyykrhua.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZGxmamJrZmN1dWt5eWtyaHVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzkxNjUsImV4cCI6MjA5Nzc1NTE2NX0.QSHbi71ajuU_AggJJ5xVDeb6jffDRyyuF4C7aYeHW3Y';
+        
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // --- 2. STATE APP ---
+        let AppData = {
+            santri: [],
+            kegiatan: [],
+            logs: [],
+            mapKegiatan: {} // Memudahkan cek Ziyadah/Murojaah
+        };
+        let chartInstance = null;
+
+        // Target Tahfidz Tahunan sesuai standar lembaga
+        // Format {j: juz, p: pojok}. 1 Juz = 20 Pojok. Juz 30 dianggap Juz paling awal.
+        const TargetTahfidz = {
+            "07": { "7": {j: 30, p: 6}, "8": {j: 5, p: 19}, "9": {j: 11, p: 0} },
+            "08": { "7": {j: 30, p: 20}, "8": {j: 6, p: 11}, "9": {j: 12, p: 0} },
+            "09": { "7": {j: 1, p: 12}, "8": {j: 7, p: 3}, "9": {j: 13, p: 0} },
+            "10": { "7": {j: 2, p: 4}, "8": {j: 7, p: 15}, "9": {j: 14, p: 0} },
+            "11": { "7": {j: 2, p: 11}, "8": {j: 8, p: 4}, "9": {j: 15, p: 0} },
+            "12": { "7": {j: 3, p: 3}, "8": {j: 8, p: 16}, "9": {j: 16, p: 0} },
+            "01": { "7": {j: 3, p: 15}, "8": {j: 9, p: 8}, "9": {j: 17, p: 0} },
+            "02": { "7": {j: 4, p: 4}, "8": {j: 9, p: 17}, "9": {j: 18, p: 0} },
+            "03": { "7": {j: 4, p: 7}, "8": {j: 9, p: 20}, "9": {j: 19, p: 0} },
+            "04": { "7": {j: 4, p: 19}, "8": {j: 10, p: 12}, "9": {j: 20, p: 0} },
+            "05": { "7": {j: 5, p: 8}, "8": {j: 11, p: 1}, "9": {j: 21, p: 0} },
+            "06": { "7": {j: 5, p: 19}, "8": {j: 11, p: 13}, "9": {j: 22, p: 0} },
+            "all":{ "7": {j: 5, p: 19}, "8": {j: 11, p: 13}, "9": {j: 22, p: 0} } // default to akhir tahun
+        };
+
+        const POJOK_PER_JUZ = 20;
+
+        // --- 3. FETCH DATA ---
+        async function fetchAllData() {
+            try {
+                updateLoadingText("Mengambil data Santri...");
+                const { data: santriData, error: err1 } = await supabase.from('santri').select('*');
+                
+                if (err1) throw new Error(`Gagal fetch santri: ${err1.message}`);
+
+                updateLoadingText("Mengambil referensi Kegiatan...");
+                const { data: kegData, error: err2 } = await supabase.from('master_kegiatan').select('*');
+                
+                if (err2) throw new Error(`Gagal fetch kegiatan: ${err2.message}`);
+
+                updateLoadingText("Mengambil riwayat Setoran...");
+                // Limit 5000 untuk mencegah timeout, silakan sesuaikan
+                const { data: logData, error: err3 } = await supabase.from('log_setoran').select('*').order('id', { ascending: true }).limit(5000);
+
+                if (err3) throw new Error(`Gagal fetch log setoran: ${err3.message}`);
+
+                AppData.santri = santriData || [];
+                // Filter santri aktif secara lokal (karena struktur kolom status_aktif bisa beragam)
+                AppData.santri = AppData.santri.filter(s => {
+                   let status = String(s.status_aktif).toLowerCase();
+                   return status === 'true' || status === '1' || status === 'aktif';
+                });
+
+                AppData.kegiatan = kegData || [];
+                AppData.logs = logData || [];
+
+                // Build Kegiatan Map for fast lookup (Is it Ziyadah or Murojaah?)
+                AppData.kegiatan.forEach(k => {
+                    let nama = String(k.nama_kegiatan).toLowerCase();
+                    let type = 'other';
+                    if (nama.includes('ziyadah') || nama.includes('tambah')) type = 'ziyadah';
+                    if (nama.includes('murojaah') || nama.includes('lancar')) type = 'murojaah';
+                    AppData.mapKegiatan[k.id] = type;
+                });
+
+                // Set default month to current real month
+                let currentMonth = new Date().getMonth() + 1;
+                document.getElementById('filterBulan').value = currentMonth.toString().padStart(2, '0');
+
+                // Process Data
+                processData();
+                hideLoading();
+                
+            } catch (error) {
+                console.error("Fetch exception:", error);
+                
+                // Ganti tampilan loading menjadi error
+                document.getElementById('loading-overlay').innerHTML = `
+                    <div class="bg-white p-6 rounded-xl shadow-2xl text-center max-w-sm mx-auto flex flex-col items-center">
+                        <i class="fas fa-exclamation-triangle text-rose-500 text-5xl mb-4"></i>
+                        <h2 class="text-xl font-bold text-slate-800 mb-2">Koneksi Database Gagal</h2>
+                        <p class="text-sm text-slate-600 mb-4">${error.message}</p>
+                        <p class="text-xs text-slate-400 mb-4">Pastikan akses RLS (Row Level Security) tabel di-setting ke public untuk operasi SELECT.</p>
+                        <button onclick="hideLoading()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                            Masuk Tanpa Data
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        function updateLoadingText(text) {
+            document.getElementById('loading-text').innerText = text;
+        }
+
+        function hideLoading() {
+            const loader = document.getElementById('loading-overlay');
+            loader.style.opacity = '0';
+            setTimeout(() => loader.classList.add('hidden'), 300);
+        }
+
+        // --- 4. DATA LOGIC ---
+
+        // Konversi Juz & Pojok menjadi angka absolut berurutan (Juz 30 adalah awal = 0 s.d 20 pojok)
+        function getAbsolutePojok(juz, pojok) {
+            let j = parseInt(juz) || 0;
+            let p = parseInt(pojok) || 0;
+            
+            if (j === 30) return p;
+            if (j > 0 && j < 30) return 20 + ((j - 1) * POJOK_PER_JUZ) + p;
+            return 0;
+        }
+
+        function getJuzPojokFromAbsolute(abs) {
+            if (abs === 0) return { j: 0, p: 0 };
+            if (abs <= 20) return { j: 30, p: abs };
+            
+            let remaining = abs - 20;
+            let j = Math.floor(remaining / POJOK_PER_JUZ) + 1;
+            let p = remaining % POJOK_PER_JUZ;
+            if (p === 0) { j -= 1; p = POJOK_PER_JUZ; }
+            return { j: j, p: p };
+        }
+
+        function isZiyadah(kegiatanVal) {
+            if (AppData.mapKegiatan[kegiatanVal] === 'ziyadah') return true;
+            let str = String(kegiatanVal).toLowerCase();
+            return str.includes('ziyadah') || str.includes('tambah') || kegiatanVal == 1;
+        }
+
+        function isMurojaah(kegiatanVal) {
+            if (AppData.mapKegiatan[kegiatanVal] === 'murojaah') return true;
+            let str = String(kegiatanVal).toLowerCase();
+            return str.includes('murojaah') || str.includes('lancar') || kegiatanVal == 2;
+        }
+
+        function processData() {
+            const filterBulan = document.getElementById('filterBulan').value;
+            const filterKelas = document.getElementById('filterKelas').value;
+
+            // Dictionary untu menampung kalkulasi per santri
+            let santriStats = {};
+            
+            // 1. Inisialisasi santri
+            AppData.santri.forEach(s => {
+                if (filterKelas !== 'all' && String(s.kelas) !== filterKelas) return;
+
+                santriStats[s.id] = {
+                    ...s,
+                    maxZiyadahAbs: 0,
+                    lastJuzZiyadah: 0,
+                    lastPojokZiyadah: 0,
+                    totalMurojaahHalaman: 0,
+                    capaiTarget: false
+                };
+            });
+
+            // 2. Olah Logs
+            AppData.logs.forEach(log => {
+                let sId = log.santri_id;
+                if(!santriStats[sId]) return; // Santri tidak ada / terfilter
+
+                let logDate = new Date(log.tanggal);
+                let logMonth = (logDate.getMonth() + 1).toString().padStart(2, '0');
+
+                let isZ = isZiyadah(log.kegiatan);
+                let isM = isMurojaah(log.kegiatan);
+
+                // Murojaah dihitung spesifik HANYA di bulan yang difilter (kecuali 'all')
+                if (isM) {
+                    if (filterBulan === 'all' || logMonth === filterBulan) {
+                        santriStats[sId].totalMurojaahHalaman += (parseInt(log.jumlah_halaman) || 0);
+                    }
+                }
+
+                // Ziyadah adalah kumulatif, kita ambil nilai MAKSIMUM absolutnya HINGGA bulan terpilih
+                // Asumsi: Urutan bulan hijriah/akademis: Jul (7) s.d Jun (6).
+                // Untuk kesederhanaan logika dashboard, kita ambil maxZiyadah dari semua log yang tercatat
+                // (karena data biasanya merepresentasikan kondisi riil saat ini).
+                if (isZ) {
+                    let absAkhir = getAbsolutePojok(log.juz_akhir, log.pojok_akhir);
+                    if (absAkhir > santriStats[sId].maxZiyadahAbs) {
+                        santriStats[sId].maxZiyadahAbs = absAkhir;
+                        santriStats[sId].lastJuzZiyadah = parseInt(log.juz_akhir) || 0;
+                        santriStats[sId].lastPojokZiyadah = parseInt(log.pojok_akhir) || 0;
+                    }
+                }
+            });
+
+            // 3. Agregasi Dashboard & Target
+            let totalSantri = 0;
+            let targetAchieved = 0;
+            let sumZiyadahAbs = 0;
+            let sumMurojaah = 0;
+
+            let kelasStats = {
+                "7": { total: 0, capai: 0 },
+                "8": { total: 0, capai: 0 },
+                "9": { total: 0, capai: 0 }
+            };
+            let halaqohStats = {};
+            
+            let santriArray = Object.values(santriStats);
+            let bulanTarget = filterBulan === 'all' ? "06" : filterBulan;
+
+            santriArray.forEach(s => {
+                totalSantri++;
+                sumZiyadahAbs += s.maxZiyadahAbs;
+                sumMurojaah += s.totalMurojaahHalaman;
+
+                // Evaluasi Target
+                let targetKelas = TargetTahfidz[bulanTarget] && TargetTahfidz[bulanTarget][s.kelas];
+                if (targetKelas) {
+                    let targetAbs = getAbsolutePojok(targetKelas.j, targetKelas.p);
+                    if (s.maxZiyadahAbs >= targetAbs) {
+                        s.capaiTarget = true;
+                        targetAchieved++;
+                        if(kelasStats[s.kelas]) kelasStats[s.kelas].capai++;
+                    }
+                }
+                if(kelasStats[s.kelas]) kelasStats[s.kelas].total++;
+
+                // Pengelompokan Halaqoh
+                let halName = s.halaqoh || 'Belum Ditentukan';
+                if (!halaqohStats[halName]) {
+                    halaqohStats[halName] = { name: halName, totalSantri: 0, capai: 0, sumZiyadahAbs: 0, sumMurojaah: 0, santriList: [] };
+                }
+                halaqohStats[halName].totalSantri++;
+                halaqohStats[halName].sumZiyadahAbs += s.maxZiyadahAbs;
+                halaqohStats[halName].sumMurojaah += s.totalMurojaahHalaman;
+                if(s.capaiTarget) halaqohStats[halName].capai++;
+                halaqohStats[halName].santriList.push(s);
+            });
+
+            // Update UI Top Cards
+            document.getElementById('stat-total-santri').innerText = totalSantri;
+            
+            let periodText = filterBulan === 'all' ? "Total keseluruhan" : "Pada bulan terpilih";
+            document.getElementById('text-murojaah-period').innerText = periodText;
+
+            if (totalSantri > 0) {
+                let avgZ = Math.floor(sumZiyadahAbs / totalSantri);
+                let avgZDisplay = getJuzPojokFromAbsolute(avgZ);
+                document.getElementById('stat-avg-juz').innerText = `Juz ${avgZDisplay.j}`;
+                document.getElementById('stat-avg-pojok').innerText = `Pojok ${avgZDisplay.p}`;
+
+                let avgM = (sumMurojaah / totalSantri).toFixed(1);
+                document.getElementById('stat-avg-murojaah').innerText = avgM;
+
+                let pTarget = Math.round((targetAchieved / totalSantri) * 100);
+                document.getElementById('stat-target-percent').innerText = `${pTarget}%`;
+                document.getElementById('stat-target-count').innerText = targetAchieved;
+                
+                let bar = document.getElementById('stat-target-bar');
+                bar.style.width = `${pTarget}%`;
+                bar.className = `h-1.5 rounded-full transition-all duration-1000 ${pTarget < 50 ? 'bg-rose-500' : (pTarget < 80 ? 'bg-amber-500' : 'bg-emerald-500')}`;
+            } else {
+                document.getElementById('stat-avg-juz').innerText = `Juz 0`;
+                document.getElementById('stat-avg-pojok').innerText = `Pojok 0`;
+                document.getElementById('stat-avg-murojaah').innerText = `0`;
+                document.getElementById('stat-target-percent').innerText = `0%`;
+                document.getElementById('stat-target-count').innerText = '0';
+                document.getElementById('stat-target-bar').style.width = `0%`;
+            }
+
+            renderChart(kelasStats);
+            renderTableSantri(santriArray, bulanTarget);
+            renderTableHalaqoh(Object.values(halaqohStats));
+        }
+
+        // --- 5. RENDER UI ---
+        function renderChart(kelasStats) {
+            const ctx = document.getElementById('targetChart').getContext('2d');
+            
+            let data = [
+                kelasStats["7"].total ? (kelasStats["7"].capai / kelasStats["7"].total * 100).toFixed(1) : 0,
+                kelasStats["8"].total ? (kelasStats["8"].capai / kelasStats["8"].total * 100).toFixed(1) : 0,
+                kelasStats["9"].total ? (kelasStats["9"].capai / kelasStats["9"].total * 100).toFixed(1) : 0
+            ];
+
+            if (chartInstance) {
+                chartInstance.destroy();
+            }
+
+            // Custom Chart.js defaults
+            Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
+            Chart.defaults.color = '#64748b';
+
+            chartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Kelas 7', 'Kelas 8', 'Kelas 9'],
+                    datasets: [{
+                        label: '% Capai Target',
+                        data: data,
+                        backgroundColor: 'rgba(79, 70, 229, 0.85)', // Indigo 600
+                        hoverBackgroundColor: 'rgba(67, 56, 202, 1)',
+                        borderRadius: 6,
+                        borderSkipped: false,
+                        barPercentage: 0.6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                            padding: 10,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) { return ` ${context.raw}% Tercapai`; }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 100,
+                            grid: { color: '#f1f5f9', drawBorder: false },
+                            ticks: { callback: v => v + '%' }
+                        },
+                        x: {
+                            grid: { display: false, drawBorder: false }
+                        }
+                    }
+                }
+            });
+        }
+
+        function renderTableSantri(santriArray, bulanTarget) {
+            const tbody = document.getElementById('table-body-santri');
+            tbody.innerHTML = '';
+            
+            santriArray.sort((a, b) => b.maxZiyadahAbs - a.maxZiyadahAbs);
+
+            santriArray.forEach(s => {
+                let targetKelas = TargetTahfidz[bulanTarget] && TargetTahfidz[bulanTarget][s.kelas];
+                let targetText = targetKelas ? `Juz ${targetKelas.j} Pjk ${targetKelas.p}` : '-';
+                
+                let badge = s.capaiTarget 
+                    ? `<span class="bg-emerald-50 text-emerald-600 text-xs font-semibold px-2.5 py-1 rounded-md border border-emerald-200"><i class="fas fa-check mr-1"></i> Tercapai</span>`
+                    : `<span class="bg-rose-50 text-rose-600 text-xs font-semibold px-2.5 py-1 rounded-md border border-rose-200"><i class="fas fa-times mr-1"></i> Belum</span>`;
+
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="px-5 py-4">
+                            <div class="font-semibold text-slate-800">${s.nama}</div>
+                            <div class="text-xs text-slate-400">NIS: ${s.nis || '-'}</div>
+                        </td>
+                        <td class="px-5 py-4">
+                            <div class="text-slate-800">Kelas ${s.kelas}</div>
+                            <div class="text-xs text-indigo-500 font-medium">${s.halaqoh || '-'}</div>
+                        </td>
+                        <td class="px-5 py-4">
+                            <div class="font-bold text-indigo-600">Juz ${s.lastJuzZiyadah} Pjk ${s.lastPojokZiyadah}</div>
+                            <div class="text-xs text-slate-400">Target: ${targetText}</div>
+                        </td>
+                        <td class="px-5 py-4 font-bold text-slate-700">${s.totalMurojaahHalaman} <span class="text-xs font-normal text-slate-400">Pjk</span></td>
+                        <td class="px-5 py-4 text-center">${badge}</td>
+                    </tr>
+                `);
+            });
+        }
+
+        function renderTableHalaqoh(halaqohArray) {
+            const tbody = document.getElementById('table-body-halaqoh');
+            tbody.innerHTML = '';
+            
+            window.halaqohDataStore = {};
+
+            halaqohArray.forEach(h => {
+                window.halaqohDataStore[h.name] = h.santriList;
+
+                let avgZ = h.totalSantri ? Math.floor(h.sumZiyadahAbs / h.totalSantri) : 0;
+                let avgZDisplay = getJuzPojokFromAbsolute(avgZ);
+                let avgM = h.totalSantri ? (h.sumMurojaah / h.totalSantri).toFixed(1) : 0;
+                let percCapai = h.totalSantri ? Math.round((h.capai / h.totalSantri) * 100) : 0;
+                let pBarColor = percCapai < 50 ? 'bg-rose-500' : (percCapai < 80 ? 'bg-amber-500' : 'bg-emerald-500');
+
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="px-5 py-4 font-semibold text-slate-800">
+                            <div class="flex items-center gap-3">
+                                <div class="bg-indigo-50 text-indigo-500 w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-users"></i></div>
+                                ${h.name}
+                            </div>
+                        </td>
+                        <td class="px-5 py-4 text-center font-medium text-slate-600">${h.totalSantri}</td>
+                        <td class="px-5 py-4 font-bold text-indigo-600">Juz ${avgZDisplay.j} Pjk ${avgZDisplay.p}</td>
+                        <td class="px-5 py-4 font-bold text-slate-700">${avgM} <span class="text-xs font-normal text-slate-400">Pjk</span></td>
+                        <td class="px-5 py-4">
+                            <div class="flex items-center gap-3">
+                                <span class="text-sm font-bold w-10">${percCapai}%</span>
+                                <div class="w-full bg-slate-100 rounded-full h-2">
+                                    <div class="${pBarColor} h-2 rounded-full" style="width: ${percCapai}%"></div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-5 py-4 text-center">
+                            <button onclick="openModal('${h.name}')" class="text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-200">
+                                Detail
+                            </button>
+                        </td>
+                    </tr>
+                `);
+            });
+        }
+
+        function switchTab(tab) {
+            const tSantri = document.getElementById('tab-santri');
+            const tHalaqoh = document.getElementById('tab-halaqoh');
+            const pSantri = document.getElementById('panel-santri');
+            const pHalaqoh = document.getElementById('panel-halaqoh');
+
+            if(tab === 'santri') {
+                tSantri.className = "px-6 py-3.5 tab-active w-1/2 focus:outline-none transition-colors text-sm";
+                tHalaqoh.className = "px-6 py-3.5 tab-inactive w-1/2 focus:outline-none transition-colors text-sm border-l border-slate-200";
+                pSantri.classList.remove('hide');
+                pHalaqoh.classList.add('hide');
+            } else {
+                tHalaqoh.className = "px-6 py-3.5 tab-active w-1/2 focus:outline-none transition-colors text-sm border-l border-slate-200";
+                tSantri.className = "px-6 py-3.5 tab-inactive w-1/2 focus:outline-none transition-colors text-sm";
+                pHalaqoh.classList.remove('hide');
+                pSantri.classList.add('hide');
+            }
+        }
+
+        function openModal(halaqohName) {
+            document.getElementById('modalTitle').innerText = halaqohName;
+            
+            const tbody = document.getElementById('modal-table-body');
+            tbody.innerHTML = '';
+            
+            let santris = window.halaqohDataStore[halaqohName] || [];
+            santris.sort((a, b) => b.maxZiyadahAbs - a.maxZiyadahAbs);
+
+            santris.forEach(s => {
+                 let badge = s.capaiTarget 
+                    ? `<span class="text-emerald-600 font-semibold"><i class="fas fa-check-circle mr-1"></i> Tercapai</span>`
+                    : `<span class="text-rose-500 font-semibold"><i class="fas fa-times-circle mr-1"></i> Belum</span>`;
+
+                tbody.insertAdjacentHTML('beforeend', `
+                    <tr class="hover:bg-slate-50/80 transition-colors">
+                        <td class="px-5 py-3 font-semibold text-slate-800">${s.nama}</td>
+                        <td class="px-5 py-3 text-slate-600">${s.kelas}</td>
+                        <td class="px-5 py-3 font-bold text-indigo-600">Juz ${s.lastJuzZiyadah} Pjk ${s.lastPojokZiyadah}</td>
+                        <td class="px-5 py-3 font-bold text-slate-700">${s.totalMurojaahHalaman} <span class="text-xs font-normal text-slate-400">Pjk</span></td>
+                        <td class="px-5 py-3">${badge}</td>
+                    </tr>
+                `);
+            });
+
+            const modal = document.getElementById('modalHalaqoh');
+            const content = document.getElementById('modalContent');
+            
+            modal.classList.remove('hidden');
+            // Timeout to allow display block to apply before transition
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                content.classList.remove('scale-95');
+            }, 10);
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('modalHalaqoh');
+            const content = document.getElementById('modalContent');
+            
+            modal.classList.add('opacity-0');
+            content.classList.add('scale-95');
+            
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300); // Matches duration-300
+        }
+
+        // Jalankan Fetching otomatis saat web dimuat
+        window.onload = fetchAllData;
+
+    </script>
+</body>
+</html>
