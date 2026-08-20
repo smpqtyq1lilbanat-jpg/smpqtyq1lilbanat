@@ -14,8 +14,8 @@
     <!-- FontAwesome untuk Icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Supabase JS Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Supabase JS Client (UPDATED CDN LINK) -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
@@ -309,7 +309,20 @@
         const SUPABASE_URL = 'https://vpdlfjbkfcuukyykrhua.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZGxmamJrZmN1dWt5eWtyaHVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzkxNjUsImV4cCI6MjA5Nzc1NTE2NX0.QSHbi71ajuU_AggJJ5xVDeb6jffDRyyuF4C7aYeHW3Y';
         
-        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        let supabase;
+        try {
+            // Inisialisasi yang lebih aman
+            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        } catch (err) {
+            console.error("Gagal inisialisasi Supabase client:", err);
+            document.getElementById('loading-overlay').innerHTML = `
+                <div class="bg-white p-6 rounded-xl shadow-2xl text-center max-w-sm mx-auto">
+                    <i class="fas fa-plug text-rose-500 text-5xl mb-4"></i>
+                    <h2 class="text-xl font-bold text-slate-800 mb-2">Gagal Memuat Library</h2>
+                    <p class="text-sm text-slate-600">Pastikan koneksi internet Anda stabil untuk memuat script Supabase.</p>
+                </div>
+            `;
+        }
 
         // --- 2. STATE APP ---
         let AppData = {
@@ -342,25 +355,31 @@
 
         // --- 3. FETCH DATA ---
         async function fetchAllData() {
+            if (!supabase) return; // Hentikan jika supabase belum terinisialisasi
+
             try {
+                console.log("Memulai proses fetch data..."); // Debugging log
+                
                 updateLoadingText("Mengambil data Santri...");
                 const { data: santriData, error: err1 } = await supabase.from('santri').select('*');
-                
-                if (err1) throw new Error(`Gagal fetch santri: ${err1.message}`);
+                console.log("Hasil fetch Santri:", santriData, err1); // Debugging log
+                if (err1) throw new Error(`Tabel Santri: ${err1.message}`);
 
                 updateLoadingText("Mengambil referensi Kegiatan...");
                 const { data: kegData, error: err2 } = await supabase.from('master_kegiatan').select('*');
-                
-                if (err2) throw new Error(`Gagal fetch kegiatan: ${err2.message}`);
+                console.log("Hasil fetch Kegiatan:", kegData, err2); // Debugging log
+                if (err2) throw new Error(`Tabel master_kegiatan: ${err2.message}`);
 
-                updateLoadingText("Mengambil riwayat Setoran...");
-                // Limit 5000 untuk mencegah timeout, silakan sesuaikan
-                const { data: logData, error: err3 } = await supabase.from('log_setoran').select('*').order('id', { ascending: true }).limit(5000);
+                updateLoadingText("Mengambil riwayat Setoran (Maksimal 10.000 data terbaru)...");
+                // Menambahkan limit 10000 agar tidak membebani memori browser jika data sangat besar
+                const { data: logData, error: err3 } = await supabase.from('log_setoran').select('*').order('id', { ascending: false }).limit(10000);
+                console.log("Hasil fetch Log:", logData ? logData.length + " baris" : null, err3); // Debugging log
+                if (err3) throw new Error(`Tabel log_setoran: ${err3.message}`);
 
-                if (err3) throw new Error(`Gagal fetch log setoran: ${err3.message}`);
-
+                // Pastikan data tidak null
                 AppData.santri = santriData || [];
-                // Filter santri aktif secara lokal (karena struktur kolom status_aktif bisa beragam)
+                
+                // Filter santri aktif secara lokal (karena struktur kolom status_aktif bisa beragam: boolean atau text)
                 AppData.santri = AppData.santri.filter(s => {
                    let status = String(s.status_aktif).toLowerCase();
                    return status === 'true' || status === '1' || status === 'aktif';
