@@ -15,44 +15,55 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap');
         
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: #f8fafc; 
+            /* Latar belakang dengan aksen titik-titik samar hijau untuk kesan premium */
+            background-color: #f0fdf4; 
+            background-image: radial-gradient(#dcfce7 1px, transparent 1px);
+            background-size: 20px 20px;
         }
         
+        /* Custom Scrollbar hijau */
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #f1f5f9; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #6ee7b7; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #10b981; }
         
         .tab-active { 
-            border-bottom: 2px solid #059669; /* Emerald 600 */
-            color: #059669; 
-            font-weight: 700; 
+            border-bottom: 3px solid #059669; 
+            color: #047857; 
+            font-weight: 800; 
             background-color: #ffffff;
         }
         .tab-inactive { 
             color: #64748b; 
             background-color: #f8fafc;
+            font-weight: 600;
         }
         .hide { display: none !important; }
         
         .table-container { max-height: 550px; overflow-y: auto; }
-        .table-container thead th { position: sticky; top: 0; background-color: #f8fafc; z-index: 10; box-shadow: 0 1px 2px 0 rgba(0,0,0,0.05);}
+        .table-container thead th { 
+            position: sticky; top: 0; 
+            background-color: #f8fafc; z-index: 10; 
+            box-shadow: 0 2px 4px 0 rgba(0,0,0,0.05);
+        }
         
+        /* Glassmorphism Card Style */
         .glass-card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-            border: 1px solid #f1f5f9;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            border: 1px solid rgba(209, 250, 229, 0.5); /* border emerald-100 */
         }
 
         .pulse-dot { animation: pulse-animation 2s infinite; }
         @keyframes pulse-animation {
             0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
     </style>
@@ -60,10 +71,13 @@
 <body class="text-slate-800 h-screen flex flex-col overflow-hidden">
 
     <!-- Loading Overlay -->
-    <div id="loading-overlay" class="fixed inset-0 bg-slate-900 bg-opacity-70 backdrop-blur-sm z-50 flex flex-col justify-center items-center text-white transition-opacity duration-300">
-        <i class="fas fa-circle-notch fa-spin text-6xl mb-5 text-emerald-400"></i>
-        <h2 class="text-3xl font-bold mb-2">Sinkronisasi Database</h2>
-        <p class="text-emerald-200 text-lg" id="loading-text">Menghubungkan ke Supabase...</p>
+    <div id="loading-overlay" class="fixed inset-0 bg-slate-900 bg-opacity-80 backdrop-blur-md z-50 flex flex-col justify-center items-center text-white transition-opacity duration-500">
+        <div class="relative flex justify-center items-center mb-6">
+            <i class="fas fa-circle-notch fa-spin text-7xl text-emerald-400 absolute opacity-50"></i>
+            <i class="fas fa-book-quran text-3xl text-emerald-300"></i>
+        </div>
+        <h2 class="text-3xl font-extrabold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-emerald-300 to-teal-200">Sinkronisasi Database</h2>
+        <p class="text-emerald-100 text-lg font-medium tracking-wide" id="loading-text">Menghubungkan ke server...</p>
     </div>
 
     <!-- System Log (Error Display) -->
@@ -76,45 +90,35 @@
     </div>
 
     <!-- Header / Navbar -->
-    <nav class="bg-white border-b border-slate-200 px-6 py-4 flex-shrink-0 z-20 shadow-sm">
+    <nav class="bg-white/80 backdrop-blur-md border-b border-emerald-100 px-6 py-4 flex-shrink-0 z-20 shadow-sm">
         <div class="flex flex-col md:flex-row justify-between items-center max-w-[1400px] mx-auto w-full gap-4">
-            <div class="flex items-center gap-3">
-                <div class="bg-emerald-600 text-white p-2.5 rounded-lg shadow-md">
-                    <i class="fas fa-book-quran text-xl"></i>
+            <div class="flex items-center gap-4">
+                <div class="bg-gradient-to-br from-emerald-500 to-teal-600 text-white p-3 rounded-xl shadow-lg shadow-emerald-200">
+                    <i class="fas fa-leaf text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-slate-800 leading-tight">Dashboard Tahfidz</h1>
-                    <p class="text-xs text-slate-500 font-medium">Monitoring Capaian Santri</p>
+                    <h1 class="text-2xl font-black text-slate-800 leading-tight">Dashboard <span class="text-emerald-600">Tahfidz</span></h1>
+                    <p class="text-xs text-slate-500 font-bold tracking-wide uppercase mt-0.5">Sistem Monitoring Terpadu</p>
                 </div>
             </div>
             
             <div class="flex flex-wrap justify-center gap-3 items-center">
                 <!-- Filters -->
-                <div class="flex items-center bg-slate-50 rounded-lg p-1 border border-slate-200 shadow-inner">
-                    <div class="pl-3 pr-2 text-emerald-600">
-                        <i class="fas fa-calendar-alt"></i>
-                    </div>
+                <div class="flex items-center bg-white rounded-xl p-1.5 border border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="pl-3 pr-2 text-emerald-500"><i class="fas fa-calendar-alt"></i></div>
                     <select id="filterBulan" class="bg-transparent border-none text-sm font-bold focus:ring-0 cursor-pointer py-1.5 pr-8 text-slate-700 outline-none" onchange="window.processData()">
-                        <option value="07">Juli</option>
-                        <option value="08">Agustus</option>
-                        <option value="09">September</option>
-                        <option value="10">Oktober</option>
-                        <option value="11">November</option>
-                        <option value="12">Desember</option>
-                        <option value="01">Januari</option>
-                        <option value="02">Februari</option>
-                        <option value="03">Maret</option>
-                        <option value="04">April</option>
-                        <option value="05">Mei</option>
-                        <option value="06">Juni</option>
+                        <option value="07">Juli</option><option value="08">Agustus</option>
+                        <option value="09">September</option><option value="10">Oktober</option>
+                        <option value="11">November</option><option value="12">Desember</option>
+                        <option value="01">Januari</option><option value="02">Februari</option>
+                        <option value="03">Maret</option><option value="04">April</option>
+                        <option value="05">Mei</option><option value="06">Juni</option>
                         <option value="all">Total (Satu Tahun)</option>
                     </select>
                 </div>
 
-                <div class="flex items-center bg-slate-50 rounded-lg p-1 border border-slate-200 shadow-inner">
-                    <div class="pl-3 pr-2 text-indigo-500">
-                        <i class="fas fa-graduation-cap"></i>
-                    </div>
+                <div class="flex items-center bg-white rounded-xl p-1.5 border border-emerald-100 shadow-sm hover:shadow-md transition-shadow">
+                    <div class="pl-3 pr-2 text-teal-500"><i class="fas fa-graduation-cap"></i></div>
                     <select id="filterKelas" class="bg-transparent border-none text-sm font-bold focus:ring-0 cursor-pointer py-1.5 pr-8 text-slate-700 outline-none" onchange="window.processData()">
                         <option value="all">Semua Kelas</option>
                         <option value="7">Kelas 7 (VII)</option>
@@ -124,17 +128,15 @@
                 </div>
 
                 <!-- Filter Pencarian Ziyadah -->
-                <div class="flex items-center bg-slate-50 rounded-lg p-1 border border-slate-200 shadow-inner" title="Tampilkan santri yang sudah mencapai minimal juz/pojok tertentu">
-                    <div class="pl-3 pr-2 text-rose-500">
-                        <i class="fas fa-search-location"></i>
-                    </div>
-                    <input type="text" id="filterZiyadah" oninput="window.processData()" placeholder="Min. Juz/Pjk (cth: 10/20)" class="bg-transparent border-none text-sm font-bold focus:ring-0 py-1.5 w-56 text-slate-700 outline-none placeholder:text-slate-400 placeholder:font-normal">
+                <div class="flex items-center bg-white rounded-xl p-1.5 border border-emerald-100 shadow-sm hover:shadow-md transition-shadow" title="Tampilkan santri dengan minimal juz/pojok tertentu">
+                    <div class="pl-3 pr-2 text-green-500"><i class="fas fa-search-location"></i></div>
+                    <input type="text" id="filterZiyadah" oninput="window.processData()" placeholder="Min. Juz/Pjk (cth: 10/20)" class="bg-transparent border-none text-sm font-bold focus:ring-0 py-1.5 w-52 text-slate-700 outline-none placeholder:text-slate-400 placeholder:font-medium">
                 </div>
 
                 <!-- Live Indicator -->
-                <div class="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full border border-emerald-200 shadow-sm">
+                <div class="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2.5 rounded-xl border border-emerald-200 shadow-sm">
                     <div class="w-2.5 h-2.5 bg-emerald-500 rounded-full pulse-dot"></div>
-                    <span class="text-xs font-bold tracking-wide">LIVE</span>
+                    <span class="text-xs font-black tracking-widest">LIVE</span>
                 </div>
             </div>
         </div>
@@ -146,68 +148,68 @@
         <!-- Top Summary Cards -->
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
             <!-- Card 1: Total Santri -->
-            <div class="glass-card p-5 relative overflow-hidden group hover:border-indigo-300 transition-colors">
-                <div class="absolute -right-6 -top-6 text-indigo-50 opacity-50 group-hover:scale-110 transition-transform duration-300">
+            <div class="glass-card p-6 relative overflow-hidden group hover:border-emerald-300 transition-colors">
+                <div class="absolute -right-4 -top-4 text-emerald-50 opacity-60 group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300">
                     <i class="fas fa-users text-9xl"></i>
                 </div>
                 <div class="relative z-10">
-                    <div class="text-sm font-bold text-slate-500 mb-1 flex items-center gap-2">
-                        <i class="fas fa-user-graduate text-indigo-500"></i> Total Santri Aktif
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                        <i class="fas fa-user-graduate text-emerald-500"></i> Total Santri
                     </div>
-                    <div class="text-4xl font-extrabold text-slate-800 mt-2" id="stat-total-santri">0</div>
-                    <div class="text-xs text-slate-400 mt-2">Berdasarkan filter kelas</div>
+                    <div class="text-5xl font-black text-slate-800 mt-2 tracking-tight" id="stat-total-santri">0</div>
+                    <div class="text-xs font-medium text-slate-400 mt-2 bg-slate-50 inline-block px-2 py-1 rounded-md">Berdasarkan filter</div>
                 </div>
             </div>
 
             <!-- Card 2: Rata-rata Ziyadah -->
-            <div class="glass-card p-5 relative overflow-hidden group hover:border-emerald-300 transition-colors">
-                <div class="absolute -right-6 -top-6 text-emerald-50 opacity-50 group-hover:scale-110 transition-transform duration-300">
+            <div class="glass-card p-6 relative overflow-hidden group hover:border-teal-300 transition-colors">
+                <div class="absolute -right-4 -top-4 text-teal-50 opacity-60 group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300">
                     <i class="fas fa-book-open text-9xl"></i>
                 </div>
                 <div class="relative z-10">
-                    <div class="text-sm font-bold text-slate-500 mb-1 flex items-center gap-2">
-                        <i class="fas fa-book-open text-emerald-500"></i> Rata-rata Ziyadah
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                        <i class="fas fa-book-open text-teal-500"></i> Rata-rata Ziyadah
                     </div>
                     <div class="flex items-baseline gap-2 mt-2">
-                        <div class="text-3xl font-extrabold text-slate-800" id="stat-avg-juz">0</div>
-                        <div class="text-sm font-bold text-slate-500 bg-slate-100 px-2 py-1 rounded" id="stat-avg-pojok">Pojok 0</div>
+                        <div class="text-4xl font-black text-slate-800 tracking-tight" id="stat-avg-juz">0</div>
+                        <div class="text-sm font-bold text-teal-700 bg-teal-50 border border-teal-100 px-2.5 py-1 rounded-lg shadow-sm" id="stat-avg-pojok">Pojok 0</div>
                     </div>
-                    <div class="text-xs text-slate-400 mt-2">Capaian akumulasi tertinggi</div>
+                    <div class="text-xs font-medium text-slate-400 mt-2 bg-slate-50 inline-block px-2 py-1 rounded-md">Rekor capaian tertinggi</div>
                 </div>
             </div>
 
             <!-- Card 3: Rata-rata Murojaah -->
-            <div class="glass-card p-5 relative overflow-hidden group hover:border-blue-300 transition-colors">
-                <div class="absolute -right-6 -top-6 text-blue-50 opacity-50 group-hover:scale-110 transition-transform duration-300">
-                    <i class="fas fa-redo text-9xl"></i>
+            <div class="glass-card p-6 relative overflow-hidden group hover:border-green-300 transition-colors">
+                <div class="absolute -right-4 -top-4 text-green-50 opacity-60 group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300">
+                    <i class="fas fa-redo-alt text-9xl"></i>
                 </div>
                 <div class="relative z-10">
-                    <div class="text-sm font-bold text-slate-500 mb-1 flex items-center gap-2">
-                        <i class="fas fa-redo text-blue-500"></i> Rata-rata Murojaah
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                        <i class="fas fa-redo-alt text-green-500"></i> Rata-rata Murojaah
                     </div>
                     <div class="flex items-baseline gap-2 mt-2">
-                        <div class="text-3xl font-extrabold text-slate-800" id="stat-avg-murojaah">0.0</div>
+                        <div class="text-4xl font-black text-slate-800 tracking-tight" id="stat-avg-murojaah">0.0</div>
                         <div class="text-sm font-bold text-slate-500">Pojok</div>
                     </div>
-                    <div class="text-xs text-slate-400 mt-2 font-medium bg-blue-50 text-blue-600 inline-block px-2 py-0.5 rounded" id="text-murojaah-period">Pada bulan terpilih</div>
+                    <div class="text-xs font-bold text-green-600 bg-green-50 border border-green-100 mt-2 inline-block px-2 py-1 rounded-md" id="text-murojaah-period">Pada bulan terpilih</div>
                 </div>
             </div>
 
             <!-- Card 4: Capai Target -->
-            <div class="glass-card p-5 relative overflow-hidden group hover:border-amber-300 transition-colors">
-                <div class="absolute -right-6 -top-6 text-amber-50 opacity-50 group-hover:scale-110 transition-transform duration-300">
-                    <i class="fas fa-trophy text-9xl"></i>
+            <div class="glass-card p-6 relative overflow-hidden group hover:border-emerald-400 transition-colors">
+                <div class="absolute -right-4 -top-4 text-emerald-50 opacity-60 group-hover:scale-110 group-hover:-rotate-12 transition-all duration-300">
+                    <i class="fas fa-medal text-9xl"></i>
                 </div>
                 <div class="relative z-10">
-                    <div class="text-sm font-bold text-slate-500 mb-1 flex items-center gap-2">
-                        <i class="fas fa-trophy text-amber-500"></i> Capai Target Tahunan
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                        <i class="fas fa-medal text-amber-500"></i> Capai Target Tahunan
                     </div>
                     <div class="flex items-baseline gap-2 mt-2">
-                        <div class="text-3xl font-extrabold text-slate-800" id="stat-target-percent">0%</div>
+                        <div class="text-4xl font-black text-slate-800 tracking-tight" id="stat-target-percent">0%</div>
                         <div class="text-sm font-bold text-slate-500"><span id="stat-target-count">0</span> Santri</div>
                     </div>
-                    <div class="w-full bg-slate-100 rounded-full h-2 mt-3 overflow-hidden">
-                        <div class="bg-amber-500 h-2 rounded-full transition-all duration-1000" id="stat-target-bar" style="width: 0%"></div>
+                    <div class="w-full bg-slate-100 rounded-full h-2.5 mt-3 overflow-hidden shadow-inner">
+                        <div class="bg-gradient-to-r from-emerald-400 to-teal-500 h-2.5 rounded-full transition-all duration-1000" id="stat-target-bar" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
@@ -215,10 +217,10 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <!-- Chart Section -->
-            <div class="glass-card p-5 lg:col-span-1 flex flex-col">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="font-bold text-slate-800">Persentase Capai Target</h3>
-                    <div class="text-[10px] font-bold text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-1 rounded uppercase tracking-wider">Per Kelas</div>
+            <div class="glass-card p-6 lg:col-span-1 flex flex-col">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="font-black text-slate-800 text-lg">Statistik Kelas</h3>
+                    <div class="text-[10px] font-black text-emerald-700 bg-emerald-100 border border-emerald-200 px-2 py-1 rounded-md uppercase tracking-widest shadow-sm">TARGET</div>
                 </div>
                 <div class="flex-grow relative w-full min-h-[300px]">
                     <canvas id="targetChart"></canvas>
@@ -226,27 +228,27 @@
             </div>
 
             <!-- Tables Section -->
-            <div class="glass-card flex flex-col lg:col-span-2 overflow-hidden shadow-lg border-emerald-100">
+            <div class="glass-card flex flex-col lg:col-span-2 overflow-hidden shadow-lg shadow-emerald-100/50">
                 <!-- Tabs -->
-                <div class="flex border-b border-slate-200 bg-slate-50">
-                    <button class="px-6 py-4 tab-active w-1/2 focus:outline-none transition-colors text-sm uppercase tracking-wider" id="tab-santri" onclick="window.switchTab('santri')">
+                <div class="flex border-b border-slate-200 bg-slate-50/50">
+                    <button class="px-6 py-5 tab-active w-1/2 focus:outline-none transition-all text-sm uppercase tracking-wider" id="tab-santri" onclick="window.switchTab('santri')">
                         <i class="fas fa-user-graduate mr-2"></i> Capaian Detail Santri
                     </button>
-                    <button class="px-6 py-4 tab-inactive w-1/2 focus:outline-none transition-colors text-sm border-l border-slate-200 uppercase tracking-wider" id="tab-halaqoh" onclick="window.switchTab('halaqoh')">
+                    <button class="px-6 py-5 tab-inactive w-1/2 focus:outline-none transition-all text-sm border-l border-slate-200 uppercase tracking-wider" id="tab-halaqoh" onclick="window.switchTab('halaqoh')">
                         <i class="fas fa-users-rectangle mr-2"></i> Rekapitulasi Halaqoh
                     </button>
                 </div>
 
                 <!-- Panel Santri -->
-                <div id="panel-santri" class="p-0 table-container flex-grow bg-white">
+                <div id="panel-santri" class="p-0 table-container flex-grow bg-white/60">
                     <table class="min-w-full text-sm text-left whitespace-nowrap">
-                        <thead class="text-xs text-slate-500 uppercase bg-slate-100 border-b border-slate-200">
+                        <thead class="text-xs text-slate-500 uppercase bg-slate-50">
                             <tr>
-                                <th scope="col" class="px-5 py-4 font-bold tracking-wider">Nama Santri</th>
-                                <th scope="col" class="px-5 py-4 font-bold tracking-wider">Kls / Halaqoh</th>
-                                <th scope="col" class="px-5 py-4 font-bold tracking-wider">Capaian Ziyadah</th>
-                                <th scope="col" class="px-5 py-4 font-bold tracking-wider">Murojaah</th>
-                                <th scope="col" class="px-5 py-4 font-bold tracking-wider text-center">Status</th>
+                                <th scope="col" class="px-6 py-5 font-black tracking-wider text-slate-600">Nama Santri</th>
+                                <th scope="col" class="px-6 py-5 font-black tracking-wider text-slate-600">Kls / Halaqoh</th>
+                                <th scope="col" class="px-6 py-5 font-black tracking-wider text-slate-600">Capaian Ziyadah</th>
+                                <th scope="col" class="px-6 py-5 font-black tracking-wider text-slate-600">Murojaah</th>
+                                <th scope="col" class="px-6 py-5 font-black tracking-wider text-center text-slate-600">Status Target</th>
                             </tr>
                         </thead>
                         <tbody id="table-body-santri" class="divide-y divide-slate-100">
@@ -256,16 +258,16 @@
                 </div>
 
                 <!-- Panel Halaqoh -->
-                <div id="panel-halaqoh" class="p-0 table-container flex-grow bg-white hide">
+                <div id="panel-halaqoh" class="p-0 table-container flex-grow bg-white/60 hide">
                     <table class="min-w-full text-sm text-left whitespace-nowrap">
-                        <thead class="text-xs text-slate-500 uppercase bg-slate-100 border-b border-slate-200">
+                        <thead class="text-xs text-slate-500 uppercase bg-slate-50">
                             <tr>
-                                <th scope="col" class="px-5 py-4 font-bold tracking-wider">Nama Halaqoh</th>
-                                <th scope="col" class="px-5 py-4 font-bold tracking-wider text-center">Jml Santri</th>
-                                <th scope="col" class="px-5 py-4 font-bold tracking-wider">Avg Ziyadah</th>
-                                <th scope="col" class="px-5 py-4 font-bold tracking-wider">Avg Murojaah</th>
-                                <th scope="col" class="px-5 py-4 font-bold tracking-wider text-center">Capai Target</th>
-                                <th scope="col" class="px-5 py-4 font-bold tracking-wider text-center">Aksi</th>
+                                <th scope="col" class="px-6 py-5 font-black tracking-wider text-slate-600">Nama Halaqoh</th>
+                                <th scope="col" class="px-6 py-5 font-black tracking-wider text-center text-slate-600">Total</th>
+                                <th scope="col" class="px-6 py-5 font-black tracking-wider text-slate-600">Rata-rata Ziyadah</th>
+                                <th scope="col" class="px-6 py-5 font-black tracking-wider text-slate-600">Rata-rata Murj.</th>
+                                <th scope="col" class="px-6 py-5 font-black tracking-wider text-center text-slate-600">Capai Target</th>
+                                <th scope="col" class="px-6 py-5 font-black tracking-wider text-center text-slate-600">Aksi</th>
                             </tr>
                         </thead>
                         <tbody id="table-body-halaqoh" class="divide-y divide-slate-100">
@@ -278,32 +280,32 @@
     </main>
 
     <!-- Modal Detail Halaqoh -->
-    <div id="modalHalaqoh" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex justify-center items-center opacity-0 transition-opacity duration-300">
-        <div class="bg-white w-11/12 max-w-5xl rounded-2xl shadow-2xl flex flex-col max-h-[85vh] transform scale-95 transition-transform duration-300" id="modalContent">
-            <div class="flex justify-between items-center p-6 border-b border-slate-200 bg-slate-50 rounded-t-2xl">
+    <div id="modalHalaqoh" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex justify-center items-center opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-11/12 max-w-5xl rounded-3xl shadow-2xl flex flex-col max-h-[85vh] transform scale-95 transition-transform duration-300 border border-emerald-50" id="modalContent">
+            <div class="flex justify-between items-center p-6 border-b border-slate-100 bg-gradient-to-r from-emerald-50 to-white rounded-t-3xl">
                 <div class="flex items-center gap-4">
-                    <div class="bg-indigo-100 text-indigo-600 p-3 rounded-xl shadow-sm">
-                        <i class="fas fa-users text-xl"></i>
+                    <div class="bg-teal-100 text-teal-600 p-3.5 rounded-2xl shadow-sm">
+                        <i class="fas fa-users text-2xl"></i>
                     </div>
                     <div>
-                        <h3 class="text-xl font-extrabold text-slate-800" id="modalTitle">Detail Halaqoh</h3>
-                        <p class="text-sm font-medium text-slate-500 mt-1" id="modalSubtitle">Daftar santri dan capaiannya</p>
+                        <h3 class="text-2xl font-black text-slate-800" id="modalTitle">Detail Halaqoh</h3>
+                        <p class="text-sm font-bold text-teal-600 mt-1 uppercase tracking-wide" id="modalSubtitle">Daftar santri dan capaiannya</p>
                     </div>
                 </div>
-                <button onclick="window.closeModal()" class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-2.5 rounded-xl transition-colors focus:outline-none bg-white border border-slate-200 shadow-sm">
+                <button onclick="window.closeModal()" class="text-slate-400 hover:text-rose-600 hover:bg-rose-50 p-3 rounded-2xl transition-colors focus:outline-none bg-white border border-slate-200 shadow-sm">
                     <i class="fas fa-times text-xl"></i>
                 </button>
             </div>
             
-            <div class="p-0 overflow-y-auto flex-grow table-container bg-white rounded-b-2xl">
+            <div class="p-0 overflow-y-auto flex-grow table-container bg-white rounded-b-3xl">
                  <table class="min-w-full text-sm text-left whitespace-nowrap">
-                    <thead class="text-xs text-slate-600 uppercase bg-slate-100 sticky top-0 border-b border-slate-200 shadow-sm">
+                    <thead class="text-xs text-slate-500 uppercase bg-slate-50 sticky top-0 shadow-sm z-10">
                         <tr>
-                            <th scope="col" class="px-6 py-4 font-bold tracking-wider">Nama Santri</th>
-                            <th scope="col" class="px-6 py-4 font-bold tracking-wider">Kelas</th>
-                            <th scope="col" class="px-6 py-4 font-bold tracking-wider">Capaian Ziyadah</th>
-                            <th scope="col" class="px-6 py-4 font-bold tracking-wider">Total Murojaah</th>
-                            <th scope="col" class="px-6 py-4 font-bold tracking-wider">Status Target</th>
+                            <th scope="col" class="px-8 py-5 font-black tracking-wider">Nama Santri</th>
+                            <th scope="col" class="px-8 py-5 font-black tracking-wider">Kelas</th>
+                            <th scope="col" class="px-8 py-5 font-black tracking-wider">Capaian Ziyadah</th>
+                            <th scope="col" class="px-8 py-5 font-black tracking-wider">Total Murojaah</th>
+                            <th scope="col" class="px-8 py-5 font-black tracking-wider">Status Target</th>
                         </tr>
                     </thead>
                     <tbody id="modal-table-body" class="divide-y divide-slate-100">
@@ -314,7 +316,7 @@
         </div>
     </div>
 
-    <!-- ES MODULE SCRIPT UNTUK STABILITAS 100% -->
+    <!-- ES MODULE SCRIPT -->
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/+esm';
 
@@ -344,7 +346,7 @@
         };
         const POJOK_PER_JUZ = 20;
 
-        // --- SISTEM DEBUGGING TAHAN BANTING ---
+        // --- SISTEM DEBUGGING ---
         function sysLog(msg, errorObj = null) {
             console.log(msg, errorObj || '');
             if (errorObj) {
@@ -362,28 +364,29 @@
         // --- FUNGSI GLOBAL UNTUK HTML ---
         window.processData = processData;
         window.switchTab = (tab) => {
-            document.getElementById('tab-santri').className = `px-6 py-4 w-1/2 focus:outline-none transition-colors text-sm uppercase tracking-wider ${tab==='santri' ? 'tab-active' : 'tab-inactive'}`;
-            document.getElementById('tab-halaqoh').className = `px-6 py-4 w-1/2 focus:outline-none transition-colors text-sm border-l border-slate-200 uppercase tracking-wider ${tab==='halaqoh' ? 'tab-active' : 'tab-inactive'}`;
+            document.getElementById('tab-santri').className = `px-6 py-5 w-1/2 focus:outline-none transition-all text-sm uppercase tracking-wider ${tab==='santri' ? 'tab-active' : 'tab-inactive border-b border-slate-200'}`;
+            document.getElementById('tab-halaqoh').className = `px-6 py-5 w-1/2 focus:outline-none transition-all text-sm border-l border-slate-200 uppercase tracking-wider ${tab==='halaqoh' ? 'tab-active' : 'tab-inactive border-b border-slate-200'}`;
             document.getElementById('panel-santri').classList.toggle('hide', tab!=='santri');
             document.getElementById('panel-halaqoh').classList.toggle('hide', tab!=='halaqoh');
         };
+
         window.openModal = (halaqohName) => {
             document.getElementById('modalTitle').innerText = halaqohName;
             const tbody = document.getElementById('modal-table-body');
             tbody.innerHTML = '';
             
             let santris = window.halaqohDataStore[halaqohName] || [];
-            santris.sort((a, b) => b.maxZiyadahAbs - a.maxZiyadahAbs); // Sort by highest Ziyadah
+            santris.sort((a, b) => b.maxZiyadahAbs - a.maxZiyadahAbs);
 
             let frag = document.createDocumentFragment();
             santris.forEach(s => {
                  let badge = s.capaiTarget 
-                    ? `<span class="bg-emerald-100 text-emerald-700 border border-emerald-200 font-bold px-3 py-1 rounded-lg text-xs"><i class="fas fa-check-circle mr-1"></i> Tercapai</span>`
-                    : `<span class="bg-rose-50 text-rose-600 border border-rose-200 font-bold px-3 py-1 rounded-lg text-xs"><i class="fas fa-times-circle mr-1"></i> Belum</span>`;
+                    ? `<span class="bg-gradient-to-r from-emerald-100 to-emerald-50 text-emerald-700 border border-emerald-200 font-extrabold px-3 py-1.5 rounded-xl text-[11px] shadow-sm tracking-wide"><i class="fas fa-check-circle mr-1"></i> TERCAPAI</span>`
+                    : `<span class="bg-rose-50 text-rose-600 border border-rose-200 font-extrabold px-3 py-1.5 rounded-xl text-[11px] shadow-sm tracking-wide"><i class="fas fa-times-circle mr-1"></i> BELUM</span>`;
                 
                 let tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition-colors";
-                tr.innerHTML = `<td class="px-6 py-4 font-bold text-slate-800">${s.nama}</td><td class="px-6 py-4 text-slate-600 font-medium">${s.kelas}</td><td class="px-6 py-4"><span class="bg-indigo-50 text-indigo-700 px-3 py-1.5 rounded-lg font-bold border border-indigo-100">Juz ${s.lastJuzZiyadah} Hal ${s.lastPojokZiyadah}</span></td><td class="px-6 py-4 font-extrabold text-slate-700 text-base">${s.totalMurojaahHalaman} <span class="text-xs font-medium text-slate-400">Pjk</span></td><td class="px-6 py-4">${badge}</td>`;
+                tr.className = "hover:bg-emerald-50/50 transition-colors";
+                tr.innerHTML = `<td class="px-8 py-5 font-black text-slate-800">${s.nama}</td><td class="px-8 py-5 text-slate-600 font-bold">${s.kelas}</td><td class="px-8 py-5"><span class="bg-teal-50 text-teal-700 px-3 py-1.5 rounded-xl font-black border border-teal-100 shadow-sm">Juz ${s.lastJuzZiyadah} Hal ${s.lastPojokZiyadah}</span></td><td class="px-8 py-5 font-black text-slate-700 text-base">${s.totalMurojaahHalaman} <span class="text-xs font-bold text-slate-400">Pjk</span></td><td class="px-8 py-5">${badge}</td>`;
                 frag.appendChild(tr);
             });
             tbody.appendChild(frag);
@@ -404,11 +407,22 @@
         function updateLoader(txt) { const el = document.getElementById('loading-text'); if(el) el.innerText = txt; }
         function hideLoader() {
             const loader = document.getElementById('loading-overlay');
-            if(loader) { loader.style.opacity = '0'; setTimeout(() => loader.classList.add('hidden'), 300); }
+            if(loader) { loader.style.opacity = '0'; setTimeout(() => loader.classList.add('hidden'), 500); }
         }
 
+        // FUNGSI KEBAL ERROR: Mengekstrak hanya angka dari teks (misal: "Juz 29" -> 29, "Pjk 2" -> 2)
+        function safeExtractNum(str) {
+            if (str === null || str === undefined) return 0;
+            let s = String(str).trim();
+            let match = s.match(/\d+/);
+            return match ? parseInt(match[0], 10) : 0;
+        }
+
+        // LOGIKA PENYEMPURNAAN (Fida Lailiyah Case)
+        // Juz 30 dihitung base 0. Juz 1 dihitung base 20. Juz 2 base 40, dst.
         function getAbsolutePojok(juz, pojok) {
-            let j = parseInt(juz) || 0; let p = parseInt(pojok) || 0;
+            let j = parseInt(juz) || 0; 
+            let p = parseInt(pojok) || 0;
             if (j === 30) return p;
             if (j > 0 && j < 30) return 20 + ((j - 1) * POJOK_PER_JUZ) + p;
             return 0;
@@ -417,14 +431,15 @@
         function getJuzPojokFromAbsolute(abs) {
             if (abs <= 0) return { j: 0, p: 0 };
             if (abs <= 20) return { j: 30, p: abs };
+            
             let remaining = abs - 20;
-            let j = Math.floor(remaining / POJOK_PER_JUZ) + 1;
+            // Math.ceil lebih aman dan akurat dari metode Math.floor sebelumnya
+            let j = Math.ceil(remaining / POJOK_PER_JUZ); 
             let p = remaining % POJOK_PER_JUZ;
-            if (p === 0) { j -= 1; p = POJOK_PER_JUZ; }
+            if (p === 0) p = POJOK_PER_JUZ;
             return { j: j, p: p };
         }
 
-        // PENYEMPURNAAN MAP KELAS (Support Romawi & Angka)
         function mapKelasTarget(kelasString) {
             if (!kelasString) return null;
             let s = String(kelasString).toUpperCase().trim();
@@ -437,20 +452,40 @@
         // --- FETCH DATA (MAIN) ---
         async function fetchAllData() {
             try {
-                updateLoader("Menghubungkan ke Supabase...");
+                updateLoader("Menghubungkan ke Database Utama...");
                 supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
                 
-                updateLoader("Mengunduh data Santri...");
+                updateLoader("Mengunduh data Master Santri...");
                 const { data: santriData, error: err1 } = await supabase.from('santri').select('id, nama, nis, kelas, halaqoh, status_aktif');
                 if (err1) throw err1;
 
-                updateLoader("Mengunduh Riwayat Setoran (10000 terbaru)...");
-                // Penting: order by tanggal DESC agar data Ziyadah pertama kali ditemukan adalah yang TERBARU
-                const { data: logData, error: err3 } = await supabase.from('log_setoran').select('santri_id, tanggal, kegiatan, juz_akhir, pojok_akhir, jumlah_halaman').order('tanggal', { ascending: false }).limit(10000);
-                if (err3) throw err3;
+                // PERBAIKAN FATAL: Gunakan Pagination untuk mengambil SEMUA log setoran tanpa terpotong limit 10.000
+                updateLoader("Mengunduh seluruh Riwayat Setoran...");
+                let allLogs = [];
+                let start = 0;
+                const step = 1000; // Ambil per 1000 baris bertahap sesuai aturan server
+                let hasMore = true;
+
+                while (hasMore) {
+                    const { data: logData, error: err3 } = await supabase
+                        .from('log_setoran')
+                        .select('santri_id, tanggal, kegiatan, juz_akhir, pojok_akhir, jumlah_halaman')
+                        .range(start, start + step - 1);
+                    
+                    if (err3) throw err3;
+                    
+                    if (logData && logData.length > 0) {
+                        allLogs = allLogs.concat(logData);
+                        start += step;
+                        updateLoader(`Menganalisis ${allLogs.length} riwayat setoran...`);
+                        if (logData.length < step) hasMore = false; // Jika kurang dari 1000, berarti data sudah habis ditarik
+                    } else {
+                        hasMore = false;
+                    }
+                }
 
                 AppData.santri = santriData || [];
-                AppData.logs = logData || [];
+                AppData.logs = allLogs || [];
 
                 // Set Default Bulan Filter
                 let currentMonth = new Date().getMonth() + 1;
@@ -473,7 +508,6 @@
 
                 let filterZiyadahAbs = 0;
                 if (filterZiyadahInput) {
-                    // Ekstrak angka juz dan pojok, pisahkan dengan garis miring, koma, strip, atau spasi
                     let parts = filterZiyadahInput.split(/[\/\,\-\s\.]+/);
                     let fJuz = parseInt(parts[0]) || 0;
                     let fPojok = parseInt(parts[1]) || 0;
@@ -484,13 +518,10 @@
                 
                 // 1. Inisialisasi Santri
                 AppData.santri.forEach(s => {
-                    // Filter Status Aktif
                     let isAktif = String(s.status_aktif).toLowerCase();
                     if(isAktif !== 'true' && isAktif !== '1' && isAktif !== 'aktif') return;
 
                     let kelasTarget = mapKelasTarget(s.kelas);
-                    
-                    // Filter Kelas
                     if (filterKelas !== 'all' && kelasTarget !== filterKelas) return;
 
                     santriStats[s.id] = {
@@ -499,70 +530,62 @@
                         maxZiyadahAbs: 0,
                         lastJuzZiyadah: 0,
                         lastPojokZiyadah: 0,
-                        hasFoundLatestZiyadah: false,
                         totalMurojaahHalaman: 0,
                         capaiTarget: false
                     };
                 });
 
-                // 2. Kalkulasi Berdasarkan Log (Sudah diurutkan DESC dari API)
+                // 2. Kalkulasi Log Secara Penuh (Pencarian Max)
                 AppData.logs.forEach(log => {
                     let sId = log.santri_id;
                     if(!santriStats[sId]) return;
 
-                    let isZiyadah = false;
-                    let isMurojaah = false;
                     let keg = String(log.kegiatan || '').toLowerCase();
-                    
-                    // Normalisasi teks untuk menghindari gagal deteksi karena spasi atau tanda baca (contoh: "Muroja'ah" / "Murajaah")
                     let kegNormal = keg.replace(/[^a-z0-9]/g, '');
-
-                    if(kegNormal.includes('ziyadah') || kegNormal.includes('tambah') || kegNormal.includes('baru') || kegNormal.includes('setoran')) isZiyadah = true;
-                    if(kegNormal.includes('muroja') || kegNormal.includes('muraja') || kegNormal.includes('ulang') || kegNormal.includes('lancar')) isMurojaah = true;
+                    let isMurojaah = kegNormal.includes('muroja') || kegNormal.includes('muraja') || kegNormal.includes('ulang') || kegNormal.includes('lancar');
 
                     let logMonth = '';
                     if (log.tanggal) {
                         let parts = log.tanggal.split('-');
-                        if(parts.length >= 2) {
-                            logMonth = parts[1];
-                        } else {
+                        if(parts.length >= 2) logMonth = parts[1];
+                        else {
                             let d = new Date(log.tanggal);
                             if (!isNaN(d.getTime())) logMonth = (d.getMonth() + 1).toString().padStart(2, '0');
                         }
                     }
 
-                    // A. Hitung Murojaah (Hanya dalam bulan yg difilter, atau semua jika filter "all")
-                    if (isMurojaah) {
-                        if (filterBulan === 'all' || logMonth === filterBulan) {
-                            // Ganti koma dengan titik untuk antisipasi salah input desimal, misal 1,5 jadi 1.5
-                            let strHalaman = String(log.jumlah_halaman || '0').replace(',', '.');
-                            santriStats[sId].totalMurojaahHalaman += (parseFloat(strHalaman) || 0);
-                        }
+                    // A. Murojaah diakumulasi berdasarkan filter bulan
+                    if (isMurojaah && (filterBulan === 'all' || logMonth === filterBulan)) {
+                        let strHalaman = String(log.jumlah_halaman || '0').replace(',', '.');
+                        let hal = parseFloat(strHalaman);
+                        if (isNaN(hal) || hal === 0) hal = safeExtractNum(strHalaman); // Backup jika input murojaah rusak
+                        santriStats[sId].totalMurojaahHalaman += hal;
                     }
 
-                    // B. Cari Ziyadah TERAKHIR / TERTINGGI (Karena DESC, yang pertama ketemu adalah yang terbaru)
-                    if (isZiyadah && !santriStats[sId].hasFoundLatestZiyadah) {
-                        if(log.juz_akhir && log.pojok_akhir) {
-                            santriStats[sId].lastJuzZiyadah = parseInt(log.juz_akhir);
-                            santriStats[sId].lastPojokZiyadah = parseInt(log.pojok_akhir);
-                            santriStats[sId].maxZiyadahAbs = getAbsolutePojok(santriStats[sId].lastJuzZiyadah, santriStats[sId].lastPojokZiyadah);
-                            santriStats[sId].hasFoundLatestZiyadah = true;
+                    // B. SOLUSI TUNTAS ZIYADAH: Ekstrak Angka Saja, Cari Capaian Tertinggi Sepanjang Masa
+                    let currentJuz = safeExtractNum(log.juz_akhir);
+                    let currentPojok = safeExtractNum(log.pojok_akhir);
+                    
+                    if (currentJuz > 0 && currentJuz <= 30) {
+                        let currentAbs = getAbsolutePojok(currentJuz, currentPojok);
+                        
+                        // Timpa jika nilai mutlaknya lebih tinggi dari rekor capaian yang pernah disimpan
+                        if (currentAbs > santriStats[sId].maxZiyadahAbs) {
+                            santriStats[sId].lastJuzZiyadah = currentJuz;
+                            santriStats[sId].lastPojokZiyadah = currentPojok;
+                            santriStats[sId].maxZiyadahAbs = currentAbs;
                         }
                     }
                 });
 
-                // 3. Rekap & Cek Target Tahunan (Sesuai Bulan Target)
+                // 3. Rekap & Cek Target Tahunan
                 let totalSantri = 0, targetAchieved = 0, sumZiyadahAbs = 0, sumMurojaah = 0;
                 let kelasStats = { "7": { total: 0, capai: 0 }, "8": { total: 0, capai: 0 }, "9": { total: 0, capai: 0 } };
                 let halaqohStats = {};
                 
                 let santriArray = Object.values(santriStats);
-
-                // Terapkan Filter Pencarian Ziyadah (Minimal Capaian)
-                if (filterZiyadahAbs > 0) {
-                    santriArray = santriArray.filter(s => s.maxZiyadahAbs >= filterZiyadahAbs);
-                }
-
+                if (filterZiyadahAbs > 0) santriArray = santriArray.filter(s => s.maxZiyadahAbs >= filterZiyadahAbs);
+                
                 let bulanTargetCek = (filterBulan === 'all') ? "06" : filterBulan;
 
                 santriArray.forEach(s => {
@@ -583,11 +606,9 @@
                         kelasStats[cls].total++;
                     }
 
-                    // Mapping Halaqoh
                     let hName = s.halaqoh || 'Tanpa Halaqoh';
-                    if (!halaqohStats[hName]) {
-                        halaqohStats[hName] = { name: hName, totalSantri: 0, capai: 0, sumZiyadahAbs: 0, sumMurojaah: 0, santriList: [] };
-                    }
+                    if (!halaqohStats[hName]) halaqohStats[hName] = { name: hName, totalSantri: 0, capai: 0, sumZiyadahAbs: 0, sumMurojaah: 0, santriList: [] };
+                    
                     halaqohStats[hName].totalSantri++;
                     halaqohStats[hName].sumZiyadahAbs += s.maxZiyadahAbs;
                     halaqohStats[hName].sumMurojaah += s.totalMurojaahHalaman;
@@ -601,9 +622,8 @@
                 if (totalSantri > 0) {
                     let avgZ = Math.floor(sumZiyadahAbs / totalSantri);
                     let avgZDisp = getJuzPojokFromAbsolute(avgZ);
-                    document.getElementById('stat-avg-juz').innerHTML = `Juz <span class="text-emerald-600">${avgZDisp.j}</span>`;
+                    document.getElementById('stat-avg-juz').innerHTML = `Juz <span class="text-teal-600">${avgZDisp.j}</span>`;
                     document.getElementById('stat-avg-pojok').innerText = `Pojok ${avgZDisp.p}`;
-                    
                     document.getElementById('stat-avg-murojaah').innerText = (sumMurojaah / totalSantri).toFixed(1);
 
                     let pTarget = Math.round((targetAchieved / totalSantri) * 100);
@@ -611,7 +631,7 @@
                     document.getElementById('stat-target-count').innerText = targetAchieved;
                     let bar = document.getElementById('stat-target-bar');
                     bar.style.width = `${pTarget}%`;
-                    bar.className = `h-2 rounded-full transition-all duration-1000 ${pTarget < 50 ? 'bg-rose-500' : (pTarget < 80 ? 'bg-amber-500' : 'bg-emerald-500')}`;
+                    bar.className = `h-2.5 rounded-full transition-all duration-1000 ${pTarget < 50 ? 'bg-gradient-to-r from-rose-400 to-rose-500' : (pTarget < 80 ? 'bg-gradient-to-r from-amber-400 to-amber-500' : 'bg-gradient-to-r from-emerald-400 to-teal-500')}`;
                 } else {
                     document.getElementById('stat-avg-juz').innerText = `Juz 0`;
                     document.getElementById('stat-avg-pojok').innerText = `Pojok 0`;
@@ -621,7 +641,6 @@
                     document.getElementById('stat-target-bar').style.width = `0%`;
                 }
 
-                // Render Chart & Tables
                 renderChart(kelasStats);
                 renderTableSantri(santriArray, bulanTargetCek);
                 renderTableHalaqoh(Object.values(halaqohStats));
@@ -650,14 +669,18 @@
                     labels: ['Kelas 7 (VII)', 'Kelas 8 (VIII)', 'Kelas 9 (IX)'],
                     datasets: [{
                         label: '% Capai Target', data: data,
-                        backgroundColor: 'rgba(16, 185, 129, 0.8)', hoverBackgroundColor: 'rgba(5, 150, 105, 1)',
-                        borderRadius: 6, barPercentage: 0.5
+                        backgroundColor: 'rgba(16, 185, 129, 0.9)', 
+                        hoverBackgroundColor: 'rgba(4, 120, 87, 1)',
+                        borderRadius: 8, barPercentage: 0.55
                     }]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
                     plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => ` ${c.raw}% Tercapai` } } },
-                    scales: { y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%' } }, x: { grid: { display: false } } }
+                    scales: { 
+                        y: { beginAtZero: true, max: 100, ticks: { callback: v => v + '%', font: {weight: 'bold'} } }, 
+                        x: { grid: { display: false }, ticks: { font: {weight: 'bold'} } } 
+                    }
                 }
             });
         }
@@ -674,17 +697,17 @@
                 let targetText = tKelas ? `Juz ${tKelas.j} Pjk ${tKelas.p}` : '-';
                 
                 let badge = s.capaiTarget 
-                    ? `<span class="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold px-2.5 py-1.5 rounded-lg whitespace-nowrap"><i class="fas fa-check mr-1"></i> Tercapai</span>`
-                    : `<span class="bg-rose-50 text-rose-600 border border-rose-200 text-[11px] font-bold px-2.5 py-1.5 rounded-lg whitespace-nowrap"><i class="fas fa-times mr-1"></i> Belum</span>`;
+                    ? `<span class="bg-gradient-to-r from-emerald-100 to-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-extrabold px-3 py-1.5 rounded-xl whitespace-nowrap shadow-sm tracking-wide"><i class="fas fa-check mr-1"></i> TERCAPAI</span>`
+                    : `<span class="bg-rose-50 text-rose-600 border border-rose-200 text-[11px] font-extrabold px-3 py-1.5 rounded-xl whitespace-nowrap shadow-sm tracking-wide"><i class="fas fa-times mr-1"></i> BELUM</span>`;
 
                 let tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50 transition-colors';
+                tr.className = 'hover:bg-emerald-50/50 transition-colors group cursor-default';
                 tr.innerHTML = `
-                    <td class="px-5 py-4"><div class="font-bold text-slate-800">${s.nama}</div><div class="text-xs text-slate-500 font-medium">NIS: ${s.nis || '-'}</div></td>
-                    <td class="px-5 py-4"><div class="text-slate-700 font-medium">${s.kelas}</div><div class="text-[11px] text-indigo-600 font-bold bg-indigo-50 inline-block px-2 py-0.5 rounded mt-1">${s.halaqoh || '-'}</div></td>
-                    <td class="px-5 py-4"><div class="font-extrabold text-emerald-600 text-base">Juz ${s.lastJuzZiyadah} Pjk ${s.lastPojokZiyadah}</div><div class="text-xs text-slate-400 mt-0.5">Target: ${targetText}</div></td>
-                    <td class="px-5 py-4 font-extrabold text-slate-700 text-base">${s.totalMurojaahHalaman} <span class="text-[11px] font-medium text-slate-400">Pjk</span></td>
-                    <td class="px-5 py-4 text-center">${badge}</td>
+                    <td class="px-6 py-4"><div class="font-black text-slate-800 text-sm group-hover:text-emerald-700 transition-colors">${s.nama}</div><div class="text-xs text-slate-500 font-bold mt-0.5">NIS: ${s.nis || '-'}</div></td>
+                    <td class="px-6 py-4"><div class="text-slate-700 font-bold">${s.kelas}</div><div class="text-[10px] text-teal-700 font-black tracking-widest uppercase bg-teal-50 border border-teal-100 inline-block px-2 py-0.5 rounded-md mt-1">${s.halaqoh || '-'}</div></td>
+                    <td class="px-6 py-4"><div class="font-black text-emerald-600 text-base">Juz ${s.lastJuzZiyadah} Pjk ${s.lastPojokZiyadah}</div><div class="text-xs text-slate-400 mt-0.5 font-bold uppercase tracking-wider">Target: ${targetText}</div></td>
+                    <td class="px-6 py-4 font-black text-slate-700 text-base">${s.totalMurojaahHalaman} <span class="text-[11px] font-bold text-slate-400">Pjk</span></td>
+                    <td class="px-6 py-4 text-center">${badge}</td>
                 `;
                 frag.appendChild(tr);
             });
@@ -696,7 +719,6 @@
             tbody.innerHTML = '';
             window.halaqohDataStore = {};
 
-            // Sort by nama halaqoh alphabetical
             halaqohArray.sort((a,b) => a.name.localeCompare(b.name));
 
             let frag = document.createDocumentFragment();
@@ -706,17 +728,17 @@
                 let avgZDisp = getJuzPojokFromAbsolute(avgZ);
                 let avgM = h.totalSantri ? (h.sumMurojaah / h.totalSantri).toFixed(1) : 0;
                 let pCapai = h.totalSantri ? Math.round((h.capai / h.totalSantri) * 100) : 0;
-                let color = pCapai < 50 ? 'bg-rose-500' : (pCapai < 80 ? 'bg-amber-500' : 'bg-emerald-500');
+                let color = pCapai < 50 ? 'from-rose-400 to-rose-500' : (pCapai < 80 ? 'from-amber-400 to-amber-500' : 'from-emerald-400 to-teal-500');
 
                 let tr = document.createElement('tr');
-                tr.className = 'hover:bg-slate-50 transition-colors';
+                tr.className = 'hover:bg-emerald-50/50 transition-colors cursor-default';
                 tr.innerHTML = `
-                    <td class="px-5 py-4 font-extrabold text-slate-800"><div class="flex items-center gap-3"><div class="bg-indigo-100 text-indigo-600 w-9 h-9 rounded-xl flex items-center justify-center shadow-sm"><i class="fas fa-users"></i></div>${h.name}</div></td>
-                    <td class="px-5 py-4 text-center font-bold text-slate-600">${h.totalSantri}</td>
-                    <td class="px-5 py-4 font-extrabold text-emerald-600 text-base">Juz ${avgZDisp.j} Pjk ${avgZDisp.p}</td>
-                    <td class="px-5 py-4 font-extrabold text-slate-700 text-base">${avgM} <span class="text-[11px] font-medium text-slate-400">Pjk</span></td>
-                    <td class="px-5 py-4"><div class="flex items-center gap-3"><span class="text-sm font-extrabold w-10 text-slate-700">${pCapai}%</span><div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden"><div class="${color} h-2.5 rounded-full" style="width: ${pCapai}%"></div></div></div></td>
-                    <td class="px-5 py-4 text-center"><button onclick="window.openModal('${h.name}')" class="text-indigo-600 bg-indigo-50 hover:bg-indigo-600 hover:text-white border border-indigo-100 px-4 py-2 rounded-lg text-xs font-bold transition-all shadow-sm focus:outline-none">Detail</button></td>
+                    <td class="px-6 py-4 font-black text-slate-800"><div class="flex items-center gap-3"><div class="bg-gradient-to-br from-teal-100 to-emerald-100 text-teal-600 w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm border border-emerald-50"><i class="fas fa-users"></i></div>${h.name}</div></td>
+                    <td class="px-6 py-4 text-center font-black text-slate-600">${h.totalSantri}</td>
+                    <td class="px-6 py-4 font-black text-emerald-600 text-base">Juz ${avgZDisp.j} Pjk ${avgZDisp.p}</td>
+                    <td class="px-6 py-4 font-black text-slate-700 text-base">${avgM} <span class="text-[11px] font-bold text-slate-400">Pjk</span></td>
+                    <td class="px-6 py-4"><div class="flex items-center gap-3"><span class="text-sm font-black w-10 text-slate-700">${pCapai}%</span><div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden shadow-inner"><div class="bg-gradient-to-r ${color} h-3 rounded-full" style="width: ${pCapai}%"></div></div></div></td>
+                    <td class="px-6 py-4 text-center"><button onclick="window.openModal('${h.name}')" class="text-emerald-700 bg-emerald-50 hover:bg-emerald-600 hover:text-white border border-emerald-200 px-4 py-2 rounded-xl text-xs font-black transition-all shadow-sm focus:outline-none tracking-widest uppercase">Detail</button></td>
                 `;
                 frag.appendChild(tr);
             });
