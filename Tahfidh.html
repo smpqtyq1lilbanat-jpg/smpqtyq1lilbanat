@@ -14,9 +14,6 @@
     <!-- FontAwesome untuk Icon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- Supabase JS Client (UPDATED CDN LINK) -->
-    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
-
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
         
@@ -304,37 +301,62 @@
         </div>
     </div>
 
-    <script>
+    <!-- Error Debugger Console (Hanya muncul jika ada error) -->
+    <div id="error-debugger" class="fixed bottom-4 right-4 bg-rose-900 text-white p-4 rounded-lg shadow-2xl z-[9999] hidden max-w-lg w-full text-xs font-mono overflow-y-auto max-h-64 border border-rose-700">
+        <div class="flex justify-between items-center mb-3 border-b border-rose-700 pb-2">
+            <span class="font-bold text-sm"><i class="fas fa-bug mr-2"></i>Sistem Log</span>
+            <button onclick="document.getElementById('error-debugger').classList.add('hidden')" class="text-rose-200 hover:text-white bg-rose-800 rounded px-2 py-1 transition-colors">Tutup</button>
+        </div>
+        <div id="error-debugger-content" class="space-y-2"></div>
+    </div>
+
+    <!-- MENGGUNAKAN ES MODULE UNTUK STABILITAS MAKSIMAL -->
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.7/+esm';
+
         // --- 1. SETUP SUPABASE ---
         const SUPABASE_URL = 'https://vpdlfjbkfcuukyykrhua.supabase.co';
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZGxmamJrZmN1dWt5eWtyaHVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzkxNjUsImV4cCI6MjA5Nzc1NTE2NX0.QSHbi71ajuU_AggJJ5xVDeb6jffDRyyuF4C7aYeHW3Y';
         
         let supabase;
+        
+        // Fungsi untuk menangkap dan menampilkan error ke layar
+        function logDebug(message, err = null, isError = false) {
+            console[isError ? 'error' : 'log'](message, err || '');
+            if (isError) {
+                const debugBox = document.getElementById('error-debugger');
+                const debugContent = document.getElementById('error-debugger-content');
+                if(debugBox && debugContent) {
+                    debugBox.classList.remove('hidden');
+                    let errStr = err ? (err.message || JSON.stringify(err)) : '';
+                    debugContent.innerHTML += `<div class="mb-2 pb-1 border-b border-rose-700/50 text-rose-100"><strong>[ERROR] ${message}</strong><br/><span class="text-rose-300">${errStr}</span></div>`;
+                }
+            }
+        }
+
         try {
-            // Inisialisasi yang lebih aman
-            supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+            logDebug("Supabase Client berhasil diinisialisasi.");
         } catch (err) {
-            console.error("Gagal inisialisasi Supabase client:", err);
+            logDebug("Gagal inisialisasi Supabase client", err, true);
             document.getElementById('loading-overlay').innerHTML = `
                 <div class="bg-white p-6 rounded-xl shadow-2xl text-center max-w-sm mx-auto">
                     <i class="fas fa-plug text-rose-500 text-5xl mb-4"></i>
-                    <h2 class="text-xl font-bold text-slate-800 mb-2">Gagal Memuat Library</h2>
-                    <p class="text-sm text-slate-600">Pastikan koneksi internet Anda stabil untuk memuat script Supabase.</p>
+                    <h2 class="text-xl font-bold text-slate-800 mb-2">Gagal Memuat Sistem</h2>
+                    <p class="text-sm text-slate-600">${err.message}</p>
                 </div>
             `;
         }
 
-        // --- 2. STATE APP ---
         let AppData = {
             santri: [],
             kegiatan: [],
             logs: [],
-            mapKegiatan: {} // Memudahkan cek Ziyadah/Murojaah
+            mapKegiatan: {}
         };
         let chartInstance = null;
 
-        // Target Tahfidz Tahunan sesuai standar lembaga
-        // Format {j: juz, p: pojok}. 1 Juz = 20 Pojok. Juz 30 dianggap Juz paling awal.
+        // Target Tahfidz Tahunan (Format {j: juz, p: pojok})
         const TargetTahfidz = {
             "07": { "7": {j: 30, p: 6}, "8": {j: 5, p: 19}, "9": {j: 11, p: 0} },
             "08": { "7": {j: 30, p: 20}, "8": {j: 6, p: 11}, "9": {j: 12, p: 0} },
@@ -348,47 +370,58 @@
             "04": { "7": {j: 4, p: 19}, "8": {j: 10, p: 12}, "9": {j: 20, p: 0} },
             "05": { "7": {j: 5, p: 8}, "8": {j: 11, p: 1}, "9": {j: 21, p: 0} },
             "06": { "7": {j: 5, p: 19}, "8": {j: 11, p: 13}, "9": {j: 22, p: 0} },
-            "all":{ "7": {j: 5, p: 19}, "8": {j: 11, p: 13}, "9": {j: 22, p: 0} } // default to akhir tahun
+            "all":{ "7": {j: 5, p: 19}, "8": {j: 11, p: 13}, "9": {j: 22, p: 0} }
         };
-
         const POJOK_PER_JUZ = 20;
 
-        // --- 3. FETCH DATA ---
+        // Ekspor fungsi ke window agar bisa dipanggil oleh event HTML (onclick, onchange)
+        window.hideLoading = hideLoading;
+        window.processData = processData;
+        window.switchTab = switchTab;
+        window.openModal = openModal;
+        window.closeModal = closeModal;
+
+        function updateLoadingText(text) {
+            const el = document.getElementById('loading-text');
+            if(el) el.innerText = text;
+        }
+
+        function hideLoading() {
+            const loader = document.getElementById('loading-overlay');
+            if(loader) {
+                loader.style.opacity = '0';
+                setTimeout(() => loader.classList.add('hidden'), 300);
+            }
+        }
+
         async function fetchAllData() {
-            if (!supabase) return; // Hentikan jika supabase belum terinisialisasi
+            if (!supabase) return;
 
             try {
-                console.log("Memulai proses fetch data..."); // Debugging log
-                
-                updateLoadingText("Mengambil data Santri...");
+                updateLoadingText("Membaca Tabel Santri...");
+                logDebug("Fetching Santri...");
                 const { data: santriData, error: err1 } = await supabase.from('santri').select('*');
-                console.log("Hasil fetch Santri:", santriData, err1); // Debugging log
                 if (err1) throw new Error(`Tabel Santri: ${err1.message}`);
 
-                updateLoadingText("Mengambil referensi Kegiatan...");
+                updateLoadingText("Membaca Tabel Kegiatan...");
+                logDebug("Fetching Master Kegiatan...");
                 const { data: kegData, error: err2 } = await supabase.from('master_kegiatan').select('*');
-                console.log("Hasil fetch Kegiatan:", kegData, err2); // Debugging log
                 if (err2) throw new Error(`Tabel master_kegiatan: ${err2.message}`);
 
-                updateLoadingText("Mengambil riwayat Setoran (Maksimal 10.000 data terbaru)...");
-                // Menambahkan limit 10000 agar tidak membebani memori browser jika data sangat besar
-                const { data: logData, error: err3 } = await supabase.from('log_setoran').select('*').order('id', { ascending: false }).limit(10000);
-                console.log("Hasil fetch Log:", logData ? logData.length + " baris" : null, err3); // Debugging log
+                updateLoadingText("Membaca Log Setoran...");
+                logDebug("Fetching Log Setoran...");
+                // Batasi 8000 data agar memori stabil, urut berdasarkan terbaru
+                const { data: logData, error: err3 } = await supabase.from('log_setoran').select('*').order('id', { ascending: false }).limit(8000);
                 if (err3) throw new Error(`Tabel log_setoran: ${err3.message}`);
 
-                // Pastikan data tidak null
-                AppData.santri = santriData || [];
-                
-                // Filter santri aktif secara lokal (karena struktur kolom status_aktif bisa beragam: boolean atau text)
-                AppData.santri = AppData.santri.filter(s => {
-                   let status = String(s.status_aktif).toLowerCase();
-                   return status === 'true' || status === '1' || status === 'aktif';
-                });
+                logDebug(`Data terkumpul: Santri(${santriData?.length||0}), Keg(${kegData?.length||0}), Log(${logData?.length||0})`);
 
+                // Proteksi Array Null
+                AppData.santri = santriData || [];
                 AppData.kegiatan = kegData || [];
                 AppData.logs = logData || [];
 
-                // Build Kegiatan Map for fast lookup (Is it Ziyadah or Murojaah?)
+                // Mapping Kegiatan
                 AppData.kegiatan.forEach(k => {
                     let nama = String(k.nama_kegiatan).toLowerCase();
                     let type = 'other';
@@ -397,58 +430,45 @@
                     AppData.mapKegiatan[k.id] = type;
                 });
 
-                // Set default month to current real month
+                // Set default bulan form
                 let currentMonth = new Date().getMonth() + 1;
-                document.getElementById('filterBulan').value = currentMonth.toString().padStart(2, '0');
+                let filterBulanEl = document.getElementById('filterBulan');
+                if(filterBulanEl) filterBulanEl.value = currentMonth.toString().padStart(2, '0');
 
-                // Process Data
+                // Eksekusi kalkulasi UI
                 processData();
                 hideLoading();
                 
             } catch (error) {
-                console.error("Fetch exception:", error);
+                logDebug("Kritis saat Fetch Data", error, true);
                 
-                // Ganti tampilan loading menjadi error
-                document.getElementById('loading-overlay').innerHTML = `
-                    <div class="bg-white p-6 rounded-xl shadow-2xl text-center max-w-sm mx-auto flex flex-col items-center">
-                        <i class="fas fa-exclamation-triangle text-rose-500 text-5xl mb-4"></i>
-                        <h2 class="text-xl font-bold text-slate-800 mb-2">Koneksi Database Gagal</h2>
-                        <p class="text-sm text-slate-600 mb-4">${error.message}</p>
-                        <p class="text-xs text-slate-400 mb-4">Pastikan akses RLS (Row Level Security) tabel di-setting ke public untuk operasi SELECT.</p>
-                        <button onclick="hideLoading()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 px-4 rounded-lg transition-colors">
-                            Masuk Tanpa Data
-                        </button>
-                    </div>
-                `;
+                const loader = document.getElementById('loading-overlay');
+                if(loader) {
+                    loader.innerHTML = `
+                        <div class="bg-white p-6 rounded-xl shadow-2xl text-center max-w-sm mx-auto flex flex-col items-center">
+                            <i class="fas fa-database text-rose-500 text-5xl mb-4"></i>
+                            <h2 class="text-xl font-bold text-slate-800 mb-2">Sinkronisasi Terhenti</h2>
+                            <p class="text-sm text-slate-600 mb-4 font-mono bg-slate-10 p-2 rounded border">${error.message}</p>
+                            <button onclick="window.hideLoading()" class="bg-slate-800 hover:bg-slate-900 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                                Tutup & Lihat Log
+                            </button>
+                        </div>
+                    `;
+                }
             }
         }
 
-        function updateLoadingText(text) {
-            document.getElementById('loading-text').innerText = text;
-        }
-
-        function hideLoading() {
-            const loader = document.getElementById('loading-overlay');
-            loader.style.opacity = '0';
-            setTimeout(() => loader.classList.add('hidden'), 300);
-        }
-
-        // --- 4. DATA LOGIC ---
-
-        // Konversi Juz & Pojok menjadi angka absolut berurutan (Juz 30 adalah awal = 0 s.d 20 pojok)
         function getAbsolutePojok(juz, pojok) {
             let j = parseInt(juz) || 0;
             let p = parseInt(pojok) || 0;
-            
             if (j === 30) return p;
             if (j > 0 && j < 30) return 20 + ((j - 1) * POJOK_PER_JUZ) + p;
             return 0;
         }
 
         function getJuzPojokFromAbsolute(abs) {
-            if (abs === 0) return { j: 0, p: 0 };
+            if (abs <= 0) return { j: 0, p: 0 };
             if (abs <= 20) return { j: 30, p: abs };
-            
             let remaining = abs - 20;
             let j = Math.floor(remaining / POJOK_PER_JUZ) + 1;
             let p = remaining % POJOK_PER_JUZ;
@@ -456,155 +476,130 @@
             return { j: j, p: p };
         }
 
-        function isZiyadah(kegiatanVal) {
-            if (AppData.mapKegiatan[kegiatanVal] === 'ziyadah') return true;
-            let str = String(kegiatanVal).toLowerCase();
-            return str.includes('ziyadah') || str.includes('tambah') || kegiatanVal == 1;
-        }
-
-        function isMurojaah(kegiatanVal) {
-            if (AppData.mapKegiatan[kegiatanVal] === 'murojaah') return true;
-            let str = String(kegiatanVal).toLowerCase();
-            return str.includes('murojaah') || str.includes('lancar') || kegiatanVal == 2;
-        }
-
         function processData() {
-            const filterBulan = document.getElementById('filterBulan').value;
-            const filterKelas = document.getElementById('filterKelas').value;
+            try {
+                const filterBulan = document.getElementById('filterBulan').value;
+                const filterKelas = document.getElementById('filterKelas').value;
 
-            // Dictionary untu menampung kalkulasi per santri
-            let santriStats = {};
-            
-            // 1. Inisialisasi santri
-            AppData.santri.forEach(s => {
-                if (filterKelas !== 'all' && String(s.kelas) !== filterKelas) return;
-
-                santriStats[s.id] = {
-                    ...s,
-                    maxZiyadahAbs: 0,
-                    lastJuzZiyadah: 0,
-                    lastPojokZiyadah: 0,
-                    totalMurojaahHalaman: 0,
-                    capaiTarget: false
-                };
-            });
-
-            // 2. Olah Logs
-            AppData.logs.forEach(log => {
-                let sId = log.santri_id;
-                if(!santriStats[sId]) return; // Santri tidak ada / terfilter
-
-                let logDate = new Date(log.tanggal);
-                let logMonth = (logDate.getMonth() + 1).toString().padStart(2, '0');
-
-                let isZ = isZiyadah(log.kegiatan);
-                let isM = isMurojaah(log.kegiatan);
-
-                // Murojaah dihitung spesifik HANYA di bulan yang difilter (kecuali 'all')
-                if (isM) {
-                    if (filterBulan === 'all' || logMonth === filterBulan) {
-                        santriStats[sId].totalMurojaahHalaman += (parseInt(log.jumlah_halaman) || 0);
-                    }
-                }
-
-                // Ziyadah adalah kumulatif, kita ambil nilai MAKSIMUM absolutnya HINGGA bulan terpilih
-                // Asumsi: Urutan bulan hijriah/akademis: Jul (7) s.d Jun (6).
-                // Untuk kesederhanaan logika dashboard, kita ambil maxZiyadah dari semua log yang tercatat
-                // (karena data biasanya merepresentasikan kondisi riil saat ini).
-                if (isZ) {
-                    let absAkhir = getAbsolutePojok(log.juz_akhir, log.pojok_akhir);
-                    if (absAkhir > santriStats[sId].maxZiyadahAbs) {
-                        santriStats[sId].maxZiyadahAbs = absAkhir;
-                        santriStats[sId].lastJuzZiyadah = parseInt(log.juz_akhir) || 0;
-                        santriStats[sId].lastPojokZiyadah = parseInt(log.pojok_akhir) || 0;
-                    }
-                }
-            });
-
-            // 3. Agregasi Dashboard & Target
-            let totalSantri = 0;
-            let targetAchieved = 0;
-            let sumZiyadahAbs = 0;
-            let sumMurojaah = 0;
-
-            let kelasStats = {
-                "7": { total: 0, capai: 0 },
-                "8": { total: 0, capai: 0 },
-                "9": { total: 0, capai: 0 }
-            };
-            let halaqohStats = {};
-            
-            let santriArray = Object.values(santriStats);
-            let bulanTarget = filterBulan === 'all' ? "06" : filterBulan;
-
-            santriArray.forEach(s => {
-                totalSantri++;
-                sumZiyadahAbs += s.maxZiyadahAbs;
-                sumMurojaah += s.totalMurojaahHalaman;
-
-                // Evaluasi Target
-                let targetKelas = TargetTahfidz[bulanTarget] && TargetTahfidz[bulanTarget][s.kelas];
-                if (targetKelas) {
-                    let targetAbs = getAbsolutePojok(targetKelas.j, targetKelas.p);
-                    if (s.maxZiyadahAbs >= targetAbs) {
-                        s.capaiTarget = true;
-                        targetAchieved++;
-                        if(kelasStats[s.kelas]) kelasStats[s.kelas].capai++;
-                    }
-                }
-                if(kelasStats[s.kelas]) kelasStats[s.kelas].total++;
-
-                // Pengelompokan Halaqoh
-                let halName = s.halaqoh || 'Belum Ditentukan';
-                if (!halaqohStats[halName]) {
-                    halaqohStats[halName] = { name: halName, totalSantri: 0, capai: 0, sumZiyadahAbs: 0, sumMurojaah: 0, santriList: [] };
-                }
-                halaqohStats[halName].totalSantri++;
-                halaqohStats[halName].sumZiyadahAbs += s.maxZiyadahAbs;
-                halaqohStats[halName].sumMurojaah += s.totalMurojaahHalaman;
-                if(s.capaiTarget) halaqohStats[halName].capai++;
-                halaqohStats[halName].santriList.push(s);
-            });
-
-            // Update UI Top Cards
-            document.getElementById('stat-total-santri').innerText = totalSantri;
-            
-            let periodText = filterBulan === 'all' ? "Total keseluruhan" : "Pada bulan terpilih";
-            document.getElementById('text-murojaah-period').innerText = periodText;
-
-            if (totalSantri > 0) {
-                let avgZ = Math.floor(sumZiyadahAbs / totalSantri);
-                let avgZDisplay = getJuzPojokFromAbsolute(avgZ);
-                document.getElementById('stat-avg-juz').innerText = `Juz ${avgZDisplay.j}`;
-                document.getElementById('stat-avg-pojok').innerText = `Pojok ${avgZDisplay.p}`;
-
-                let avgM = (sumMurojaah / totalSantri).toFixed(1);
-                document.getElementById('stat-avg-murojaah').innerText = avgM;
-
-                let pTarget = Math.round((targetAchieved / totalSantri) * 100);
-                document.getElementById('stat-target-percent').innerText = `${pTarget}%`;
-                document.getElementById('stat-target-count').innerText = targetAchieved;
+                let santriStats = {};
                 
-                let bar = document.getElementById('stat-target-bar');
-                bar.style.width = `${pTarget}%`;
-                bar.className = `h-1.5 rounded-full transition-all duration-1000 ${pTarget < 50 ? 'bg-rose-500' : (pTarget < 80 ? 'bg-amber-500' : 'bg-emerald-500')}`;
-            } else {
-                document.getElementById('stat-avg-juz').innerText = `Juz 0`;
-                document.getElementById('stat-avg-pojok').innerText = `Pojok 0`;
-                document.getElementById('stat-avg-murojaah').innerText = `0`;
-                document.getElementById('stat-target-percent').innerText = `0%`;
-                document.getElementById('stat-target-count').innerText = '0';
-                document.getElementById('stat-target-bar').style.width = `0%`;
-            }
+                AppData.santri.forEach(s => {
+                    // Filter Kelas (Tipe data seringkali beda antara int dan str)
+                    if (filterKelas !== 'all' && String(s.kelas) !== filterKelas) return;
+                    
+                    // Filter Santri Aktif saja
+                    let status = String(s.status_aktif).toLowerCase();
+                    if(status !== 'true' && status !== '1' && status !== 'aktif') return;
 
-            renderChart(kelasStats);
-            renderTableSantri(santriArray, bulanTarget);
-            renderTableHalaqoh(Object.values(halaqohStats));
+                    santriStats[s.id] = {
+                        ...s,
+                        maxZiyadahAbs: 0,
+                        lastJuzZiyadah: 0,
+                        lastPojokZiyadah: 0,
+                        totalMurojaahHalaman: 0,
+                        capaiTarget: false
+                    };
+                });
+
+                AppData.logs.forEach(log => {
+                    let sId = log.santri_id;
+                    if(!santriStats[sId]) return;
+
+                    let logDate = log.tanggal ? new Date(log.tanggal) : null;
+                    let logMonth = logDate ? (logDate.getMonth() + 1).toString().padStart(2, '0') : null;
+
+                    let isZ = AppData.mapKegiatan[log.kegiatan] === 'ziyadah' || log.kegiatan == 1;
+                    let isM = AppData.mapKegiatan[log.kegiatan] === 'murojaah' || log.kegiatan == 2;
+
+                    if (isM) {
+                        if (filterBulan === 'all' || logMonth === filterBulan) {
+                            santriStats[sId].totalMurojaahHalaman += (parseInt(log.jumlah_halaman) || 0);
+                        }
+                    }
+
+                    if (isZ) {
+                        let absAkhir = getAbsolutePojok(log.juz_akhir, log.pojok_akhir);
+                        if (absAkhir > santriStats[sId].maxZiyadahAbs) {
+                            santriStats[sId].maxZiyadahAbs = absAkhir;
+                            santriStats[sId].lastJuzZiyadah = parseInt(log.juz_akhir) || 0;
+                            santriStats[sId].lastPojokZiyadah = parseInt(log.pojok_akhir) || 0;
+                        }
+                    }
+                });
+
+                let totalSantri = 0, targetAchieved = 0, sumZiyadahAbs = 0, sumMurojaah = 0;
+                let kelasStats = { "7": { total: 0, capai: 0 }, "8": { total: 0, capai: 0 }, "9": { total: 0, capai: 0 } };
+                let halaqohStats = {};
+                let santriArray = Object.values(santriStats);
+                let bulanTarget = filterBulan === 'all' ? "06" : filterBulan;
+
+                santriArray.forEach(s => {
+                    totalSantri++;
+                    sumZiyadahAbs += s.maxZiyadahAbs;
+                    sumMurojaah += s.totalMurojaahHalaman;
+
+                    let cls = String(s.kelas);
+                    let targetKelas = TargetTahfidz[bulanTarget] && TargetTahfidz[bulanTarget][cls];
+                    
+                    if (targetKelas) {
+                        let targetAbs = getAbsolutePojok(targetKelas.j, targetKelas.p);
+                        if (s.maxZiyadahAbs >= targetAbs) {
+                            s.capaiTarget = true;
+                            targetAchieved++;
+                            if(kelasStats[cls]) kelasStats[cls].capai++;
+                        }
+                    }
+                    if(kelasStats[cls]) kelasStats[cls].total++;
+
+                    let halName = s.halaqoh || 'Belum Ditentukan';
+                    if (!halaqohStats[halName]) {
+                        halaqohStats[halName] = { name: halName, totalSantri: 0, capai: 0, sumZiyadahAbs: 0, sumMurojaah: 0, santriList: [] };
+                    }
+                    halaqohStats[halName].totalSantri++;
+                    halaqohStats[halName].sumZiyadahAbs += s.maxZiyadahAbs;
+                    halaqohStats[halName].sumMurojaah += s.totalMurojaahHalaman;
+                    if(s.capaiTarget) halaqohStats[halName].capai++;
+                    halaqohStats[halName].santriList.push(s);
+                });
+
+                // Update UI Statistik
+                document.getElementById('stat-total-santri').innerText = totalSantri;
+                document.getElementById('text-murojaah-period').innerText = filterBulan === 'all' ? "Total keseluruhan" : "Pada bulan terpilih";
+
+                if (totalSantri > 0) {
+                    let avgZ = Math.floor(sumZiyadahAbs / totalSantri);
+                    let avgZDisplay = getJuzPojokFromAbsolute(avgZ);
+                    document.getElementById('stat-avg-juz').innerText = `Juz ${avgZDisplay.j}`;
+                    document.getElementById('stat-avg-pojok').innerText = `Pojok ${avgZDisplay.p}`;
+                    document.getElementById('stat-avg-murojaah').innerText = (sumMurojaah / totalSantri).toFixed(1);
+
+                    let pTarget = Math.round((targetAchieved / totalSantri) * 100);
+                    document.getElementById('stat-target-percent').innerText = `${pTarget}%`;
+                    document.getElementById('stat-target-count').innerText = targetAchieved;
+                    
+                    let bar = document.getElementById('stat-target-bar');
+                    bar.style.width = `${pTarget}%`;
+                    bar.className = `h-1.5 rounded-full transition-all duration-1000 ${pTarget < 50 ? 'bg-rose-500' : (pTarget < 80 ? 'bg-amber-500' : 'bg-emerald-500')}`;
+                } else {
+                    document.getElementById('stat-avg-juz').innerText = `Juz 0`;
+                    document.getElementById('stat-avg-pojok').innerText = `Pojok 0`;
+                    document.getElementById('stat-avg-murojaah').innerText = `0`;
+                    document.getElementById('stat-target-percent').innerText = `0%`;
+                    document.getElementById('stat-target-count').innerText = '0';
+                    document.getElementById('stat-target-bar').style.width = `0%`;
+                }
+
+                renderChart(kelasStats);
+                renderTableSantri(santriArray, bulanTarget);
+                renderTableHalaqoh(Object.values(halaqohStats));
+            } catch (err) {
+                logDebug("Error saat memproses (processData)", err, true);
+            }
         }
 
-        // --- 5. RENDER UI ---
         function renderChart(kelasStats) {
-            const ctx = document.getElementById('targetChart').getContext('2d');
+            const ctx = document.getElementById('targetChart');
+            if(!ctx) return;
             
             let data = [
                 kelasStats["7"].total ? (kelasStats["7"].capai / kelasStats["7"].total * 100).toFixed(1) : 0,
@@ -612,52 +607,30 @@
                 kelasStats["9"].total ? (kelasStats["9"].capai / kelasStats["9"].total * 100).toFixed(1) : 0
             ];
 
-            if (chartInstance) {
-                chartInstance.destroy();
-            }
+            if (chartInstance) chartInstance.destroy();
 
-            // Custom Chart.js defaults
             Chart.defaults.font.family = "'Plus Jakarta Sans', sans-serif";
             Chart.defaults.color = '#64748b';
 
-            chartInstance = new Chart(ctx, {
+            chartInstance = new Chart(ctx.getContext('2d'), {
                 type: 'bar',
                 data: {
                     labels: ['Kelas 7', 'Kelas 8', 'Kelas 9'],
                     datasets: [{
-                        label: '% Capai Target',
-                        data: data,
-                        backgroundColor: 'rgba(79, 70, 229, 0.85)', // Indigo 600
-                        hoverBackgroundColor: 'rgba(67, 56, 202, 1)',
-                        borderRadius: 6,
-                        borderSkipped: false,
-                        barPercentage: 0.6
+                        label: '% Capai Target', data: data,
+                        backgroundColor: 'rgba(79, 70, 229, 0.85)', hoverBackgroundColor: 'rgba(67, 56, 202, 1)',
+                        borderRadius: 6, borderSkipped: false, barPercentage: 0.6
                     }]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     plugins: {
                         legend: { display: false },
-                        tooltip: {
-                            backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                            padding: 10,
-                            cornerRadius: 8,
-                            callbacks: {
-                                label: function(context) { return ` ${context.raw}% Tercapai`; }
-                            }
-                        }
+                        tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)', padding: 10, cornerRadius: 8, callbacks: { label: c => ` ${c.raw}% Tercapai` } }
                     },
                     scales: {
-                        y: {
-                            beginAtZero: true,
-                            max: 100,
-                            grid: { color: '#f1f5f9', drawBorder: false },
-                            ticks: { callback: v => v + '%' }
-                        },
-                        x: {
-                            grid: { display: false, drawBorder: false }
-                        }
+                        y: { beginAtZero: true, max: 100, grid: { color: '#f1f5f9', drawBorder: false }, ticks: { callback: v => v + '%' } },
+                        x: { grid: { display: false, drawBorder: false } }
                     }
                 }
             });
@@ -665,81 +638,63 @@
 
         function renderTableSantri(santriArray, bulanTarget) {
             const tbody = document.getElementById('table-body-santri');
+            if(!tbody) return;
             tbody.innerHTML = '';
             
             santriArray.sort((a, b) => b.maxZiyadahAbs - a.maxZiyadahAbs);
-
+            
+            let fragment = document.createDocumentFragment();
             santriArray.forEach(s => {
-                let targetKelas = TargetTahfidz[bulanTarget] && TargetTahfidz[bulanTarget][s.kelas];
+                let cls = String(s.kelas);
+                let targetKelas = TargetTahfidz[bulanTarget] && TargetTahfidz[bulanTarget][cls];
                 let targetText = targetKelas ? `Juz ${targetKelas.j} Pjk ${targetKelas.p}` : '-';
                 
                 let badge = s.capaiTarget 
                     ? `<span class="bg-emerald-50 text-emerald-600 text-xs font-semibold px-2.5 py-1 rounded-md border border-emerald-200"><i class="fas fa-check mr-1"></i> Tercapai</span>`
                     : `<span class="bg-rose-50 text-rose-600 text-xs font-semibold px-2.5 py-1 rounded-md border border-rose-200"><i class="fas fa-times mr-1"></i> Belum</span>`;
 
-                tbody.insertAdjacentHTML('beforeend', `
-                    <tr class="hover:bg-slate-50/80 transition-colors">
-                        <td class="px-5 py-4">
-                            <div class="font-semibold text-slate-800">${s.nama}</div>
-                            <div class="text-xs text-slate-400">NIS: ${s.nis || '-'}</div>
-                        </td>
-                        <td class="px-5 py-4">
-                            <div class="text-slate-800">Kelas ${s.kelas}</div>
-                            <div class="text-xs text-indigo-500 font-medium">${s.halaqoh || '-'}</div>
-                        </td>
-                        <td class="px-5 py-4">
-                            <div class="font-bold text-indigo-600">Juz ${s.lastJuzZiyadah} Pjk ${s.lastPojokZiyadah}</div>
-                            <div class="text-xs text-slate-400">Target: ${targetText}</div>
-                        </td>
-                        <td class="px-5 py-4 font-bold text-slate-700">${s.totalMurojaahHalaman} <span class="text-xs font-normal text-slate-400">Pjk</span></td>
-                        <td class="px-5 py-4 text-center">${badge}</td>
-                    </tr>
-                `);
+                let tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50/80 transition-colors';
+                tr.innerHTML = `
+                    <td class="px-5 py-4"><div class="font-semibold text-slate-800">${s.nama}</div><div class="text-xs text-slate-400">NIS: ${s.nis || '-'}</div></td>
+                    <td class="px-5 py-4"><div class="text-slate-800">Kelas ${s.kelas}</div><div class="text-xs text-indigo-500 font-medium">${s.halaqoh || '-'}</div></td>
+                    <td class="px-5 py-4"><div class="font-bold text-indigo-600">Juz ${s.lastJuzZiyadah} Pjk ${s.lastPojokZiyadah}</div><div class="text-xs text-slate-400">Target: ${targetText}</div></td>
+                    <td class="px-5 py-4 font-bold text-slate-700">${s.totalMurojaahHalaman} <span class="text-xs font-normal text-slate-400">Pjk</span></td>
+                    <td class="px-5 py-4 text-center">${badge}</td>
+                `;
+                fragment.appendChild(tr);
             });
+            tbody.appendChild(fragment);
         }
 
         function renderTableHalaqoh(halaqohArray) {
             const tbody = document.getElementById('table-body-halaqoh');
+            if(!tbody) return;
             tbody.innerHTML = '';
-            
             window.halaqohDataStore = {};
 
+            let fragment = document.createDocumentFragment();
             halaqohArray.forEach(h => {
                 window.halaqohDataStore[h.name] = h.santriList;
-
                 let avgZ = h.totalSantri ? Math.floor(h.sumZiyadahAbs / h.totalSantri) : 0;
                 let avgZDisplay = getJuzPojokFromAbsolute(avgZ);
                 let avgM = h.totalSantri ? (h.sumMurojaah / h.totalSantri).toFixed(1) : 0;
                 let percCapai = h.totalSantri ? Math.round((h.capai / h.totalSantri) * 100) : 0;
                 let pBarColor = percCapai < 50 ? 'bg-rose-500' : (percCapai < 80 ? 'bg-amber-500' : 'bg-emerald-500');
 
-                tbody.insertAdjacentHTML('beforeend', `
-                    <tr class="hover:bg-slate-50/80 transition-colors">
-                        <td class="px-5 py-4 font-semibold text-slate-800">
-                            <div class="flex items-center gap-3">
-                                <div class="bg-indigo-50 text-indigo-500 w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-users"></i></div>
-                                ${h.name}
-                            </div>
-                        </td>
-                        <td class="px-5 py-4 text-center font-medium text-slate-600">${h.totalSantri}</td>
-                        <td class="px-5 py-4 font-bold text-indigo-600">Juz ${avgZDisplay.j} Pjk ${avgZDisplay.p}</td>
-                        <td class="px-5 py-4 font-bold text-slate-700">${avgM} <span class="text-xs font-normal text-slate-400">Pjk</span></td>
-                        <td class="px-5 py-4">
-                            <div class="flex items-center gap-3">
-                                <span class="text-sm font-bold w-10">${percCapai}%</span>
-                                <div class="w-full bg-slate-100 rounded-full h-2">
-                                    <div class="${pBarColor} h-2 rounded-full" style="width: ${percCapai}%"></div>
-                                </div>
-                            </div>
-                        </td>
-                        <td class="px-5 py-4 text-center">
-                            <button onclick="openModal('${h.name}')" class="text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-200">
-                                Detail
-                            </button>
-                        </td>
-                    </tr>
-                `);
+                let tr = document.createElement('tr');
+                tr.className = 'hover:bg-slate-50/80 transition-colors';
+                tr.innerHTML = `
+                    <td class="px-5 py-4 font-semibold text-slate-800"><div class="flex items-center gap-3"><div class="bg-indigo-50 text-indigo-500 w-8 h-8 rounded-full flex items-center justify-center"><i class="fas fa-users"></i></div>${h.name}</div></td>
+                    <td class="px-5 py-4 text-center font-medium text-slate-600">${h.totalSantri}</td>
+                    <td class="px-5 py-4 font-bold text-indigo-600">Juz ${avgZDisplay.j} Pjk ${avgZDisplay.p}</td>
+                    <td class="px-5 py-4 font-bold text-slate-700">${avgM} <span class="text-xs font-normal text-slate-400">Pjk</span></td>
+                    <td class="px-5 py-4"><div class="flex items-center gap-3"><span class="text-sm font-bold w-10">${percCapai}%</span><div class="w-full bg-slate-100 rounded-full h-2"><div class="${pBarColor} h-2 rounded-full" style="width: ${percCapai}%"></div></div></div></td>
+                    <td class="px-5 py-4 text-center"><button onclick="window.openModal('${h.name}')" class="text-indigo-600 bg-indigo-50 hover:bg-indigo-100 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors focus:outline-none">Detail</button></td>
+                `;
+                fragment.appendChild(tr);
             });
+            tbody.appendChild(fragment);
         }
 
         function switchTab(tab) {
@@ -747,6 +702,7 @@
             const tHalaqoh = document.getElementById('tab-halaqoh');
             const pSantri = document.getElementById('panel-santri');
             const pHalaqoh = document.getElementById('panel-halaqoh');
+            if(!tSantri) return;
 
             if(tab === 'santri') {
                 tSantri.className = "px-6 py-3.5 tab-active w-1/2 focus:outline-none transition-colors text-sm";
@@ -763,7 +719,6 @@
 
         function openModal(halaqohName) {
             document.getElementById('modalTitle').innerText = halaqohName;
-            
             const tbody = document.getElementById('modal-table-body');
             tbody.innerHTML = '';
             
@@ -774,43 +729,25 @@
                  let badge = s.capaiTarget 
                     ? `<span class="text-emerald-600 font-semibold"><i class="fas fa-check-circle mr-1"></i> Tercapai</span>`
                     : `<span class="text-rose-500 font-semibold"><i class="fas fa-times-circle mr-1"></i> Belum</span>`;
-
-                tbody.insertAdjacentHTML('beforeend', `
-                    <tr class="hover:bg-slate-50/80 transition-colors">
-                        <td class="px-5 py-3 font-semibold text-slate-800">${s.nama}</td>
-                        <td class="px-5 py-3 text-slate-600">${s.kelas}</td>
-                        <td class="px-5 py-3 font-bold text-indigo-600">Juz ${s.lastJuzZiyadah} Pjk ${s.lastPojokZiyadah}</td>
-                        <td class="px-5 py-3 font-bold text-slate-700">${s.totalMurojaahHalaman} <span class="text-xs font-normal text-slate-400">Pjk</span></td>
-                        <td class="px-5 py-3">${badge}</td>
-                    </tr>
-                `);
+                tbody.insertAdjacentHTML('beforeend', `<tr class="hover:bg-slate-50/80 transition-colors"><td class="px-5 py-3 font-semibold text-slate-800">${s.nama}</td><td class="px-5 py-3 text-slate-600">${s.kelas}</td><td class="px-5 py-3 font-bold text-indigo-600">Juz ${s.lastJuzZiyadah} Pjk ${s.lastPojokZiyadah}</td><td class="px-5 py-3 font-bold text-slate-700">${s.totalMurojaahHalaman} <span class="text-xs font-normal text-slate-400">Pjk</span></td><td class="px-5 py-3">${badge}</td></tr>`);
             });
 
             const modal = document.getElementById('modalHalaqoh');
             const content = document.getElementById('modalContent');
-            
             modal.classList.remove('hidden');
-            // Timeout to allow display block to apply before transition
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                content.classList.remove('scale-95');
-            }, 10);
+            setTimeout(() => { modal.classList.remove('opacity-0'); content.classList.remove('scale-95'); }, 10);
         }
 
         function closeModal() {
             const modal = document.getElementById('modalHalaqoh');
             const content = document.getElementById('modalContent');
-            
             modal.classList.add('opacity-0');
             content.classList.add('scale-95');
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300); // Matches duration-300
+            setTimeout(() => modal.classList.add('hidden'), 300);
         }
 
-        // Jalankan Fetching otomatis saat web dimuat
-        window.onload = fetchAllData;
+        // Panggil fungsi utama secara langsung ketika module diload
+        fetchAllData();
 
     </script>
 </body>
