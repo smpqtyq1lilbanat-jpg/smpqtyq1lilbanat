@@ -127,10 +127,10 @@
                     </select>
                 </div>
 
-                <!-- Filter Pencarian Ziyadah -->
-                <div class="flex items-center bg-white rounded-xl p-1.5 border border-emerald-100 shadow-sm hover:shadow-md transition-shadow" title="Tampilkan santri dengan minimal juz/pojok tertentu">
-                    <div class="pl-3 pr-2 text-green-500"><i class="fas fa-search-location"></i></div>
-                    <input type="text" id="filterZiyadah" oninput="window.processData()" placeholder="Min. Juz/Pjk (cth: 10/20)" class="bg-transparent border-none text-sm font-bold focus:ring-0 py-1.5 w-52 text-slate-700 outline-none placeholder:text-slate-400 placeholder:font-medium">
+                <!-- Target Dinamis Ziyadah -->
+                <div class="flex items-center bg-white rounded-xl p-1.5 border border-emerald-100 shadow-sm hover:shadow-md transition-shadow" title="Atur target kustom untuk melihat prosentase capaian">
+                    <div class="pl-3 pr-2 text-amber-500"><i class="fas fa-bullseye"></i></div>
+                    <input type="text" id="filterZiyadah" oninput="window.processData()" placeholder="Cek Target Juz/Pjk (cth: 10/0)" class="bg-transparent border-none text-sm font-bold focus:ring-0 py-1.5 w-52 text-slate-700 outline-none placeholder:text-slate-400 placeholder:font-medium">
                 </div>
 
                 <!-- Live Indicator -->
@@ -201,7 +201,7 @@
                     <i class="fas fa-medal text-9xl"></i>
                 </div>
                 <div class="relative z-10">
-                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-2">
+                    <div class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1 flex items-center gap-2" id="card-target-title">
                         <i class="fas fa-medal text-amber-500"></i> Capai Target Tahunan
                     </div>
                     <div class="flex items-baseline gap-2 mt-2">
@@ -578,15 +578,24 @@
                     }
                 });
 
-                // 3. Rekap & Cek Target Tahunan
+                // 3. Rekap & Cek Target Tahunan atau Dinamis
                 let totalSantri = 0, targetAchieved = 0, sumZiyadahAbs = 0, sumMurojaah = 0;
                 let kelasStats = { "7": { total: 0, capai: 0 }, "8": { total: 0, capai: 0 }, "9": { total: 0, capai: 0 } };
                 let halaqohStats = {};
                 
                 let santriArray = Object.values(santriStats);
-                if (filterZiyadahAbs > 0) santriArray = santriArray.filter(s => s.maxZiyadahAbs >= filterZiyadahAbs);
                 
                 let bulanTargetCek = (filterBulan === 'all') ? "06" : filterBulan;
+
+                // Ubah judul Card Target secara dinamis
+                let targetTitleEl = document.getElementById('card-target-title');
+                if (targetTitleEl) {
+                    if (filterZiyadahAbs > 0) {
+                        targetTitleEl.innerHTML = `<i class="fas fa-bullseye text-amber-500"></i> Capai Target Dinamis`;
+                    } else {
+                        targetTitleEl.innerHTML = `<i class="fas fa-medal text-amber-500"></i> Capai Target Tahunan`;
+                    }
+                }
 
                 santriArray.forEach(s => {
                     totalSantri++;
@@ -594,17 +603,22 @@
                     sumMurojaah += s.totalMurojaahHalaman;
 
                     let cls = s.kelasTarget;
-                    if(cls && TargetTahfidz[bulanTargetCek] && TargetTahfidz[bulanTargetCek][cls]) {
+                    let targetAbs = 0;
+
+                    // Tentukan Target: Kustom vs Default
+                    if (filterZiyadahAbs > 0) {
+                        targetAbs = filterZiyadahAbs; // Pakai target kustom dari input
+                    } else if (cls && TargetTahfidz[bulanTargetCek] && TargetTahfidz[bulanTargetCek][cls]) {
                         let t = TargetTahfidz[bulanTargetCek][cls];
-                        let targetAbs = getAbsolutePojok(t.j, t.p);
-                        
-                        if (s.maxZiyadahAbs >= targetAbs) {
-                            s.capaiTarget = true;
-                            targetAchieved++;
-                            kelasStats[cls].capai++;
-                        }
-                        kelasStats[cls].total++;
+                        targetAbs = getAbsolutePojok(t.j, t.p); // Pakai target default tahunan/bulanan
                     }
+                    
+                    if (targetAbs > 0 && s.maxZiyadahAbs >= targetAbs) {
+                        s.capaiTarget = true;
+                        targetAchieved++;
+                        if (cls && kelasStats[cls]) kelasStats[cls].capai++;
+                    }
+                    if (cls && kelasStats[cls]) kelasStats[cls].total++;
 
                     let hName = s.halaqoh || 'Tanpa Halaqoh';
                     if (!halaqohStats[hName]) halaqohStats[hName] = { name: hName, totalSantri: 0, capai: 0, sumZiyadahAbs: 0, sumMurojaah: 0, santriList: [] };
@@ -642,7 +656,7 @@
                 }
 
                 renderChart(kelasStats);
-                renderTableSantri(santriArray, bulanTargetCek);
+                renderTableSantri(santriArray, bulanTargetCek, filterZiyadahAbs);
                 renderTableHalaqoh(Object.values(halaqohStats));
 
             } catch (err) {
@@ -685,16 +699,22 @@
             });
         }
 
-        function renderTableSantri(santriArray, bulanTarget) {
+        function renderTableSantri(santriArray, bulanTarget, customTargetAbs = 0) {
             const tbody = document.getElementById('table-body-santri');
             tbody.innerHTML = '';
             santriArray.sort((a, b) => b.maxZiyadahAbs - a.maxZiyadahAbs);
             
             let frag = document.createDocumentFragment();
             santriArray.forEach(s => {
-                let clsMap = s.kelasTarget;
-                let tKelas = clsMap ? (TargetTahfidz[bulanTarget] && TargetTahfidz[bulanTarget][clsMap]) : null;
-                let targetText = tKelas ? `Juz ${tKelas.j} Pjk ${tKelas.p}` : '-';
+                let targetText = '-';
+                if (customTargetAbs > 0) {
+                    let t = getJuzPojokFromAbsolute(customTargetAbs);
+                    targetText = `Juz ${t.j} Pjk ${t.p}`;
+                } else {
+                    let clsMap = s.kelasTarget;
+                    let tKelas = clsMap ? (TargetTahfidz[bulanTarget] && TargetTahfidz[bulanTarget][clsMap]) : null;
+                    if (tKelas) targetText = `Juz ${tKelas.j} Pjk ${tKelas.p}`;
+                }
                 
                 let badge = s.capaiTarget 
                     ? `<span class="bg-gradient-to-r from-emerald-100 to-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-extrabold px-3 py-1.5 rounded-xl whitespace-nowrap shadow-sm tracking-wide"><i class="fas fa-check mr-1"></i> TERCAPAI</span>`
