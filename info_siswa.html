@@ -166,7 +166,10 @@
                 <!-- Loading State -->
                 <div id="loginLoading" class="hidden flex-col items-center justify-center py-8">
                     <div class="loader mb-4"></div>
-                    <p class="text-sm text-primary-700 font-semibold animate-pulse">Menyiapkan data rapor santri...</p>
+                    <p class="text-sm text-primary-700 font-semibold animate-pulse mt-4 text-center">
+                        Memuat data santri...<br>
+                        <span class="text-xs font-normal text-gray-500">Mengkoneksikan ke Supabase & Google Sheets</span>
+                    </p>
                 </div>
                 
                 <!-- Error State -->
@@ -204,7 +207,7 @@
         </div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full -mt-8 relative z-20">
-            <!-- Tab Navigation -->
+            <!-- Tab Navigation (Ditambah menu Tabungan) -->
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-8 flex flex-wrap sm:flex-nowrap">
                 <button onclick="switchTab('tab-nilai')" id="btn-tab-nilai" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-active flex items-center justify-center">
                     <i class="fas fa-chart-line mr-2 text-lg"></i><span class="hidden sm:inline">Rapor</span> Akademik
@@ -215,11 +218,13 @@
                 <button onclick="switchTab('tab-disiplin')" id="btn-tab-disiplin" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center border-l border-gray-100">
                     <i class="fas fa-balance-scale mr-2 text-lg"></i>Sikap <span class="hidden sm:inline">& Disiplin</span>
                 </button>
+                <button onclick="switchTab('tab-tabungan')" id="btn-tab-tabungan" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center border-l border-gray-100">
+                    <i class="fas fa-piggy-bank mr-2 text-lg text-emerald-600"></i><span class="hidden sm:inline">Data</span> Tabungan
+                </button>
             </div>
 
             <!-- TAB CONTENT: NILAI AKADEMIK -->
             <div id="tab-nilai" class="tab-content block fade-in">
-                
                 <!-- GRAFIK TREN NILAI -->
                 <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-md border border-gray-100 mb-8">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
@@ -323,13 +328,12 @@
                                 <tr class="bg-gray-50 border-b border-gray-200 text-xs uppercase text-gray-500 font-bold tracking-wider">
                                     <th class="py-4 px-6 w-40">Tanggal</th>
                                     <th class="py-4 px-6 w-32">Kegiatan</th>
-                                    <!-- Menghapus class text-center agar capaian lebih rapi dibaca dari kiri -->
                                     <th class="py-4 px-6 w-64">Capaian Surat / Juz</th>
                                     <th class="py-4 px-6">Keterangan Tambahan</th>
                                 </tr>
                             </thead>
                             <tbody id="tahfizh-tbody" class="text-sm divide-y divide-gray-100">
-                                <!-- Data tahfizh akan di-render di sini oleh JavaScript -->
+                                <!-- Data tahfizh -->
                             </tbody>
                         </table>
                     </div>
@@ -338,15 +342,6 @@
 
             <!-- TAB CONTENT: SIKAP & DISIPLIN -->
             <div id="tab-disiplin" class="tab-content hidden fade-in">
-                <!-- Info Banner dihapus jika data sudah live, namun disisakan div tempat penampungnya untuk jaga-jaga -->
-                <div id="disiplin-info-banner" class="bg-blue-50 border border-blue-200 text-blue-800 px-5 py-4 rounded-2xl mb-8 flex items-start text-sm shadow-sm hidden">
-                    <i class="fas fa-info-circle mt-0.5 mr-3 text-blue-500 text-xl"></i>
-                    <div>
-                        <strong class="block font-bold mb-1 text-base">Informasi Kedisiplinan:</strong>
-                        Sistem sedang memuat data kedisiplinan terbaru dari database.
-                    </div>
-                </div>
-
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                     <!-- Poin Prestasi -->
                     <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden flex hover:shadow-lg transition">
@@ -395,7 +390,48 @@
                                 </tr>
                             </thead>
                             <tbody id="disiplin-tbody" class="text-sm divide-y divide-gray-100">
-                                <!-- Data disiplin akan di-render secara dinamis di sini -->
+                                <!-- Data disiplin -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: TABUNGAN -->
+            <div id="tab-tabungan" class="tab-content hidden fade-in">
+                <!-- Saldo Card -->
+                <div class="bg-gradient-to-r from-emerald-500 to-emerald-700 rounded-3xl shadow-xl border border-emerald-400 p-8 sm:p-10 mb-8 text-white relative overflow-hidden flex items-center justify-between">
+                    <i class="fas fa-piggy-bank absolute -right-6 -bottom-10 text-8xl opacity-10 transform -rotate-12 scale-150"></i>
+                    <div class="relative z-10">
+                        <h4 class="text-emerald-100 font-bold uppercase tracking-widest text-sm mb-2">Total Saldo Tabungan</h4>
+                        <div class="flex items-end">
+                            <span class="text-xl font-bold mr-2 mb-1">Rp</span>
+                            <div class="text-4xl sm:text-6xl font-extrabold tracking-tight drop-shadow-md" id="total-saldo-tabungan">0</div>
+                        </div>
+                    </div>
+                    <div class="relative z-10 hidden sm:flex w-20 h-20 bg-white/10 rounded-full backdrop-blur-md border border-white/20 items-center justify-center shadow-inner">
+                        <i class="fas fa-wallet text-4xl text-emerald-100"></i>
+                    </div>
+                </div>
+
+                <!-- Tabel Riwayat Tabungan -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-5 border-b border-gray-100 bg-white flex justify-between items-center">
+                        <h3 class="font-bold text-gray-900 text-lg"><i class="fas fa-history mr-2 text-emerald-600"></i>Riwayat Transaksi Tabungan</h3>
+                        <span class="bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-bold tracking-wide border border-green-200 shadow-sm animate-pulse">Live</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[600px]">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200 text-xs uppercase text-gray-500 font-bold tracking-wider">
+                                    <th class="py-4 px-6 w-48">Tanggal & Waktu</th>
+                                    <th class="py-4 px-6 w-32 text-center">Tipe</th>
+                                    <th class="py-4 px-6">Keterangan</th>
+                                    <th class="py-4 px-6 w-40 text-right">Nominal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabungan-tbody" class="text-sm divide-y divide-gray-100">
+                                <!-- Data tabungan akan di-render secara dinamis di sini -->
                             </tbody>
                         </table>
                     </div>
@@ -415,14 +451,16 @@
         </div>
     </footer>
 
-    <!-- SUPABASE & CHART SCRIPT -->
     <script>
         // ==========================================
-        // KONFIGURASI SUPABASE
+        // KONFIGURASI SUPABASE & APPS SCRIPT
         // ==========================================
         const SUPABASE_URL = 'https://vpdlfjbkfcuukyykrhua.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZGxmamJrZmN1dWt5eWtyaHVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzkxNjUsImV4cCI6MjA5Nzc1NTE2NX0.QSHbi71ajuU_AggJJ5xVDeb6jffDRyyuF4C7aYeHW3Y';
         
+        // Google Apps Script API URL untuk Tabungan (Sama dengan Admin)
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx0jQYSSfrN2dD8Wb4kaul0eItZ5tEG5jHO-6yN_UXnSHDxyif0adevn_fhudLBJmYB4w/exec';
+
         let supabaseClient = null;
         if (window.supabase) {
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -431,34 +469,31 @@
         // ==========================================
         // STATE MANAGEMENT
         // ==========================================
+        let profilSantri = null; 
         let studentRecords = []; 
         let tahfizhRecords = []; 
         let disiplinRecords = []; 
-        let allGrades = []; // State baru: Menyimpan semua nilai untuk rata-rata angkatan
-        let trendChartInstance = null; // Menyimpan instance chart
-        let tahfizhChartInstance = null; // Tambahan untuk grafik tahfizh
+        let allGrades = []; 
+        let trendChartInstance = null; 
+
+        // State Tabungan dari Google Sheets
+        let dataTabunganSiswa = null; 
+        let riwayatTabungan = [];
 
         const loginSection = document.getElementById('loginSection');
         const dashboardSection = document.getElementById('dashboardSection');
         const navActions = document.getElementById('navActions');
         const examSelector = document.getElementById('examSelector');
 
-        // Konstanta Urutan Bulan Ajaran Baru (Juli -> Juni)
         const monthOrder = {
             'JULI': 1, 'AGUSTUS': 2, 'SEPTEMBER': 3, 'OKTOBER': 4, 'NOVEMBER': 5, 'DESEMBER': 6,
             'JANUARI': 7, 'FEBRUARI': 8, 'MARET': 9, 'APRIL': 10, 'MEI': 11, 'JUNI': 12
         };
 
-        // ==========================================
-        // FUNGSI BANTUAN TAHUN AJARAN
-        // ==========================================
         function getTahunAjaranBerjalan() {
             const now = new Date();
             const year = now.getFullYear();
-            const month = now.getMonth(); // 0 = Jan, 7 = Agu
-
-            // Mulai bulan Agustus (index 7) ke atas, masuk Tahun Ajaran baru (Contoh: 2026/2027)
-            // Bulan sebelum Agustus masuk ke TA sebelumnya (Contoh: 2025/2026)
+            const month = now.getMonth(); 
             if (month >= 7) {
                 return `${year}/${year + 1}`;
             } else {
@@ -467,32 +502,41 @@
         }
 
         // ==========================================
-        // FUNGSI PENARIKAN DATA
+        // FUNGSI PENARIKAN DATA TERBARU DARI SUPABASE
         // ==========================================
         async function fetchStudentData(nis) {
             try {
-                // Tarik Nilai Akademik
+                // 1. Tarik Data Profil
+                const { data: dataSantri, error: errSantri } = await supabaseClient
+                    .from('santri')
+                    .select('*')
+                    .eq('nis', nis)
+                    .limit(1);
+
+                if (errSantri || !dataSantri || dataSantri.length === 0) {
+                    throw new Error(`Data santri dengan NIS "${nis}" tidak ditemukan.`);
+                }
+                
+                profilSantri = dataSantri[0];
+
+                // 2. Tarik Jurnal Tahfizh
+                try {
+                    const { data: dataTahfizh } = await supabaseClient
+                        .from('log_setoran')
+                        .select('*')
+                        .eq('santri_id', profilSantri.id)
+                        .order('tanggal', { ascending: false });
+                    
+                    if (dataTahfizh) tahfizhRecords = dataTahfizh;
+                } catch(e) { console.log("Tahfizh error:", e); }
+
+                // 3. Tarik Nilai Akademik
                 const responseNilai = await supabaseClient
                     .from('ledger_nilai')
                     .select('*')
                     .ilike('nis', `%${nis}%`); 
                 
-                if (responseNilai.error) throw responseNilai.error;
-                
-                // Tarik Jurnal Tahfizh
-                try {
-                    const responseTahfizh = await supabaseClient
-                        .from('jurnal_tahfizh')
-                        .select('*')
-                        .ilike('nis', `%${nis}%`)
-                        .order('tanggal', { ascending: false });
-                    
-                    if (!responseTahfizh.error) {
-                        tahfizhRecords = responseTahfizh.data || [];
-                    }
-                } catch(e) { console.log("Tahfizh error:", e); }
-
-                // Tarik Jurnal Disiplin (Penting untuk data asli pelanggaran/prestasi)
+                // 4. Tarik Jurnal Disiplin
                 try {
                     const responseDisiplin = await supabaseClient
                         .from('jurnal_disiplin')
@@ -507,7 +551,7 @@
                 
                 return responseNilai.data || [];
             } catch (error) {
-                throw new Error("Koneksi ke server gagal. Silakan coba lagi.");
+                throw error;
             }
         }
 
@@ -543,65 +587,78 @@
             }
 
             try {
+                // Fetch Supabase Data
                 const rawMatchedData = await fetchStudentData(nisInput);
                 
-                if (rawMatchedData.length > 0) {
-                    
-                    // --- LOGIK FILTER TAHUN AJARAN ---
+                // Fetch Google Sheets Data (Tabungan) secara paralel
+                try {
+                    const [siswaRes, riwayatRes] = await Promise.all([
+                        fetch(SCRIPT_URL + '?action=getDataSiswa').then(res => res.json()),
+                        fetch(SCRIPT_URL + '?action=getRiwayat').then(res => res.json())
+                    ]);
+
+                    if (siswaRes.status === 'success') {
+                        // Cari data spesifik siswa berdasarkan NIS
+                        dataTabunganSiswa = siswaRes.data.find(s => s.nis === nisInput);
+                    }
+                    if (riwayatRes.status === 'success') {
+                        // Filter riwayat khusus NIS ini dan urutkan dari yang terbaru (menggunakan localeCompare untuk string tanggal)
+                        riwayatTabungan = riwayatRes.data.filter(r => r.nis === nisInput).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
+                    }
+                } catch (apiErr) {
+                    console.error("Gagal mengambil data tabungan dari Google Sheets:", apiErr);
+                    // Kita tidak men-throw error agar jika Sheets gagal, Supabase tetap jalan
+                }
+
+                if (profilSantri) {
                     const currentTA = getTahunAjaranBerjalan();
                     
-                    // Filter utama: hanya ambil data untuk Tahun Ajaran berjalan
-                    let matchedData = rawMatchedData.filter(record => {
-                        const thn = record.tahun || record.Tahun || record.TAHUN || '';
-                        return thn === currentTA;
-                    });
-
-                    // Fallback: Jika di TA berjalan belum ada data sama sekali (awal semester),
-                    // sistem akan memunculkan data dari Tahun Ajaran terakhir milik siswa tersebut
-                    if (matchedData.length === 0) {
-                        const fallbackTA = rawMatchedData[rawMatchedData.length - 1].tahun || rawMatchedData[rawMatchedData.length - 1].Tahun || rawMatchedData[rawMatchedData.length - 1].TAHUN || '';
-                        matchedData = rawMatchedData.filter(record => {
+                    if (rawMatchedData && rawMatchedData.length > 0) {
+                        let matchedData = rawMatchedData.filter(record => {
                             const thn = record.tahun || record.Tahun || record.TAHUN || '';
-                            return thn === fallbackTA;
+                            return thn === currentTA;
                         });
-                    }
 
-                    // Urutkan data berdasarkan kalender akademik (Juli -> Juni)
-                    matchedData.sort((a, b) => {
-                        const blnA = (a.bulan || a.Bulan || a.BULAN || '').toUpperCase();
-                        const blnB = (b.bulan || b.Bulan || b.BULAN || '').toUpperCase();
-                        const scoreA = monthOrder[blnA] || 99;
-                        const scoreB = monthOrder[blnB] || 99;
-                        return scoreA - scoreB;
-                    });
-
-                    studentRecords = matchedData;
-                    
-                    // Menarik semua data nilai untuk grafik perbandingan rata-rata global
-                    try {
-                        const resAll = await supabaseClient.from('ledger_nilai').select('*').limit(5000);
-                        if(!resAll.error) {
-                            // Filter juga rata-rata angkatan sesuai dengan TA yang sedang aktif ditampilkan
-                            const activeTA = studentRecords[0].tahun || studentRecords[0].Tahun || studentRecords[0].TAHUN || currentTA;
-                            allGrades = (resAll.data || []).filter(record => {
+                        if (matchedData.length === 0) {
+                            const fallbackTA = rawMatchedData[rawMatchedData.length - 1].tahun || rawMatchedData[rawMatchedData.length - 1].Tahun || rawMatchedData[rawMatchedData.length - 1].TAHUN || '';
+                            matchedData = rawMatchedData.filter(record => {
                                 const thn = record.tahun || record.Tahun || record.TAHUN || '';
-                                return thn === activeTA;
+                                return thn === fallbackTA;
                             });
                         }
-                    } catch(e) { console.log("Gagal memuat rata-rata global"); }
+
+                        matchedData.sort((a, b) => {
+                            const blnA = (a.bulan || a.Bulan || a.BULAN || '').toUpperCase();
+                            const blnB = (b.bulan || b.Bulan || b.BULAN || '').toUpperCase();
+                            const scoreA = monthOrder[blnA] || 99;
+                            const scoreB = monthOrder[blnB] || 99;
+                            return scoreA - scoreB;
+                        });
+
+                        studentRecords = matchedData;
+                        
+                        try {
+                            const resAll = await supabaseClient.from('ledger_nilai').select('*').limit(5000);
+                            if(!resAll.error) {
+                                const activeTA = studentRecords[0].tahun || studentRecords[0].Tahun || studentRecords[0].TAHUN || currentTA;
+                                allGrades = (resAll.data || []).filter(record => {
+                                    const thn = record.tahun || record.Tahun || record.TAHUN || '';
+                                    return thn === activeTA;
+                                });
+                            }
+                        } catch(e) { console.log("Gagal memuat rata-rata global"); }
+                    } else {
+                        studentRecords = [];
+                        allGrades = [];
+                    }
 
                     masukKeDashboard();
-                } else {
-                    showErr(`Data rapor untuk NIS "${nisInput}" tidak ditemukan. Pastikan nomor sudah benar.`);
                 }
             } catch (err) {
                 showErr(err.message);
             }
         }
 
-        // ==========================================
-        // DASHBOARD RENDERING
-        // ==========================================
         function masukKeDashboard() {
             loginSection.classList.add('hidden');
             dashboardSection.classList.remove('hidden');
@@ -613,14 +670,12 @@
                 </button>
             `;
 
-            // Data Kelas akan otomatis selalu yang terbaru berkat filter TA di atas
-            const profilSiswa = studentRecords[0];
-            const tahunAjaranTampil = profilSiswa.tahun || profilSiswa.Tahun || profilSiswa.TAHUN || getTahunAjaranBerjalan();
+            const tahunAjaranTampil = (studentRecords.length > 0) ? (studentRecords[0].tahun || studentRecords[0].Tahun || studentRecords[0].TAHUN || getTahunAjaranBerjalan()) : getTahunAjaranBerjalan();
             
-            document.getElementById('dashTahunAjaran').innerText = `Rapor Akademik TA. ${tahunAjaranTampil}`;
-            document.getElementById('dashNama').innerText = profilSiswa.nama || profilSiswa.Nama || profilSiswa.NAMA || '-';
-            document.getElementById('dashNis').innerText = profilSiswa.nis || profilSiswa.NIS || profilSiswa.Nis || '-';
-            document.getElementById('dashKelas').innerText = profilSiswa.kelas || profilSiswa.Kelas || profilSiswa.KELAS || '-';
+            document.getElementById('dashTahunAjaran').innerText = `Portal Wali TA. ${tahunAjaranTampil}`;
+            document.getElementById('dashNama').innerText = profilSantri.nama || '-';
+            document.getElementById('dashNis').innerText = profilSantri.nis || '-';
+            document.getElementById('dashKelas').innerText = profilSantri.kelas || '-';
 
             populateExamSelector();
             renderSelectedExamGrades();
@@ -628,14 +683,20 @@
             
             renderTahfizhData();
             renderDisiplinData(); 
+            renderTabunganData(); // Render data tabungan dari Google Sheets
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function logout() {
+            profilSantri = null;
             studentRecords = [];
             tahfizhRecords = [];
             disiplinRecords = [];
+            allGrades = [];
+            dataTabunganSiswa = null;
+            riwayatTabungan = [];
+            
             document.getElementById('nis').value = '';
             
             if(trendChartInstance) {
@@ -665,8 +726,41 @@
         }
 
         // ==========================================
-        // DATA RAPOR & GRAFIK TREN
+        // RENDER DATA TABUNGAN (DARI GOOGLE SHEETS)
         // ==========================================
+        function renderTabunganData() {
+            const tbody = document.getElementById('tabungan-tbody');
+            tbody.innerHTML = ''; 
+
+            // Set Total Saldo (dari tabel DATA SISWA di Google Sheets)
+            const saldoAkhir = dataTabunganSiswa ? dataTabunganSiswa.tabungan : 0;
+            document.getElementById('total-saldo-tabungan').innerText = new Intl.NumberFormat('id-ID').format(saldoAkhir);
+
+            if (riwayatTabungan.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="py-8 px-6 text-center text-gray-500 italic">Belum ada riwayat transaksi tabungan yang terekam di sistem.</td></tr>`;
+                return;
+            }
+
+            // Loop dan tampilkan semua riwayat tabungan siswa tersebut
+            riwayatTabungan.forEach(record => {
+                const badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                const jenisLabel = "Setoran Masuk";
+                const icon = '<i class="fas fa-arrow-down mr-1"></i>';
+
+                const row = document.createElement('tr');
+                row.className = "hover:bg-gray-50 transition duration-150";
+                row.innerHTML = `
+                    <td class="py-4 px-6 whitespace-nowrap text-gray-600 font-medium">${record.timestamp}</td>
+                    <td class="py-4 px-6 text-center">
+                        <span class="${badgeClass} border px-3 py-1.5 rounded-lg text-xs font-bold inline-block whitespace-nowrap shadow-sm">${icon} ${jenisLabel}</span>
+                    </td>
+                    <td class="py-4 px-6 text-gray-800 font-medium">Setoran Tabungan</td>
+                    <td class="py-4 px-6 text-right font-extrabold text-emerald-600 text-base">+ Rp ${new Intl.NumberFormat('id-ID').format(record.jumlah)}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
         const getValHelper = (data, key) => {
             if (data[key] !== undefined) return data[key];
             const upper = key.toUpperCase();
@@ -693,7 +787,6 @@
 
         function renderTrendChart() {
             const ctx = document.getElementById('trendChart').getContext('2d');
-            
             const labels = [];
             const dataPoints = [];
 
@@ -701,12 +794,10 @@
                 const bln = record.bulan || record.Bulan || record.BULAN || '';
                 const ktg = record.kategori || record.Kategori || record.KATEGORI || '';
                 labels.push(`${bln} ${ktg}`.trim() || 'Periode');
-                
                 const avg = calculateAverage(record);
                 dataPoints.push(avg);
             });
 
-            // Menghitung Rata-rata Angkatan (Global Average) per periode
             const globalAveragesByPeriod = {};
             allGrades.forEach(record => {
                 const bln = record.bulan || record.Bulan || record.BULAN || '';
@@ -727,16 +818,19 @@
                 if (globalAveragesByPeriod[label] && globalAveragesByPeriod[label].count > 0) {
                     return (globalAveragesByPeriod[label].sum / globalAveragesByPeriod[label].count).toFixed(1);
                 }
-                return null; // Membiarkan kosong jika tidak ada perbandingan
+                return null; 
             });
 
             if(dataPoints.length > 0) {
                 document.getElementById('avgScoreDisplay').innerText = dataPoints[dataPoints.length - 1];
+            } else {
+                document.getElementById('avgScoreDisplay').innerText = "0.0";
             }
 
             if(trendChartInstance) {
                 trendChartInstance.destroy();
             }
+            if (studentRecords.length === 0) return;
 
             trendChartInstance = new Chart(ctx, {
                 type: 'line',
@@ -746,7 +840,7 @@
                         {
                             label: 'Nilai Santriwati',
                             data: dataPoints,
-                            borderColor: '#16a34a', // Hijau
+                            borderColor: '#16a34a', 
                             backgroundColor: 'rgba(22, 163, 74, 0.1)',
                             borderWidth: 3,
                             pointBackgroundColor: '#ffffff',
@@ -760,10 +854,10 @@
                         {
                             label: 'Rata-Rata Angkatan',
                             data: globalDataPoints,
-                            borderColor: '#f59e0b', // Oranye/Amber
+                            borderColor: '#f59e0b',
                             backgroundColor: 'transparent',
                             borderWidth: 2,
-                            borderDash: [5, 5], // Garis putus-putus
+                            borderDash: [5, 5], 
                             pointBackgroundColor: '#f59e0b',
                             pointBorderColor: '#fff',
                             pointRadius: 4,
@@ -774,44 +868,14 @@
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+                    responsive: true, maintainAspectRatio: false,
                     plugins: {
-                        legend: { 
-                            display: true,
-                            position: 'bottom',
-                            labels: {
-                                font: { family: 'Inter', size: 12 },
-                                usePointStyle: true,
-                                boxWidth: 8
-                            }
-                        },
-                        tooltip: {
-                            backgroundColor: '#14532d',
-                            titleFont: { family: 'Inter', size: 13 },
-                            bodyFont: { family: 'Inter', size: 14, weight: 'bold' },
-                            padding: 12,
-                            displayColors: true,
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + context.parsed.y;
-                                }
-                            }
-                        }
+                        legend: { display: true, position: 'bottom', labels: { font: { family: 'Inter', size: 12 }, usePointStyle: true, boxWidth: 8 } },
+                        tooltip: { backgroundColor: '#14532d', titleFont: { family: 'Inter', size: 13 }, bodyFont: { family: 'Inter', size: 14, weight: 'bold' }, padding: 12, displayColors: true, callbacks: { label: function(context) { return context.dataset.label + ': ' + context.parsed.y; } } }
                     },
                     scales: {
-                        y: {
-                            min: 60,
-                            max: 100,
-                            ticks: { stepSize: 10, font: { family: 'Inter' } },
-                            grid: { color: '#f1f5f9' },
-                            border: { display: false }
-                        },
-                        x: {
-                            ticks: { font: { family: 'Inter' } },
-                            grid: { display: false },
-                            border: { display: false }
-                        }
+                        y: { min: 60, max: 100, ticks: { stepSize: 10, font: { family: 'Inter' } }, grid: { color: '#f1f5f9' }, border: { display: false } },
+                        x: { ticks: { font: { family: 'Inter' } }, grid: { display: false }, border: { display: false } }
                     }
                 }
             });
@@ -819,16 +883,20 @@
 
         function populateExamSelector() {
             examSelector.innerHTML = ''; 
+            if (studentRecords.length === 0) {
+                const option = document.createElement('option');
+                option.value = "";
+                option.text = "BELUM ADA DATA NILAI UJIAN";
+                examSelector.appendChild(option);
+                return;
+            }
             studentRecords.forEach((record, index) => {
                 const thn = record.tahun || record.Tahun || record.TAHUN || '';
                 const bln = record.bulan || record.Bulan || record.BULAN || '-';
                 const ktg = record.kategori || record.Kategori || record.KATEGORI || '-';
-                
-                // Format diperbarui: "TA. 2025/2026 | SEPTEMBER - ULANGAN HARIAN"
                 let label = '';
                 if (thn) label += `TA. ${thn} | `;
                 label += `${bln} - ${ktg}`;
-                
                 const option = document.createElement('option');
                 option.value = index; 
                 option.text = label.toUpperCase();
@@ -838,90 +906,54 @@
         }
 
         function renderSelectedExamGrades() {
+            if (studentRecords.length === 0) {
+                const nullText = '<li class="p-6 text-center text-gray-500 text-sm font-medium">Data nilai akademik belum dimasukkan ke dalam sistem</li>';
+                document.getElementById('list-diniyyah').innerHTML = nullText;
+                document.getElementById('list-umum').innerHTML = nullText;
+                document.getElementById('list-bahasa1').innerHTML = nullText;
+                document.getElementById('list-bahasa2').innerHTML = nullText;
+                return;
+            }
             const selectedIndex = examSelector.value;
             const data = studentRecords[selectedIndex];
-
             if(!data) return;
-
             const buatBaris = (label, nilai, icon) => {
                 const valStr = (nilai !== null && nilai !== undefined && nilai !== '') ? nilai : '-';
                 const numVal = parseInt(valStr);
-                
                 let badgeClass = 'bg-gray-100 text-gray-700 border-gray-200';
                 if(!isNaN(numVal)) {
                     if (numVal < 75) badgeClass = 'bg-red-50 text-red-700 border-red-200';
                     else if (numVal >= 90) badgeClass = 'bg-green-50 text-green-800 border-green-200';
                     else badgeClass = 'bg-blue-50 text-blue-800 border-blue-200';
                 }
-
-                return `
-                <li class="px-6 py-4 flex justify-between items-center list-row border-l-4 border-transparent">
-                    <span class="text-sm font-semibold text-gray-700 flex items-center"><i class="${icon} w-6 text-gray-400 mr-3 text-center text-lg"></i>${label}</span>
-                    <span class="font-extrabold px-3 py-1.5 rounded-lg text-sm ${badgeClass} border min-w-[3.5rem] text-center shadow-sm">${valStr}</span>
-                </li>
-                `;
+                return `<li class="px-6 py-4 flex justify-between items-center list-row border-l-4 border-transparent"><span class="text-sm font-semibold text-gray-700 flex items-center"><i class="${icon} w-6 text-gray-400 mr-3 text-center text-lg"></i>${label}</span><span class="font-extrabold px-3 py-1.5 rounded-lg text-sm ${badgeClass} border min-w-[3.5rem] text-center shadow-sm">${valStr}</span></li>`;
             };
-
             const getVal = (key) => getValHelper(data, key);
-
-            document.getElementById('list-diniyyah').innerHTML = 
-                buatBaris('PAI (Umum)', getVal('pai'), 'fas fa-book') +
-                buatBaris('Akhlaq', getVal('akhlaq'), 'fas fa-heart') +
-                buatBaris('Tauhid', getVal('tauhid'), 'fas fa-fingerprint') +
-                buatBaris('Hadist', getVal('hadist'), 'fas fa-scroll') +
-                buatBaris('Tafsir', getVal('tafsir'), 'fas fa-quran') +
-                buatBaris('Fiqih', getVal('fiqih'), 'fas fa-praying-hands') +
-                buatBaris('Nahwu / Qiraatul Kitab', getVal('fins'), 'fas fa-book-open');
-
-            document.getElementById('list-umum').innerHTML = 
-                buatBaris('Matematika', getVal('matematika'), 'fas fa-square-root-alt') +
-                buatBaris('Ilmu Pengetahuan Alam (IPA)', getVal('ipa'), 'fas fa-flask') +
-                buatBaris('Ilmu Pengetahuan Sosial (IPS)', getVal('ips'), 'fas fa-globe-asia') +
-                buatBaris('Pendidikan Pancasila (PPKN)', getVal('ppkn'), 'fas fa-flag');
-
-            document.getElementById('list-bahasa1').innerHTML = 
-                buatBaris('Bahasa Indonesia', getVal('bahasa_indonesia'), 'fas fa-comment') +
-                buatBaris('Bahasa Inggris', getVal('bahasa_inggris'), 'fas fa-comments') +
-                buatBaris('Conversation', getVal('conversation'), 'fas fa-headset') +
-                buatBaris('Bahasa Arab', getVal('bahasa_arab'), 'fas fa-comment-dots');
-
-            document.getElementById('list-bahasa2').innerHTML = 
-                buatBaris('Bahasa Jawa', getVal('bahasa_jawa'), 'fas fa-pen-nib') +
-                buatBaris('Informatika', getVal('informatika'), 'fas fa-laptop-code') +
-                buatBaris('Seni Budaya', getVal('seni_budaya'), 'fas fa-palette') +
-                buatBaris('PJOK (Olahraga)', getVal('pjok'), 'fas fa-running');
+            document.getElementById('list-diniyyah').innerHTML = buatBaris('PAI (Umum)', getVal('pai'), 'fas fa-book') + buatBaris('Akhlaq', getVal('akhlaq'), 'fas fa-heart') + buatBaris('Tauhid', getVal('tauhid'), 'fas fa-fingerprint') + buatBaris('Hadist', getVal('hadist'), 'fas fa-scroll') + buatBaris('Tafsir', getVal('tafsir'), 'fas fa-quran') + buatBaris('Fiqih', getVal('fiqih'), 'fas fa-praying-hands') + buatBaris('Nahwu / Qiraatul Kitab', getVal('fins'), 'fas fa-book-open');
+            document.getElementById('list-umum').innerHTML = buatBaris('Matematika', getVal('matematika'), 'fas fa-square-root-alt') + buatBaris('Ilmu Pengetahuan Alam (IPA)', getVal('ipa'), 'fas fa-flask') + buatBaris('Ilmu Pengetahuan Sosial (IPS)', getVal('ips'), 'fas fa-globe-asia') + buatBaris('Pendidikan Pancasila (PPKN)', getVal('ppkn'), 'fas fa-flag');
+            document.getElementById('list-bahasa1').innerHTML = buatBaris('Bahasa Indonesia', getVal('bahasa_indonesia'), 'fas fa-comment') + buatBaris('Bahasa Inggris', getVal('bahasa_inggris'), 'fas fa-comments') + buatBaris('Conversation', getVal('conversation'), 'fas fa-headset') + buatBaris('Bahasa Arab', getVal('bahasa_arab'), 'fas fa-comment-dots');
+            document.getElementById('list-bahasa2').innerHTML = buatBaris('Bahasa Jawa', getVal('bahasa_jawa'), 'fas fa-pen-nib') + buatBaris('Informatika', getVal('informatika'), 'fas fa-laptop-code') + buatBaris('Seni Budaya', getVal('seni_budaya'), 'fas fa-palette') + buatBaris('PJOK (Olahraga)', getVal('pjok'), 'fas fa-running');
         }
 
-        // ==========================================
-        // RENDER TAHFIZH
-        // ==========================================
         function renderTahfizhData() {
             const tbody = document.getElementById('tahfizh-tbody');
             tbody.innerHTML = ''; 
-
             if (tahfizhRecords.length === 0) {
                 document.getElementById('tahfizh-ziyadah').innerText = "Belum Ada Data";
                 document.getElementById('tahfizh-murojaah').innerText = "Belum Ada Data";
-                document.getElementById('tahfizh-halaqoh').innerText = "-";
-                tbody.innerHTML = `<tr><td colspan="4" class="py-8 px-6 text-center text-gray-500 italic">Belum ada riwayat setoran tahfizh yang terekam.</td></tr>`;
+                document.getElementById('tahfizh-halaqoh').innerText = profilSantri.halaqoh || "-";
+                tbody.innerHTML = `<tr><td colspan="4" class="py-8 px-6 text-center text-gray-500 italic">Belum ada riwayat setoran tahfizh yang terekam di sistem.</td></tr>`;
                 return;
             }
-
             const lastZiyadah = tahfizhRecords.find(r => r.kegiatan && r.kegiatan.toLowerCase().includes('ziyadah'));
             if (lastZiyadah && lastZiyadah.juz_akhir && lastZiyadah.juz_akhir !== '-') {
                 document.getElementById('tahfizh-ziyadah').innerHTML = `Juz ${lastZiyadah.juz_akhir} <span class="text-sm text-gray-500 block sm:inline mt-1 sm:mt-0 font-normal">Pj. ${lastZiyadah.pojok_akhir || '-'}</span>`;
-            } else {
-                document.getElementById('tahfizh-ziyadah').innerText = "Belum Ziyadah";
-            }
-
-            const lastMurojaah = tahfizhRecords.find(r => r.kegiatan && r.kegiatan.toLowerCase().includes('murojaah'));
+            } else { document.getElementById('tahfizh-ziyadah').innerText = "Belum Ziyadah"; }
+            const lastMurojaah = tahfizhRecords.find(r => r.kegiatan && r.kegiatan.toLowerCase().includes('muroja'));
             if (lastMurojaah && lastMurojaah.juz_akhir && lastMurojaah.juz_akhir !== '-') {
                 document.getElementById('tahfizh-murojaah').innerHTML = `Juz ${lastMurojaah.juz_akhir} <span class="text-sm text-gray-500 block sm:inline mt-1 sm:mt-0 font-normal">Pj. ${lastMurojaah.pojok_akhir || '-'}</span>`;
-            } else {
-                document.getElementById('tahfizh-murojaah').innerText = "Belum Murojaah";
-            }
-
-            const halaqohName = tahfizhRecords[0].halaqoh || tahfizhRecords[0].Halaqoh || '-';
+            } else { document.getElementById('tahfizh-murojaah').innerText = "Belum Murojaah"; }
+            const halaqohName = profilSantri.halaqoh || '-';
             document.getElementById('tahfizh-halaqoh').innerText = halaqohName.replace('Ustdzh. ', '').replace('Ustzh. ', '');
 
             tahfizhRecords.forEach(record => {
@@ -930,145 +962,66 @@
                     const dateObj = new Date(record.tanggal);
                     tglFormat = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
                 }
-
                 const kgt = (record.kegiatan || '').trim();
                 let badgeClass = "bg-gray-100 text-gray-700 border-gray-200";
                 if (kgt.toLowerCase().includes('ziyadah')) badgeClass = "bg-green-50 text-green-700 border-green-200";
-                else if (kgt.toLowerCase().includes('murojaah')) badgeClass = "bg-blue-50 text-blue-700 border-blue-200";
-
-                const jAwal = record.juz_awal || '-';
-                const pAwal = record.pojok_awal || '-';
-                const jAkhir = record.juz_akhir || '-';
-                const pAkhir = record.pojok_akhir || '-';
-                
-                // Peningkatan format perataan capaian ayat (Menggunakan badge pojok terpisah dan flex agar sangat rapi)
+                else if (kgt.toLowerCase().includes('muroja')) badgeClass = "bg-blue-50 text-blue-700 border-blue-200";
+                const jAwal = record.juz_awal || '-'; const pAwal = record.pojok_awal || '-'; const jAkhir = record.juz_akhir || '-'; const pAkhir = record.pojok_akhir || '-';
                 let rangeAyat = '-';
                 if(jAwal !== '-' || jAkhir !== '-') {
                      if (jAwal === jAkhir && pAwal === pAkhir) {
                          rangeAyat = `<div class="inline-flex items-center"><span class="font-bold text-gray-800">Juz ${jAkhir}</span> <span class="text-xs text-gray-500 ml-1.5 px-2 py-0.5 bg-gray-100 border border-gray-200 rounded-md">Pj. ${pAkhir}</span></div>`;
                      } else {
-                         rangeAyat = `
-                         <div class="inline-flex items-center flex-wrap gap-2">
-                             <div class="flex items-center"><span class="font-bold text-gray-800">Juz ${jAwal}</span> <span class="text-xs text-gray-500 ml-1.5 px-2 py-0.5 bg-gray-100 border border-gray-200 rounded-md">Pj. ${pAwal}</span></div>
-                             <i class="fas fa-arrow-right text-gray-300 text-xs"></i> 
-                             <div class="flex items-center"><span class="font-bold text-gray-800">Juz ${jAkhir}</span> <span class="text-xs text-gray-500 ml-1.5 px-2 py-0.5 bg-gray-100 border border-gray-200 rounded-md">Pj. ${pAkhir}</span></div>
-                         </div>`;
+                         rangeAyat = `<div class="inline-flex items-center flex-wrap gap-2"><div class="flex items-center"><span class="font-bold text-gray-800">Juz ${jAwal}</span> <span class="text-xs text-gray-500 ml-1.5 px-2 py-0.5 bg-gray-100 border border-gray-200 rounded-md">Pj. ${pAwal}</span></div><i class="fas fa-arrow-right text-gray-300 text-xs"></i><div class="flex items-center"><span class="font-bold text-gray-800">Juz ${jAkhir}</span> <span class="text-xs text-gray-500 ml-1.5 px-2 py-0.5 bg-gray-100 border border-gray-200 rounded-md">Pj. ${pAkhir}</span></div></div>`;
                      }
                 }
-
                 const row = document.createElement('tr');
                 row.className = "hover:bg-gray-50 transition duration-150";
-                row.innerHTML = `
-                    <td class="py-4 px-6 whitespace-nowrap text-gray-600 font-medium">${tglFormat}</td>
-                    <td class="py-4 px-6"><span class="inline-block whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-bold ${badgeClass} border shadow-sm">${kgt}</span></td>
-                    <td class="py-4 px-6">${rangeAyat}</td>
-                    <td class="py-4 px-6 text-gray-500 text-xs leading-relaxed">${record.keterangan !== '-' ? record.keterangan : ''}</td>
-                `;
+                row.innerHTML = `<td class="py-4 px-6 whitespace-nowrap text-gray-600 font-medium">${tglFormat}</td><td class="py-4 px-6"><span class="inline-block whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-bold ${badgeClass} border shadow-sm">${kgt}</span></td><td class="py-4 px-6">${rangeAyat}</td><td class="py-4 px-6 text-gray-500 text-xs leading-relaxed">${record.keterangan ? record.keterangan : ''}</td>`;
                 tbody.appendChild(row);
             });
         }
 
-        // ==========================================
-        // RENDER KEDISIPLINAN (DATA ASLI DARI DATABASE)
-        // ==========================================
         function renderDisiplinData() {
             const tbody = document.getElementById('disiplin-tbody');
             tbody.innerHTML = ''; 
-
-            let totalMerit = 0;
-            let totalDemerit = 0;
-
-            const infoBanner = document.getElementById('disiplin-info-banner');
-
+            let totalMerit = 0; let totalDemerit = 0;
             if (disiplinRecords.length === 0) {
-                document.getElementById('total-merit').innerText = '0';
-                document.getElementById('total-demerit').innerText = '0';
-                if(infoBanner) infoBanner.style.display = 'none'; // Sembunyikan pesan loading
+                document.getElementById('total-merit').innerText = '0'; document.getElementById('total-demerit').innerText = '0';
                 tbody.innerHTML = `<tr><td colspan="4" class="py-8 px-6 text-center text-gray-500 italic">Ananda belum memiliki catatan kejadian/prestasi di asrama.</td></tr>`;
                 return;
             }
-
-            if(infoBanner) infoBanner.style.display = 'none'; // Sembunyikan pesan loading
-
             disiplinRecords.forEach(record => {
-                // Pemformatan Tanggal
                 let tglFormat = "-";
                 if(record.tanggal_pelanggaran) {
                     const dateObj = new Date(record.tanggal_pelanggaran);
-                    if(!isNaN(dateObj.getTime())) {
-                        tglFormat = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-                    } else {
-                        tglFormat = record.tanggal_pelanggaran; 
-                    }
+                    if(!isNaN(dateObj.getTime())) { tglFormat = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }); } 
+                    else { tglFormat = record.tanggal_pelanggaran; }
                 }
-
-                // Kalkulasi Poin
                 const poin = parseInt(record.poin_pelanggaran) || 0;
                 let isPrestasi = false;
-                
-                if (poin > 0) {
-                    isPrestasi = true;
-                    totalMerit += poin;
-                } else if (poin < 0) {
-                    totalDemerit += Math.abs(poin); // Dijumlahkan secara absolut agar totalnya jadi positif untuk ditampilkan
-                }
-
-                // Styling Khusus Poin dan Baris
+                if (poin > 0) { isPrestasi = true; totalMerit += poin; } else if (poin < 0) { totalDemerit += Math.abs(poin); }
                 const badgeClass = isPrestasi ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200";
-                const jenisLabel = isPrestasi ? "Prestasi" : "Pelanggaran";
-                const poinLabel = (poin > 0 ? '+' : '') + poin; 
-                const poinClass = isPrestasi ? "text-green-600" : "text-red-600";
-
+                const jenisLabel = isPrestasi ? "Prestasi" : "Pelanggaran"; const poinLabel = (poin > 0 ? '+' : '') + poin; const poinClass = isPrestasi ? "text-green-600" : "text-red-600";
                 const row = document.createElement('tr');
                 row.className = "hover:bg-gray-50 transition duration-150";
-                row.innerHTML = `
-                    <td class="py-4 px-6 whitespace-nowrap text-gray-600 font-medium">${tglFormat}</td>
-                    <td class="py-4 px-6">
-                        <div class="font-medium text-gray-800">${record.nama_pelanggaran || '-'}</div>
-                        <div class="text-xs text-gray-500 font-normal mt-1">${record.keterangan || ''}</div>
-                    </td>
-                    <td class="py-4 px-6 text-center"><span class="${badgeClass} border px-3 py-1.5 rounded-lg text-xs font-bold inline-block whitespace-nowrap shadow-sm">${jenisLabel}</span></td>
-                    <td class="py-4 px-6 text-right font-extrabold ${poinClass} text-base">${poinLabel}</td>
-                `;
+                row.innerHTML = `<td class="py-4 px-6 whitespace-nowrap text-gray-600 font-medium">${tglFormat}</td><td class="py-4 px-6"><div class="font-medium text-gray-800">${record.nama_pelanggaran || '-'}</div><div class="text-xs text-gray-500 font-normal mt-1">${record.keterangan || ''}</div></td><td class="py-4 px-6 text-center"><span class="${badgeClass} border px-3 py-1.5 rounded-lg text-xs font-bold inline-block whitespace-nowrap shadow-sm">${jenisLabel}</span></td><td class="py-4 px-6 text-right font-extrabold ${poinClass} text-base">${poinLabel}</td>`;
                 tbody.appendChild(row);
             });
-
-            // Update Skor Poin di Kartu Utama
-            document.getElementById('total-merit').innerText = totalMerit;
-            document.getElementById('total-demerit').innerText = totalDemerit;
+            document.getElementById('total-merit').innerText = totalMerit; document.getElementById('total-demerit').innerText = totalDemerit;
         }
 
-        // ==========================================
-        // TAB NAVIGATION LOGIC
-        // ==========================================
         function switchTab(tabId) {
-            // Sembunyikan semua konten tab dengan pengecekan aman (null check)
-            document.querySelectorAll('.tab-content').forEach(el => {
-                if (el) el.classList.add('hidden');
-            });
-            
-            // Tampilkan tab yang dipilih (null check)
+            document.querySelectorAll('.tab-content').forEach(el => { if (el) el.classList.add('hidden'); });
             const targetTab = document.getElementById(tabId);
-            if (targetTab) {
-                targetTab.classList.remove('hidden');
-            }
-
-            // Reset styling untuk semua tombol tab (null check)
-            const btns = ['btn-tab-nilai', 'btn-tab-tahfizh', 'btn-tab-disiplin'];
+            if (targetTab) { targetTab.classList.remove('hidden'); }
+            const btns = ['btn-tab-nilai', 'btn-tab-tahfizh', 'btn-tab-disiplin', 'btn-tab-tabungan'];
             btns.forEach(id => {
                 const btn = document.getElementById(id);
-                if (btn) {
-                    btn.classList.remove('tab-active');
-                    btn.classList.add('tab-inactive');
-                }
+                if (btn) { btn.classList.remove('tab-active'); btn.classList.add('tab-inactive'); }
             });
-
-            // Aktifkan styling untuk tombol yang dipilih (null check)
             const activeBtn = document.getElementById('btn-' + tabId);
-            if (activeBtn) {
-                activeBtn.classList.remove('tab-inactive');
-                activeBtn.classList.add('tab-active');
-            }
+            if (activeBtn) { activeBtn.classList.remove('tab-inactive'); activeBtn.classList.add('tab-active'); }
         }
     </script>
 </body>
