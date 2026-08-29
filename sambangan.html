@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ceklis Sambangan Santri</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        brand: { 50: '#f0f9ff', 100: '#e0f2fe', 500: '#0ea5e9', 600: '#0284c7', 900: '#0c4a6e' }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-panel { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        /* Animasi pop-in untuk hasil scan */
+        @keyframes popIn { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .animate-pop { animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans h-screen flex flex-col overflow-hidden text-slate-800">
+
+    <!-- NAVBAR -->
+    <nav class="bg-brand-900 text-white shadow-lg shrink-0">
+        <div class="max-w-full mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center text-xl backdrop-blur-sm border border-white/30">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight tracking-wide">CEKLIS SAMBANGAN SANTRI</h1>
+                    <p class="text-brand-100 text-[11px] font-medium uppercase tracking-wider">Sistem Keamanan & Kunjungan Terpadu</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-6">
+                <!-- Sync Status -->
+                <div id="syncStatus" class="hidden md:flex items-center gap-2 px-3 py-1.5 bg-white/10 rounded-full border border-white/20 text-xs font-semibold">
+                    <i class="fas fa-sync-alt fa-spin text-brand-100"></i> <span id="syncText">Menghubungkan...</span>
+                </div>
+                <!-- Clock -->
+                <div class="text-right">
+                    <div id="clock" class="font-bold text-xl font-mono tracking-widest leading-none">00:00:00</div>
+                    <div id="date" class="text-xs text-brand-100 font-medium mt-1 uppercase">Memuat Tanggal...</div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col lg:flex-row p-4 lg:p-6 gap-6 overflow-hidden">
+        
+        <!-- KOLOM KIRI (SCANNER & HASIL) -->
+        <div class="w-full lg:w-1/3 flex flex-col gap-6">
+            
+            <!-- Kotak Input Scanner & Manual -->
+            <div class="glass-panel rounded-2xl shadow-sm border border-slate-200 p-5 lg:p-6 flex-shrink-0 relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-full h-1 bg-brand-500"></div>
+                
+                <!-- Toggle Mode -->
+                <div class="flex bg-slate-200/80 rounded-xl p-1 mb-5">
+                    <button id="btnTabScanner" onclick="switchInputMode('scanner')" class="flex-1 py-2 text-sm font-bold bg-white rounded-lg shadow-sm text-brand-600 transition border border-slate-100">
+                        <i class="fas fa-qrcode mr-1"></i> Alat
+                    </button>
+                    <button id="btnTabNfc" onclick="switchInputMode('nfc')" class="flex-1 py-2 text-sm font-bold text-slate-500 rounded-lg hover:text-slate-700 transition bg-transparent">
+                        <i class="fas fa-wifi mr-1"></i> NFC HP
+                    </button>
+                    <button id="btnTabManual" onclick="switchInputMode('manual')" class="flex-1 py-2 text-sm font-bold text-slate-500 rounded-lg hover:text-slate-700 transition bg-transparent">
+                        <i class="fas fa-hand-pointer mr-1"></i> Manual
+                    </button>
+                </div>
+                
+                <!-- Mode 1: Scanner -->
+                <div id="modeScanner" class="block">
+                    <div class="relative">
+                        <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <i class="fas fa-id-badge text-slate-400 text-xl"></i>
+                        </div>
+                        <input type="text" id="scannerInput" autofocus placeholder="Scan / Ketik NIS..." 
+                               class="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-300 rounded-xl text-lg font-bold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:ring-4 focus:ring-brand-500/20 transition-all shadow-inner"
+                               onkeypress="handleScan(event)">
+                    </div>
+                    <p class="text-[11px] text-slate-400 mt-3 flex items-center">
+                        <i class="fas fa-info-circle mr-1.5"></i> Pastikan kursor berkedip di kotak ini saat pakai alat scan.
+                    </p>
+                </div>
+
+                <!-- Mode 2: NFC HP -->
+                <div id="modeNfc" class="hidden flex-col items-center justify-center text-center gap-4 py-2">
+                    <div id="nfcIconCircle" class="w-20 h-20 bg-blue-100 text-blue-500 rounded-full flex items-center justify-center text-4xl shadow-inner mb-2 transition-all">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <div id="nfcStatusText" class="font-bold text-slate-700">Siap Membaca NFC</div>
+                    <p class="text-[11px] text-slate-500 px-4">Dekatkan kartu santri ke area NFC di bagian belakang punggung HP Anda.</p>
+                    <button onclick="startNfcScan()" class="mt-2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2.5 px-6 rounded-xl shadow-md transition w-full flex items-center justify-center gap-2">
+                        <i class="fas fa-play"></i> Mulai Ulang Scan NFC
+                    </button>
+                    <p class="text-[10px] text-slate-400 mt-1">*Hanya mendukung browser Google Chrome di Android.</p>
+                </div>
+
+                <!-- Mode 3: Input Manual -->
+                <div id="modeManual" class="hidden flex-col gap-3">
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 block ml-1">1. Pilih Kelas</label>
+                        <select id="selectKelas" onchange="populateSiswa()" class="w-full p-3.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:border-brand-500 transition shadow-inner appearance-none cursor-pointer">
+                            <option value="">-- Ketuk untuk Pilih Kelas --</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1.5 block ml-1 mt-1">2. Pilih Nama Santri</label>
+                        <select id="selectSiswa" disabled onchange="checkManualSubmit()" class="w-full p-3.5 bg-slate-50 border-2 border-slate-300 rounded-xl text-sm font-bold text-slate-700 focus:outline-none focus:border-brand-500 transition disabled:opacity-50 disabled:bg-slate-100 shadow-inner appearance-none cursor-pointer">
+                            <option value="">-- Pilih Kelas Dahulu --</option>
+                        </select>
+                    </div>
+                    <button onclick="submitManual()" id="btnSubmitManual" disabled class="w-full bg-brand-600 text-white font-bold py-3.5 rounded-xl hover:bg-brand-700 transition disabled:opacity-50 disabled:cursor-not-allowed mt-2 shadow-md flex items-center justify-center gap-2">
+                        <i class="fas fa-check-circle"></i> Catat Sambangan
+                    </button>
+                </div>
+
+            </div>
+
+            <!-- Kartu Hasil Scan Terakhir -->
+            <div id="resultCard" class="glass-panel rounded-2xl shadow-sm border border-slate-200 p-6 flex-1 hidden flex-col justify-center items-center text-center relative overflow-hidden">
+                <!-- Background dekoratif -->
+                <i class="fas fa-check-circle absolute -right-10 -bottom-10 text-9xl opacity-5 text-green-500" id="resultBgIcon"></i>
+                
+                <div id="resultIconBox" class="w-20 h-20 rounded-full bg-green-100 text-green-600 flex items-center justify-center text-4xl mb-4 shadow-inner">
+                    <i class="fas fa-check" id="resultIcon"></i>
+                </div>
+                
+                <h3 id="resultTitle" class="text-2xl font-black text-slate-800 mb-1">BERHASIL!</h3>
+                <p id="resultMsg" class="text-slate-500 font-medium mb-6">Santri tercatat sedang dijenguk.</p>
+                
+                <div class="w-full bg-slate-50 rounded-xl p-4 border border-slate-100 text-left">
+                    <div class="text-xs text-slate-400 font-bold uppercase mb-1">Data Santri</div>
+                    <div id="resNama" class="font-bold text-lg text-brand-900 truncate">NAMA SANTRI</div>
+                    <div class="flex justify-between items-center mt-2">
+                        <div class="text-sm font-semibold text-slate-600"><i class="fas fa-id-card text-slate-400 w-5"></i> <span id="resNis">NIS</span></div>
+                        <div class="text-sm font-semibold text-slate-600 bg-slate-200 px-2 py-0.5 rounded"><i class="fas fa-door-open text-slate-400 w-5"></i> <span id="resKelas">KELAS</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Loading State Scanner -->
+            <div id="scanLoading" class="glass-panel rounded-2xl shadow-sm border border-slate-200 p-6 flex-1 flex flex-col justify-center items-center text-center hidden">
+                <div class="loader mb-4 border-4 border-slate-100 border-t-brand-500 rounded-full w-12 h-12 animate-spin"></div>
+                <p class="text-slate-600 font-bold">Memproses Data...</p>
+            </div>
+
+        </div>
+
+        <!-- KOLOM KANAN (DASHBOARD & TABEL) -->
+        <div class="w-full lg:w-2/3 flex flex-col gap-6 overflow-hidden">
+            
+            <!-- Statistik Hari Ini -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 flex-shrink-0">
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-xl"><i class="fas fa-users"></i></div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-400 uppercase">Total Santri</div>
+                        <div class="text-2xl font-black text-slate-700" id="statTotal">0</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-green-50 text-green-500 flex items-center justify-center text-xl"><i class="fas fa-user-check"></i></div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-400 uppercase">Dijenguk Hari Ini</div>
+                        <div class="text-2xl font-black text-green-600" id="statVisited">0</div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-4 flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-orange-50 text-orange-500 flex items-center justify-center text-xl"><i class="fas fa-user-clock"></i></div>
+                    <div>
+                        <div class="text-xs font-bold text-slate-400 uppercase">Belum Dijenguk</div>
+                        <div class="text-2xl font-black text-orange-600" id="statNotVisited">0</div>
+                    </div>
+                </div>
+                <div class="bg-brand-500 rounded-2xl shadow-sm shadow-brand-200 p-4 flex items-center gap-4 text-white">
+                    <div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-xl"><i class="fas fa-calendar-day"></i></div>
+                    <div>
+                        <div class="text-xs font-bold text-brand-100 uppercase">Data Kunjungan</div>
+                        <div class="text-lg font-bold" id="statHariIni">HARI INI</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tabel Riwayat Hari Ini -->
+            <div class="glass-panel rounded-2xl shadow-sm border border-slate-200 flex-1 flex flex-col overflow-hidden">
+                <div class="px-6 py-4 border-b border-slate-100 flex justify-between items-center bg-white/50">
+                    <h3 class="font-bold text-slate-800"><i class="fas fa-list-ul mr-2 text-brand-500"></i> Log Sambangan (Hari Ini)</h3>
+                    <button onclick="fetchData()" class="text-xs font-bold bg-white border border-slate-200 text-slate-600 px-3 py-1.5 rounded-lg hover:bg-slate-50 transition shadow-sm">
+                        <i class="fas fa-sync-alt mr-1"></i> Refresh Manual
+                    </button>
+                </div>
+                
+                <div class="flex-1 overflow-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-50 sticky top-0 z-10 border-b border-slate-200">
+                            <tr class="text-[11px] uppercase tracking-wider text-slate-500 font-bold">
+                                <th class="py-3 px-6 w-24">Waktu</th>
+                                <th class="py-3 px-6 w-32">NIS</th>
+                                <th class="py-3 px-6">Nama Santri</th>
+                                <th class="py-3 px-6 w-24">Kelas</th>
+                                <th class="py-3 px-6 w-32 text-center">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logTableBody" class="text-sm divide-y divide-slate-100 bg-white">
+                            <!-- Data log akan masuk ke sini -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        // ==========================================
+        // KONFIGURASI URL APPS SCRIPT
+        // ==========================================
+        // GANTI DENGAN URL APPS SCRIPT ANDA
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx0jQYSSfrN2dD8Wb4kaul0eItZ5tEG5jHO-6yN_UXnSHDxyif0adevn_fhudLBJmYB4w/exec'; 
+
+        // State Global
+        let dataSiswa = [];
+        let logSambanganHariIni = [];
+
+        // ==========================================
+        // FUNGSI INISIALISASI
+        // ==========================================
+        window.onload = () => {
+            updateClock();
+            setInterval(updateClock, 1000); // Update jam tiap detik
+            
+            // Set teks "Hari Ini"
+            const options = { weekday: 'long', day: 'numeric', month: 'long' };
+            document.getElementById('statHariIni').innerText = new Date().toLocaleDateString('id-ID', options).toUpperCase();
+            
+            // Tarik data saat pertama load
+            fetchData();
+        };
+
+        // ==========================================
+        // JAM REAL-TIME
+        // ==========================================
+        function updateClock() {
+            const now = new Date();
+            const timeStr = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).replace(/\./g, ':');
+            document.getElementById('clock').innerText = timeStr; 
+            const dateStr = now.toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            document.getElementById('date').innerText = dateStr;
+        }
+
+        // ==========================================
+        // FUNGSI FETCH DATA (DARI GOOGLE SHEETS)
+        // ==========================================
+        async function fetchData() {
+            const syncStatus = document.getElementById('syncStatus');
+            const syncText = document.getElementById('syncText');
+            
+            syncStatus.classList.remove('hidden');
+            syncStatus.querySelector('i').className = 'fas fa-sync-alt fa-spin text-brand-500';
+            syncText.innerText = 'Menyinkronkan data...';
+            syncText.className = 'text-brand-600';
+
+            try {
+                // Kita gunakan API yang sudah ada/diperbarui untuk mengambil data
+                const response = await fetch(SCRIPT_URL + '?action=getDataSambangan');
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    dataSiswa = result.data.siswa;
+                    logSambanganHariIni = result.data.logHariIni;
+                    
+                    updateDashboard();
+                    renderTable();
+                    
+                    syncStatus.querySelector('i').className = 'fas fa-check-circle text-green-500';
+                    syncText.innerText = 'Tersinkronisasi';
+                    syncText.className = 'text-green-600';
+
+                    // Refresh pilihan kelas jika ada data baru
+                    populateKelas();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                console.error("Error fetching data:", error);
+                syncStatus.querySelector('i').className = 'fas fa-exclamation-triangle text-red-500';
+                syncText.innerText = 'Gagal memuat data (Offline)';
+                syncText.className = 'text-red-600';
+            }
+
+            // Kembalikan fokus ke input scanner
+            document.getElementById('scannerInput').focus();
+        }
+
+        // ==========================================
+        // LOGIKA TAB & INPUT MANUAL (UNTUK HP)
+        // ==========================================
+        function switchInputMode(mode) {
+            const modes = ['scanner', 'nfc', 'manual'];
+            
+            modes.forEach(m => {
+                const btn = document.getElementById('btnTab' + m.charAt(0).toUpperCase() + m.slice(1));
+                const div = document.getElementById('mode' + m.charAt(0).toUpperCase() + m.slice(1));
+                
+                if (m === mode) {
+                    div.classList.remove('hidden');
+                    div.classList.add(m === 'manual' || m === 'nfc' ? 'flex' : 'block');
+                    btn.className = 'flex-1 py-2 text-sm font-bold bg-white rounded-lg shadow-sm text-brand-600 transition border border-slate-100';
+                    
+                    if (m === 'scanner') document.getElementById('scannerInput').focus();
+                    if (m === 'manual') populateKelas();
+                    if (m === 'nfc') startNfcScan(); // Otomatis mulai baca NFC saat tab dibuka
+                } else {
+                    div.classList.add('hidden');
+                    div.classList.remove('block', 'flex');
+                    btn.className = 'flex-1 py-2 text-sm font-bold text-slate-500 rounded-lg hover:text-slate-700 transition bg-transparent';
+                }
+            });
+        }
+
+        // ==========================================
+        // LOGIKA SCANNER NFC SMARTPHONE (ANDROID CHROME)
+        // ==========================================
+        let ndef = null;
+
+        async function startNfcScan() {
+            const nfcStatusText = document.getElementById('nfcStatusText');
+            const nfcIconCircle = document.getElementById('nfcIconCircle');
+
+            // Cek apakah browser mendukung Web NFC
+            if (!('NDEFReader' in window)) {
+                nfcIconCircle.className = "w-20 h-20 bg-red-100 text-red-500 rounded-full flex items-center justify-center text-4xl shadow-inner mb-2";
+                nfcIconCircle.innerHTML = '<i class="fas fa-times-circle"></i>';
+                nfcStatusText.innerHTML = '<span class="text-red-500">NFC Tidak Didukung di Browser/HP ini</span>';
+                return;
+            }
+
+            try {
+                if (!ndef) {
+                    ndef = new NDEFReader();
+                }
+                
+                await ndef.scan();
+                
+                // UI Mode Menunggu Kartu
+                nfcIconCircle.className = "w-20 h-20 bg-blue-100 text-blue-500 rounded-full flex items-center justify-center text-4xl shadow-inner mb-2 animate-pulse border-4 border-blue-200";
+                nfcIconCircle.innerHTML = '<i class="fas fa-wifi"></i>';
+                nfcStatusText.innerHTML = '<span class="text-blue-600">Mendengarkan Kartu... Dekatkan ke HP</span>';
+                
+                ndef.onreadingerror = () => {
+                    nfcStatusText.innerHTML = '<span class="text-orange-500">Gagal membaca. Coba geser posisi kartu.</span>';
+                };
+
+                ndef.onreading = event => {
+                    // ID dari NFC web formatnya: 04:a1:b2:xx, kita hapus titik duanya agar seragam
+                    const rawUID = event.serialNumber; 
+                    const cleanUID = rawUID.replace(/:/g, "").toUpperCase();
+                    
+                    nfcIconCircle.className = "w-20 h-20 bg-green-100 text-green-500 rounded-full flex items-center justify-center text-4xl shadow-inner mb-2";
+                    nfcIconCircle.innerHTML = '<i class="fas fa-check"></i>';
+                    nfcStatusText.innerHTML = `<span class="text-green-600">Terbaca: ${cleanUID}</span>`;
+                    
+                    // Panggil sistem ceklis seperti biasa
+                    prosesCeklis(cleanUID);
+
+                    // Kembalikan ke mode standby setelah 2 detik
+                    setTimeout(() => {
+                        if (document.getElementById('modeNfc').classList.contains('flex')) {
+                            startNfcScan();
+                        }
+                    }, 2000);
+                };
+
+            } catch (error) {
+                nfcIconCircle.className = "w-20 h-20 bg-red-100 text-red-500 rounded-full flex items-center justify-center text-4xl shadow-inner mb-2";
+                nfcIconCircle.innerHTML = '<i class="fas fa-exclamation-triangle"></i>';
+                nfcStatusText.innerHTML = `<span class="text-red-500">Akses Ditolak / Error NFC</span>`;
+            }
+        }
+
+        function populateKelas() {
+            const selectKelas = document.getElementById('selectKelas');
+            const currentVal = selectKelas.value;
+            
+            // Bersihkan dulu (sisakan placeholder)
+            selectKelas.innerHTML = '<option value="">-- Ketuk untuk Pilih Kelas --</option>';
+            
+            if (dataSiswa.length === 0) return;
+            
+            // Ambil nama kelas yang unik dan urutkan
+            const classes = [...new Set(dataSiswa.map(s => s.kelas.trim()))].filter(Boolean).sort();
+            
+            classes.forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c;
+                opt.textContent = c;
+                selectKelas.appendChild(opt);
+            });
+
+            // Pertahankan pilihan sebelumnya jika ada
+            if(currentVal && classes.includes(currentVal)) {
+                selectKelas.value = currentVal;
+            }
+        }
+
+        function populateSiswa() {
+            const selectKelas = document.getElementById('selectKelas');
+            const selectSiswa = document.getElementById('selectSiswa');
+            const btnSubmit = document.getElementById('btnSubmitManual');
+            
+            const selectedKelas = selectKelas.value;
+            
+            selectSiswa.innerHTML = '<option value="">-- Pilih Nama Santri --</option>';
+            btnSubmit.disabled = true;
+            
+            if (!selectedKelas) {
+                selectSiswa.disabled = true;
+                return;
+            }
+            
+            selectSiswa.disabled = false;
+            
+            // Filter siswa berdasarkan kelas, urutkan nama sesuai abjad
+            const siswaInKelas = dataSiswa.filter(s => s.kelas.trim() === selectedKelas).sort((a, b) => a.nama.localeCompare(b.nama));
+            
+            siswaInKelas.forEach(s => {
+                const opt = document.createElement('option');
+                opt.value = s.nis;
+                opt.textContent = s.nama;
+                selectSiswa.appendChild(opt);
+            });
+        }
+
+        function checkManualSubmit() {
+            const selectSiswa = document.getElementById('selectSiswa');
+            const btnSubmit = document.getElementById('btnSubmitManual');
+            btnSubmit.disabled = !selectSiswa.value;
+        }
+
+        function submitManual() {
+            const selectSiswa = document.getElementById('selectSiswa');
+            const nis = selectSiswa.value;
+            if (nis) {
+                prosesCeklis(nis);
+                // Reset setelah submit
+                selectSiswa.value = "";
+                checkManualSubmit();
+            }
+        }
+
+        // ==========================================
+        // UPDATE DASHBOARD & TABEL LOKAL
+        // ==========================================
+        function updateDashboard() {
+            const totalSiswa = dataSiswa.length;
+            // Hitung unik NIS dari log hari ini
+            const visitedNis = new Set(logSambanganHariIni.map(log => log.nis));
+            const totalVisited = visitedNis.size;
+            const totalNotVisited = totalSiswa - totalVisited;
+
+            document.getElementById('statTotal').innerText = totalSiswa;
+            document.getElementById('statVisited').innerText = totalVisited;
+            document.getElementById('statNotVisited').innerText = totalNotVisited >= 0 ? totalNotVisited : 0;
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('logTableBody');
+            tbody.innerHTML = '';
+
+            if (logSambanganHariIni.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="py-8 text-center text-slate-500 font-medium italic">Belum ada kunjungan sambangan hari ini.</td></tr>`;
+                return;
+            }
+
+            // Urutkan dari yang terbaru di atas (asumsi logSambanganHariIni belum urut)
+            const sortedLogs = [...logSambanganHariIni].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            sortedLogs.forEach(log => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+                
+                // Ambil jam saja dari timestamp
+                const timeOnly = new Date(log.timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(/\./g, ':');
+
+                tr.innerHTML = `
+                    <td class="py-3 px-6 font-mono text-slate-500 text-xs">${timeOnly}</td>
+                    <td class="py-3 px-6 font-semibold text-slate-700">${log.nis}</td>
+                    <td class="py-3 px-6 font-bold text-brand-900">${log.nama}</td>
+                    <td class="py-3 px-6 text-slate-600 font-medium">${log.kelas}</td>
+                    <td class="py-3 px-6 text-center">
+                        <span class="bg-green-100 text-green-700 border border-green-200 px-2 py-1 rounded text-xs font-bold"><i class="fas fa-check mr-1"></i>Hadir</span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ==========================================
+        // LOGIKA SCANNER & PENGIRIMAN DATA
+        // ==========================================
+        async function handleScan(event) {
+            if (event.key === 'Enter') {
+                const inputVal = document.getElementById('scannerInput').value.trim();
+                document.getElementById('scannerInput').value = ''; // Kosongkan input
+                document.getElementById('scannerInput').focus();
+
+                if (!inputVal) return;
+
+                prosesCeklis(inputVal);
+            }
+        }
+
+        async function prosesCeklis(scannedValue) {
+            // Sembunyikan hasil lama, tampilkan loading
+            document.getElementById('resultCard').classList.add('hidden');
+            document.getElementById('resultCard').classList.remove('animate-pop', 'flex');
+            document.getElementById('scanLoading').classList.remove('hidden');
+
+            // 1. Cari siswa di data lokal (berdasarkan ID NFC atau NIS)
+        // Modifikasi sedikit untuk memaklumi format ID NFC HP dan Alat (mengabaikan titik dua dan huruf besar/kecil)
+        const scannedClean = scannedValue.replace(/:/g, "").toUpperCase();
+        
+        const siswa = dataSiswa.find(s => 
+            s.id.toUpperCase() === scannedClean || 
+            s.id.replace(/:/g, "").toUpperCase() === scannedClean || 
+            s.nis === scannedValue
+        );
+
+        if (!siswa) {
+                showResult(false, "SANTRI TIDAK DITEMUKAN", "Kartu atau NIS tidak terdaftar di database.", "-", "-", "-", "fa-times", "bg-red-100 text-red-600", "text-red-500");
+                return;
+            }
+
+            // 2. Cek apakah sudah dijenguk hari ini (Optimistic UI Cek Lokal)
+            const sudahDijenguk = logSambanganHariIni.find(log => log.nis === siswa.nis);
+            
+            if (sudahDijenguk) {
+                // Tampilkan peringatan, tapi jangan tolak sepenuhnya jika mereka mau tap ulang (tergantung aturan).
+                // Di sini kita anggap peringatan saja "SUDAH DIJENGUK"
+                showResult(false, "SUDAH TERCATAT", "Santri ini sudah melakukan ceklis kunjungan sebelumnya hari ini.", siswa.nama, siswa.nis, siswa.kelas, "fa-exclamation", "bg-orange-100 text-orange-600", "text-orange-500");
+                return;
+            }
+
+            // 3. Update UI Lokal secara Instan (Optimistic UI)
+            const newLog = {
+                timestamp: new Date().toISOString(),
+                nis: siswa.nis,
+                nama: siswa.nama,
+                kelas: siswa.kelas
+            };
+            
+            logSambanganHariIni.unshift(newLog); // Masukkan ke array paling atas
+            updateDashboard();
+            renderTable();
+            showResult(true, "BERHASIL!", "Kunjungan santri berhasil dicatat.", siswa.nama, siswa.nis, siswa.kelas, "fa-check", "bg-green-100 text-green-600", "text-green-500");
+
+            // 4. Kirim data ke Google Sheets di background (Background Sync)
+            try {
+                const payload = {
+                    action: 'inputSambangan',
+                    nis: siswa.nis,
+                    nama: siswa.nama,
+                    kelas: siswa.kelas
+                };
+
+                fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors', // Penting agar tidak error CORS saat POST dari front-end
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                // Tidak perlu await response jika pakai no-cors, asumsikan berhasil karena internet nyala
+                const syncText = document.getElementById('syncText');
+                syncText.innerText = 'Data tersimpan ke cloud';
+                setTimeout(() => { if(syncText.innerText === 'Data tersimpan ke cloud') syncText.innerText = 'Tersinkronisasi'; }, 3000);
+
+            } catch (err) {
+                console.error("Gagal simpan ke cloud:", err);
+                const syncText = document.getElementById('syncText');
+                document.getElementById('syncStatus').querySelector('i').className = 'fas fa-exclamation-triangle text-red-500';
+                syncText.innerText = 'Gagal menyimpan ke cloud';
+                syncText.className = 'text-red-600';
+            }
+        }
+
+        // Fungsi Tampilan UI Hasil Scan
+        function showResult(isSuccess, title, msg, nama, nis, kelas, iconClass, iconBgClass, bgIconColor) {
+            document.getElementById('scanLoading').classList.add('hidden');
+            
+            const resCard = document.getElementById('resultCard');
+            const resTitle = document.getElementById('resultTitle');
+            const resMsg = document.getElementById('resultMsg');
+            const resIconBox = document.getElementById('resultIconBox');
+            const resIcon = document.getElementById('resultIcon');
+            const resBgIcon = document.getElementById('resultBgIcon');
+
+            resTitle.innerText = title;
+            resTitle.className = `text-2xl font-black mb-1 ${isSuccess ? 'text-green-600' : (title.includes('TIDAK') ? 'text-red-600' : 'text-orange-600')}`;
+            resMsg.innerText = msg;
+            
+            document.getElementById('resNama').innerText = nama;
+            document.getElementById('resNis').innerText = nis;
+            document.getElementById('resKelas').innerText = kelas;
+
+            // Reset icon class
+            resIconBox.className = `w-20 h-20 rounded-full flex items-center justify-center text-4xl mb-4 shadow-inner ${iconBgClass}`;
+            resIcon.className = `fas ${iconClass}`;
+            resBgIcon.className = `fas ${iconClass} absolute -right-10 -bottom-10 text-9xl opacity-5 ${bgIconColor}`;
+
+            resCard.classList.remove('hidden');
+            resCard.classList.add('flex', 'animate-pop');
+
+            // Set timeout untuk menghilangkan hasil agar bersih untuk scan berikutnya
+            setTimeout(() => {
+                resCard.classList.remove('animate-pop');
+            }, 300);
+        }
+
+        // Mencegah klik di luar menghilangkan fokus scanner terlalu lama
+        document.addEventListener('click', (e) => {
+            const modeScanner = document.getElementById('modeScanner');
+            // Hanya kembalikan fokus jika SEDANG DI TAB SCANNER ALAT
+            if(modeScanner.classList.contains('block') && 
+               e.target.tagName !== 'INPUT' && 
+               e.target.tagName !== 'BUTTON' && 
+               e.target.tagName !== 'SELECT') {
+                
+                const scannerInput = document.getElementById('scannerInput');
+                if (scannerInput) scannerInput.focus();
+            }
+        });
+
+    </script>
+</body>
+</html>
