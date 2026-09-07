@@ -1,0 +1,1352 @@
+import React, { useState, useEffect, useMemo } from 'react';
+import { 
+  Users, 
+  BookOpen, 
+  FileText, 
+  LayoutDashboard, 
+  Plus, 
+  Trash2, 
+  Save, 
+  GraduationCap, 
+  Bell, 
+  UserCheck, 
+  Upload, 
+  Download, 
+  Search, 
+  Filter, 
+  RefreshCw, 
+  CheckCircle2, 
+  AlertCircle, 
+  X,
+  FileSpreadsheet
+} from 'lucide-react';
+
+const SUPABASE_URL = 'https://vpdlfjbkfcuukyykrhua.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZGxmamJrZmN1dWt5eWtyaHVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzkxNjUsImV4cCI6MjA5Nzc1NTE2NX0.QSHbi71ajuU_AggJJ5xVDeb6jffDRyyuF4C7aYeHW3Y';
+
+const apiHeaders = {
+  'apikey': SUPABASE_KEY,
+  'Authorization': `Bearer ${SUPABASE_KEY}`,
+  'Content-Type': 'application/json',
+  'Prefer': 'return=representation'
+};
+
+const loadXLSX = async () => {
+  if (window.XLSX) return window.XLSX;
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
+    script.onload = () => resolve(window.XLSX);
+    script.onerror = () => reject(new Error('Gagal memuat library XLSX'));
+    document.head.appendChild(script);
+  });
+};
+
+export default function App() {
+  const [activeMenu, setActiveMenu] = useState('dashboard');
+  const [loading, setLoading] = useState(false);
+  const [notification, setNotification] = useState({ show: false, message: '', type: 'success' });
+  const [deleteConfirm, setDeleteConfirm] = useState({ open: false, type: '', id: null, title: '' });
+
+  // Data states from Supabase
+  const [santris, setSantris] = useState([]);
+  const [gurus, setGurus] = useState([]);
+  const [mapels, setMapels] = useState([]);
+  const [nilais, setNilais] = useState([]);
+
+  const showNotif = (message, type = 'success') => {
+    setNotification({ show: true, message, type });
+    setTimeout(() => {
+      setNotification({ show: false, message: '', type: 'success' });
+    }, 3500);
+  };
+
+  const fetchAllData = async () => {
+    setLoading(true);
+    try {
+      const [resSantri, resGuru, resMapel, resNilai] = await Promise.all([
+        fetch(`${SUPABASE_URL}/rest/v1/santri?select=*&order=nama.asc`, { headers: apiHeaders }),
+        fetch(`${SUPABASE_URL}/rest/v1/daftar_guru?select=*&order=created_at.desc`, { headers: apiHeaders }),
+        fetch(`${SUPABASE_URL}/rest/v1/daftar_mapel?select=*&order=created_at.desc`, { headers: apiHeaders }),
+        fetch(`${SUPABASE_URL}/rest/v1/daftar_nilai?select=*&order=created_at.desc`, { headers: apiHeaders })
+      ]);
+
+      if (resSantri.ok) {
+        const dataSantri = await resSantri.json();
+        setSantris(dataSantri);
+      }
+      if (resGuru.ok) {
+        const dataGuru = await resGuru.json();
+        setGurus(dataGuru);
+      }
+      if (resMapel.ok) {
+        const dataMapel = await resMapel.json();
+        setMapels(dataMapel);
+      }
+      if (resNilai.ok) {
+        const dataNilai = await resNilai.json();
+        setNilais(dataNilai);
+      }
+    } catch (err) {
+      console.error('Error fetching data:', err);
+      showNotif('Koneksi Supabase bermasalah atau tabel belum siap.', 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchAllData();
+  }, []);
+
+  const executeDelete = async () => {
+    const { type, id } = deleteConfirm;
+    if (!id || !type) return;
+
+    let endpoint = '';
+    if (type === 'guru') endpoint = 'daftar_guru';
+    if (type === 'mapel') endpoint = 'daftar_mapel';
+    if (type === 'nilai') endpoint = 'daftar_nilai';
+
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/${endpoint}?id=eq.${id}`, {
+        method: 'DELETE',
+        headers: apiHeaders
+      });
+
+      if (res.ok) {
+        if (type === 'guru') setGurus(prev => prev.filter(item => item.id !== id));
+        if (type === 'mapel') setMapels(prev => prev.filter(item => item.id !== id));
+        if (type === 'nilai') setNilais(prev => prev.filter(item => item.id !== id));
+        showNotif(`Data ${type} berhasil dihapus!`);
+      } else {
+        showNotif(`Gagal menghapus data di Supabase`, 'error');
+      }
+    } catch (error) {
+      console.error(error);
+      showNotif('Terjadi kesalahan saat menghapus data', 'error');
+    } finally {
+      setDeleteConfirm({ open: false, type: '', id: null, title: '' });
+    }
+  };
+
+  const DashboardView = () => {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800">Ringkasan Sistem Ledger</h2>
+            <p className="text-slate-500 text-sm mt-1">Status sinkronisasi data online dengan database Supabase</p>
+          </div>
+          <button 
+            onClick={fetchAllData}
+            disabled={loading}
+            className="flex items-center space-x-2 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg text-sm font-medium transition-colors"
+          >
+            <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+            <span>Muat Ulang Data</span>
+          </button>
+        </div>
+
+        {/* Statistik ringkasan */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex items-center space-x-4">
+            <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+              <UserCheck size={26} />
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Santri</p>
+              <p className="text-2xl font-black text-slate-800">{santris.length}</p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex items-center space-x-4">
+            <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl">
+              <Users size={26} />
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Guru</p>
+              <p className="text-2xl font-black text-slate-800">{gurus.length}</p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex items-center space-x-4">
+            <div className="p-3 bg-amber-50 text-amber-600 rounded-xl">
+              <BookOpen size={26} />
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Mata Pelajaran</p>
+              <p className="text-2xl font-black text-slate-800">{mapels.length}</p>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-xl p-5 border border-slate-100 shadow-sm flex items-center space-x-4">
+            <div className="p-3 bg-purple-50 text-purple-600 rounded-xl">
+              <FileText size={26} />
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Nilai Masuk</p>
+              <p className="text-2xl font-black text-slate-800">{nilais.length}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Tabel Aktivitas Nilai Terbaru */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-base font-bold text-slate-800 flex items-center">
+              <FileText size={18} className="mr-2 text-blue-600" /> Nilai Siswa Terbaru Terinput
+            </h3>
+            <button 
+              onClick={() => setActiveMenu('nilai')} 
+              className="text-sm font-semibold text-blue-600 hover:text-blue-700"
+            >
+              Lihat Semua &rarr;
+            </button>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-slate-100 text-sm">
+              <thead>
+                <tr className="text-slate-400 text-xs uppercase font-semibold text-left">
+                  <th className="py-3 px-4">Nama Siswa</th>
+                  <th className="py-3 px-4">NIS</th>
+                  <th className="py-3 px-4">Mata Pelajaran</th>
+                  <th className="py-3 px-4">Ujian</th>
+                  <th className="py-3 px-4 text-center">Nilai</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {nilais.slice(0, 5).map((n) => (
+                  <tr key={n.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-4 font-semibold text-slate-800">{n.nama_siswa}</td>
+                    <td className="py-3 px-4 font-mono text-slate-500">{n.nis}</td>
+                    <td className="py-3 px-4 text-slate-700">{n.nama_mapel}</td>
+                    <td className="py-3 px-4 text-slate-500">{n.nama_ujian} ({n.bulan})</td>
+                    <td className="py-3 px-4 text-center">
+                      <span className="inline-block px-3 py-1 bg-blue-50 text-blue-700 font-bold rounded-full text-xs">
+                        {Number(n.nilai).toFixed(1)}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+                {nilais.length === 0 && (
+                  <tr>
+                    <td colSpan="5" className="py-6 text-center text-slate-400">Belum ada data nilai yang tersimpan di Supabase.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const DataSantriView = () => {
+    const [search, setSearch] = useState('');
+    const [selectedClass, setSelectedClass] = useState('ALL');
+
+    const classOptions = useMemo(() => {
+      const unique = [...new Set(santris.map(s => s.kelas).filter(Boolean))];
+      return unique.sort();
+    }, [santris]);
+
+    const filteredSantri = useMemo(() => {
+      return santris.filter(s => {
+        const matchSearch = (s.nama || '').toLowerCase().includes(search.toLowerCase()) || 
+                            (s.nis || '').includes(search) || 
+                            (s.halaqoh || '').toLowerCase().includes(search.toLowerCase());
+        const matchClass = selectedClass === 'ALL' || s.kelas === selectedClass;
+        return matchSearch && matchClass;
+      });
+    }, [santris, search, selectedClass]);
+
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800">Master Data Santri (Siswa)</h2>
+            <p className="text-slate-500 text-sm">Data tersinkron otomatis dari tabel public.santri di Supabase</p>
+          </div>
+        </div>
+
+        {/* Filter bar */}
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-3 items-center justify-between">
+          <div className="relative w-full md:w-80">
+            <Search className="absolute left-3 top-2.5 text-slate-400" size={18} />
+            <input 
+              type="text" 
+              placeholder="Cari NIS, Nama Santri, atau Halaqoh..." 
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          <div className="flex items-center space-x-2 w-full md:w-auto">
+            <Filter size={16} className="text-slate-400" />
+            <span className="text-sm text-slate-500">Kelas:</span>
+            <select 
+              value={selectedClass} 
+              onChange={(e) => setSelectedClass(e.target.value)}
+              className="border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+            >
+              <option value="ALL">Semua Kelas ({santris.length})</option>
+              {classOptions.map(cls => (
+                <option key={cls} value={cls}>{cls}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+
+        {/* Tabel Data Santri */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-slate-100 text-sm">
+              <thead className="bg-slate-50">
+                <tr className="text-slate-500 text-xs uppercase font-semibold text-left">
+                  <th className="py-3.5 px-4">NIS</th>
+                  <th className="py-3.5 px-4">Nama Lengkap</th>
+                  <th className="py-3.5 px-4">Kelas</th>
+                  <th className="py-3.5 px-4">Halaqoh</th>
+                  <th className="py-3.5 px-4 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredSantri.map((santri) => (
+                  <tr key={santri.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-4 font-mono font-bold text-slate-700">{santri.nis}</td>
+                    <td className="py-3 px-4 font-semibold text-slate-800">{santri.nama}</td>
+                    <td className="py-3 px-4">
+                      <span className="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-700 font-medium rounded text-xs">
+                        {santri.kelas}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-slate-600">{santri.halaqoh || '-'}</td>
+                    <td className="py-3 px-4 text-center">
+                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${
+                        santri.status_aktif !== false ? 'bg-emerald-50 text-emerald-700' : 'bg-rose-50 text-rose-700'
+                      }`}>
+                        {santri.status_aktif !== false ? 'Aktif' : 'Non-Aktif'}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+                {filteredSantri.length === 0 && (
+                  <tr>
+                    <td colSpan="5" className="py-8 text-center text-slate-400">
+                      {santris.length === 0 ? 'Sedang memuat data atau tabel santri kosong di Supabase.' : 'Tidak ada data santri yang sesuai pencarian.'}
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const DataGuruView = () => {
+    const [formData, setFormData] = useState({ nip: '', nama_guru: '', no_hp: '', email: '' });
+    const [submitting, setSubmitting] = useState(false);
+    const [uploading, setUploading] = useState(false);
+
+    // Download template Excel untuk Guru
+    const handleDownloadTemplate = async () => {
+      try {
+        const XLSX = await loadXLSX();
+        const templateData = [
+          {
+            "nip": "198001012005011001",
+            "nama_guru": "Budi Santoso, S.Pd",
+            "no_hp": "081234567890",
+            "email": "budi@sekolah.id"
+          },
+          {
+            "nip": "198502022010022002",
+            "nama_guru": "Ustdzh. Siti Aminah, M.Pd",
+            "no_hp": "081987654321",
+            "email": "siti@sekolah.id"
+          }
+        ];
+        const ws = XLSX.utils.json_to_sheet(templateData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Data Guru");
+        XLSX.writeFile(wb, "Template_Import_Guru.xlsx");
+        showNotif("Template Excel Guru berhasil diunduh!");
+      } catch (err) {
+        console.error(err);
+        showNotif("Gagal mengunduh template Excel", "error");
+      }
+    };
+
+    // Import Excel untuk Guru
+    const handleImportExcel = async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      setUploading(true);
+      try {
+        const XLSX = await loadXLSX();
+        const reader = new FileReader();
+
+        reader.onload = async (evt) => {
+          try {
+            const bstr = evt.target.result;
+            const wb = XLSX.read(bstr, { type: 'binary' });
+            const sheetName = wb.SheetNames[0];
+            const data = XLSX.utils.sheet_to_json(wb.Sheets[sheetName]);
+
+            if (!data || data.length === 0) {
+              showNotif('File Excel kosong atau format tidak sesuai', 'error');
+              setUploading(false);
+              return;
+            }
+
+            // Normalisasi key
+            const formatted = data.map(item => ({
+              nip: String(item.nip || item.NIP || '').trim(),
+              nama_guru: String(item.nama_guru || item['Nama Guru'] || item.nama || '').trim(),
+              no_hp: String(item.no_hp || item['No HP'] || item['Nomor HP'] || '').trim(),
+              email: String(item.email || item.Email || '').trim()
+            })).filter(g => g.nama_guru !== '');
+
+            if (formatted.length === 0) {
+              showNotif('Tidak ada data guru yang valid pada file tersebut', 'error');
+              setUploading(false);
+              return;
+            }
+
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/daftar_guru`, {
+              method: 'POST',
+              headers: apiHeaders,
+              body: JSON.stringify(formatted)
+            });
+
+            if (response.ok) {
+              const inserted = await response.json();
+              setGurus(prev => [...inserted, ...prev]);
+              showNotif(`Berhasil mengimpor ${inserted.length} data guru!`);
+            } else {
+              showNotif('Gagal mengimpor ke Supabase. Periksa duplikasi NIP atau RLS tabel.', 'error');
+            }
+          } catch (err) {
+            console.error(err);
+            showNotif('Gagal membaca file Excel', 'error');
+          } finally {
+            setUploading(false);
+            e.target.value = '';
+          }
+        };
+
+        reader.readAsBinaryString(file);
+      } catch (err) {
+        console.error(err);
+        setUploading(false);
+        showNotif('Gagal memproses file Excel', 'error');
+      }
+    };
+
+    // Submit form manual
+    const handleSubmitManual = async (e) => {
+      e.preventDefault();
+      setSubmitting(true);
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/daftar_guru`, {
+          method: 'POST',
+          headers: apiHeaders,
+          body: JSON.stringify([formData])
+        });
+
+        if (response.ok) {
+          const inserted = await response.json();
+          setGurus([inserted[0], ...gurus]);
+          setFormData({ nip: '', nama_guru: '', no_hp: '', email: '' });
+          showNotif('Data Guru berhasil disimpan!');
+        } else {
+          showNotif('Gagal menyimpan ke Supabase. Pastikan tabel daftar_guru ada.', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showNotif('Terjadi kesalahan saat menyimpan guru', 'error');
+      } finally {
+        setSubmitting(false);
+      }
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800">Manajemen Data Guru</h2>
+            <p className="text-slate-500 text-sm">Kelola daftar pendidik dan pengajar yang terdaftar</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button 
+              onClick={handleDownloadTemplate}
+              className="px-3 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg flex items-center shadow-sm transition-colors"
+            >
+              <Download size={16} className="mr-2 text-slate-500" /> Template Excel
+            </button>
+            <label className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg flex items-center cursor-pointer shadow-sm transition-colors">
+              <Upload size={16} className="mr-2" />
+              <span>{uploading ? 'Mengimpor...' : 'Import Excel'}</span>
+              <input type="file" accept=".xlsx, .xls" onChange={handleImportExcel} disabled={uploading} className="hidden" />
+            </label>
+          </div>
+        </div>
+
+        {/* Form Tambah Manual */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <h3 className="text-base font-bold text-slate-800 mb-4 flex items-center">
+            <Plus size={18} className="mr-2 text-blue-600" /> Tambah Guru Baru
+          </h3>
+          <form onSubmit={handleSubmitManual} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">NIP / NUPTK</label>
+              <input 
+                type="text" 
+                value={formData.nip}
+                onChange={e => setFormData({ ...formData, nip: e.target.value })}
+                placeholder="Contoh: 19800101..." 
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Nama Lengkap & Gelar *</label>
+              <input 
+                required
+                type="text" 
+                value={formData.nama_guru}
+                onChange={e => setFormData({ ...formData, nama_guru: e.target.value })}
+                placeholder="Ustdzh. Siti Aminah, M.Pd" 
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Nomor WhatsApp / HP</label>
+              <input 
+                type="text" 
+                value={formData.no_hp}
+                onChange={e => setFormData({ ...formData, no_hp: e.target.value })}
+                placeholder="08123456789" 
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Email</label>
+              <input 
+                type="email" 
+                value={formData.email}
+                onChange={e => setFormData({ ...formData, email: e.target.value })}
+                placeholder="guru@sekolah.id" 
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
+            <div className="md:col-span-2 lg:col-span-4 flex justify-end">
+              <button 
+                type="submit" 
+                disabled={submitting}
+                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg flex items-center shadow-sm transition-colors"
+              >
+                <Save size={16} className="mr-2" />
+                <span>{submitting ? 'Menyimpan...' : 'Simpan Guru'}</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Tabel Data Guru */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-slate-100 text-sm">
+              <thead className="bg-slate-50">
+                <tr className="text-slate-500 text-xs uppercase font-semibold text-left">
+                  <th className="py-3.5 px-4">NIP</th>
+                  <th className="py-3.5 px-4">Nama Guru</th>
+                  <th className="py-3.5 px-4">No. HP</th>
+                  <th className="py-3.5 px-4">Email</th>
+                  <th className="py-3.5 px-4 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {gurus.map((guru) => (
+                  <tr key={guru.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-4 font-mono text-slate-600">{guru.nip || '-'}</td>
+                    <td className="py-3 px-4 font-bold text-slate-800">{guru.nama_guru}</td>
+                    <td className="py-3 px-4 text-slate-600">{guru.no_hp || '-'}</td>
+                    <td className="py-3 px-4 text-slate-500">{guru.email || '-'}</td>
+                    <td className="py-3 px-4 text-right">
+                      <button 
+                        onClick={() => setDeleteConfirm({ open: true, type: 'guru', id: guru.id, title: guru.nama_guru })}
+                        className="text-rose-500 hover:text-rose-700 p-1.5 hover:bg-rose-50 rounded-lg transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {gurus.length === 0 && (
+                  <tr>
+                    <td colSpan="5" className="py-8 text-center text-slate-400">Belum ada data guru di database.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const DataMapelView = () => {
+    const [formData, setFormData] = useState({ kode_mapel: '', nama_mapel: '', kategori: 'Wajib' });
+    const [submitting, setSubmitting] = useState(false);
+    const [uploading, setUploading] = useState(false);
+
+    // Download template Excel untuk Mapel
+    const handleDownloadTemplate = async () => {
+      try {
+        const XLSX = await loadXLSX();
+        const templateData = [
+          {
+            "kode_mapel": "MAT-101",
+            "nama_mapel": "Matematika Dasar",
+            "kategori": "Wajib"
+          },
+          {
+            "kode_mapel": "TAH-102",
+            "nama_mapel": "Tahfidz Al-Qur'an",
+            "kategori": "Peminatan"
+          }
+        ];
+        const ws = XLSX.utils.json_to_sheet(templateData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Data Mapel");
+        XLSX.writeFile(wb, "Template_Import_Mapel.xlsx");
+        showNotif("Template Excel Mapel berhasil diunduh!");
+      } catch (err) {
+        console.error(err);
+        showNotif("Gagal mengunduh template Excel", "error");
+      }
+    };
+
+    // Import Excel untuk Mapel
+    const handleImportExcel = async (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      setUploading(true);
+      try {
+        const XLSX = await loadXLSX();
+        const reader = new FileReader();
+
+        reader.onload = async (evt) => {
+          try {
+            const bstr = evt.target.result;
+            const wb = XLSX.read(bstr, { type: 'binary' });
+            const sheetName = wb.SheetNames[0];
+            const data = XLSX.utils.sheet_to_json(wb.Sheets[sheetName]);
+
+            if (!data || data.length === 0) {
+              showNotif('File Excel kosong', 'error');
+              setUploading(false);
+              return;
+            }
+
+            const formatted = data.map(item => ({
+              kode_mapel: String(item.kode_mapel || item['Kode Mapel'] || item.kode || '').trim(),
+              nama_mapel: String(item.nama_mapel || item['Nama Mapel'] || item.mapel || '').trim(),
+              kategori: String(item.kategori || item.Kategori || 'Wajib').trim()
+            })).filter(m => m.kode_mapel !== '' && m.nama_mapel !== '');
+
+            if (formatted.length === 0) {
+              showNotif('Data mapel tidak valid pada file Excel', 'error');
+              setUploading(false);
+              return;
+            }
+
+            const response = await fetch(`${SUPABASE_URL}/rest/v1/daftar_mapel`, {
+              method: 'POST',
+              headers: apiHeaders,
+              body: JSON.stringify(formatted)
+            });
+
+            if (response.ok) {
+              const inserted = await response.json();
+              setMapels(prev => [...inserted, ...prev]);
+              showNotif(`Berhasil mengimpor ${inserted.length} mata pelajaran!`);
+            } else {
+              showNotif('Gagal mengimpor ke Supabase. Periksa kode mapel kembar.', 'error');
+            }
+          } catch (err) {
+            console.error(err);
+            showNotif('Format file Excel tidak dapat diproses', 'error');
+          } finally {
+            setUploading(false);
+            e.target.value = '';
+          }
+        };
+
+        reader.readAsBinaryString(file);
+      } catch (err) {
+        console.error(err);
+        setUploading(false);
+        showNotif('Gagal membaca file Excel', 'error');
+      }
+    };
+
+    // Submit form manual
+    const handleSubmitManual = async (e) => {
+      e.preventDefault();
+      setSubmitting(true);
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/daftar_mapel`, {
+          method: 'POST',
+          headers: apiHeaders,
+          body: JSON.stringify([formData])
+        });
+
+        if (response.ok) {
+          const inserted = await response.json();
+          setMapels([inserted[0], ...mapels]);
+          setFormData({ kode_mapel: '', nama_mapel: '', kategori: 'Wajib' });
+          showNotif('Mata Pelajaran berhasil ditambahkan!');
+        } else {
+          showNotif('Gagal menyimpan mapel ke Supabase', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showNotif('Terjadi error saat menyimpan data mapel', 'error');
+      } finally {
+        setSubmitting(false);
+      }
+    };
+
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800">Data Mata Pelajaran</h2>
+            <p className="text-slate-500 text-sm">Daftar kurikulum dan mata pelajaran yang diajarkan</p>
+          </div>
+          <div className="flex items-center space-x-2">
+            <button 
+              onClick={handleDownloadTemplate}
+              className="px-3 py-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 text-sm font-medium rounded-lg flex items-center shadow-sm transition-colors"
+            >
+              <Download size={16} className="mr-2 text-slate-500" /> Template Excel
+            </button>
+            <label className="px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium rounded-lg flex items-center cursor-pointer shadow-sm transition-colors">
+              <Upload size={16} className="mr-2" />
+              <span>{uploading ? 'Mengimpor...' : 'Import Excel'}</span>
+              <input type="file" accept=".xlsx, .xls" onChange={handleImportExcel} disabled={uploading} className="hidden" />
+            </label>
+          </div>
+        </div>
+
+        {/* Form Tambah Manual Mapel */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <h3 className="text-base font-bold text-slate-800 mb-4 flex items-center">
+            <Plus size={18} className="mr-2 text-blue-600" /> Tambah Mata Pelajaran Baru
+          </h3>
+          <form onSubmit={handleSubmitManual} className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Kode Mapel *</label>
+              <input 
+                required
+                type="text" 
+                value={formData.kode_mapel}
+                onChange={e => setFormData({ ...formData, kode_mapel: e.target.value })}
+                placeholder="Contoh: MAT-101" 
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Nama Mata Pelajaran *</label>
+              <input 
+                required
+                type="text" 
+                value={formData.nama_mapel}
+                onChange={e => setFormData({ ...formData, nama_mapel: e.target.value })}
+                placeholder="Bahasa Arab / Matematika" 
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">Kategori Kurikulum</label>
+              <select 
+                value={formData.kategori}
+                onChange={e => setFormData({ ...formData, kategori: e.target.value })}
+                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+              >
+                <option value="Wajib">Wajib</option>
+                <option value="Peminatan">Peminatan</option>
+                <option value="Tahfidz / Agama">Tahfidz / Agama</option>
+                <option value="Muatan Lokal">Muatan Lokal</option>
+              </select>
+            </div>
+            <div className="md:col-span-3 flex justify-end">
+              <button 
+                type="submit" 
+                disabled={submitting}
+                className="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white text-sm font-semibold rounded-lg flex items-center shadow-sm transition-colors"
+              >
+                <Save size={16} className="mr-2" />
+                <span>{submitting ? 'Menyimpan...' : 'Simpan Mapel'}</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        {/* Tabel Data Mapel */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-slate-100 text-sm">
+              <thead className="bg-slate-50">
+                <tr className="text-slate-500 text-xs uppercase font-semibold text-left">
+                  <th className="py-3.5 px-4">Kode Mapel</th>
+                  <th className="py-3.5 px-4">Nama Mata Pelajaran</th>
+                  <th className="py-3.5 px-4">Kategori</th>
+                  <th className="py-3.5 px-4 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {mapels.map((mapel) => (
+                  <tr key={mapel.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-4 font-mono font-bold text-blue-700">{mapel.kode_mapel}</td>
+                    <td className="py-3 px-4 font-semibold text-slate-800">{mapel.nama_mapel}</td>
+                    <td className="py-3 px-4">
+                      <span className="inline-block px-2.5 py-0.5 bg-slate-100 text-slate-700 rounded text-xs font-medium">
+                        {mapel.kategori}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      <button 
+                        onClick={() => setDeleteConfirm({ open: true, type: 'mapel', id: mapel.id, title: mapel.nama_mapel })}
+                        className="text-rose-500 hover:text-rose-700 p-1.5 hover:bg-rose-50 rounded-lg transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {mapels.length === 0 && (
+                  <tr>
+                    <td colSpan="4" className="py-8 text-center text-slate-400">Belum ada data mata pelajaran.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const InputNilaiView = () => {
+    const [namaUjian, setNamaUjian] = useState('Ujian Tengah Semester');
+    const [bulan, setBulan] = useState('September 2026');
+    const [namaMapel, setNamaMapel] = useState(mapels[0]?.nama_mapel || '');
+    const [namaGuru, setNamaGuru] = useState(gurus[0]?.nama_guru || '');
+    const [selectedSantriId, setSelectedSantriId] = useState('');
+    const [nilai, setNilai] = useState('');
+    const [submitting, setSubmitting] = useState(false);
+
+    // Filter table ledger
+    const [filterUjian, setFilterUjian] = useState('ALL');
+    const [filterMapel, setFilterMapel] = useState('ALL');
+    const [searchLedger, setSearchLedger] = useState('');
+
+    // Handle santri change
+    const currentSantri = useMemo(() => {
+      return santris.find(s => s.id === selectedSantriId);
+    }, [santris, selectedSantriId]);
+
+    // Update default guru/mapel saat master data tersedia
+    useEffect(() => {
+      if (!namaMapel && mapels.length > 0) setNamaMapel(mapels[0].nama_mapel);
+      if (!namaGuru && gurus.length > 0) setNamaGuru(gurus[0].nama_guru);
+    }, [mapels, gurus]);
+
+    // Simpan nilai ke tabel daftar_nilai Supabase
+    const handleSaveNilai = async (e) => {
+      e.preventDefault();
+      if (!currentSantri) {
+        showNotif('Silakan pilih siswa terlebih dahulu', 'error');
+        return;
+      }
+      if (!namaMapel) {
+        showNotif('Silakan pilih nama mata pelajaran', 'error');
+        return;
+      }
+      if (!namaGuru) {
+        showNotif('Silakan pilih nama guru pengampu', 'error');
+        return;
+      }
+
+      const payload = {
+        nama_ujian: namaUjian,
+        bulan: bulan,
+        nama_mapel: namaMapel,
+        nama_guru: namaGuru,
+        nis: currentSantri.nis,
+        nama_siswa: currentSantri.nama,
+        nilai: parseFloat(nilai)
+      };
+
+      setSubmitting(true);
+      try {
+        const response = await fetch(`${SUPABASE_URL}/rest/v1/daftar_nilai`, {
+          method: 'POST',
+          headers: apiHeaders,
+          body: JSON.stringify([payload])
+        });
+
+        if (response.ok) {
+          const inserted = await response.json();
+          setNilais([inserted[0], ...nilais]);
+          setNilai('');
+          showNotif(`Nilai ${currentSantri.nama} berhasil disimpan!`);
+        } else {
+          showNotif('Gagal menyimpan nilai ke database Supabase', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showNotif('Terjadi kesalahan saat input nilai', 'error');
+      } finally {
+        setSubmitting(false);
+      }
+    };
+
+    // Export tabel ledger ke Excel
+    const handleExportLedgerExcel = async () => {
+      try {
+        const XLSX = await loadXLSX();
+        const exportData = filteredNilais.map((item, idx) => ({
+          "No": idx + 1,
+          "Nama Ujian": item.nama_ujian,
+          "Bulan": item.bulan,
+          "Mata Pelajaran": item.nama_mapel,
+          "Guru Pengampu": item.nama_guru,
+          "NIS": item.nis,
+          "Nama Siswa": item.nama_siswa,
+          "Nilai": item.nilai
+        }));
+
+        const ws = XLSX.utils.json_to_sheet(exportData);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Ledger Nilai");
+        XLSX.writeFile(wb, `Ledger_Nilai_${Date.now()}.xlsx`);
+        showNotif('Berhasil mengunduh rekap ledger ke Excel!');
+      } catch (err) {
+        console.error(err);
+        showNotif('Gagal mengekspor file Excel', 'error');
+      }
+    };
+
+    // Filter daftar nilai
+    const filteredNilais = useMemo(() => {
+      return nilais.filter(item => {
+        const matchSearch = (item.nama_siswa || '').toLowerCase().includes(searchLedger.toLowerCase()) || 
+                            (item.nis || '').includes(searchLedger);
+        const matchUjian = filterUjian === 'ALL' || item.nama_ujian === filterUjian;
+        const matchMapel = filterMapel === 'ALL' || item.nama_mapel === filterMapel;
+        return matchSearch && matchUjian && matchMapel;
+      });
+    }, [nilais, searchLedger, filterUjian, filterMapel]);
+
+    // List unik untuk dropdown filter
+    const uniqueUjian = useMemo(() => [...new Set(nilais.map(n => n.nama_ujian).filter(Boolean))], [nilais]);
+    const uniqueMapelInNilai = useMemo(() => [...new Set(nilais.map(n => n.nama_mapel).filter(Boolean))], [nilais]);
+
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h2 className="text-2xl font-bold text-slate-800">Input & Ledger Nilai Siswa</h2>
+            <p className="text-slate-500 text-sm">Entri nilai akademik dan rekapitulasi data ledger</p>
+          </div>
+          <button 
+            onClick={handleExportLedgerExcel}
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg flex items-center shadow-sm transition-colors"
+          >
+            <FileSpreadsheet size={16} className="mr-2" /> Download Rekap Excel
+          </button>
+        </div>
+
+        {/* Panel Input Nilai */}
+        <div className="bg-white rounded-2xl shadow-sm border border-slate-100 p-6">
+          <form onSubmit={handleSaveNilai} className="space-y-5">
+            {/* Header Ujian & Relasi Guru/Mapel */}
+            <div className="p-4 bg-slate-50 border border-slate-200/70 rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Nama Ujian</label>
+                <input 
+                  required
+                  type="text" 
+                  value={namaUjian}
+                  onChange={e => setNamaUjian(e.target.value)}
+                  placeholder="Contoh: Penilaian Harian 1"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Bulan / Periode</label>
+                <input 
+                  required
+                  type="text" 
+                  value={bulan}
+                  onChange={e => setBulan(e.target.value)}
+                  placeholder="Contoh: September 2026"
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Mata Pelajaran</label>
+                <select 
+                  required
+                  value={namaMapel}
+                  onChange={e => setNamaMapel(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+                  <option value="">-- Pilih Mata Pelajaran --</option>
+                  {mapels.map(m => (
+                    <option key={m.id} value={m.nama_mapel}>
+                      {m.kode_mapel} - {m.nama_mapel}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Guru Pengampu</label>
+                <select 
+                  required
+                  value={namaGuru}
+                  onChange={e => setNamaGuru(e.target.value)}
+                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none"
+                >
+                  <option value="">-- Pilih Guru --</option>
+                  {gurus.map(g => (
+                    <option key={g.id} value={g.nama_guru}>
+                      {g.nama_guru}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            {/* Input Siswa & Nilai */}
+            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
+              <div className="md:col-span-8">
+                <label className="block text-xs font-bold text-slate-600 uppercase mb-1">Pilih Siswa (Dari Master Santri) *</label>
+                <select 
+                  required
+                  value={selectedSantriId}
+                  onChange={e => setSelectedSantriId(e.target.value)}
+                  className="w-full px-3 py-2.5 border border-slate-200 rounded-lg text-sm bg-white focus:ring-2 focus:ring-blue-500 outline-none font-medium"
+                >
+                  <option value="">-- Pilih Nama Siswa / Santri --</option>
+                  {santris.map(s => (
+                    <option key={s.id} value={s.id}>
+                      [{s.nis}] {s.nama} - Kelas {s.kelas}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="md:col-span-4">
+                <label className="block text-xs font-bold text-blue-700 uppercase mb-1">Nilai (Skala 0 - 100) *</label>
+                <div className="flex gap-2">
+                  <input 
+                    required
+                    type="number" 
+                    step="0.01"
+                    min="0"
+                    max="100"
+                    value={nilai}
+                    onChange={e => setNilai(e.target.value)}
+                    placeholder="85.5"
+                    className="w-full px-3 py-2 border-2 border-blue-300 rounded-lg text-lg font-bold text-center text-blue-900 focus:ring-2 focus:ring-blue-500 outline-none"
+                  />
+                  <button 
+                    type="submit" 
+                    disabled={submitting}
+                    className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold rounded-lg flex items-center shadow-md transition-colors whitespace-nowrap"
+                  >
+                    <Save size={16} className="mr-1.5" />
+                    <span>{submitting ? 'Menyimpan...' : 'Simpan Nilai'}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        {/* Filter Tabel Ledger */}
+        <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100 flex flex-col md:flex-row gap-3 items-center justify-between">
+          <div className="relative w-full md:w-72">
+            <Search className="absolute left-3 top-2.5 text-slate-400" size={18} />
+            <input 
+              type="text" 
+              placeholder="Cari siswa atau NIS di ledger..." 
+              value={searchLedger}
+              onChange={(e) => setSearchLedger(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto">
+            <select 
+              value={filterUjian} 
+              onChange={e => setFilterUjian(e.target.value)}
+              className="border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+            >
+              <option value="ALL">Semua Ujian</option>
+              {uniqueUjian.map(u => <option key={u} value={u}>{u}</option>)}
+            </select>
+
+            <select 
+              value={filterMapel} 
+              onChange={e => setFilterMapel(e.target.value)}
+              className="border border-slate-200 rounded-lg py-2 px-3 text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+            >
+              <option value="ALL">Semua Mapel</option>
+              {uniqueMapelInNilai.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </div>
+        </div>
+
+        {/* Tabel Rekap Ledger */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="min-w-full divide-y divide-slate-100 text-sm">
+              <thead className="bg-slate-50">
+                <tr className="text-slate-500 text-xs uppercase font-semibold text-left">
+                  <th className="py-3.5 px-4">Nama Siswa</th>
+                  <th className="py-3.5 px-4">NIS</th>
+                  <th className="py-3.5 px-4">Ujian & Periode</th>
+                  <th className="py-3.5 px-4">Mata Pelajaran</th>
+                  <th className="py-3.5 px-4">Guru</th>
+                  <th className="py-3.5 px-4 text-center">Nilai</th>
+                  <th className="py-3.5 px-4 text-right">Aksi</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {filteredNilais.map((item) => (
+                  <tr key={item.id} className="hover:bg-slate-50 transition-colors">
+                    <td className="py-3 px-4 font-bold text-slate-800">{item.nama_siswa}</td>
+                    <td className="py-3 px-4 font-mono text-slate-500">{item.nis}</td>
+                    <td className="py-3 px-4">
+                      <div className="font-medium text-slate-700">{item.nama_ujian}</div>
+                      <div className="text-xs text-slate-400">{item.bulan}</div>
+                    </td>
+                    <td className="py-3 px-4 font-semibold text-blue-600">{item.nama_mapel}</td>
+                    <td className="py-3 px-4 text-slate-600">{item.nama_guru}</td>
+                    <td className="py-3 px-4 text-center">
+                      <span className="inline-block px-3 py-1 bg-blue-50 text-blue-700 font-bold rounded-full text-sm">
+                        {Number(item.nilai).toFixed(2)}
+                      </span>
+                    </td>
+                    <td className="py-3 px-4 text-right">
+                      <button 
+                        onClick={() => setDeleteConfirm({ open: true, type: 'nilai', id: item.id, title: `${item.nama_siswa} (${item.nama_mapel})` })}
+                        className="text-rose-500 hover:text-rose-700 p-1.5 hover:bg-rose-50 rounded-lg transition-colors"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+                {filteredNilais.length === 0 && (
+                  <tr>
+                    <td colSpan="7" className="py-8 text-center text-slate-400">Belum ada rekaman nilai pada filter yang dipilih.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="flex h-screen bg-slate-50 text-slate-800 font-sans">
+      
+      {/* Sidebar Navigasi */}
+      <aside className="w-64 bg-slate-900 text-white flex flex-col shadow-xl z-20">
+        <div className="p-6 flex items-center space-x-3 border-b border-slate-800">
+          <div className="bg-blue-600 p-2.5 rounded-xl shadow-md">
+            <GraduationCap size={24} className="text-white" />
+          </div>
+          <div>
+            <span className="text-lg font-black tracking-wide block leading-none">EduLedger</span>
+            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Online Database</span>
+          </div>
+        </div>
+
+        <nav className="flex-1 overflow-y-auto py-5 px-3 space-y-1">
+          <button 
+            onClick={() => setActiveMenu('dashboard')} 
+            className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all ${
+              activeMenu === 'dashboard' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <LayoutDashboard size={18} className="mr-3" /> Dashboard
+          </button>
+
+          <div className="pt-4 pb-2 px-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+            Master Data
+          </div>
+
+          <button 
+            onClick={() => setActiveMenu('santri')} 
+            className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all ${
+              activeMenu === 'santri' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <UserCheck size={18} className="mr-3" /> Data Santri
+          </button>
+
+          <button 
+            onClick={() => setActiveMenu('guru')} 
+            className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all ${
+              activeMenu === 'guru' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <Users size={18} className="mr-3" /> Data Guru
+          </button>
+
+          <button 
+            onClick={() => setActiveMenu('mapel')} 
+            className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all ${
+              activeMenu === 'mapel' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <BookOpen size={18} className="mr-3" /> Data Mapel
+          </button>
+
+          <div className="pt-4 pb-2 px-4 text-[11px] font-bold text-slate-500 uppercase tracking-wider">
+            Penilaian
+          </div>
+
+          <button 
+            onClick={() => setActiveMenu('nilai')} 
+            className={`w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all ${
+              activeMenu === 'nilai' ? 'bg-blue-600 text-white shadow-md' : 'text-slate-400 hover:text-white hover:bg-slate-800'
+            }`}
+          >
+            <FileText size={18} className="mr-3" /> Input & Ledger Nilai
+          </button>
+        </nav>
+
+        {/* Footer info */}
+        <div className="p-4 bg-slate-950 border-t border-slate-800/80 text-xs text-slate-500 text-center">
+          <div>Supabase Connected</div>
+          <div className="text-[10px] text-slate-600 mt-0.5">vpdlfjbkfcuukyykrhua</div>
+        </div>
+      </aside>
+
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        
+        {/* Header atas */}
+        <header className="bg-white border-b border-slate-200/80 px-8 py-4 flex items-center justify-between z-10">
+          <div className="flex items-center space-x-3">
+            <span className="text-xl font-bold text-slate-800 capitalize">
+              {activeMenu === 'dashboard' && 'Dashboard Ringkasan'}
+              {activeMenu === 'santri' && 'Master Data Santri (public.santri)'}
+              {activeMenu === 'guru' && 'Kelola Pendidik & Guru'}
+              {activeMenu === 'mapel' && 'Mata Pelajaran Sekolah'}
+              {activeMenu === 'nilai' && 'Daftar Nilai & Ledger Siswa'}
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center px-3 py-1 bg-emerald-50 text-emerald-700 text-xs font-semibold rounded-full border border-emerald-200">
+              <span className="w-2 h-2 rounded-full bg-emerald-500 mr-2 animate-pulse"></span>
+              Online API
+            </div>
+          </div>
+        </header>
+
+        {/* Toast Notifikasi Dinamis */}
+        {notification.show && (
+          <div className="fixed top-5 right-8 z-50 animate-fade-in">
+            <div className={`flex items-center px-4 py-3 rounded-xl shadow-xl border text-sm font-semibold ${
+              notification.type === 'error' 
+                ? 'bg-rose-50 border-rose-200 text-rose-800' 
+                : 'bg-emerald-50 border-emerald-200 text-emerald-800'
+            }`}>
+              {notification.type === 'error' ? (
+                <AlertCircle size={18} className="mr-2 text-rose-600 flex-shrink-0" />
+              ) : (
+                <CheckCircle2 size={18} className="mr-2 text-emerald-600 flex-shrink-0" />
+              )}
+              <span>{notification.message}</span>
+            </div>
+          </div>
+        )}
+
+        {/* Modal Konfirmasi Hapus Data */}
+        {deleteConfirm.open && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
+            <div className="bg-white rounded-2xl shadow-2xl border border-slate-100 max-w-md w-full p-6 space-y-4">
+              <div className="flex justify-between items-start">
+                <div className="p-3 bg-rose-50 text-rose-600 rounded-xl">
+                  <AlertCircle size={24} />
+                </div>
+                <button 
+                  onClick={() => setDeleteConfirm({ open: false, type: '', id: null, title: '' })}
+                  className="text-slate-400 hover:text-slate-600"
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div>
+                <h4 className="text-lg font-bold text-slate-800">Konfirmasi Hapus Data</h4>
+                <p className="text-sm text-slate-500 mt-1">
+                  Apakah Anda yakin ingin menghapus data <span className="font-semibold text-slate-700">"{deleteConfirm.title}"</span> dari database Supabase? Tindakan ini tidak dapat dibatalkan.
+                </p>
+              </div>
+
+              <div className="flex justify-end space-x-3 pt-2">
+                <button 
+                  onClick={() => setDeleteConfirm({ open: false, type: '', id: null, title: '' })}
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold rounded-lg transition-colors"
+                >
+                  Batal
+                </button>
+                <button 
+                  onClick={executeDelete}
+                  className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold rounded-lg shadow-sm transition-colors"
+                >
+                  Hapus Permanen
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* View Konten Aktif */}
+        <main className="flex-1 overflow-y-auto p-8 bg-slate-50/50">
+          <div className="max-w-7xl mx-auto">
+            {activeMenu === 'dashboard' && <DashboardView />}
+            {activeMenu === 'santri' && <DataSantriView />}
+            {activeMenu === 'guru' && <DataGuruView />}
+            {activeMenu === 'mapel' && <DataMapelView />}
+            {activeMenu === 'nilai' && <InputNilaiView />}
+          </div>
+        </main>
+
+      </div>
+    </div>
+  );
+}
