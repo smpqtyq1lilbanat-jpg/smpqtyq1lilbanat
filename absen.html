@@ -118,13 +118,23 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Pilih Bulan</label>
-                    <input type="month" id="rekap-bulan" onchange="generateMonthlyReport()" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500">
+                    <input type="month" id="rekap-bulan" onchange="fetchMonthlyAttendanceAndReport()" class="w-full p-2.5 bg-slate-50 border border-slate-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500">
                 </div>
                 <div class="flex items-end">
                     <button onclick="downloadCSV()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2.5 rounded-lg text-sm transition flex items-center justify-center gap-2 shadow">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                         <span>Unduh Rekap CSV</span>
                     </button>
+                </div>
+            </div>
+
+            <!-- Petunjuk filter bulan dan pintasan cepat -->
+            <div id="rekap-info-bar" class="mb-4 px-4 py-3 rounded-lg bg-slate-50 text-slate-600 text-xs border border-slate-200 flex flex-wrap items-center justify-between gap-2">
+                <span>💡 Pintasan Pilih Bulan Data:</span>
+                <div class="flex items-center gap-2">
+                    <button onclick="setQuickMonth('2026-07')" class="px-2.5 py-1 bg-white border border-slate-300 rounded hover:bg-blue-50 hover:text-blue-600 font-semibold transition">Juli 2026</button>
+                    <button onclick="setQuickMonth('2026-08')" class="px-2.5 py-1 bg-white border border-slate-300 rounded hover:bg-blue-50 hover:text-blue-600 font-semibold transition">Agustus 2026</button>
+                    <button onclick="setQuickMonth('2026-09')" class="px-2.5 py-1 bg-white border border-slate-300 rounded hover:bg-blue-50 hover:text-blue-600 font-semibold transition">September 2026</button>
                 </div>
             </div>
             
@@ -292,9 +302,11 @@
         let parsedExcelRows = [];
 
         window.onload = async function() {
-            // Set tanggal default hari ini
+            // Set default tanggal hari ini (September 2026)
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('input-tanggal').value = today;
+            
+            // Set default bulan rekap ke September 2026 (atau bulan berjalan)
             document.getElementById('rekap-bulan').value = today.substring(0, 7);
 
             if (!_supabase) {
@@ -334,28 +346,46 @@
             document.getElementById('status-bar').classList.add('hidden');
         }
 
-        // Memuat master santri dan riwayat presensi dari Supabase
+        // Memuat master santri dari Supabase
         async function loadInitialData() {
             try {
                 showStatusBar("Mengambil data santri dari tabel 'santri'...");
 
-                // 1. Ambil data dari tabel santri
-                const { data: santriData, error: santriErr } = await _supabase
-                    .from('santri')
-                    .select('nis, nama, kelas')
-                    .order('kelas', { ascending: true })
-                    .order('nama', { ascending: true });
+                let allSantri = [];
+                let from = 0;
+                const pageSize = 1000;
+                let hasMore = true;
 
-                if (santriErr) throw santriErr;
+                while (hasMore) {
+                    const { data: santriData, error: santriErr } = await _supabase
+                        .from('santri')
+                        .select('nis, nama, kelas')
+                        .order('kelas', { ascending: true })
+                        .order('nama', { ascending: true })
+                        .range(from, from + pageSize - 1);
 
-                if (!santriData || santriData.length === 0) {
+                    if (santriErr) throw santriErr;
+
+                    if (santriData && santriData.length > 0) {
+                        allSantri.push(...santriData);
+                        if (santriData.length < pageSize) {
+                            hasMore = false;
+                        } else {
+                            from += pageSize;
+                        }
+                    } else {
+                        hasMore = false;
+                    }
+                }
+
+                if (allSantri.length === 0) {
                     showStatusBar("Tabel 'santri' kosong atau tidak ada data yang ditemukan.", "warning");
                     return;
                 }
 
-                masterStudents = santriData.map(s => ({
+                masterStudents = allSantri.map(s => ({
                     id: String(s.nis).trim(),
-                    name: s.nama,
+                    name: String(s.nama).trim(),
                     class: String(s.kelas).trim()
                 }));
 
@@ -373,28 +403,84 @@
                     rekapKelasSelect.innerHTML += `<option value="${c}">Kelas ${c}</option>`;
                 });
 
-                // 2. Ambil seluruh catatan dari tabel presensi_siswa
-                showStatusBar("Mengambil riwayat absensi dari tabel 'presensi_siswa'...");
-                const { data: presensiData, error: presensiErr } = await _supabase
-                    .from('presensi_siswa')
-                    .select('tanggal, nis, status, kelas');
+                hideStatusBar();
+                await loadAttendanceForm();
+                await fetchMonthlyAttendanceAndReport();
 
-                if (presensiErr) throw presensiErr;
+            } catch (err) {
+                console.error("Error memuat data:", err);
+                showStatusBar("Terjadi kegagalan memuat data santri: " + (err.message || err), "error");
+            }
+        }
 
-                dbAttendance = {};
-                (presensiData || []).forEach(r => {
+        // Shortcut cepat ubah bulan
+        function setQuickMonth(yearMonth) {
+            document.getElementById('rekap-bulan').value = yearMonth;
+            fetchMonthlyAttendanceAndReport();
+        }
+
+        // Ambil data presensi khusus bulan yang dipilih dengan pagination tanpa batas 1.000 baris
+        async function fetchMonthlyAttendanceAndReport() {
+            const selectedMonth = document.getElementById('rekap-bulan').value;
+            if (!selectedMonth || !_supabase) return;
+
+            showStatusBar(`Memuat riwayat presensi untuk bulan ${selectedMonth}...`);
+
+            // Hitung tanggal awal dan tanggal akhir bulan dengan presisi kalender (misal Sept = 30 hari)
+            const [yearStr, monthStr] = selectedMonth.split('-');
+            const year = parseInt(yearStr, 10);
+            const month = parseInt(monthStr, 10);
+            const lastDay = new Date(year, month, 0).getDate(); // Menghitung tanggal 28, 29, 30, atau 31 dengan tepat
+            
+            const startDate = `${selectedMonth}-01`;
+            const endDate = `${selectedMonth}-${String(lastDay).padStart(2, '0')}`;
+
+            try {
+                let allPresensi = [];
+                let from = 0;
+                const batchSize = 1000;
+                let hasMore = true;
+
+                // Loop pagination untuk mengambil SEMUA baris di bulan tersebut (melewati limit 1000 Supabase)
+                while (hasMore) {
+                    const { data: chunk, error: presensiErr } = await _supabase
+                        .from('presensi_siswa')
+                        .select('tanggal, nis, status, kelas')
+                        .gte('tanggal', startDate)
+                        .lte('tanggal', endDate)
+                        .range(from, from + batchSize - 1);
+
+                    if (presensiErr) throw presensiErr;
+
+                    if (chunk && chunk.length > 0) {
+                        allPresensi.push(...chunk);
+                        if (chunk.length < batchSize) {
+                            hasMore = false;
+                        } else {
+                            from += batchSize;
+                        }
+                    } else {
+                        hasMore = false;
+                    }
+                }
+
+                // Bersihkan cache presensi bulan ini dan perbarui dengan seluruh data baru
+                Object.keys(dbAttendance).forEach(key => {
+                    if (key.startsWith(selectedMonth)) delete dbAttendance[key];
+                });
+
+                allPresensi.forEach(r => {
                     const tgl = String(r.tanggal).split('T')[0];
                     if (!dbAttendance[tgl]) dbAttendance[tgl] = {};
                     dbAttendance[tgl][String(r.nis).trim()] = r.status;
                 });
 
                 hideStatusBar();
-                loadAttendanceForm();
                 generateMonthlyReport();
 
             } catch (err) {
-                console.error("Error memuat data:", err);
-                showStatusBar("Terjadi kegagalan memuat data: " + (err.message || err), "error");
+                console.error("Gagal mengambil data bulan terpilih:", err);
+                showStatusBar("Gagal memuat absensi bulan " + selectedMonth + ": " + (err.message || err), "error");
             }
         }
 
@@ -419,7 +505,7 @@
                 loadAttendanceForm();
             } else if (tabId === 'rekap-tab') {
                 btnRekap.className = activeClass;
-                generateMonthlyReport();
+                fetchMonthlyAttendanceAndReport();
             } else if (tabId === 'import-tab') {
                 btnImport.className = activeClass;
             }
@@ -609,29 +695,24 @@
                 }
 
                 showStatusBar(`Sukses! Sebanyak ${insertedCount} data absensi berhasil masuk ke tabel 'presensi_siswa'.`, "success");
-                btn.innerHTML = `<span>✓ Selesai Terunggah</span>`;
-                btn.className = "bg-emerald-600 text-white font-semibold px-6 py-2.5 rounded-lg text-sm shadow";
-
-                // Refresh data lokal untuk menyelaraskan form dan rekap
-                await loadInitialData();
-
+                
                 setTimeout(() => {
-                    btn.disabled = false;
-                    btn.innerHTML = `<span>Unggah Semua ke Supabase</span>`;
-                    btn.className = "bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-lg text-sm transition shadow flex items-center gap-2";
                     progressContainer.classList.add('hidden');
-                }, 3500);
+                    btn.disabled = false;
+                    btn.innerHTML = `<svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg><span>Unggah Semua ke Supabase</span>`;
+                    fetchMonthlyAttendanceAndReport();
+                }, 1500);
 
             } catch (err) {
-                console.error("Gagal unggah ke Supabase:", err);
-                showStatusBar("Gagal mengunggah data: " + (err.message || err), "error");
+                console.error("Gagal mengunggah ke Supabase:", err);
+                showStatusBar("Gagal mengunggah ke Supabase: " + (err.message || err), "error");
                 btn.disabled = false;
-                btn.innerHTML = `<span>Coba Unggah Lagi</span>`;
+                btn.innerHTML = `<span>Unggah Semua ke Supabase</span>`;
             }
         }
 
-        // Menampilkan Form Absensi berdasarkan Kelas & Tanggal
-        function loadAttendanceForm() {
+        // Menampilkan Form Absensi dan membaca data yang sudah tersimpan di database untuk tanggal & kelas tersebut
+        async function loadAttendanceForm() {
             const selectedClass = document.getElementById('input-kelas').value;
             const selectedDate = document.getElementById('input-tanggal').value;
             const tableBody = document.getElementById('student-list-table');
@@ -641,8 +722,6 @@
                 return;
             }
 
-            tableBody.innerHTML = '';
-            const dailyData = dbAttendance[selectedDate] || {};
             const classStudents = masterStudents.filter(s => s.class === selectedClass);
 
             if (classStudents.length === 0) {
@@ -650,9 +729,36 @@
                 return;
             }
 
+            // Jika di memori lokal belum ada tanggal ini, ambil langsung dari Supabase untuk kelas dan tanggal tersebut
+            if (!dbAttendance[selectedDate] || Object.keys(dbAttendance[selectedDate]).length === 0) {
+                try {
+                    const { data: dayData, error } = await _supabase
+                        .from('presensi_siswa')
+                        .select('nis, nama_siswa, status')
+                        .eq('tanggal', selectedDate)
+                        .eq('kelas', selectedClass);
+
+                    if (!error && dayData && dayData.length > 0) {
+                        if (!dbAttendance[selectedDate]) dbAttendance[selectedDate] = {};
+                        dayData.forEach(item => {
+                            const nisKey = String(item.nis || '').trim();
+                            const nameKey = String(item.nama_siswa || '').trim().toUpperCase();
+                            if (nisKey) dbAttendance[selectedDate][nisKey] = item.status;
+                            if (nameKey) dbAttendance[selectedDate][nameKey] = item.status;
+                        });
+                    }
+                } catch (e) {
+                    console.warn("Gagal cek data harian:", e);
+                }
+            }
+
+            tableBody.innerHTML = '';
+            const dailyData = dbAttendance[selectedDate] || {};
+
             let no = 1;
             classStudents.forEach(student => {
-                const currentStatus = dailyData[student.id] || "Hadir";
+                // Cari status berdasarkan NIS atau Nama Siswa
+                const currentStatus = dailyData[student.id] || dailyData[student.name.toUpperCase()] || "Hadir";
                 const row = document.createElement('tr');
                 row.className = "hover:bg-slate-50 transition border-b border-slate-100";
                 const radioClass = "w-4 h-4 cursor-pointer accent-blue-600";
@@ -669,82 +775,69 @@
             });
         }
 
-        // Tombol pintas ubah semua santri jadi status tertentu
-        function setAllRadio(statusValue) {
-            const radios = document.querySelectorAll(`input[type="radio"][value="${statusValue}"]`);
-            radios.forEach(r => r.checked = true);
-        }
+        // Ambil data presensi khusus bulan yang dipilih dengan pagination tanpa batas 1.000 baris
+        async function fetchMonthlyAttendanceAndReport() {
+            const selectedMonth = document.getElementById('rekap-bulan').value;
+            if (!selectedMonth || !_supabase) return;
 
-        // Menyimpan data absensi harian ke Supabase
-        async function saveAttendance() {
-            if (!_supabase) {
-                showStatusBar("Konfigurasi Supabase belum disetel!", "error");
-                return;
-            }
+            showStatusBar(`Memuat riwayat presensi untuk bulan ${selectedMonth}...`);
 
-            const selectedClass = document.getElementById('input-kelas').value;
-            const selectedDate = document.getElementById('input-tanggal').value;
-            const btn = document.getElementById('btn-save');
-
-            if (!selectedClass || !selectedDate) {
-                showStatusBar("Silakan pilih kelas dan tanggal yang valid terlebih dahulu.", "warning");
-                return;
-            }
-
-            btn.disabled = true;
-            btn.innerHTML = `<div class="loader !w-4 !h-4 !border-2"></div> <span>Menyimpan...</span>`;
-
-            const classStudents = masterStudents.filter(s => s.class === selectedClass);
-            let recordsToSave = [];
-
-            if (!dbAttendance[selectedDate]) dbAttendance[selectedDate] = {};
-
-            classStudents.forEach(student => {
-                const radioChecked = document.querySelector(`input[name="status-${student.id}"]:checked`);
-                const val = radioChecked ? radioChecked.value : "Hadir";
-                recordsToSave.push({
-                    tanggal: selectedDate,
-                    kelas: selectedClass,
-                    nis: student.id,
-                    nama_siswa: student.name,
-                    status: val
-                });
-                dbAttendance[selectedDate][student.id] = val;
-            });
+            const [yearStr, monthStr] = selectedMonth.split('-');
+            const year = parseInt(yearStr, 10);
+            const month = parseInt(monthStr, 10);
+            const lastDay = new Date(year, month, 0).getDate();
+            
+            const startDate = `${selectedMonth}-01`;
+            const endDate = `${selectedMonth}-${String(lastDay).padStart(2, '0')}`;
 
             try {
-                // Hapus data presensi kelas ini di tanggal ini terlebih dahulu (idempotent / penggantian bersih)
-                const { error: delError } = await _supabase
-                    .from('presensi_siswa')
-                    .delete()
-                    .eq('tanggal', selectedDate)
-                    .eq('kelas', selectedClass);
+                let allPresensi = [];
+                let from = 0;
+                const batchSize = 1000;
+                let hasMore = true;
 
-                if (delError) throw delError;
+                while (hasMore) {
+                    const { data: chunk, error: presensiErr } = await _supabase
+                        .from('presensi_siswa')
+                        .select('tanggal, nis, nama_siswa, status, kelas')
+                        .gte('tanggal', startDate)
+                        .lte('tanggal', endDate)
+                        .range(from, from + batchSize - 1);
 
-                // Insert batch data baru
-                const { error: insError } = await _supabase
-                    .from('presensi_siswa')
-                    .insert(recordsToSave);
+                    if (presensiErr) throw presensiErr;
 
-                if (insError) throw insError;
+                    if (chunk && chunk.length > 0) {
+                        allPresensi.push(...chunk);
+                        if (chunk.length < batchSize) {
+                            hasMore = false;
+                        } else {
+                            from += batchSize;
+                        }
+                    } else {
+                        hasMore = false;
+                    }
+                }
 
-                btn.innerHTML = `<span>✓ Berhasil Tersimpan!</span>`;
-                btn.className = "bg-blue-600 text-white font-semibold px-6 py-2 rounded-lg text-sm transition shadow";
+                // Bersihkan cache presensi bulan ini dan perbarui
+                Object.keys(dbAttendance).forEach(key => {
+                    if (key.startsWith(selectedMonth)) delete dbAttendance[key];
+                });
 
-                showStatusBar(`Presensi kelas ${selectedClass} tanggal ${selectedDate} berhasil disimpan ke Supabase!`, "success");
+                allPresensi.forEach(r => {
+                    const tgl = String(r.tanggal).split('T')[0];
+                    if (!dbAttendance[tgl]) dbAttendance[tgl] = {};
+                    const nisKey = String(r.nis || '').trim();
+                    const nameKey = String(r.nama_siswa || '').trim().toUpperCase();
+                    if (nisKey) dbAttendance[tgl][nisKey] = r.status;
+                    if (nameKey) dbAttendance[tgl][nameKey] = r.status;
+                });
 
-                setTimeout(() => {
-                    btn.innerHTML = `<span>Simpan ke Supabase</span>`;
-                    btn.className = "bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 py-2 rounded-lg text-sm transition shadow flex items-center gap-2";
-                    btn.disabled = false;
-                }, 2500);
+                hideStatusBar();
+                generateMonthlyReport();
 
             } catch (err) {
-                console.error("Gagal menyimpan ke Supabase:", err);
-                showStatusBar("Gagal menyimpan absensi: " + (err.message || err), "error");
-                btn.innerHTML = `<span>Simpan ke Supabase</span>`;
-                btn.disabled = false;
+                console.error("Gagal mengambil data bulan terpilih:", err);
+                showStatusBar("Gagal memuat absensi bulan " + selectedMonth + ": " + (err.message || err), "error");
             }
         }
 
@@ -770,7 +863,8 @@
             masterStudents.forEach(student => {
                 const sClass = student.class;
                 activeDatesInMonth.forEach(date => {
-                    const status = dbAttendance[date]?.[student.id];
+                    // Cari status berdasarkan NIS atau Nama
+                    const status = dbAttendance[date]?.[student.id] || dbAttendance[date]?.[student.name.toUpperCase()];
                     if (status) {
                         globalStats.Total++;
                         if (status === 'Hadir') globalStats.H++;
@@ -830,7 +924,7 @@
                 let countHadir = 0, countSakit = 0, countIzin = 0, countAlpha = 0, totalHari = 0;
 
                 activeDatesInMonth.forEach(date => {
-                    const status = dbAttendance[date]?.[student.id];
+                    const status = dbAttendance[date]?.[student.id] || dbAttendance[date]?.[student.name.toUpperCase()];
                     if (status) {
                         totalHari++;
                         if (status === 'Hadir') countHadir++;
