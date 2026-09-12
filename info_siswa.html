@@ -11,7 +11,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -25,7 +25,6 @@
     <!-- Chart.js untuk Grafik -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Tailwind Configuration -->
     <script>
         tailwind.config = {
             theme: {
@@ -73,7 +72,6 @@
             background-color: #f9fafb;
         }
         
-        /* Loader Spinner */
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #15803d;
@@ -87,13 +85,12 @@
             100% { transform: rotate(360deg); }
         }
 
-        .fade-in { animation: fadeIn 0.5s ease-in-out; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
+            from { opacity: 0; transform: translateY(12px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Styling tambahan untuk baris tabel agar lebih lega */
         .list-row {
             transition: all 0.2s ease;
         }
@@ -131,7 +128,6 @@
 
     <!-- SECTION 1: LOGIN (Ditampilkan awal) -->
     <div id="loginSection" class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 relative overflow-hidden fade-in">
-        <!-- Abstract BG -->
         <div class="absolute inset-0 z-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
 
         <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-100 relative z-10 overflow-hidden transform transition-all">
@@ -143,7 +139,7 @@
                     <i class="fas fa-users text-4xl text-primary-700"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-white font-serif relative z-10">Selamat Datang, Bapak/Ibu</h2>
-                <p class="text-primary-100 text-sm mt-3 relative z-10 leading-relaxed">Silakan masukkan NIS putri Anda untuk mengakses rekapitulasi akademik & asrama.</p>
+                <p class="text-primary-100 text-sm mt-3 relative z-10 leading-relaxed">Silakan masukkan NIS putri Anda untuk mengakses rekapitulasi akademik, kehadiran & asrama.</p>
             </div>
             
             <div class="p-8 sm:p-10">
@@ -168,7 +164,7 @@
                     <div class="loader mb-4"></div>
                     <p class="text-sm text-primary-700 font-semibold animate-pulse mt-4 text-center">
                         Memuat data santri...<br>
-                        <span class="text-xs font-normal text-gray-500">Mengkoneksikan ke Supabase & Google Sheets</span>
+                        <span class="text-xs font-normal text-gray-500">Mengkoneksikan ke Supabase & Cloud Storage</span>
                     </p>
                 </div>
                 
@@ -187,7 +183,6 @@
         <!-- Header Banner -->
         <div class="bg-gradient-to-r from-primary-900 to-primary-800 text-white py-12 md:py-16 relative border-b-4 border-secondary-500 overflow-hidden">
             <div class="absolute inset-0 z-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
-            <!-- Decorative circles -->
             <div class="absolute -top-24 -right-24 w-64 h-64 bg-white opacity-5 rounded-full blur-2xl"></div>
             <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-white opacity-5 rounded-full blur-2xl"></div>
 
@@ -207,19 +202,22 @@
         </div>
 
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full -mt-8 relative z-20">
-            <!-- Tab Navigation (Ditambah menu Tabungan) -->
-            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-8 flex flex-wrap sm:flex-nowrap">
-                <button onclick="switchTab('tab-nilai')" id="btn-tab-nilai" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-active flex items-center justify-center">
-                    <i class="fas fa-chart-line mr-2 text-lg"></i><span class="hidden sm:inline">Rapor</span> Akademik
+            <!-- Tab Navigation (5 Menu: Nilai, Tahfizh, Disiplin, Tabungan, dan Absensi) -->
+            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-8 grid grid-cols-2 sm:grid-cols-5 divide-x divide-y sm:divide-y-0 divide-gray-100">
+                <button onclick="switchTab('tab-nilai')" id="btn-tab-nilai" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-active flex items-center justify-center">
+                    <i class="fas fa-chart-line mr-1.5 sm:mr-2 text-base sm:text-lg"></i><span class="hidden md:inline">Rapor</span> Akademik
                 </button>
-                <button onclick="switchTab('tab-tahfizh')" id="btn-tab-tahfizh" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center border-l border-gray-100">
-                    <i class="fas fa-quran mr-2 text-lg"></i><span class="hidden sm:inline">Capaian</span> Tahfizh
+                <button onclick="switchTab('tab-tahfizh')" id="btn-tab-tahfizh" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center">
+                    <i class="fas fa-quran mr-1.5 sm:mr-2 text-base sm:text-lg"></i><span class="hidden md:inline">Capaian</span> Tahfizh
                 </button>
-                <button onclick="switchTab('tab-disiplin')" id="btn-tab-disiplin" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center border-l border-gray-100">
-                    <i class="fas fa-balance-scale mr-2 text-lg"></i>Sikap <span class="hidden sm:inline">& Disiplin</span>
+                <button onclick="switchTab('tab-disiplin')" id="btn-tab-disiplin" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center">
+                    <i class="fas fa-balance-scale mr-1.5 sm:mr-2 text-base sm:text-lg"></i>Sikap <span class="hidden md:inline">& Disiplin</span>
                 </button>
-                <button onclick="switchTab('tab-tabungan')" id="btn-tab-tabungan" class="flex-1 px-4 py-4 sm:py-5 text-sm sm:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center border-l border-gray-100">
-                    <i class="fas fa-piggy-bank mr-2 text-lg text-emerald-600"></i><span class="hidden sm:inline">Data</span> Tabungan
+                <button onclick="switchTab('tab-tabungan')" id="btn-tab-tabungan" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center">
+                    <i class="fas fa-piggy-bank mr-1.5 sm:mr-2 text-base sm:text-lg text-emerald-600"></i><span class="hidden md:inline">Data</span> Tabungan
+                </button>
+                <button onclick="switchTab('tab-absensi')" id="btn-tab-absensi" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center col-span-2 sm:col-span-1">
+                    <i class="fas fa-calendar-check mr-1.5 sm:mr-2 text-base sm:text-lg text-blue-600"></i>Presensi <span class="hidden md:inline">Santri</span>
                 </button>
             </div>
 
@@ -250,7 +248,6 @@
                     </div>
                     <div class="w-full md:w-1/3">
                         <select id="examSelector" onchange="renderSelectedExamGrades()" class="w-full px-5 py-3.5 bg-white border-2 border-primary-200 rounded-xl focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition font-bold text-primary-900 shadow-sm cursor-pointer appearance-none">
-                            <!-- Options dipopulasi oleh JS -->
                         </select>
                     </div>
                 </div>
@@ -333,7 +330,6 @@
                                 </tr>
                             </thead>
                             <tbody id="tahfizh-tbody" class="text-sm divide-y divide-gray-100">
-                                <!-- Data tahfizh -->
                             </tbody>
                         </table>
                     </div>
@@ -390,7 +386,6 @@
                                 </tr>
                             </thead>
                             <tbody id="disiplin-tbody" class="text-sm divide-y divide-gray-100">
-                                <!-- Data disiplin -->
                             </tbody>
                         </table>
                     </div>
@@ -431,7 +426,115 @@
                                 </tr>
                             </thead>
                             <tbody id="tabungan-tbody" class="text-sm divide-y divide-gray-100">
-                                <!-- Data tabungan akan di-render secara dinamis di sini -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB CONTENT: ABSENSI / KEHADIRAN (BARU) -->
+            <div id="tab-absensi" class="tab-content hidden fade-in">
+                <!-- Filter Bar Bulan Presensi -->
+                <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                    <div>
+                        <h3 class="font-bold text-gray-900 text-xl flex items-center">
+                            <i class="fas fa-calendar-alt text-blue-600 mr-2.5"></i> Rekap Presensi & Kehadiran
+                        </h3>
+                        <p class="text-sm text-gray-500 mt-1">Pantau kedisiplinan dan riwayat kehadiran harian ananda di madrasah.</p>
+                    </div>
+                    <div class="flex items-center gap-3 w-full sm:w-auto">
+                        <label for="filterBulanAbsensi" class="text-xs font-bold uppercase text-gray-500 whitespace-nowrap">Filter Bulan:</label>
+                        <select id="filterBulanAbsensi" onchange="filterAbsensiData()" class="w-full sm:w-auto px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-gray-800 outline-none transition">
+                            <option value="ALL">Semua Bulan (Kumulatif)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 5 Statistik Ringkasan Presensi -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+                    <!-- Persentase Kehadiran -->
+                    <div class="col-span-2 md:col-span-1 bg-white p-5 rounded-2xl shadow-md border border-gray-100 border-l-4 border-l-primary-600 flex flex-col justify-between">
+                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tingkat Kehadiran</span>
+                        <div class="my-2">
+                            <span id="stat-persen-hadir" class="text-3xl sm:text-4xl font-extrabold text-primary-700">100%</span>
+                        </div>
+                        <span class="text-[11px] text-gray-500 font-medium" id="stat-total-hari">0 Hari Tercatat</span>
+                    </div>
+
+                    <!-- Hadir (H) -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 border-l-4 border-l-emerald-500 flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Hadir (H)</span>
+                            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs"><i class="fas fa-check"></i></span>
+                        </div>
+                        <div class="my-2">
+                            <span id="stat-count-hadir" class="text-3xl font-extrabold text-emerald-600">0</span>
+                        </div>
+                        <span class="text-[11px] text-emerald-700 font-semibold">Tepat Waktu</span>
+                    </div>
+
+                    <!-- Sakit (S) -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 border-l-4 border-l-amber-500 flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Sakit (S)</span>
+                            <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-xs"><i class="fas fa-procedures"></i></span>
+                        </div>
+                        <div class="my-2">
+                            <span id="stat-count-sakit" class="text-3xl font-extrabold text-amber-600">0</span>
+                        </div>
+                        <span class="text-[11px] text-amber-700 font-semibold">Surat Keterangan</span>
+                    </div>
+
+                    <!-- Izin (I) -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 border-l-4 border-l-blue-500 flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Izin (I)</span>
+                            <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs"><i class="fas fa-envelope-open-text"></i></span>
+                        </div>
+                        <div class="my-2">
+                            <span id="stat-count-izin" class="text-3xl font-extrabold text-blue-600">0</span>
+                        </div>
+                        <span class="text-[11px] text-blue-700 font-semibold">Terkonfirmasi</span>
+                    </div>
+
+                    <!-- Alpha (A) -->
+                    <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 border-l-4 border-l-rose-500 flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Alpha (A)</span>
+                            <span class="w-6 h-6 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xs"><i class="fas fa-times"></i></span>
+                        </div>
+                        <div class="my-2">
+                            <span id="stat-count-alpha" class="text-3xl font-extrabold text-rose-600">0</span>
+                        </div>
+                        <span class="text-[11px] text-rose-700 font-semibold">Tanpa Keterangan</span>
+                    </div>
+                </div>
+
+                <!-- Log Riwayat Absensi Lengkap -->
+                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+                    <div class="px-6 py-5 border-b border-gray-100 bg-white flex justify-between items-center">
+                        <h3 class="font-bold text-gray-900 text-lg flex items-center">
+                            <i class="fas fa-clipboard-check mr-2 text-blue-600"></i>Log Riwayat Presensi Harian
+                        </h3>
+                        <span id="absensi-row-counter" class="bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full font-bold border border-blue-200">
+                            0 Pertemuan
+                        </span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse min-w-[650px]">
+                            <thead>
+                                <tr class="bg-gray-50 border-b border-gray-200 text-xs uppercase text-gray-500 font-bold tracking-wider">
+                                    <th class="py-4 px-6 w-16 text-center">No</th>
+                                    <th class="py-4 px-6 w-48">Tanggal & Hari</th>
+                                    <th class="py-4 px-6 w-32">Kelas</th>
+                                    <th class="py-4 px-6 w-36 text-center">Status Kehadiran</th>
+                                    <th class="py-4 px-6">Keterangan</th>
+                                </tr>
+                            </thead>
+                            <tbody id="absensi-tbody" class="text-sm divide-y divide-gray-100">
+                                <tr>
+                                    <td colspan="5" class="py-8 px-6 text-center text-gray-500 italic">Memuat data presensi santriwati...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -480,6 +583,9 @@
         let dataTabunganSiswa = null; 
         let riwayatTabungan = [];
 
+        // State Presensi Siswa dari Supabase
+        let absensiRecords = [];
+
         const loginSection = document.getElementById('loginSection');
         const dashboardSection = document.getElementById('dashboardSection');
         const navActions = document.getElementById('navActions');
@@ -494,7 +600,7 @@
             const now = new Date();
             const year = now.getFullYear();
             const month = now.getMonth(); 
-            if (month >= 7) {
+            if (month >= 6) {
                 return `${year}/${year + 1}`;
             } else {
                 return `${year - 1}/${year}`;
@@ -548,6 +654,26 @@
                         disiplinRecords = responseDisiplin.data || [];
                     }
                 } catch(e) { console.log("Disiplin error:", e); }
+
+                // 5. Tarik Presensi / Kehadiran Siswa (dari tabel presensi_siswa)
+                try {
+                    // Cari berdasarkan NIS atau Nama Siswa secara paralel
+                    const { data: dataAbsensi, error: errAbsensi } = await supabaseClient
+                        .from('presensi_siswa')
+                        .select('*')
+                        .or(`nis.eq.${nis},nama_siswa.ilike.%${profilSantri.nama.trim()}%`)
+                        .order('tanggal', { ascending: false })
+                        .limit(500);
+
+                    if (!errAbsensi && dataAbsensi) {
+                        absensiRecords = dataAbsensi;
+                    } else {
+                        absensiRecords = [];
+                    }
+                } catch(e) { 
+                    console.warn("Absensi query warning:", e); 
+                    absensiRecords = [];
+                }
                 
                 return responseNilai.data || [];
             } catch (error) {
@@ -598,16 +724,13 @@
                     ]);
 
                     if (siswaRes.status === 'success') {
-                        // Cari data spesifik siswa berdasarkan NIS
                         dataTabunganSiswa = siswaRes.data.find(s => s.nis === nisInput);
                     }
                     if (riwayatRes.status === 'success') {
-                        // Filter riwayat khusus NIS ini dan urutkan dari yang terbaru (menggunakan localeCompare untuk string tanggal)
                         riwayatTabungan = riwayatRes.data.filter(r => r.nis === nisInput).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
                     }
                 } catch (apiErr) {
                     console.error("Gagal mengambil data tabungan dari Google Sheets:", apiErr);
-                    // Kita tidak men-throw error agar jika Sheets gagal, Supabase tetap jalan
                 }
 
                 if (profilSantri) {
@@ -683,7 +806,8 @@
             
             renderTahfizhData();
             renderDisiplinData(); 
-            renderTabunganData(); // Render data tabungan dari Google Sheets
+            renderTabunganData(); 
+            initAbsensiModule(); // Inisialisasi Modul Presensi
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -696,6 +820,7 @@
             allGrades = [];
             dataTabunganSiswa = null;
             riwayatTabungan = [];
+            absensiRecords = [];
             
             document.getElementById('nis').value = '';
             
@@ -726,13 +851,169 @@
         }
 
         // ==========================================
+        // RENDER DATA ABSENSI / KEHADIRAN (BARU)
+        // ==========================================
+        function initAbsensiModule() {
+            const filterBulan = document.getElementById('filterBulanAbsensi');
+            filterBulan.innerHTML = '<option value="ALL">Semua Bulan (Kumulatif)</option>';
+
+            if (absensiRecords.length === 0) {
+                renderAbsensiTable([]);
+                updateAbsensiSummary([]);
+                return;
+            }
+
+            // Ekstrak bulan-bulan yang tersedia secara unik (Format: YYYY-MM)
+            const availableMonths = [...new Set(absensiRecords.map(r => {
+                if (!r.tanggal) return '';
+                return String(r.tanggal).substring(0, 7);
+            }))].filter(Boolean).sort().reverse();
+
+            const namaBulanIndo = {
+                '01': 'Januari', '02': 'Februari', '03': 'Maret', '04': 'April',
+                '05': 'Mei', '06': 'Juni', '07': 'Juli', '08': 'Agustus',
+                '09': 'September', '10': 'Oktober', '11': 'November', '12': 'Desember'
+            };
+
+            availableMonths.forEach(ym => {
+                const [year, month] = ym.split('-');
+                const label = `${namaBulanIndo[month] || month} ${year}`;
+                const opt = document.createElement('option');
+                opt.value = ym;
+                opt.textContent = label;
+                filterBulan.appendChild(opt);
+            });
+
+            // Jalankan filter awal (menampilkan semua atau bulan terkini)
+            filterAbsensiData();
+        }
+
+        function filterAbsensiData() {
+            const selectedYM = document.getElementById('filterBulanAbsensi').value;
+            let filtered = absensiRecords;
+
+            if (selectedYM !== 'ALL') {
+                filtered = absensiRecords.filter(r => r.tanggal && String(r.tanggal).startsWith(selectedYM));
+            }
+
+            updateAbsensiSummary(filtered);
+            renderAbsensiTable(filtered);
+        }
+
+        function updateAbsensiSummary(records) {
+            let hadir = 0, sakit = 0, izin = 0, alpha = 0;
+
+            records.forEach(r => {
+                const s = String(r.status || '').trim().toLowerCase();
+                if (s === 'hadir') hadir++;
+                else if (s === 'sakit') sakit++;
+                else if (s === 'izin') izin++;
+                else if (s === 'alpha' || s === 'alpa') alpha++;
+            });
+
+            const total = records.length;
+            const persentase = total > 0 ? ((hadir / total) * 100).toFixed(1) : 100;
+
+            document.getElementById('stat-count-hadir').innerText = hadir;
+            document.getElementById('stat-count-sakit').innerText = sakit;
+            document.getElementById('stat-count-izin').innerText = izin;
+            document.getElementById('stat-count-alpha').innerText = alpha;
+            document.getElementById('stat-total-hari').innerText = `${total} Hari Pembelajaran`;
+
+            const persenElem = document.getElementById('stat-persen-hadir');
+            persenElem.innerText = total > 0 ? `${persentase}%` : '100%';
+
+            if (total === 0) {
+                persenElem.className = "text-3xl sm:text-4xl font-extrabold text-gray-400";
+            } else if (persentase >= 90) {
+                persenElem.className = "text-3xl sm:text-4xl font-extrabold text-emerald-600";
+            } else if (persentase >= 75) {
+                persenElem.className = "text-3xl sm:text-4xl font-extrabold text-amber-600";
+            } else {
+                persenElem.className = "text-3xl sm:text-4xl font-extrabold text-rose-600";
+            }
+        }
+
+        function renderAbsensiTable(records) {
+            const tbody = document.getElementById('absensi-tbody');
+            const counter = document.getElementById('absensi-row-counter');
+            tbody.innerHTML = '';
+            counter.innerText = `${records.length} Pertemuan`;
+
+            if (records.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="py-10 px-6 text-center text-gray-500 italic">
+                            <i class="fas fa-calendar-times text-gray-300 text-4xl mb-3 block"></i>
+                            Belum ada riwayat absensi pada periode ini.
+                        </td>
+                    </tr>`;
+                return;
+            }
+
+            records.forEach((record, index) => {
+                // Format Hari dan Tanggal
+                let tglFormatted = "-";
+                let hari = "";
+                if (record.tanggal) {
+                    const dateObj = new Date(record.tanggal);
+                    if (!isNaN(dateObj.getTime())) {
+                        tglFormatted = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+                        hari = dateObj.toLocaleDateString('id-ID', { weekday: 'long' });
+                    } else {
+                        tglFormatted = record.tanggal;
+                    }
+                }
+
+                // Badge Kehadiran
+                const status = String(record.status || 'Hadir').trim();
+                let badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
+                let iconClass = "fas fa-check-circle";
+
+                if (status.toLowerCase() === 'sakit') {
+                    badgeClass = "bg-amber-50 text-amber-700 border-amber-200";
+                    iconClass = "fas fa-procedures";
+                } else if (status.toLowerCase() === 'izin') {
+                    badgeClass = "bg-blue-50 text-blue-700 border-blue-200";
+                    iconClass = "fas fa-envelope-open-text";
+                } else if (status.toLowerCase().includes('alpha') || status.toLowerCase().includes('alpa')) {
+                    badgeClass = "bg-rose-50 text-rose-700 border-rose-200";
+                    iconClass = "fas fa-times-circle";
+                }
+
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition duration-150";
+                tr.innerHTML = `
+                    <td class="py-4 px-6 text-center font-mono text-xs text-gray-400 font-semibold">${index + 1}</td>
+                    <td class="py-4 px-6">
+                        <div class="font-bold text-gray-800">${tglFormatted}</div>
+                        ${hari ? `<div class="text-xs text-gray-500 font-medium">${hari}</div>` : ''}
+                    </td>
+                    <td class="py-4 px-6">
+                        <span class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-md font-semibold text-xs border border-gray-200">
+                            ${record.kelas || profilSantri.kelas || '-'}
+                        </span>
+                    </td>
+                    <td class="py-4 px-6 text-center">
+                        <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-extrabold border ${badgeClass} shadow-sm">
+                            <i class="${iconClass} mr-1.5"></i> ${status}
+                        </span>
+                    </td>
+                    <td class="py-4 px-6 text-xs text-gray-500">
+                        ${record.keterangan || (status === 'Hadir' ? 'Mengikuti KBM tatap muka' : 'Izin tidak masuk')}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // ==========================================
         // RENDER DATA TABUNGAN (DARI GOOGLE SHEETS)
         // ==========================================
         function renderTabunganData() {
             const tbody = document.getElementById('tabungan-tbody');
             tbody.innerHTML = ''; 
 
-            // Set Total Saldo (dari tabel DATA SISWA di Google Sheets)
             const saldoAkhir = dataTabunganSiswa ? dataTabunganSiswa.tabungan : 0;
             document.getElementById('total-saldo-tabungan').innerText = new Intl.NumberFormat('id-ID').format(saldoAkhir);
 
@@ -741,7 +1022,6 @@
                 return;
             }
 
-            // Loop dan tampilkan semua riwayat tabungan siswa tersebut
             riwayatTabungan.forEach(record => {
                 const badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
                 const jenisLabel = "Setoran Masuk";
@@ -1015,7 +1295,9 @@
             document.querySelectorAll('.tab-content').forEach(el => { if (el) el.classList.add('hidden'); });
             const targetTab = document.getElementById(tabId);
             if (targetTab) { targetTab.classList.remove('hidden'); }
-            const btns = ['btn-tab-nilai', 'btn-tab-tahfizh', 'btn-tab-disiplin', 'btn-tab-tabungan'];
+            
+            // Daftarkan semua id tombol tab termasuk tab-absensi
+            const btns = ['btn-tab-nilai', 'btn-tab-tahfizh', 'btn-tab-disiplin', 'btn-tab-tabungan', 'btn-tab-absensi'];
             btns.forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn) { btn.classList.remove('tab-active'); btn.classList.add('tab-inactive'); }
