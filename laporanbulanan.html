@@ -1,0 +1,1945 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Laporan Kinerja Bulanan - Sekolah & Yayasan</title>
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  <!-- Chart.js for analytics -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Supabase JS Client v2 -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    /* Custom scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    /* Printable report styling */
+    @media print {
+      .no-print {
+        display: none !important;
+      }
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+      }
+      .print-shadow-none {
+        box-shadow: none !important;
+        border: 1px solid #e2e8f0 !important;
+      }
+    }
+    /* Cell highlights for roles */
+    .table-cell-yayasan {
+      background-color: #f0fdf4;
+    }
+    .table-cell-yayasan:focus-within {
+      background-color: #dcfce7;
+    }
+    .table-cell-school {
+      background-color: #f8fafc;
+    }
+    .table-cell-school:focus-within {
+      background-color: #eef2ff;
+    }
+    .animate-spin-slow {
+      animation: spin 3s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col antialiased">
+
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-sm no-print">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16 gap-4">
+        <!-- Logo and Title -->
+        <div class="flex items-center space-x-3">
+          <div class="w-10 h-10 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-lg shadow-md shadow-indigo-100">
+            <i class="ph-bold ph-chart-polar text-xl"></i>
+          </div>
+          <div>
+            <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">Laporan Kinerja Bulanan</h1>
+            <p class="text-xs text-slate-500 font-medium">Monitoring IKU Terhubung Supabase Cloud</p>
+          </div>
+        </div>
+
+        <!-- Global Selectors: Period & Active Role -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <!-- Month & Year Selector -->
+          <div class="flex items-center bg-slate-100 rounded-xl p-1 text-xs font-medium text-slate-600 border border-slate-200">
+            <select id="selectMonth" onchange="onPeriodChanged()" class="bg-transparent px-2 py-1 outline-none text-slate-800 font-semibold cursor-pointer">
+              <option value="1">Januari</option>
+              <option value="2">Februari</option>
+              <option value="3">Maret</option>
+              <option value="4">April</option>
+              <option value="5">Mei</option>
+              <option value="6">Juni</option>
+              <option value="7">Juli</option>
+              <option value="8" selected>Agustus</option>
+              <option value="9">September</option>
+              <option value="10">Oktober</option>
+              <option value="11">November</option>
+              <option value="12">Desember</option>
+            </select>
+            <span class="text-slate-300">|</span>
+            <select id="selectYear" onchange="onPeriodChanged()" class="bg-transparent px-2 py-1 outline-none text-slate-800 font-semibold cursor-pointer">
+              <option value="2026" selected>2026</option>
+              <option value="2027">2027</option>
+            </select>
+          </div>
+
+          <!-- Role Toggle (Sekolah vs Yayasan) -->
+          <div class="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-semibold">
+            <button id="roleSchoolBtn" onclick="switchRole('sekolah')" class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-sm bg-white text-indigo-600">
+              <i class="ph-bold ph-chalkboard-teacher"></i>
+              <span class="hidden sm:inline">Unit</span> Sekolah
+            </button>
+            <button id="roleYayasanBtn" onclick="switchRole('yayasan')" class="px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900">
+              <i class="ph-bold ph-buildings"></i>
+              <span>Yayasan</span>
+            </button>
+          </div>
+
+          <!-- Supabase Config Status -->
+          <button onclick="openModal('modalSupabase')" title="Status & Pengaturan Database" class="p-2 rounded-xl text-slate-600 hover:text-indigo-600 hover:bg-slate-100 transition-colors border border-slate-200 relative">
+            <i class="ph-bold ph-database text-lg"></i>
+            <span id="dbDotIndicator" class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          </button>
+          
+          <!-- Print Report Button -->
+          <button onclick="window.print()" title="Cetak Laporan Bulanan" class="p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors border border-slate-200 hidden sm:block">
+            <i class="ph-bold ph-printer text-lg"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    
+    <!-- Top Banner: Info Role, Cloud Status, Action Buttons -->
+    <div class="no-print bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <div class="flex items-start sm:items-center gap-3.5">
+        <div id="roleBadgeIcon" class="w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0 text-2xl font-bold">
+          <i class="ph-bold ph-pencil-simple-line"></i>
+        </div>
+        <div>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span id="roleBadgeText" class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-100 text-indigo-700">Mode Input Unit Sekolah</span>
+            <span id="dbStatusBadge" class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-800 flex items-center gap-1.5">
+              <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+              <span>Supabase: vpdlfjbkfcuukyykrhua</span>
+            </span>
+            <span id="syncingIndicator" class="hidden text-xs text-indigo-600 font-semibold items-center gap-1">
+              <i class="ph-bold ph-spinner animate-spin"></i> Menyinkronkan...
+            </span>
+          </div>
+          <p id="roleDescription" class="text-xs sm:text-sm text-slate-500 mt-1">
+            Anda dapat mengedit kolom <span class="font-semibold text-indigo-600">Realisasi</span> dan <span class="font-semibold text-slate-700">Catatan/Kendala</span> per kegiatan penunjang.
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick Action Buttons -->
+      <div class="flex items-center gap-2 flex-wrap">
+        <button onclick="openModal('modalAddIKU')" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 shadow-sm transition flex items-center gap-1.5">
+          <i class="ph-bold ph-plus-circle text-base text-indigo-600"></i> Tambah IKU
+        </button>
+        <button onclick="refreshDataFromSupabase()" title="Muat ulang dari server" class="p-2 rounded-xl text-xs font-semibold bg-white text-slate-700 border border-slate-300 hover:bg-slate-50 shadow-sm transition">
+          <i class="ph-bold ph-arrows-clockwise text-base text-slate-600"></i>
+        </button>
+        <button onclick="saveAllChangesToCloud()" class="px-4 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-200 transition flex items-center gap-1.5">
+          <i class="ph-bold ph-cloud-arrow-up text-base"></i> Simpan ke Supabase
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 no-print">
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+        <span class="text-xs font-medium text-slate-500">Total IKU Divisi</span>
+        <div class="flex items-baseline justify-between mt-2">
+          <span id="statTotalIKU" class="text-2xl font-bold text-slate-800">0</span>
+          <span class="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md">Indikator</span>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+        <span class="text-xs font-medium text-slate-500">Total Kegiatan Penunjang</span>
+        <div class="flex items-baseline justify-between mt-2">
+          <span id="statTotalActivities" class="text-2xl font-bold text-slate-800">0</span>
+          <span class="text-xs font-semibold text-sky-600 bg-sky-50 px-2 py-0.5 rounded-md">Sub Target</span>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+        <span class="text-xs font-medium text-slate-500">Progres Input Sekolah</span>
+        <div class="flex items-baseline justify-between mt-2">
+          <span id="statSchoolProgress" class="text-2xl font-bold text-emerald-600">0%</span>
+          <div class="w-16 h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div id="barSchoolProgress" class="h-full bg-emerald-500 transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm">
+        <span class="text-xs font-medium text-slate-500">Verifikasi Yayasan</span>
+        <div class="flex items-baseline justify-between mt-2">
+          <span id="statYayasanProgress" class="text-2xl font-bold text-teal-600">0%</span>
+          <div class="w-16 h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div id="barYayasanProgress" class="h-full bg-teal-500 transition-all duration-500" style="width: 0%"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-print">
+      <div class="flex items-center justify-between mb-2">
+        <label class="text-xs font-bold uppercase tracking-wider text-slate-500">Pilih Divisi / Unit Kerja</label>
+        <span id="activeDivisionCoordinator" class="text-xs text-slate-500 font-medium">Koordinator: -</span>
+      </div>
+      <div id="divisionPillsContainer" class="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-thin">
+        <!-- Injected via JavaScript from Supabase divisions table -->
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden print-shadow-none">
+      <!-- Table Header Title (Visible in print) -->
+      <div class="p-4 sm:p-5 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 bg-slate-50/50">
+        <div>
+          <h2 id="tableTitle" class="text-base sm:text-lg font-bold text-slate-900">Laporan Divisi Kurikulum</h2>
+          <p id="tableSubtitle" class="text-xs text-slate-500 mt-0.5">Periode: Agustus 2026 • Realtime Supabase Database</p>
+        </div>
+        <div class="flex items-center gap-3 text-xs text-slate-500 no-print">
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded bg-indigo-50 border border-indigo-200"></span> Realisasi (Sekolah)
+          </div>
+          <div class="flex items-center gap-1.5">
+            <span class="w-3 h-3 rounded bg-emerald-50 border border-emerald-300"></span> Verifikasi (Yayasan)
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Data Table matching user Excel layout -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs sm:text-sm">
+          <thead>
+            <tr class="bg-slate-100/90 text-slate-700 uppercase font-semibold text-xs border-b border-slate-200 tracking-wider">
+              <th class="py-3 px-3 w-12 text-center">NO</th>
+              <th class="py-3 px-4 min-w-[220px]">INDIKATOR (IKU)</th>
+              <th class="py-3 px-4 min-w-[130px] font-bold text-slate-800">TARGET</th>
+              <th class="py-3 px-3 min-w-[130px] text-indigo-700 bg-indigo-50/70 text-center font-bold">REALISASI</th>
+              <th class="py-3 px-3 min-w-[130px] text-emerald-700 bg-emerald-50/70 text-center font-bold">YAYASAN</th>
+              <th class="py-3 px-4 min-w-[200px]">KEGIATAN PENUNJANG</th>
+              <th class="py-3 px-3 min-w-[130px]">WAKTU</th>
+              <th class="py-3 px-4 min-w-[240px]">CATATAN / KENDALA</th>
+              <th class="py-3 px-2 w-14 text-center no-print">OPSI</th>
+            </tr>
+          </thead>
+          <tbody id="indicatorsTableBody" class="divide-y divide-slate-200">
+            <!-- Dynamic rows populated from Supabase -->
+          </tbody>
+        </table>
+      </div>
+
+      <div id="tableEmptyState" class="hidden p-12 text-center">
+        <i class="ph-thin ph-clipboard-text text-5xl text-slate-300"></i>
+        <h3 class="text-sm font-semibold text-slate-700 mt-2">Belum ada data IKU pada divisi ini di Supabase</h3>
+        <p class="text-xs text-slate-500 mt-1 max-w-sm mx-auto">Anda dapat menambahkan indikator baru atau mengklik tombol di bawah untuk mengisi data default Excel.</p>
+        <div class="mt-4 flex items-center justify-center gap-2">
+          <button onclick="openModal('modalAddIKU')" class="px-4 py-2 bg-indigo-600 text-white text-xs font-semibold rounded-xl hover:bg-indigo-700 transition">
+            + Tambah IKU Baru
+          </button>
+          <button onclick="seedInitialExcelDataToSupabase()" class="px-4 py-2 bg-emerald-600 text-white text-xs font-semibold rounded-xl hover:bg-emerald-700 transition">
+            <i class="ph-bold ph-database"></i> Migrasikan Data Excel ke Supabase
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm no-print">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <h3 class="text-sm font-bold text-slate-800">Komparasi Target vs Realisasi Sekolah & Yayasan</h3>
+          <p class="text-xs text-slate-500">Visualisasi ketercapaian sub-kegiatan pada divisi aktif</p>
+        </div>
+        <span class="text-xs bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg font-medium">Chart Otomatis</span>
+      </div>
+      <div class="h-64 w-full">
+        <canvas id="realizationChart"></canvas>
+      </div>
+    </div>
+  </main>
+
+  <div id="modalSupabase" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold">
+            <i class="ph-bold ph-database text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Koneksi Database Supabase</h3>
+            <p class="text-xs text-slate-500">vpdlfjbkfcuukyykrhua.supabase.co</p>
+          </div>
+        </div>
+        <button onclick="closeModal('modalSupabase')" class="text-slate-400 hover:text-slate-600">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4 mt-4 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Supabase Project URL</label>
+          <input type="text" id="supabaseUrlInput" readonly class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-800 font-mono outline-none">
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Anon Public Key</label>
+          <textarea id="supabaseKeyInput" rows="3" readonly class="w-full px-3.5 py-2.5 rounded-xl border border-slate-300 bg-slate-50 text-slate-800 font-mono outline-none"></textarea>
+        </div>
+
+        <div class="p-3.5 rounded-xl bg-indigo-50/70 border border-indigo-100 text-slate-700">
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="font-bold text-indigo-900 mb-0.5"><i class="ph-bold ph-sparkle text-indigo-600"></i> Seed / Migrasi Master Data Excel</p>
+              <p class="text-[11px] text-slate-600">Isi database Supabase dengan semua IKU & Kegiatan penunjang dari file Excel.</p>
+            </div>
+            <button onclick="seedInitialExcelDataToSupabase()" class="px-3.5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold flex items-center gap-1 shadow-sm">
+              <i class="ph-bold ph-arrow-circle-up"></i> Migrasi Sekarang
+            </button>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-between pt-2">
+          <button onclick="testSupabaseConnection()" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 font-semibold text-slate-700 transition flex items-center gap-1.5">
+            <i class="ph-bold ph-plugs-connected"></i> Tes Koneksi Tabel
+          </button>
+          <button onclick="closeModal('modalSupabase')" class="px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 font-semibold text-white transition">
+            Tutup
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="modalAddIKU" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-200">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Tambah Indikator (IKU) Baru</h3>
+          <p class="text-xs text-slate-500">Tersimpan langsung ke tabel Supabase indicators & activities</p>
+        </div>
+        <button onclick="closeModal('modalAddIKU')" class="text-slate-400 hover:text-slate-600">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+      </div>
+
+      <form id="formAddIKU" onsubmit="handleAddIKU(event)" class="space-y-3.5 mt-4 text-xs">
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Divisi Terpilih</label>
+          <select id="modalDivisionSelect" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 bg-slate-50 font-medium"></select>
+        </div>
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Judul Indikator Kinerja Utama (IKU)</label>
+          <input type="text" id="newIkuTitle" required placeholder="Contoh: Rata-rata Nilai Ujian Sekolah" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 font-medium focus:border-indigo-500 outline-none">
+        </div>
+
+        <div class="p-3 bg-indigo-50/60 rounded-xl border border-indigo-100 space-y-3">
+          <div class="font-bold text-indigo-900 flex items-center gap-1">
+            <i class="ph-bold ph-list-checks"></i> Kegiatan Penunjang Pertama
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Nama Kegiatan Penunjang</label>
+            <input type="text" id="newActivityName" required placeholder="Contoh: Klinik Belajar (Rabu)" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 font-medium bg-white focus:border-indigo-500 outline-none">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Target Angka (Kolom Target)</label>
+              <input type="text" id="newTargetValue" required placeholder="Contoh: 4 Kali / 80% Tuntas" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 font-medium bg-white focus:border-indigo-500 outline-none">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Waktu Pelaksanaan</label>
+              <input type="text" id="newSchedule" placeholder="Contoh: Harian / Mingguan" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 font-medium bg-white focus:border-indigo-500 outline-none">
+            </div>
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" onclick="closeModal('modalAddIKU')" class="px-4 py-2.5 rounded-xl bg-slate-100 font-semibold text-slate-600 hover:bg-slate-200">Batal</button>
+          <button type="submit" id="btnSubmitIKU" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 font-semibold text-white shadow-sm flex items-center gap-1">
+            <span>Simpan ke Supabase</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="modalAddSubActivity" class="fixed inset-0 z-50 bg-slate-900/40 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl max-w-md w-full p-6 shadow-2xl border border-slate-200">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div>
+          <h3 class="text-base font-bold text-slate-900">Tambah Kegiatan Penunjang</h3>
+          <p id="subActivityParentTitle" class="text-xs text-indigo-600 font-medium truncate max-w-xs"></p>
+        </div>
+        <button onclick="closeModal('modalAddSubActivity')" class="text-slate-400 hover:text-slate-600">
+          <i class="ph-bold ph-x text-lg"></i>
+        </button>
+      </div>
+
+      <form id="formAddSubActivity" onsubmit="handleAddSubActivity(event)" class="space-y-3.5 mt-4 text-xs">
+        <input type="hidden" id="targetParentIkuId">
+
+        <div>
+          <label class="block font-semibold text-slate-700 mb-1">Nama Kegiatan Penunjang</label>
+          <input type="text" id="subActivityName" required placeholder="Contoh: Ujian Tengah Semester" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 font-medium focus:border-indigo-500 outline-none">
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Target Angka</label>
+            <input type="text" id="subActivityTarget" required placeholder="Contoh: 80% Tuntas" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 font-medium focus:border-indigo-500 outline-none">
+          </div>
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Waktu Pelaksanaan</label>
+            <input type="text" id="subActivitySchedule" placeholder="Contoh: Bulanan" class="w-full px-3.5 py-2 rounded-xl border border-slate-300 font-medium focus:border-indigo-500 outline-none">
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2 pt-2">
+          <button type="button" onclick="closeModal('modalAddSubActivity')" class="px-4 py-2.5 rounded-xl bg-slate-100 font-semibold text-slate-600 hover:bg-slate-200">Batal</button>
+          <button type="submit" class="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 font-semibold text-white shadow-sm">Simpan Kegiatan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="toastNotification" class="fixed bottom-5 right-5 z-50 transform transition-all duration-300 translate-y-20 opacity-0 pointer-events-none flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl bg-slate-900 text-white text-xs font-medium border border-slate-700">
+    <i id="toastIcon" class="ph-bold ph-check-circle text-emerald-400 text-xl"></i>
+    <span id="toastMessage">Perubahan berhasil disimpan</span>
+  </div>
+
+  <script>
+    // Supabase project credentials
+    const SUPABASE_PROJECT_ID = 'vpdlfjbkfcuukyykrhua';
+    const SUPABASE_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co`;
+    const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZGxmamJrZmN1dWt5eWtyaHVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzkxNjUsImV4cCI6MjA5Nzc1NTE2NX0.QSHbi71ajuU_AggJJ5xVDeb6jffDRyyuF4C7aYeHW3Y';
+
+    let supabaseClient = null;
+    let currentRole = 'sekolah'; // 'sekolah' | 'yayasan'
+    let currentDivisionId = 1;   // matches int4 from divisions table
+    let currentPeriodId = null;  // UUID from report_periods
+    let chartInstance = null;
+    let saveTimeout = null;
+
+    // In-memory caching for swift UI responses
+    let divisions = [];
+    let indicators = [];
+    let activities = [];
+    let reportDetails = {}; // keyed by activity_id: { id, realization_school, realization_yayasan, notes }
+
+    // Initial Excel Seed Data for quick migration into Supabase
+    const initialExcelData = [
+      {
+        div_id: 1, // Kurikulum
+        code: 1,
+        title: 'Kelas bersih rapi dan kondusif selama KBM aktif',
+        acts: [
+          { name: 'Monitoring KBM', target: '100%', schedule: 'Harian', real_s: '0.9', real_y: '0.9', notes: '' }
+        ]
+      },
+      {
+        div_id: 1,
+        code: 2,
+        title: 'Rata-rata Nilai Ujian Sekolah (Sains & Non-Sains)',
+        acts: [
+          { name: 'Klinik Belajar (Rabu)', target: '4 Kali', schedule: 'Mingguan', real_s: '-', real_y: '', notes: 'Akan dilaksanakan mulai akhir Agustus karena KBM baru mulai aktif kembali.' },
+          { name: 'Kontrol Nilai Ulangan Harian', target: '80% Tuntas', schedule: 'Bulanan', real_s: '-', real_y: '', notes: 'Belum terlaksana' },
+          { name: 'Sumatif Tengah Semester I', target: '80% Tuntas', schedule: 'Tengah Semester (September)', real_s: '-', real_y: '', notes: '' },
+          { name: 'Sumatif Akhir Semester', target: '80% Tuntas', schedule: '1 Desember 2026', real_s: '-', real_y: '', notes: '' },
+          { name: 'Pembagian Rapor Semester Gasal T.A. 2026/2027', target: '100% Terlaksana', schedule: 'Desember 2026', real_s: '-', real_y: '', notes: '' }
+        ]
+      },
+      {
+        div_id: 1,
+        code: 3,
+        title: 'Persiapan TKA & ANBK',
+        acts: [
+          { name: 'Try out TKA kelas VIII', target: '100% Terlaksana', schedule: 'Maret 2027', real_s: '-', real_y: '', notes: '' }
+        ]
+      },
+      {
+        div_id: 1,
+        code: 4,
+        title: 'Kelengkapan Dokumen Kurikulum (KSP & ATP)',
+        acts: [
+          { name: 'Rapat Koordinasi Awal Semester Gasal', target: '100% Terlaksana', schedule: 'Juli 2026', real_s: '100 %', real_y: '100 %', notes: 'Hasil rapat: Pembagian tugas & inventaris buku.' },
+          { name: 'Review & Penetapan Jadwal Pelajaran', target: '100% Terlaksana', schedule: 'Juli 2026', real_s: '100 %', real_y: '100 %', notes: 'Jadwal reguler dan matrikulasi kelas 7 beres.' },
+          { name: 'RKT, KSP dan ATP tiap Mapel', target: '100% Lengkap', schedule: 'Juli 2026', real_s: '70 %', real_y: '70 %', notes: 'Penyesuaian KSP dari dinas kabupaten.' }
+        ]
+      },
+      {
+        div_id: 2, // Kesiswaan
+        code: 1,
+        title: 'Ketertiban Apel dan Makan',
+        acts: [
+          { name: 'Monitoring Sarapan dan Makan Siang', target: '100%', schedule: 'Harian', real_s: '0.93', real_y: '', notes: 'Beberapa anak masih mengaji saat jam makan pagi.' },
+          { name: 'Monitoring Apel Pagi', target: '100%', schedule: 'Harian', real_s: '0.88', real_y: '', notes: 'Kedisiplinan kelas 7 perlu dibina lagi.' }
+        ]
+      },
+      {
+        div_id: 2,
+        code: 2,
+        title: 'Tingkat Pelanggaran Tata Tertib',
+        acts: [
+          { name: 'Pelaksanaan Poin Merit demerit', target: '<5%', schedule: 'Harian', real_s: '-', real_y: '', notes: '' }
+        ]
+      },
+      {
+        div_id: 2,
+        code: 3,
+        title: 'Karakter Kepemimpinan (Petugas Apel/Upacara/OSIS)',
+        acts: [
+          { name: 'Upacara hari senin rutin', target: '10/10', schedule: 'Mingguan', real_s: '3 Kali', real_y: '', notes: 'Ketika berbaris, masih ada yang bersuara.' },
+          { name: 'MPLS murid baru 2026/2027', target: '100% Terlaksana', schedule: 'Juli 2026', real_s: '100%', real_y: '100%', notes: 'Berjalan lancar.' }
+        ]
+      },
+      {
+        div_id: 3, // Humas
+        code: 1,
+        title: 'Partisipasi Ibadah Sunnah',
+        acts: [
+          { name: 'Shalat Dhuha dan Dzuhur Berjamaah', target: '100%', schedule: 'Harian', real_s: '95%', real_y: '', notes: '' },
+          { name: 'Istighosah dan Kajian Hadist', target: '4 Kali', schedule: 'Mingguan', real_s: '4 Kali', real_y: '', notes: '' }
+        ]
+      },
+      {
+        div_id: 5, // Bahasa & Prestasi
+        code: 1,
+        title: 'Keaktifan Berbahasa Inggris (Active English)',
+        acts: [
+          { name: 'Monitoring English Zone', target: '80% Siswa Aktif', schedule: 'Harian', real_s: '0.5', real_y: '', notes: 'Kesadaran santriyah untuk berbahasa inggris masih perlu didorong.' },
+          { name: 'English Show Up', target: '1 Kali', schedule: 'Bulanan', real_s: '1 Kali', real_y: '', notes: '' },
+          { name: 'English For Teacher', target: '4 Kali', schedule: 'Mingguan', real_s: '1 Kali', real_y: '', notes: '' }
+        ]
+      }
+    ];
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      document.getElementById('supabaseUrlInput').value = SUPABASE_URL;
+      document.getElementById('supabaseKeyInput').value = SUPABASE_ANON;
+      
+      // Default report date to today with Indonesian format
+    const today = new Date();
+    const options = { day: 'numeric', month: 'long', year: 'numeric' };
+    const formattedDate = `Pati, ${today.toLocaleDateString('id-ID', options)}`;
+    const dateInput = document.getElementById('exportReportDate');
+    if (dateInput) dateInput.value = formattedDate;
+
+    initChart();
+      await initSupabaseConnection();
+    });
+
+    async function initSupabaseConnection() {
+      try {
+        showSyncing(true);
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+        // Fetch divisions table directly from Supabase
+        const { data: dbDivisions, error: divError } = await supabaseClient
+          .from('divisions')
+          .select('*')
+          .order('id', { ascending: true });
+
+        if (divError) {
+          throw divError;
+        }
+
+        if (dbDivisions && dbDivisions.length > 0) {
+          divisions = dbDivisions.map(d => ({
+            id: d.id,
+            name: d.name,
+            code: d.code || d.name,
+            coordinator: d.coordinator_name || 'Koordinator'
+          }));
+          currentDivisionId = divisions[0].id;
+        }
+
+        renderDivisionPills();
+        populateModalDivisions();
+
+        // Ensure active period exists in report_periods
+        await ensureCurrentPeriodExists();
+
+        // Load indicators, activities, and report details
+        await loadAllDivisionData();
+
+        showToast('Terhubung ke database Supabase!', 'success');
+      } catch (err) {
+        console.error('Supabase init error:', err);
+        showToast('Koneksi Supabase error: ' + (err.message || 'Periksa konfigurasi'), 'error');
+        fallbackToMemoryData();
+      } finally {
+        showSyncing(false);
+      }
+    }
+
+    async function ensureCurrentPeriodExists() {
+      if (!supabaseClient) return;
+      const month = parseInt(document.getElementById('selectMonth').value);
+      const year = parseInt(document.getElementById('selectYear').value);
+
+      try {
+        const { data: periods, error: fetchErr } = await supabaseClient
+          .from('report_periods')
+          .select('id, month, year, is_locked')
+          .eq('month', month)
+          .eq('year', year)
+          .limit(1);
+
+        if (fetchErr) throw fetchErr;
+
+        if (periods && periods.length > 0) {
+          currentPeriodId = periods[0].id;
+        } else {
+          // Insert new period
+          const { data: inserted, error: insertErr } = await supabaseClient
+            .from('report_periods')
+            .insert([{ month: month, year: year, is_locked: false }])
+            .select();
+
+          if (insertErr) throw insertErr;
+          if (inserted && inserted.length > 0) {
+            currentPeriodId = inserted[0].id;
+          }
+        }
+      } catch (err) {
+        console.warn('Period ensure error:', err.message);
+      }
+    }
+
+    async function onPeriodChanged() {
+      const monthText = document.getElementById('selectMonth').options[document.getElementById('selectMonth').selectedIndex].text;
+      const yearText = document.getElementById('selectYear').value;
+      document.getElementById('tableSubtitle').textContent = `Periode: ${monthText} ${yearText} • Realtime Supabase Database`;
+
+      await ensureCurrentPeriodExists();
+      await loadAllDivisionData();
+      showToast(`Periode diubah: ${monthText} ${yearText}`, 'info');
+    }
+
+    async function loadAllDivisionData() {
+      if (!supabaseClient) return;
+      showSyncing(true);
+
+      try {
+        // 1. Fetch indicators for active division
+        const { data: dbIndicators, error: indError } = await supabaseClient
+          .from('indicators')
+          .select('*')
+          .eq('division_id', currentDivisionId)
+          .order('code_number', { ascending: true });
+
+        if (indError) throw indError;
+        indicators = dbIndicators || [];
+
+        if (indicators.length === 0) {
+          activities = [];
+          reportDetails = {};
+          renderDivisionTable();
+          updateMetricCards();
+          updateChartData();
+          return;
+        }
+
+        // 2. Fetch activities for these indicators
+        const indicatorIds = indicators.map(i => i.id);
+        const { data: dbActivities, error: actError } = await supabaseClient
+          .from('indicator_activities')
+          .select('*')
+          .in('indicator_id', indicatorIds);
+
+        if (actError) throw actError;
+        activities = dbActivities || [];
+
+        // 3. Fetch report_details for current period & activities
+        reportDetails = {};
+        if (activities.length > 0 && currentPeriodId) {
+          const actIds = activities.map(a => a.id);
+          const { data: dbDetails, error: detError } = await supabaseClient
+            .from('report_details')
+            .select('*')
+            .eq('period_id', currentPeriodId)
+            .in('activity_id', actIds);
+
+          if (!detError && dbDetails) {
+            dbDetails.forEach(row => {
+              reportDetails[row.activity_id] = {
+                id: row.id,
+                realization_school: row.realization_school || '',
+                realization_yayasan: row.realization_yayasan || '',
+                notes: row.notes || ''
+              };
+            });
+          }
+        }
+
+        renderDivisionTable();
+        updateMetricCards();
+        updateChartData();
+      } catch (err) {
+        console.error('Fetch division data error:', err);
+        showToast('Gagal memuat data: ' + err.message, 'error');
+      } finally {
+        showSyncing(false);
+      }
+    }
+
+    function switchRole(role) {
+      currentRole = role;
+      const schoolBtn = document.getElementById('roleSchoolBtn');
+      const yayasanBtn = document.getElementById('roleYayasanBtn');
+      const badgeText = document.getElementById('roleBadgeText');
+      const badgeIcon = document.getElementById('roleBadgeIcon');
+      const desc = document.getElementById('roleDescription');
+
+      if (role === 'sekolah') {
+        schoolBtn.className = 'px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-sm bg-white text-indigo-600 font-semibold';
+        yayasanBtn.className = 'px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900';
+        badgeText.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-indigo-100 text-indigo-700';
+        badgeText.textContent = 'Mode Input Unit Sekolah';
+        badgeIcon.className = 'w-11 h-11 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center flex-shrink-0 text-2xl font-bold';
+        badgeIcon.innerHTML = '<i class="ph-bold ph-pencil-simple-line"></i>';
+        desc.innerHTML = 'Anda bertindak sebagai <span class="font-semibold text-indigo-600">Unit Sekolah</span>. Kolom Realisasi dan Catatan aktif untuk diinput.';
+      } else {
+        yayasanBtn.className = 'px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 shadow-sm bg-emerald-600 text-white font-semibold';
+        schoolBtn.className = 'px-3 py-1.5 rounded-lg transition-all flex items-center gap-1.5 text-slate-600 hover:text-slate-900';
+        badgeText.className = 'px-2.5 py-0.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-100 text-emerald-800';
+        badgeText.textContent = 'Mode Evaluasi & Verifikasi Yayasan';
+        badgeIcon.className = 'w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 text-2xl font-bold';
+        badgeIcon.innerHTML = '<i class="ph-bold ph-shield-check"></i>';
+        desc.innerHTML = 'Anda bertindak sebagai <span class="font-semibold text-emerald-700">Pengurus Yayasan</span>. Kolom Hijau (Yayasan) aktif untuk diisi/diverifikasi.';
+      }
+
+      renderDivisionTable();
+      showToast(`Mode aktif: ${role.toUpperCase()}`, 'info');
+    }
+
+    function renderDivisionPills() {
+      const container = document.getElementById('divisionPillsContainer');
+      container.innerHTML = '';
+
+      divisions.forEach(div => {
+        const isActive = div.id === currentDivisionId;
+        const btn = document.createElement('button');
+        btn.onclick = () => selectDivision(div.id);
+        btn.className = `px-3.5 py-2 rounded-xl text-xs font-semibold whitespace-nowrap transition-all flex items-center gap-2 ${
+          isActive 
+            ? 'bg-slate-900 text-white shadow-md' 
+            : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-100'
+        }`;
+        btn.innerHTML = `<span>${div.name}</span>`;
+        container.appendChild(btn);
+      });
+    }
+
+    async function selectDivision(divId) {
+      currentDivisionId = divId;
+      renderDivisionPills();
+      await loadAllDivisionData();
+    }
+
+    function renderDivisionTable() {
+      const activeDiv = divisions.find(d => d.id === currentDivisionId);
+      if (activeDiv) {
+        document.getElementById('tableTitle').textContent = `Laporan Divisi ${activeDiv.name}`;
+        document.getElementById('activeDivisionCoordinator').textContent = `Koordinator: ${activeDiv.coordinator || '-'}`;
+      }
+
+      const tbody = document.getElementById('indicatorsTableBody');
+      tbody.innerHTML = '';
+
+      const emptyState = document.getElementById('tableEmptyState');
+      if (indicators.length === 0) {
+        emptyState.classList.remove('hidden');
+        return;
+      } else {
+        emptyState.classList.add('hidden');
+      }
+
+      const isSchoolMode = currentRole === 'sekolah';
+      const isYayasanMode = currentRole === 'yayasan';
+
+      indicators.forEach((iku, ikuIndex) => {
+        const ikuActivities = activities.filter(a => a.indicator_id === iku.id);
+        const rowSpan = ikuActivities.length || 1;
+
+        if (ikuActivities.length === 0) {
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-50 transition-colors';
+          tr.innerHTML = `
+            <td class="py-3.5 px-3 text-center font-bold text-slate-600 border-r border-slate-200">${iku.code_number || ikuIndex + 1}</td>
+            <td class="py-3.5 px-4 font-semibold text-slate-800 border-r border-slate-200">
+              <div class="flex items-center justify-between">
+                <span>${escapeHtml(iku.title)}</span>
+                <button onclick="openAddSubActivityModal('${iku.id}', '${escapeHtml(iku.title)}')" title="Tambah Kegiatan Penunjang" class="text-indigo-600 hover:text-indigo-800 p-1">
+                  <i class="ph-bold ph-plus-circle text-base"></i>
+                </button>
+              </div>
+            </td>
+            <td colspan="6" class="py-3 px-4 text-center text-slate-400 italic">Belum ada kegiatan penunjang. Klik tombol + untuk menambahkan target kegiatan.</td>
+            <td class="py-3 px-2 text-center no-print">
+              <button onclick="deleteIKU('${iku.id}')" title="Hapus IKU" class="text-rose-500 hover:text-rose-700">
+                <i class="ph-bold ph-trash"></i>
+              </button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+          return;
+        }
+
+        ikuActivities.forEach((act, actIndex) => {
+          const detail = reportDetails[act.id] || { realization_school: '', realization_yayasan: '', notes: '' };
+          const tr = document.createElement('tr');
+          tr.className = 'hover:bg-slate-50/70 transition-colors border-b border-slate-100';
+
+          let parentCols = '';
+          if (actIndex === 0) {
+            parentCols = `
+              <td rowspan="${rowSpan}" class="py-3.5 px-3 text-center font-bold text-slate-700 border-r border-slate-200 bg-white align-top">
+                ${iku.code_number || ikuIndex + 1}
+              </td>
+              <td rowspan="${rowSpan}" class="py-3.5 px-4 font-semibold text-slate-900 border-r border-slate-200 bg-white align-top">
+                <div class="flex flex-col justify-between h-full space-y-2">
+                  <span>${escapeHtml(iku.title)}</span>
+                  <div class="pt-2 no-print flex items-center gap-1.5 text-[11px] text-indigo-600">
+                    <button onclick="openAddSubActivityModal('${iku.id}', '${escapeHtml(iku.title)}')" class="inline-flex items-center gap-1 font-semibold hover:underline">
+                      <i class="ph-bold ph-plus"></i> Tambah Kegiatan
+                    </button>
+                  </div>
+                </div>
+              </td>
+            `;
+          }
+
+          tr.innerHTML = `
+            ${parentCols}
+            <!-- Column Target (Berpasangan dengan Kegiatan Penunjang) -->
+            <td class="py-2.5 px-3 border-r border-slate-200 bg-slate-50/60 font-semibold text-slate-800">
+              <span class="inline-block px-2 py-0.5 rounded bg-slate-200/70 text-slate-700 text-xs">${escapeHtml(act.target_value)}</span>
+            </td>
+
+            <!-- Column Realisasi Sekolah -->
+            <td class="py-2 px-2 border-r border-slate-200 text-center table-cell-school">
+              <input type="text" 
+                     value="${escapeHtml(detail.realization_school || '')}" 
+                     placeholder="90% / 4 kali" 
+                     oninput="onFieldChanged('${act.id}', 'realization_school', this.value)"
+                     ${!isSchoolMode ? 'disabled title="Hanya dapat diedit pada Mode Unit Sekolah"' : ''}
+                     class="w-full text-center py-1.5 px-2 rounded-lg border ${isSchoolMode ? 'border-indigo-300 bg-white focus:ring-2 focus:ring-indigo-400 font-semibold text-indigo-900' : 'border-transparent bg-transparent text-slate-700'} text-xs outline-none">
+            </td>
+
+            <!-- Column Yayasan -->
+            <td class="py-2 px-2 border-r border-slate-200 text-center table-cell-yayasan">
+              <input type="text" 
+                     value="${escapeHtml(detail.realization_yayasan || '')}" 
+                     placeholder="Verifikasi" 
+                     oninput="onFieldChanged('${act.id}', 'realization_yayasan', this.value)"
+                     ${!isYayasanMode ? 'disabled title="Hanya dapat diverifikasi pada Mode Yayasan"' : ''}
+                     class="w-full text-center py-1.5 px-2 rounded-lg border ${isYayasanMode ? 'border-emerald-400 bg-emerald-50 focus:ring-2 focus:ring-emerald-400 font-semibold text-emerald-900' : 'border-transparent bg-transparent text-slate-700'} text-xs outline-none">
+            </td>
+
+            <!-- Column Kegiatan Penunjang -->
+            <td class="py-2.5 px-4 font-medium text-slate-800 border-r border-slate-200">
+              ${escapeHtml(act.activity_name)}
+            </td>
+
+            <!-- Column Waktu -->
+            <td class="py-2.5 px-3 text-slate-600 border-r border-slate-200 text-xs">
+              <span class="inline-flex items-center gap-1">
+                <i class="ph ph-calendar-blank text-slate-400"></i> ${escapeHtml(act.schedule || '-')}
+              </span>
+            </td>
+
+            <!-- Column Catatan / Kendala -->
+            <td class="py-2 px-3 border-r border-slate-200">
+              <textarea rows="1" 
+                        placeholder="Tulis catatan / kendala..." 
+                        oninput="onFieldChanged('${act.id}', 'notes', this.value)"
+                        class="w-full py-1.5 px-2.5 rounded-lg border border-slate-200 text-slate-700 text-xs focus:border-indigo-500 focus:bg-white bg-slate-50/50 outline-none resize-y">${escapeHtml(detail.notes || '')}</textarea>
+            </td>
+
+            <!-- Action column -->
+            <td class="py-2 px-2 text-center no-print">
+              <button onclick="deleteActivity('${act.id}')" title="Hapus Kegiatan Penunjang" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition">
+                <i class="ph-bold ph-trash text-sm"></i>
+              </button>
+            </td>
+          `;
+
+          tbody.appendChild(tr);
+        });
+      });
+    }
+
+    function onFieldChanged(actId, field, value) {
+      if (!reportDetails[actId]) {
+        reportDetails[actId] = { realization_school: '', realization_yayasan: '', notes: '' };
+      }
+      reportDetails[actId][field] = value;
+      updateMetricCards();
+      updateChartData();
+
+      // Debounce auto-save to cloud
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        saveSingleDetailToCloud(actId);
+      }, 700);
+    }
+
+    async function saveSingleDetailToCloud(actId) {
+      if (!supabaseClient || !currentPeriodId) return;
+      showSyncing(true);
+
+      const d = reportDetails[actId];
+      try {
+        const payload = {
+          period_id: currentPeriodId,
+          activity_id: actId,
+          realization_school: d.realization_school || null,
+          realization_yayasan: d.realization_yayasan || null,
+          notes: d.notes || null,
+          updated_at: new Date().toISOString()
+        };
+
+        const { data, error } = await supabaseClient
+          .from('report_details')
+          .upsert(payload, { onConflict: 'period_id, activity_id' })
+          .select();
+
+        if (error) throw error;
+        if (data && data[0]) {
+          reportDetails[actId].id = data[0].id;
+        }
+      } catch (err) {
+        console.error('Save to cloud failed:', err);
+      } finally {
+        showSyncing(false);
+      }
+    }
+
+    async function saveAllChangesToCloud() {
+      if (!supabaseClient) {
+        showToast('Database Supabase belum terhubung!', 'error');
+        return;
+      }
+      showSyncing(true);
+
+      try {
+        const promises = Object.keys(reportDetails).map(actId => saveSingleDetailToCloud(actId));
+        await Promise.all(promises);
+        showToast('Semua data berhasil disimpan ke Supabase!', 'success');
+      } catch (err) {
+        showToast('Gagal menyimpan: ' + err.message, 'error');
+      } finally {
+        showSyncing(false);
+      }
+    }
+
+    async function handleAddIKU(e) {
+      e.preventDefault();
+      const divId = parseInt(document.getElementById('modalDivisionSelect').value);
+      const title = document.getElementById('newIkuTitle').value.trim();
+      const actName = document.getElementById('newActivityName').value.trim();
+      const targetVal = document.getElementById('newTargetValue').value.trim();
+      const schedule = document.getElementById('newSchedule').value.trim();
+
+      showSyncing(true);
+      try {
+        const nextCode = indicators.length + 1;
+
+        // Insert IKU to Supabase
+        const { data: newIku, error: ikuErr } = await supabaseClient
+          .from('indicators')
+          .insert([{
+            division_id: divId,
+            code_number: nextCode,
+            title: title,
+            academic_year: '2026/2027'
+          }])
+          .select();
+
+        if (ikuErr) throw ikuErr;
+
+        if (newIku && newIku.length > 0) {
+          const ikuId = newIku[0].id;
+
+          // Insert sub-activity
+          const { data: newAct, error: actErr } = await supabaseClient
+            .from('indicator_activities')
+            .insert([{
+              indicator_id: ikuId,
+              activity_name: actName,
+              target_value: targetVal,
+              schedule: schedule
+            }])
+            .select();
+
+          if (actErr) throw actErr;
+
+          closeModal('modalAddIKU');
+          document.getElementById('formAddIKU').reset();
+          currentDivisionId = divId;
+          await loadAllDivisionData();
+          showToast('Indikator IKU baru berhasil disimpan ke Supabase!', 'success');
+        }
+      } catch (err) {
+        console.error('Error add IKU:', err);
+        showToast('Gagal menambah IKU: ' + err.message, 'error');
+      } finally {
+        showSyncing(false);
+      }
+    }
+
+    function openAddSubActivityModal(ikuId, ikuTitle) {
+      document.getElementById('targetParentIkuId').value = ikuId;
+      document.getElementById('subActivityParentTitle').textContent = `IKU: ${ikuTitle}`;
+      openModal('modalAddSubActivity');
+    }
+
+    async function handleAddSubActivity(e) {
+      e.preventDefault();
+      const ikuId = document.getElementById('targetParentIkuId').value;
+      const actName = document.getElementById('subActivityName').value.trim();
+      const target = document.getElementById('subActivityTarget').value.trim();
+      const schedule = document.getElementById('subActivitySchedule').value.trim();
+
+      showSyncing(true);
+      try {
+        const { error } = await supabaseClient
+          .from('indicator_activities')
+          .insert([{
+            indicator_id: ikuId,
+            activity_name: actName,
+            target_value: target,
+            schedule: schedule
+          }]);
+
+        if (error) throw error;
+
+        closeModal('modalAddSubActivity');
+        document.getElementById('formAddSubActivity').reset();
+        await loadAllDivisionData();
+        showToast('Kegiatan penunjang berhasil ditambahkan!', 'success');
+      } catch (err) {
+        console.error('Add activity error:', err);
+        showToast('Gagal menambah kegiatan: ' + err.message, 'error');
+      } finally {
+        showSyncing(false);
+      }
+    }
+
+    async function deleteIKU(ikuId) {
+      showSyncing(true);
+      try {
+        const { error } = await supabaseClient
+          .from('indicators')
+          .delete()
+          .eq('id', ikuId);
+
+        if (error) throw error;
+        await loadAllDivisionData();
+        showToast('IKU berhasil dihapus dari database.', 'info');
+      } catch (err) {
+        showToast('Gagal menghapus IKU: ' + err.message, 'error');
+      } finally {
+        showSyncing(false);
+      }
+    }
+
+    async function deleteActivity(actId) {
+      showSyncing(true);
+      try {
+        const { error } = await supabaseClient
+          .from('indicator_activities')
+          .delete()
+          .eq('id', actId);
+
+        if (error) throw error;
+        delete reportDetails[actId];
+        await loadAllDivisionData();
+        showToast('Kegiatan penunjang berhasil dihapus.', 'info');
+      } catch (err) {
+        showToast('Gagal menghapus kegiatan: ' + err.message, 'error');
+      } finally {
+        showSyncing(false);
+      }
+    }
+
+    async function seedInitialExcelDataToSupabase() {
+      if (!supabaseClient) {
+        showToast('Koneksi Supabase belum siap', 'error');
+        return;
+      }
+
+      showSyncing(true);
+      showToast('Memulai migrasi data Excel ke Supabase...', 'info');
+
+      try {
+        await ensureCurrentPeriodExists();
+
+        for (const item of initialExcelData) {
+          // Check if IKU already exists for this division
+          const { data: existingIku } = await supabaseClient
+            .from('indicators')
+            .select('id')
+            .eq('division_id', item.div_id)
+            .eq('code_number', item.code)
+            .limit(1);
+
+          let parentIkuId;
+          if (existingIku && existingIku.length > 0) {
+            parentIkuId = existingIku[0].id;
+          } else {
+            const { data: createdIku, error: ikuErr } = await supabaseClient
+              .from('indicators')
+              .insert([{
+                division_id: item.div_id,
+                code_number: item.code,
+                title: item.title,
+                academic_year: '2026/2027'
+              }])
+              .select();
+
+            if (ikuErr) throw ikuErr;
+            parentIkuId = createdIku[0].id;
+          }
+
+          // Insert sub-activities & initial realization
+          for (const act of item.acts) {
+            const { data: existingAct } = await supabaseClient
+              .from('indicator_activities')
+              .select('id')
+              .eq('indicator_id', parentIkuId)
+              .eq('activity_name', act.name)
+              .limit(1);
+
+            let actId;
+            if (existingAct && existingAct.length > 0) {
+              actId = existingAct[0].id;
+            } else {
+              const { data: createdAct, error: actErr } = await supabaseClient
+                .from('indicator_activities')
+                .insert([{
+                  indicator_id: parentIkuId,
+                  activity_name: act.name,
+                  target_value: act.target,
+                  schedule: act.schedule
+                }])
+                .select();
+
+              if (actErr) throw actErr;
+              actId = createdAct[0].id;
+            }
+
+            // Insert initial report details
+            if (currentPeriodId && actId) {
+              await supabaseClient
+                .from('report_details')
+                .upsert({
+                  period_id: currentPeriodId,
+                  activity_id: actId,
+                  realization_school: act.real_s,
+                  realization_yayasan: act.real_y || null,
+                  notes: act.notes || null
+                }, { onConflict: 'period_id, activity_id' });
+            }
+          }
+        }
+
+        closeModal('modalSupabase');
+        await loadAllDivisionData();
+        showToast('Migrasi data Excel ke Supabase berhasil diselesaikan!', 'success');
+      } catch (err) {
+        console.error('Seed error:', err);
+        showToast('Error migrasi: ' + err.message, 'error');
+      } finally {
+        showSyncing(false);
+      }
+    }
+
+    function updateMetricCards() {
+      const totalIku = indicators.length;
+      const totalAct = activities.length;
+
+      let filledSchool = 0;
+      let filledYayasan = 0;
+
+      activities.forEach(act => {
+        const det = reportDetails[act.id];
+        if (det && det.realization_school && det.realization_school.trim() !== '' && det.realization_school !== '-') {
+          filledSchool++;
+        }
+        if (det && det.realization_yayasan && det.realization_yayasan.trim() !== '' && det.realization_yayasan !== '-') {
+          filledYayasan++;
+        }
+      });
+
+      const schoolPct = totalAct > 0 ? Math.round((filledSchool / totalAct) * 100) : 0;
+      const yayasanPct = totalAct > 0 ? Math.round((filledYayasan / totalAct) * 100) : 0;
+
+      document.getElementById('statTotalIKU').textContent = totalIku;
+      document.getElementById('statTotalActivities').textContent = totalAct;
+      
+      document.getElementById('statSchoolProgress').textContent = `${schoolPct}%`;
+      document.getElementById('barSchoolProgress').style.width = `${schoolPct}%`;
+
+      document.getElementById('statYayasanProgress').textContent = `${yayasanPct}%`;
+      document.getElementById('barYayasanProgress').style.width = `${yayasanPct}%`;
+    }
+
+    function initChart() {
+      const ctx = document.getElementById('realizationChart').getContext('2d');
+      chartInstance = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [],
+          datasets: [
+            {
+              label: 'Realisasi Sekolah (%)',
+              data: [],
+              backgroundColor: 'rgba(99, 102, 241, 0.85)',
+              borderRadius: 6
+            },
+            {
+              label: 'Verifikasi Yayasan (%)',
+              data: [],
+              backgroundColor: 'rgba(16, 185, 129, 0.85)',
+              borderRadius: 6
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 100,
+              ticks: {
+                callback: function(val) { return val + "%"; }
+              }
+            },
+            x: {
+              ticks: {
+                maxRotation: 20,
+                minRotation: 0,
+                autoSkip: false
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              position: 'top',
+              labels: {
+                boxWidth: 12,
+                font: { size: 11, family: 'Inter' }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function parsePercentage(val) {
+      if (!val) return 0;
+      val = String(val).replace('%', '').trim();
+      let num = parseFloat(val);
+      if (isNaN(num)) return 0;
+      if (num > 0 && num <= 1) num = num * 100;
+      return Math.min(Math.max(num, 0), 100);
+    }
+
+    function updateChartData() {
+      if (!chartInstance) return;
+      const topActivities = activities.slice(0, 8);
+
+      const labels = topActivities.map(a => a.activity_name.length > 22 ? a.activity_name.substring(0, 22) + '...' : a.activity_name);
+      const schoolData = topActivities.map(a => {
+        const d = reportDetails[a.id];
+        return d ? parsePercentage(d.realization_school) : 0;
+      });
+      const yayasanData = topActivities.map(a => {
+        const d = reportDetails[a.id];
+        return d ? parsePercentage(d.realization_yayasan) : 0;
+      });
+
+      chartInstance.data.labels = labels;
+      chartInstance.data.datasets[0].data = schoolData;
+      chartInstance.data.datasets[1].data = yayasanData;
+      chartInstance.update();
+    }
+
+    function populateModalDivisions() {
+      const select = document.getElementById('modalDivisionSelect');
+      select.innerHTML = '';
+      divisions.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.id;
+        opt.textContent = `${d.name} (${d.code})`;
+        if (d.id === currentDivisionId) opt.selected = true;
+        select.appendChild(opt);
+      });
+    }
+
+    async function testSupabaseConnection() {
+      try {
+        const { data, error } = await supabaseClient.from('divisions').select('id, name').limit(1);
+        if (error) throw error;
+        showToast('Koneksi Supabase aktif & tabel terverifikasi!', 'success');
+      } catch (err) {
+        showToast('Koneksi gagal: ' + err.message, 'error');
+      }
+    }
+
+    async function refreshDataFromSupabase() {
+      await loadAllDivisionData();
+      showToast('Data diperbarui dari Supabase', 'info');
+    }
+
+    function fallbackToMemoryData() {
+      divisions = [
+        { id: 1, name: 'Kurikulum', code: 'KURIKULUM', coordinator: 'Ummi Mukhoyyaroh, M.Pd.' },
+        { id: 2, name: 'Kesiswaan', code: 'KESISWAAN', coordinator: 'Ella Setyana, S.Pd.' },
+        { id: 3, name: 'Humas', code: 'HUMAS', coordinator: 'Nur malisa Qothrun Nada, S.Pd.' },
+        { id: 4, name: 'Sarpras', code: 'SARPRAS', coordinator: 'Anisa Ika Wulandari, S.Pd.' },
+        { id: 5, name: 'Bahasa & Prestasi', code: 'BAHASA_PRESTASI', coordinator: 'Siti Khanifah, S.Pd.' },
+        { id: 6, name: 'Tata Usaha', code: 'TU', coordinator: 'Dewi Setiyani, S.Pd' }
+      ];
+      renderDivisionPills();
+      populateModalDivisions();
+    }
+
+    function openModal(modalId) {
+      document.getElementById(modalId).classList.remove('hidden');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.add('hidden');
+    }
+
+    /* -------------------------------------------------------------
+       EXPORT & PRINT ENGINE: PDF, DOCX (WORD), & DIRECT PRINT
+       ------------------------------------------------------------- */
+
+    function openExportModal(preferredFormat = 'pdf') {
+      const activeDiv = divisions.find(d => d.id === currentDivisionId);
+      if (activeDiv) {
+        document.getElementById('exportCurrentDivName').textContent = `Divisi ${activeDiv.name}`;
+      }
+
+      // Pre-select format
+      const radios = document.getElementsByName('exportFormatRadio');
+      for (const r of radios) {
+        if (r.value === preferredFormat) r.checked = true;
+      }
+
+      const iconContainer = document.getElementById('exportModalIcon');
+      if (preferredFormat === 'pdf') {
+        iconContainer.className = 'w-10 h-10 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold text-xl';
+        iconContainer.innerHTML = '<i class="ph-bold ph-file-pdf"></i>';
+      } else {
+        iconContainer.className = 'w-10 h-10 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold text-xl';
+        iconContainer.innerHTML = '<i class="ph-bold ph-file-doc"></i>';
+      }
+
+      openModal('modalExportReport');
+    }
+
+    // Direct browser print with formal report layout
+    async function printFormalReport() {
+      showSyncing(true);
+      showToast('Menyiapkan format cetak resmi...', 'info');
+      try {
+        const fullHtml = await generateFormalDocumentHTML([currentDivisionId]);
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write(fullHtml);
+        printWindow.document.close();
+        printWindow.focus();
+        setTimeout(() => {
+          printWindow.print();
+        }, 500);
+      } catch (err) {
+        console.error('Print error:', err);
+        showToast('Gagal mencetak: ' + err.message, 'error');
+      } finally {
+        showSyncing(false);
+      }
+    }
+
+    async function processReportExport() {
+      const formatRadios = document.getElementsByName('exportFormatRadio');
+      let selectedFormat = 'pdf';
+      for (const r of formatRadios) {
+        if (r.checked) selectedFormat = r.value;
+      }
+
+      const scopeRadios = document.getElementsByName('exportScopeRadio');
+      let selectedScope = 'current';
+      for (const r of scopeRadios) {
+        if (r.checked) selectedScope = r.value;
+      }
+
+      const btn = document.getElementById('btnExecuteExport');
+      const btnText = document.getElementById('btnExecuteExportText');
+      const originalText = btnText.textContent;
+
+      btn.disabled = true;
+      btnText.textContent = 'Memproses berkas...';
+      showSyncing(true);
+
+      try {
+        let divisionIdsToExport = [];
+        if (selectedScope === 'all') {
+          divisionIdsToExport = divisions.map(d => d.id);
+        } else {
+          divisionIdsToExport = [currentDivisionId];
+        }
+
+        if (selectedFormat === 'pdf') {
+          await exportToPDF(divisionIdsToExport);
+        } else {
+          await exportToWordDOCX(divisionIdsToExport);
+        }
+
+        closeModal('modalExportReport');
+      } catch (err) {
+        console.error('Export error:', err);
+        showToast('Gagal mengekspor berkas: ' + err.message, 'error');
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = originalText;
+        showSyncing(false);
+      }
+    }
+
+    // Helper to fetch data for any division
+    async function fetchDivisionDataBundle(divId) {
+      // If currently active, return existing in-memory state
+      if (divId === currentDivisionId) {
+        return {
+          division: divisions.find(d => d.id === divId),
+          indicators: [...indicators],
+          activities: [...activities],
+          details: { ...reportDetails }
+        };
+      }
+
+      // Otherwise query Supabase
+      const divObj = divisions.find(d => d.id === divId);
+      const { data: dbInds } = await supabaseClient
+        .from('indicators')
+        .select('*')
+        .eq('division_id', divId)
+        .order('code_number', { ascending: true });
+
+      const divInds = dbInds || [];
+      let divActs = [];
+      let divDets = {};
+
+      if (divInds.length > 0) {
+        const indIds = divInds.map(i => i.id);
+        const { data: dbActs } = await supabaseClient
+          .from('indicator_activities')
+          .select('*')
+          .in('indicator_id', indIds);
+        divActs = dbActs || [];
+
+        if (divActs.length > 0 && currentPeriodId) {
+          const actIds = divActs.map(a => a.id);
+          const { data: dbDetails } = await supabaseClient
+            .from('report_details')
+            .select('*')
+            .eq('period_id', currentPeriodId)
+            .in('activity_id', actIds);
+
+          if (dbDetails) {
+            dbDetails.forEach(row => {
+              divDets[row.activity_id] = {
+                id: row.id,
+                realization_school: row.realization_school || '',
+                realization_yayasan: row.realization_yayasan || '',
+                notes: row.notes || ''
+              };
+            });
+          }
+        }
+      }
+
+      return {
+        division: divObj,
+        indicators: divInds,
+        activities: divActs,
+        details: divDets
+      };
+    }
+
+    // Builds the full HTML document string containing formal Kop, Tables, and Signatures
+    async function generateFormalDocumentHTML(divIds) {
+      const monthText = document.getElementById('selectMonth').options[document.getElementById('selectMonth').selectedIndex].text;
+      const yearText = document.getElementById('selectYear').value;
+      const kepalaSekolah = document.getElementById('signerKepalaSekolah')?.value || 'M. Ahsanul Umam, S.Pd.I.';
+      const ketuaYayasan = document.getElementById('signerKetuaYayasan')?.value || 'H. Ibrahim Wagiman';
+      const reportDate = document.getElementById('exportReportDate')?.value || `Pati, 13 ${monthText} ${yearText}`;
+
+      // Logo SVG of Yanbu'ul Qur'an emblem
+      const logoSvg = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 300" style="width: 140px; height: 140px; margin: 0 auto; display: block;">
+          <defs>
+            <radialGradient id="gradEmblem" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#059669" />
+              <stop offset="100%" stop-color="#064e3b" />
+            </radialGradient>
+          </defs>
+          <path d="M150,15 C190,15 210,35 225,50 C245,70 270,75 280,95 C290,120 280,145 285,170 C285,195 265,220 250,240 C225,270 190,285 150,285 C110,285 75,270 50,240 C35,220 15,195 15,170 C20,145 10,120 20,95 C30,75 55,70 75,50 C90,35 110,15 150,15 Z" fill="none" stroke="#0f172a" stroke-width="4"/>
+          <path d="M150,30 C180,30 200,45 215,60 C235,78 255,82 265,100 C272,120 262,140 268,165 C268,185 250,208 238,225 C215,252 185,268 150,268 C115,268 85,252 62,225 C50,208 32,185 32,165 C38,140 28,120 35,100 C45,82 65,78 85,60 C100,45 120,30 150,30 Z" fill="#065f46" stroke="#047857" stroke-width="2"/>
+          <!-- Star at top -->
+          <polygon points="150,48 154,60 166,60 156,68 160,80 150,72 140,80 144,68 134,60 146,60" fill="#facc15"/>
+          <!-- Globe circle -->
+          <circle cx="150" cy="145" r="68" fill="#ffffff" stroke="#0f172a" stroke-width="3"/>
+          <ellipse cx="150" cy="145" rx="68" ry="24" fill="none" stroke="#0f172a" stroke-width="1.5"/>
+          <line x1="150" y1="77" x2="150" y2="213" stroke="#0f172a" stroke-width="1.5"/>
+          <!-- Open Quran Icon in middle -->
+          <path d="M125,125 Q138,132 150,132 Q162,132 175,125 L175,165 Q162,172 150,172 Q138,172 125,165 Z" fill="#f8fafc" stroke="#0f172a" stroke-width="2.5"/>
+          <path d="M150,132 L150,172" stroke="#0f172a" stroke-width="2"/>
+          <!-- Banner ribbon bottom -->
+          <path d="M90,195 Q150,210 210,195 L220,220 Q150,235 80,220 Z" fill="#ffffff" stroke="#0f172a" stroke-width="2.5"/>
+          <text x="150" y="213" text-anchor="middle" font-family="'Inter', sans-serif" font-weight="900" font-size="13" fill="#0f172a" letter-spacing="1">YANBU'UL QUR'AN</text>
+        </svg>
+      `;
+
+      // 1. COVER PAGE
+      const coverPage = `
+        <div class="report-page page-break-after" style="display: flex; flex-direction: column; justify-content: space-between; height: 96vh; box-sizing: border-box; text-align: center; padding: 25px 20px;">
+          <div>
+            ${logoSvg}
+            <h1 style="margin: 20px 0 6px 0; font-size: 26px; font-weight: 900; letter-spacing: 2px; color: #0f172a; text-transform: uppercase;">LAPORAN BULANAN</h1>
+            <h2 style="margin: 0; font-size: 22px; font-weight: 800; color: #047857; letter-spacing: 1px;">YQBS 1 PATI PUTRI</h2>
+            <h3 style="margin: 8px 0 0 0; font-size: 16px; font-weight: 700; color: #1e293b; text-transform: uppercase;">PERIODE ${escapeHtml(monthText).toUpperCase()} ${escapeHtml(yearText)}</h3>
+          </div>
+
+          <div style="margin: 30px auto; padding: 12px 24px; border-top: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1; display: inline-block;">
+            <p style="margin: 0; font-size: 13px; font-weight: 600; color: #334155;">Disampaikan dalam Rapat Bulanan</p>
+            <p style="margin: 3px 0 0 0; font-size: 15px; font-weight: 800; color: #0f172a;">Yayasan Asem Bungkuk Pati</p>
+            <p style="margin: 4px 0 0 0; font-size: 12px; color: #64748b;">${escapeHtml(reportDate)}</p>
+          </div>
+
+          <div>
+            <div style="font-size: 15px; font-weight: 700; color: #065f46; margin-bottom: 6px; font-family: 'Amiri', 'Traditional Arabic', serif;">
+              مَعْهَدُ التَّحْفِيْظِ يَنْبُوْعُ القُرْآنِ ۱ قَاطِيْ
+            </div>
+            <h3 style="margin: 0; font-size: 16px; font-weight: 900; color: #0f172a; letter-spacing: 0.5px;">
+              YANBU'UL QUR'AN BOARDING SCHOOL 1 PATI
+            </h3>
+            <p style="margin: 2px 0 0 0; font-size: 12px; font-weight: 700; color: #047857;">(Pondok Tahfidh – SMPQT – SMAQT)</p>
+            <p style="margin: 4px 0 0 0; font-size: 10.5px; color: #475569; max-width: 650px; margin-left: auto; margin-right: auto;">
+              Jalan Raya Pati Tayu Km. 06 Dukuh Ngulaan, Desa Sukoharjo, Kec. Wedarijaksa, Kabupaten Pati 59152
+            </p>
+          </div>
+        </div>
+      `;
+
+      // 2. HALAMAN PENGESAHAN
+      const approvalPage = `
+        <div class="report-page page-break-after" style="padding: 25px 20px; box-sizing: border-box;">
+          <div style="text-align: center; border-bottom: 2px solid #0f172a; padding-bottom: 8px; margin-bottom: 25px;">
+            <h2 style="margin: 0; font-size: 18px; font-weight: 900; letter-spacing: 1px; color: #0f172a; text-transform: uppercase;">HALAMAN PENGESAHAN</h2>
+          </div>
+
+          <p style="font-size: 12px; line-height: 1.8; text-align: justify; color: #1e293b; text-indent: 35px; margin-bottom: 35px;">
+            Laporan Kegiatan Bulanan <b>YQBS 1 PATI PUTRI</b>, yakni periode <b>${escapeHtml(monthText)} ${escapeHtml(yearText)}</b> Semester Gasal Tahun Ajaran <b>2026/2027</b> sebagai bahan evaluasi pelaksanaan Kegiatan Belajar Mengajar (KBM) dan Kepesantrenan yang lebih baik di <b>YQBS 1 PATI PUTRI</b> Margorejo Kecamatan Wedarijaksa Kabupaten Pati telah disetujui oleh Tim untuk diajukan ke Ketua Yayasan Asem Bungkuk Sukoharjo Wedarijaksa Pati.
+          </p>
+
+          <table style="width: 100%; border-collapse: collapse; margin-top: 40px; font-size: 12px;">
+            <tr>
+              <td style="width: 50%; text-align: center; vertical-align: top;">
+                <p style="margin: 0; font-weight: 600; color: #475569;">Mengetahui,</p>
+                <p style="margin: 2px 0 0 0; font-weight: 800; color: #0f172a;">Ketua Yayasan Asem Bungkuk</p>
+                <div style="height: 75px;"></div>
+                <p style="margin: 0; font-weight: 900; text-decoration: underline; color: #0f172a; font-size: 13px;">${escapeHtml(ketuaYayasan)}</p>
+                <p style="margin: 3px 0 0 0; font-size: 11px; color: #64748b;">NIY. 19720722.2016.0001</p>
+              </td>
+
+              <td style="width: 50%; text-align: center; vertical-align: top;">
+                <p style="margin: 0; font-weight: 600; color: #475569;">${escapeHtml(reportDate)},</p>
+                <p style="margin: 2px 0 0 0; font-weight: 800; color: #0f172a;">Kepala Sekolah</p>
+                <div style="height: 75px;"></div>
+                <p style="margin: 0; font-weight: 900; text-decoration: underline; color: #0f172a; font-size: 13px;">${escapeHtml(kepalaSekolah)}</p>
+                <p style="margin: 3px 0 0 0; font-size: 11px; color: #64748b;">NIY. 19931029.2017.0022</p>
+              </td>
+            </tr>
+          </table>
+        </div>
+      `;
+
+      // 3. PENDAHULUAN & PROFIL
+      const introPage = `
+        <div class="report-page page-break-after" style="padding: 20px; box-sizing: border-box; font-size: 11px; line-height: 1.6; color: #1e293b;">
+          <div style="margin-bottom: 20px;">
+            <h3 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 800; color: #0f172a; border-bottom: 1.5px solid #0f172a; display: inline-block;">
+              A. PENDAHULUAN
+            </h3>
+            <p style="text-align: justify; text-indent: 30px; margin: 4px 0 8px 0;">
+              Puji syukur ke hadirat Allah Subhanahu wa Ta’ala atas limpahan rahmat, taufik, dan hidayah-Nya sehingga <b>YQBS 1 PATI PUTRI</b> dapat melaksanakan kegiatan pembelajaran, tahfidzul Qur'an, dan pembinaan santriwati dengan lancar pada periode <b>${escapeHtml(monthText)} ${escapeHtml(yearText)}</b>. Shalawat serta salam semoga senantiasa tercurah kepada junjungan kita Nabi Muhammad Shallallahu ‘alaihi wasallam, beserta keluarga, sahabat, dan pengikut beliau hingga akhir zaman.
+            </p>
+            <p style="text-align: justify; text-indent: 30px; margin: 4px 0 8px 0;">
+              Laporan ini disusun sebagai bentuk pertanggungjawaban dan dokumentasi kegiatan yang telah dilaksanakan oleh <b>YQBS 1 PATI PUTRI</b> selama bulan berjalan, meliputi kegiatan kurikulum akademik, tahfidzul Qur’an, pembinaan karakter kesiswaan, keasramaan, sarana prasarana, serta kegiatan penunjang lainnya.
+            </p>
+            <p style="text-align: justify; text-indent: 30px; margin: 4px 0 0 0;">
+              Penyusunan laporan ini bertujuan untuk memberikan gambaran menyeluruh mengenai perkembangan, capaian, dan tantangan yang dihadapi selama periode tersebut, sekaligus sebagai bahan evaluasi bersama Yayasan Asem Bungkuk untuk peningkatan mutu pendidikan di masa mendatang.
+            </p>
+          </div>
+
+          <div>
+            <h3 style="margin: 0 0 8px 0; font-size: 14px; font-weight: 800; color: #0f172a; border-bottom: 1.5px solid #0f172a; display: inline-block;">
+              B. PROFIL LEMBAGA
+            </h3>
+            
+            <div style="margin-bottom: 12px;">
+              <p style="margin: 0 0 4px 0; font-weight: 700; color: #0f172a;">1. Identitas Lembaga</p>
+              <table style="width: 100%; border-collapse: collapse; font-size: 10.5px;">
+                <tr><td style="width: 22%; padding: 2px 0;">Nama Lembaga / Sekolah</td><td style="width: 2%;">:</td><td style="font-weight: 700; color: #047857;">YQBS 1 PATI PUTRI (SMPQT Yanbu'ul Qur'an 1 Lil Banat)</td></tr>
+                <tr><td style="padding: 2px 0;">Tahun Berdiri</td><td>:</td><td>2025</td></tr>
+                <tr><td style="padding: 2px 0;">NPSN</td><td>:</td><td>70054907</td></tr>
+                <tr><td style="padding: 2px 0;">Nomor Ijin Operasional</td><td>:</td><td>400.3.5/01944/2025</td></tr>
+                <tr><td style="padding: 2px 0;">Nama Kepala Sekolah</td><td>:</td><td>Muhammad Ahsanul Umam, S.Pd.I.</td></tr>
+                <tr><td style="padding: 2px 0;">Alamat Kampus</td><td>:</td><td>Jl. Raya Pati-Tayu KM. 6 Dukuh Ngulaan, Sukoharjo, Wedarijaksa, Pati</td></tr>
+                <tr><td style="padding: 2px 0;">Email / No. Telpon</td><td>:</td><td>smpqtyq2pati@gmail.com / (0295) 4102840 (Kode Pos: 59152)</td></tr>
+              </table>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+              <p style="margin: 0 0 4px 0; font-weight: 700; color: #0f172a;">2. Visi dan Misi</p>
+              <p style="margin: 0 0 2px 0; font-weight: 600;">Visi:</p>
+              <p style="margin: 0 0 4px 10px; font-style: italic; color: #065f46;">"Terwujudnya generasi qur'ani yang unggul, berkarakter, serta berwawasan lingkungan dan kebangsaan."</p>
+              <p style="margin: 0 0 2px 0; font-weight: 600;">Misi:</p>
+              <ol style="margin: 0; padding-left: 20px; font-size: 10px; line-height: 1.4;">
+                <li>Mendidik generasi qur'ani yang mengintegrasikan nilai-nilai al-qur'an dalam pengetahuan dan teknologi</li>
+                <li>Membentuk generasi qur'ani yang memiliki kedisiplinan tinggi dan bertanggung jawab</li>
+                <li>Membentuk generasi qur'ani yang peduli lingkungan</li>
+                <li>Menciptakan lingkungan belajar yang bersih, nyaman, indah dan menyenangkan</li>
+                <li>Membentuk generasi qur'ani yang berwawasan kebangsaan</li>
+              </ol>
+            </div>
+
+            <div>
+              <p style="margin: 0 0 4px 0; font-weight: 700; color: #0f172a;">3. Struktur Organisasi Tim Pelaksana</p>
+              <table style="width: 100%; border-collapse: collapse; font-size: 10px;">
+                <tr><td style="width: 25%; padding: 2px 0;">Penanggung Jawab Mutu</td><td style="width: 2%;">:</td><td style="font-weight: 600;">Ruqayah, M.Pd.</td><td style="width: 25%;">Waka Sarpras</td><td style="width: 2%;">:</td><td style="font-weight: 600;">Mahda Laina Arimukhti, S.Kom.</td></tr>
+                <tr><td style="padding: 2px 0;">Kepala Sekolah</td><td>:</td><td style="font-weight: 600;">M. Ahsanul Umam, S.Pd.I.</td><td>Waka Bahasa & Prestasi</td><td>:</td><td style="font-weight: 600;">Siti Khanifah, S.Pd.</td></tr>
+                <tr><td style="padding: 2px 0;">Waka Kurikulum</td><td>:</td><td style="font-weight: 600;">Ummi Mukhoyyaroh, M.Pd.</td><td>Kepala Tata Usaha</td><td>:</td><td style="font-weight: 600;">Dewi Setiyani, S.Pd.</td></tr>
+                <tr><td style="padding: 2px 0;">Waka Kesiswaan</td><td>:</td><td style="font-weight: 600;">Ella Setyana, S.Pd.</td><td>Koordinator Pondok</td><td>:</td><td style="font-weight: 600;">Tim Kepengasuhan Santri</td></tr>
+                <tr><td style="padding: 2px 0;">Waka Humas</td><td>:</td><td style="font-weight: 600;">Laila Mahfudloh Zain, S.Pd.</td><td>Kabersos & Murobbiyah</td><td>:</td><td style="font-weight: 600;">Tim Asrama Putri</td></tr>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // 4. BAB C: LAPORAN PELAKSANAAN PROGRAM (TABEL PER DIVISI)
+      let divisionTablesContent = `
+        <div style="margin-bottom: 20px;">
+          <h2 style="margin: 0 0 4px 0; font-size: 15px; font-weight: 900; color: #0f172a; text-transform: uppercase;">
+            C. LAPORAN PELAKSANAAN PROGRAM & PENCAPAIAN IKU
+          </h2>
+          <p style="margin: 0 0 15px 0; font-size: 11px; font-weight: 600; color: #475569;">
+            YQBS 1 PATI PUTRI • PERIODE: ${escapeHtml(monthText).toUpperCase()} ${escapeHtml(yearText)}
+          </p>
+        </div>
+      `;
+
+      for (let idx = 0; idx < divIds.length; idx++) {
+        const bundle = await fetchDivisionDataBundle(divIds[idx]);
+        const div = bundle.division;
+        const divInds = bundle.indicators;
+        const divActs = bundle.activities;
+        const divDets = bundle.details;
+
+        let tableRowsHtml = '';
+        if (divInds.length === 0) {
+          tableRowsHtml = `
+            <tr>
+              <td colspan="8" style="text-align:center; padding: 15px; color: #64748b; font-style: italic; border: 1px solid #94a3b8;">
+                Belum ada data indikator kinerja (IKU) untuk divisi ini.
+              </td>
+            </tr>
+          `;
+        } else {
+          divInds.forEach((iku, iIndex) => {
+            const acts = divActs.filter(a => a.indicator_id === iku.id);
+            const rowSpan = acts.length || 1;
+
+            if (acts.length === 0) {
+              tableRowsHtml += `
+                <tr>
+                  <td style="text-align: center; font-weight: bold; padding: 6px; border: 1px solid #94a3b8; background-color: #f8fafc;">${iku.code_number || iIndex + 1}</td>
+                  <td style="font-weight: 600; padding: 6px; border: 1px solid #94a3b8;">${escapeHtml(iku.title)}</td>
+                  <td colspan="6" style="text-align: center; color: #94a3b8; font-style: italic; padding: 6px; border: 1px solid #94a3b8;">-</td>
+                </tr>
+              `;
+              return;
+            }
+
+            acts.forEach((act, aIndex) => {
+              const det = divDets[act.id] || { realization_school: '', realization_yayasan: '', notes: '' };
+              let parentCell = '';
+              if (aIndex === 0) {
+                parentCell = `
+                  <td rowspan="${rowSpan}" style="text-align: center; font-weight: bold; vertical-align: top; padding: 6px; border: 1px solid #94a3b8; background-color: #f8fafc;">
+                    ${iku.code_number || iIndex + 1}
+                  </td>
+                  <td rowspan="${rowSpan}" style="font-weight: 600; vertical-align: top; padding: 6px; border: 1px solid #94a3b8; background-color: #ffffff;">
+                    ${escapeHtml(iku.title)}
+                  </td>
+                `;
+              }
+
+              tableRowsHtml += `
+                <tr>
+                  ${parentCell}
+                  <td style="padding: 6px; border: 1px solid #94a3b8; text-align: center; font-weight: 700; background-color: #f8fafc;">${escapeHtml(act.target_value)}</td>
+                  <td style="padding: 6px; border: 1px solid #94a3b8; text-align: center; font-weight: 700; color: #1e1b4b; background-color: #eef2ff;">${escapeHtml(det.realization_school || '-')}</td>
+                  <td style="padding: 6px; border: 1px solid #94a3b8; text-align: center; font-weight: 700; color: #064e3b; background-color: #ecfdf5;">${escapeHtml(det.realization_yayasan || '-')}</td>
+                  <td style="padding: 6px; border: 1px solid #94a3b8;">${escapeHtml(act.activity_name)}</td>
+                  <td style="padding: 6px; border: 1px solid #94a3b8; font-size: 10px; text-align: center;">${escapeHtml(act.schedule || '-')}</td>
+                  <td style="padding: 6px; border: 1px solid #94a3b8; font-size: 10px;">${escapeHtml(det.notes || '-')}</td>
+                </tr>
+              `;
+            });
+          });
+        }
+
+        const isLast = idx === divIds.length - 1;
+
+        divisionTablesContent += `
+          <div class="report-division-section ${!isLast ? 'page-break-after' : ''}" style="margin-bottom: 25px;">
+            <!-- Judul Sub Bab Divisi -->
+            <div style="background-color: #f1f5f9; padding: 6px 12px; border-left: 4px solid #047857; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="margin: 0; font-size: 13px; font-weight: 800; color: #0f172a; text-transform: uppercase;">
+                ${idx + 1}. DIVISI ${escapeHtml(div.name)}
+              </h3>
+              <span style="font-size: 10.5px; font-weight: 600; color: #475569;">
+                Koordinator: ${escapeHtml(div.coordinator || '-')}
+              </span>
+            </div>
+
+            <!-- Tabel Data IKU Divisi -->
+            <table style="width: 100%; border-collapse: collapse; font-size: 10.5px; font-family: 'Inter', Arial, sans-serif; margin-bottom: 15px;">
+              <thead>
+                <tr style="background-color: #e2e8f0; color: #0f172a; text-transform: uppercase; font-size: 9px; font-weight: 800; border: 1px solid #94a3b8;">
+                  <th style="padding: 6px 4px; width: 32px; text-align: center; border: 1px solid #94a3b8;">NO</th>
+                  <th style="padding: 6px 6px; width: 22%; text-align: left; border: 1px solid #94a3b8;">INDIKATOR KINERJA UTAMA (IKU)</th>
+                  <th style="padding: 6px 4px; width: 11%; text-align: center; border: 1px solid #94a3b8;">TARGET</th>
+                  <th style="padding: 6px 4px; width: 11%; text-align: center; border: 1px solid #94a3b8; background-color: #c7d2fe; color: #1e1b4b;">REALISASI</th>
+                  <th style="padding: 6px 4px; width: 11%; text-align: center; border: 1px solid #94a3b8; background-color: #a7f3d0; color: #064e3b;">YAYASAN</th>
+                  <th style="padding: 6px 6px; width: 20%; text-align: left; border: 1px solid #94a3b8;">KEGIATAN PENUNJANG</th>
+                  <th style="padding: 6px 4px; width: 10%; text-align: center; border: 1px solid #94a3b8;">WAKTU</th>
+                  <th style="padding: 6px 6px; width: 15%; text-align: left; border: 1px solid #94a3b8;">CATATAN / KENDALA</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${tableRowsHtml}
+              </tbody>
+            </table>
+
+            <!-- Tanda Tangan per Divisi -->
+            <table style="width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 10px; page-break-inside: avoid;">
+              <tr>
+                <td style="width: 50%; text-align: left; vertical-align: top; padding-left: 20px;">
+                  <p style="margin: 0; color: #64748b;">Koordinator Divisi,</p>
+                  <div style="height: 38px;"></div>
+                  <p style="margin: 0; font-weight: 800; text-decoration: underline; color: #0f172a;">${escapeHtml(div.coordinator || 'Koordinator Unit')}</p>
+                </td>
+                <td style="width: 50%; text-align: right; vertical-align: top; padding-right: 20px;">
+                  <p style="margin: 0; color: #64748b;">Mengetahui Kepala Sekolah,</p>
+                  <div style="height: 38px;"></div>
+                  <p style="margin: 0; font-weight: 800; text-decoration: underline; color: #0f172a;">${escapeHtml(kepalaSekolah)}</p>
+                </td>
+              </tr>
+            </table>
+          </div>
+        `;
+      }
+
+      return `
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Laporan Bulanan YQBS 1 PATI PUTRI</title>
+          <style>
+            @page {
+              size: A4 landscape;
+              margin: 8mm;
+            }
+            body {
+              font-family: 'Inter', Arial, Helvetica, sans-serif;
+              color: #0f172a;
+              background-color: #ffffff;
+              margin: 0;
+              padding: 0;
+            }
+            .page-break-after {
+              page-break-after: always;
+            }
+            table {
+              page-break-inside: auto;
+            }
+            tr {
+              page-break-inside: avoid;
+            }
+          </style>
+        </head>
+        <body>
+          ${coverPage}
+          ${approvalPage}
+          ${introPage}
+          <div class="report-page">
+            ${divisionTablesContent}
+          </div>
+        </body>
+        </html>
+      `;
+    }
+
+    // Export Handler: PDF (via html2pdf.js)
+    async function exportToPDF(divIds) {
+      showToast('Menyusun buku laporan PDF YQBS 1 PATI PUTRI...', 'info');
+      const htmlContent = await generateFormalDocumentHTML(divIds);
+
+      const tempContainer = document.createElement('div');
+      tempContainer.style.width = '1120px'; // A4 landscape ratio
+      tempContainer.style.padding = '10px';
+      tempContainer.style.background = '#ffffff';
+      tempContainer.innerHTML = htmlContent;
+      document.body.appendChild(tempContainer);
+
+      const monthText = document.getElementById('selectMonth').options[document.getElementById('selectMonth').selectedIndex].text;
+      const yearText = document.getElementById('selectYear').value;
+      const filename = divIds.length > 1 
+        ? `Laporan_Bulanan_YQBS_1_PATI_PUTRI_Lengkap_${monthText}_${yearText}.pdf`
+        : `Laporan_Bulanan_YQBS_1_PATI_PUTRI_Divisi_${divisions.find(d => d.id === divIds[0])?.name.replace(/\s+/g, '_')}_${monthText}_${yearText}.pdf`;
+
+      const opt = {
+        margin: [6, 6, 6, 6],
+        filename: filename,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true, letterRendering: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'landscape' },
+        pagebreak: { mode: ['css', 'legacy'] }
+      };
+
+      try {
+        await html2pdf().set(opt).from(tempContainer).save();
+        showToast('Buku Laporan PDF berhasil diunduh!', 'success');
+      } finally {
+        document.body.removeChild(tempContainer);
+      }
+    }
+
+    // Export Handler: Microsoft Word (.docx)
+    async function exportToWordDOCX(divIds) {
+      showToast('Menyusun berkas Word (.docx) YQBS 1 PATI PUTRI...', 'info');
+      const fullHtml = await generateFormalDocumentHTML(divIds);
+
+      const monthText = document.getElementById('selectMonth').options[document.getElementById('selectMonth').selectedIndex].text;
+      const yearText = document.getElementById('selectYear').value;
+      const filename = divIds.length > 1 
+        ? `Laporan_Bulanan_YQBS_1_PATI_PUTRI_Lengkap_${monthText}_${yearText}.docx`
+        : `Laporan_Bulanan_YQBS_1_PATI_PUTRI_Divisi_${divisions.find(d => d.id === divIds[0])?.name.replace(/\s+/g, '_')}_${monthText}_${yearText}.docx`;
+
+      // Check if html-docx-js is available
+      if (typeof htmlDocx !== 'undefined' && htmlDocx.asBlob) {
+        try {
+          const docxBlob = htmlDocx.asBlob(fullHtml, {
+            orientation: 'landscape',
+            margins: { top: 720, right: 720, bottom: 720, left: 720 }
+          });
+          saveAs(docxBlob, filename);
+          showToast('Dokumen Word (.docx) berhasil diunduh!', 'success');
+          return;
+        } catch (e) {
+          console.warn('htmlDocx conversion fallback:', e);
+        }
+      }
+
+      // Robust MSO-compliant HTML Word document fallback (universally recognized by Word/WPS/Docs in landscape)
+      const wordDocumentContent = `
+        <html xmlns:o='urn:schemas-microsoft-com:office:office' 
+              xmlns:w='urn:schemas-microsoft-com:office:word' 
+              xmlns='http://www.w3.org/TR/REC-html40'>
+        <head>
+          <meta charset='utf-8'>
+          <title>Laporan Bulanan YQBS 1 PATI PUTRI</title>
+          <!--[if gte mso 9]>
+          <xml>
+            <w:WordDocument>
+              <w:View>Print</w:View>
+              <w:Zoom>100</w:Zoom>
+              <w:DoNotOptimizeForBrowser/>
+            </w:WordDocument>
+          </xml>
+          <![endif]-->
+          <style>
+            @page Section1 {
+              size: 841.9pt 595.3pt; /* A4 Landscape in points */
+              mso-page-orientation: landscape;
+              margin: 25pt 25pt 25pt 25pt;
+              mso-header-margin: 15.0pt;
+              mso-footer-margin: 15.0pt;
+            }
+            div.Section1 { page: Section1; }
+            body { font-family: 'Calibri', 'Arial', sans-serif; font-size: 10pt; color: #000; }
+            table { border-collapse: collapse; width: 100%; }
+            th, td { border: 1 solid #7f7f7f; padding: 4.5pt; }
+          </style>
+        </head>
+        <body>
+          <div class="Section1">
+            ${fullHtml}
+          </div>
+        </body>
+        </html>
+      `;
+
+      const blob = new Blob(['\ufeff' + wordDocumentContent], {
+        type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document;charset=utf-8'
+      });
+      saveAs(blob, filename);
+      showToast('Dokumen Word berhasil diunduh!', 'success');
+    }
+  </script>
+</body>
+</html>
