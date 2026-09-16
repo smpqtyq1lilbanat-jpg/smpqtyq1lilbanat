@@ -2,7 +2,7 @@
 <html lang="id" class="scroll-smooth">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Portal Wali Santriwati - SMPQT Yanbu'ul Qur'an 1 Lil Banat</title>
     
     <!-- Favicon -->
@@ -11,7 +11,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Merriweather:ital,wght@0,400;0,700;1,400&amp;family=Amiri:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS CDN & Config -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,7 +26,7 @@
                             200: '#bbf7d0',
                             500: '#22c55e',
                             600: '#16a34a',
-                            700: '#15803d',
+                            700: '#15803d', /* Hijau utama khas madrasah */
                             800: '#166534',
                             900: '#14532d',
                         },
@@ -54,37 +54,38 @@
     <!-- Chart.js untuk Grafik -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- Custom CSS persis sesuai stylesheet snapshot -->
+    <!-- Custom CSS -->
     <style>
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: rgb(241, 241, 241); }
-        ::-webkit-scrollbar-thumb { background: rgb(21, 128, 61); border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: rgb(22, 101, 52); }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-        .tab-active { 
-            border-bottom: 3px solid rgb(21, 128, 61); 
-            color: rgb(21, 128, 61); 
-            font-weight: 700; 
-            background-color: rgb(240, 253, 244); 
-        }
-        .tab-inactive { 
-            border-bottom: 3px solid transparent; 
-            color: rgb(107, 114, 128); 
-            font-weight: 500; 
-        }
-        .tab-inactive:hover { 
-            color: rgb(55, 65, 81); 
-            border-bottom: 3px solid rgb(209, 213, 219); 
-            background-color: rgb(249, 250, 251); 
-        }
+        /* Hide scrollbar for mobile horizontal scrolling */
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        .loader { 
-            border-width: 4px; 
-            border-style: solid; 
-            border-color: rgb(21, 128, 61) rgb(243, 243, 243) rgb(243, 243, 243); 
-            border-image: none; 
-            border-radius: 50%; 
-            width: 32px; 
+        /* Modern Pill Tabs */
+        .tab-active {
+            background-color: #15803d;
+            color: #ffffff;
+            border: 2px solid #14532d;
+            box-shadow: 0 4px 0 0 #14532d;
+            transform: translateY(-2px);
+        }
+        .tab-inactive {
+            background-color: #ffffff;
+            color: #4b5563; 
+            border: 2px solid #e5e7eb;
+            box-shadow: 0 4px 0 0 #e5e7eb;
+        }
+        .tab-inactive:active {
+            transform: translateY(2px);
+            box-shadow: 0 0 0 0 #e5e7eb;
+        }
+        
+        .loader {
             height: 32px; 
             animation: 1s linear 0s infinite normal none running spin; 
         }
@@ -94,201 +95,205 @@
         }
 
         .fade-in { 
-            animation: 0.4s ease-in-out 0s 1 normal none running fadeIn; 
+            animation: 0.4s ease-out 0s 1 normal none running fadeIn; 
         }
         @keyframes fadeIn { 
-            0% { opacity: 0; transform: translateY(12px); }
+            0% { opacity: 0; transform: translateY(15px); }
             100% { opacity: 1; transform: translateY(0px); }
         }
 
-        .list-row { 
-            transition: 0.2s; 
-        }
-        .list-row:hover { 
-            background-color: rgb(248, 250, 252); 
-            transform: translateX(4px); 
-            border-left-color: rgb(34, 197, 94); 
+        /* Brutalism Button Active State */
+        .btn-brutal:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0 0 #064e3b;
         }
     </style>
 </head>
-<body class="font-sans text-gray-800 bg-slate-50 antialiased min-h-screen flex flex-col">
+<body class="font-sans text-gray-800 bg-slate-100 antialiased min-h-screen flex flex-col selection:bg-primary-200 selection:text-primary-900">
 
     <!-- Navigation Bar -->
-    <nav class="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-gray-200">
+    <nav class="bg-white/90 backdrop-blur-lg shadow-sm sticky top-0 z-50 border-b border-gray-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 sm:h-20 items-center">
+            <div class="flex justify-between h-14 sm:h-16 items-center">
                 <!-- Logo -->
-                <a href="https://www.smpqtyq1lilbanat.sch.id/" target="_blank" class="flex-shrink-0 flex items-center group">
-                    <img src="https://www.smpqtyq1lilbanat.sch.id/logo.png" alt="Logo SMPQT" class="w-10 h-10 sm:w-12 sm:h-12 mr-3 object-contain" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');">
-                    <div class="hidden w-10 h-10 sm:w-12 sm:h-12 bg-primary-700 rounded-full items-center justify-center text-white font-bold text-lg mr-3 shadow-sm border border-secondary-500">YQ</div>
+                <a href="https://www.smpqtyq1lilbanat.sch.id/" target="_blank" class="flex-shrink-0 flex items-center group relative z-10 cursor-pointer">
+                    <img src="https://www.smpqtyq1lilbanat.sch.id/logo.png" alt="Logo SMPQT" class="w-8 h-8 sm:w-10 sm:h-10 mr-2.5 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="hidden w-8 h-8 sm:w-10 sm:h-10 bg-primary-700 rounded-full items-center justify-center text-white font-bold text-xs sm:text-sm mr-2.5 shadow-sm border border-secondary-500">YQ</div>
                     <div class="flex flex-col">
-                        <span class="font-bold text-sm sm:text-base md:text-lg text-primary-900 leading-tight group-hover:text-primary-700 transition">Portal Wali Santriwati</span>
-                        <span class="text-[10px] sm:text-xs text-gray-500 font-medium">SMPQT Yanbu'ul Qur'an 1 Lil Banat</span>
+                        <span class="font-extrabold text-sm sm:text-base text-primary-900 leading-tight">Portal Wali</span>
+                        <span class="text-[9px] sm:text-[11px] text-gray-500 font-medium">SMPQT Yanbu'ul Qur'an 1</span>
                     </div>
                 </a>
                 <!-- Nav Actions -->
-                <div id="navActions" class="flex items-center gap-3">
-                    <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm flex items-center">
-                        <i class="fas fa-shield-check text-green-600 mr-1.5"></i> Terenkripsi
+                <div id="navActions" class="relative z-10">
+                    <span class="text-[10px] sm:text-xs font-bold text-primary-700 bg-primary-50 px-2.5 py-1.5 rounded-lg border border-primary-200 flex items-center">
+                        <i class="fas fa-lock mr-1.5"></i> <span class="hidden sm:inline">Aman &amp; </span>Terenkripsi
                     </span>
-                    <button id="btnLogout" onclick="handleLogout()" class="hidden text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 px-3 py-1.5 rounded-lg transition items-center">
-                        <i class="fas fa-sign-out-alt mr-1"></i> Keluar
-                    </button>
                 </div>
             </div>
         </div>
     </nav>
 
+    <!-- -->
     <!-- SECTION 1: LOGIN (Ditampilkan awal) -->
-    <div id="loginSection" class="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 relative overflow-hidden fade-in">
-        <div class="absolute inset-0 z-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
+    <div id="loginSection" class="flex-grow flex items-center justify-center py-10 px-4 sm:px-6 relative overflow-hidden fade-in">
+        <!-- Background Pattern (Absolute & Pointer-Events-None to fix click blocking) -->
+        <div class="absolute inset-0 z-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] pointer-events-none"></div>
 
-        <div class="w-full max-w-md bg-white rounded-3xl shadow-2xl border border-gray-100 relative z-10 overflow-hidden transform transition-all">
-            <div class="bg-gradient-to-br from-primary-800 to-primary-900 p-10 text-center relative">
-                <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white opacity-10"></div>
-                <div class="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white opacity-10"></div>
+        <!-- Login Card -->
+        <div class="w-full max-w-sm bg-white rounded-[2rem] shadow-2xl overflow-hidden relative z-20 transform transition-all border border-gray-100">
+            <!-- Header Card (Hijau Solid) -->
+            <div class="bg-primary-700 pt-10 pb-8 px-6 text-center relative overflow-hidden">
+                <!-- Ornamen Blur (Pointer-events-none) -->
+                <div class="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white opacity-10 blur-xl pointer-events-none"></div>
+                <div class="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white opacity-10 blur-xl pointer-events-none"></div>
                 
-                <div class="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-5 shadow-xl border-4 border-primary-600/30 relative z-10">
-                    <i class="fas fa-users text-4xl text-primary-700"></i>
+                <div class="w-16 h-16 bg-white rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md relative z-10">
+                    <i class="fas fa-user-graduate text-3xl text-primary-700"></i>
                 </div>
-                <h2 class="text-2xl font-bold text-white font-serif relative z-10">Selamat Datang, Bapak/Ibu</h2>
-                <p class="text-primary-100 text-sm mt-3 relative z-10 leading-relaxed">Silakan masukkan NIS putri Anda untuk mengakses rekapitulasi akademik, kehadiran &amp; asrama.</p>
+                <h2 class="text-xl sm:text-2xl font-bold text-white font-serif relative z-10 leading-snug">Selamat Datang,<br>Bapak/Ibu</h2>
+                <p class="text-primary-100 text-xs sm:text-sm mt-3 relative z-10 leading-relaxed font-medium">Silakan masukkan NIS putri Anda untuk mengakses rekapitulasi akademik &amp; asrama.</p>
             </div>
             
-            <div class="p-8 sm:p-10">
-                <div id="loginForm" class="space-y-6">
+            <!-- Body Card -->
+            <div class="p-6 sm:p-8 bg-white relative z-20">
+                <div id="loginForm" class="space-y-5">
                     <div>
-                        <label for="nis" class="block text-sm font-bold text-gray-700 mb-2">Nomor Induk Santriwati (NIS)</label>
-                        <div class="relative">
-                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                <i class="fas fa-id-card text-gray-400 text-lg"></i>
+                        <label for="nis" class="block text-xs sm:text-sm font-bold text-gray-700 mb-2">Nomor Induk Santriwati (NIS)</label>
+                        <div class="relative group z-30">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors">
+                                <i class="fas fa-id-card text-gray-400 text-lg group-focus-within:text-primary-600 transition"></i>
                             </div>
-                            <input type="text" id="nis" required="" placeholder="Contoh: 25210166" class="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-base shadow-inner font-semibold text-gray-800">
+                            <input type="tel" id="nis" required="" placeholder="Contoh: 25210166" class="w-full pl-12 pr-4 py-3.5 bg-blue-50/50 border-2 border-gray-200 rounded-xl focus:ring-0 focus:border-primary-500 focus:bg-white outline-none transition text-base font-bold text-gray-900 shadow-inner" onkeypress="if(event.key === 'Enter') handleLogin()">
                         </div>
                     </div>
                     
-                    <button type="button" id="btnLogin" onclick="handleLogin()" class="w-full bg-primary-700 hover:bg-primary-800 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center text-base hover:-translate-y-0.5">
-                        <span>Buka Rapor Interaktif</span> <i class="fas fa-arrow-right ml-2"></i>
+                    <!-- Fix: Button dengan z-index tinggi, kursor aktif, dan tanpa class overlay yang menghalangi -->
+                    <button type="button" onclick="handleLogin()" id="btnLogin" class="btn-brutal relative z-40 w-full bg-primary-700 text-white font-bold py-3.5 px-4 rounded-xl transition-all border-2 border-[#064e3b] shadow-[0_4px_0_0_#064e3b] flex items-center justify-center text-sm sm:text-base cursor-pointer">
+                        <span>Buka Rapor Interaktif</span> <i class="fas fa-arrow-right ml-2 text-sm"></i>
                     </button>
                 </div>
 
                 <!-- Loading State -->
-                <div id="loginLoading" class="hidden flex-col items-center justify-center py-8">
-                    <div class="loader mb-4"></div>
-                    <p class="text-sm text-primary-700 font-semibold animate-pulse mt-4 text-center">
+                <div id="loginLoading" class="hidden flex-col items-center justify-center py-6">
+                    <div class="loader mb-3"></div>
+                    <p class="text-xs sm:text-sm text-primary-700 font-bold animate-pulse mt-2 text-center">
                         Memuat data santri...<br>
-                        <span class="text-xs font-normal text-gray-500">Mengkoneksikan ke Supabase &amp; Cloud Storage</span>
+                        <span class="text-[10px] font-medium text-gray-500">Mengkoneksikan ke Server</span>
                     </p>
                 </div>
                 
                 <!-- Error State -->
-                <div id="loginError" class="hidden mt-6 bg-red-50 text-red-600 p-4 rounded-xl border border-red-200 text-sm flex items-start shadow-sm">
-                    <i class="fas fa-exclamation-circle mt-0.5 mr-2.5 text-lg"></i>
-                    <span id="loginErrorText" class="leading-relaxed font-medium">Error.</span>
+                <div id="loginError" class="hidden mt-5 bg-red-50 text-red-600 p-4 rounded-xl border border-red-100 text-xs sm:text-sm flex items-start shadow-sm">
+                    <i class="fas fa-exclamation-circle mt-0.5 mr-2 text-base"></i>
+                    <span id="loginErrorText" class="leading-relaxed font-semibold">Error.</span>
                 </div>
             </div>
         </div>
     </div>
 
+    <!-- -->
     <!-- SECTION 2: DASHBOARD SISWA (Disembunyikan di awal) -->
-    <main id="dashboardSection" class="hidden flex-grow flex-col w-full fade-in pb-12">
+    <main id="dashboardSection" class="hidden flex-grow flex-col w-full fade-in pb-8">
         
-        <!-- Header Banner -->
-        <div class="bg-gradient-to-r from-primary-900 to-primary-800 text-white py-12 md:py-16 relative border-b-4 border-secondary-500 overflow-hidden">
-            <div class="absolute inset-0 z-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')]"></div>
-            <div class="absolute -top-24 -right-24 w-64 h-64 bg-white opacity-5 rounded-full blur-2xl"></div>
-            <div class="absolute -bottom-24 -left-24 w-64 h-64 bg-white opacity-5 rounded-full blur-2xl"></div>
+        <!-- Header Banner Melengkung -->
+        <div class="bg-primary-700 text-white pt-8 pb-16 relative rounded-b-[2.5rem] sm:rounded-b-[3.5rem] shadow-lg overflow-hidden mb-6 z-10">
+            <div class="absolute inset-0 z-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] pointer-events-none"></div>
+            <!-- Ornamen -->
+            <div class="absolute -bottom-20 -left-10 w-48 h-48 bg-primary-500 opacity-30 rounded-full blur-2xl pointer-events-none"></div>
+            <div class="absolute top-10 right-0 w-32 h-32 bg-secondary-400 opacity-20 rounded-full blur-2xl pointer-events-none"></div>
 
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 flex flex-col md:flex-row items-center gap-6 md:gap-8">
-                <div class="w-24 h-24 sm:w-32 sm:h-32 bg-white text-primary-800 rounded-full flex items-center justify-center text-5xl sm:text-6xl font-bold shadow-2xl border-4 border-primary-600 shrink-0">
+            <div class="max-w-7xl mx-auto px-5 relative z-10 flex flex-row items-center gap-4">
+                <div class="w-16 h-16 sm:w-24 sm:h-24 bg-white/20 backdrop-blur-md text-white rounded-2xl flex items-center justify-center text-3xl sm:text-5xl font-bold shadow-inner border border-white/30 shrink-0">
                     <i class="fas fa-user-graduate"></i>
                 </div>
-                <div class="text-center md:text-left flex-1">
-                    <span id="dashTahunAjaran" class="inline-block px-3 py-1 bg-primary-800/80 rounded-full text-xs text-primary-100 mb-3 font-semibold tracking-widest uppercase border border-primary-700 backdrop-blur-sm">Arsip Rapor Siswa</span>
-                    <h1 id="dashNama" class="text-3xl sm:text-4xl lg:text-5xl font-bold font-serif mb-4 text-white drop-shadow-md">Nama Siswa</h1>
-                    <div class="flex flex-wrap justify-center md:justify-start gap-3 text-sm font-semibold">
-                        <span class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 shadow-sm flex items-center"><i class="fas fa-id-card mr-2 text-secondary-400"></i>NIS: <span id="dashNis" class="ml-1">0000</span></span>
-                        <span class="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 shadow-sm flex items-center"><i class="fas fa-chalkboard mr-2 text-secondary-400"></i>Kelas: <span id="dashKelas" class="ml-1">7X</span></span>
+                <div class="flex-1">
+                    <span id="dashTahunAjaran" class="inline-block px-2.5 py-1 bg-black/20 rounded-lg text-[10px] sm:text-xs text-white mb-1.5 font-bold tracking-wider uppercase border border-white/10 backdrop-blur-md">Arsip Rapor Siswa</span>
+                    <h1 id="dashNama" class="text-xl sm:text-3xl font-extrabold font-serif text-white drop-shadow-md leading-tight line-clamp-2">Nama Siswa</h1>
+                    <div class="flex flex-wrap gap-2 mt-2 text-[10px] sm:text-xs font-bold">
+                        <span class="bg-white text-primary-800 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg shadow-sm flex items-center"><i class="fas fa-id-card mr-1.5 text-primary-500"></i>NIS: <span id="dashNis" class="ml-1">0000</span></span>
+                        <span class="bg-white text-primary-800 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg shadow-sm flex items-center"><i class="fas fa-chalkboard mr-1.5 text-primary-500"></i>Kelas: <span id="dashKelas" class="ml-1">7X</span></span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full -mt-8 relative z-20">
-            <!-- Tab Navigation (5 Menu: Nilai, Tahfizh, Disiplin, Tabungan, dan Absensi) -->
-            <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-8 grid grid-cols-2 sm:grid-cols-5 divide-x divide-y sm:divide-y-0 divide-gray-100">
-                <button id="btn-tab-nilai" onclick="switchTab('tab-nilai', this)" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-active flex items-center justify-center">
-                    <i class="fas fa-chart-line mr-1.5 sm:mr-2 text-base sm:text-lg"></i><span class="hidden md:inline">Rapor</span>&nbsp;Akademik
+        <div class="max-w-7xl mx-auto px-4 w-full -mt-10 relative z-20">
+            <!-- Tab Navigation (Modern Mobile Pill Scroll) -->
+            <div class="flex overflow-x-auto hide-scrollbar gap-3 pb-4 mb-4 snap-x w-full">
+                <!-- Tambahan padding kanan/kiri agar scroll di HP terasa lega -->
+                <div class="w-1 shrink-0 snap-start"></div> 
+                <button onclick="switchTab('tab-nilai')" id="btn-tab-nilai" class="btn-brutal snap-center shrink-0 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all focus:outline-none tab-active flex items-center justify-center">
+                    <i class="fas fa-chart-line mr-2 text-sm sm:text-base"></i>Akademik
                 </button>
-                <button id="btn-tab-tahfizh" onclick="switchTab('tab-tahfizh', this)" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center">
-                    <i class="fas fa-quran mr-1.5 sm:mr-2 text-base sm:text-lg"></i><span class="hidden md:inline">Capaian</span>&nbsp;Tahfizh
+                <button onclick="switchTab('tab-tahfizh')" id="btn-tab-tahfizh" class="btn-brutal snap-center shrink-0 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all focus:outline-none tab-inactive flex items-center justify-center">
+                    <i class="fas fa-quran mr-2 text-sm sm:text-base"></i>Tahfizh
                 </button>
-                <button id="btn-tab-disiplin" onclick="switchTab('tab-disiplin', this)" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center">
-                    <i class="fas fa-balance-scale mr-1.5 sm:mr-2 text-base sm:text-lg"></i>Sikap&nbsp;<span class="hidden md:inline">&amp; Disiplin</span>
+                <button onclick="switchTab('tab-disiplin')" id="btn-tab-disiplin" class="btn-brutal snap-center shrink-0 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all focus:outline-none tab-inactive flex items-center justify-center">
+                    <i class="fas fa-balance-scale mr-2 text-sm sm:text-base"></i>Disiplin
                 </button>
-                <button id="btn-tab-tabungan" onclick="switchTab('tab-tabungan', this)" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center">
-                    <i class="fas fa-piggy-bank mr-1.5 sm:mr-2 text-base sm:text-lg text-emerald-600"></i><span class="hidden md:inline">Data</span>&nbsp;Tabungan
+                <button onclick="switchTab('tab-tabungan')" id="btn-tab-tabungan" class="btn-brutal snap-center shrink-0 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all focus:outline-none tab-inactive flex items-center justify-center">
+                    <i class="fas fa-piggy-bank mr-2 text-sm sm:text-base text-emerald-600"></i>Tabungan
                 </button>
-                <button id="btn-tab-absensi" onclick="switchTab('tab-absensi', this)" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center col-span-2 sm:col-span-1">
-                    <i class="fas fa-calendar-check mr-1.5 sm:mr-2 text-base sm:text-lg text-blue-600"></i>Presensi&nbsp;<span class="hidden md:inline">Santri</span>
+                <button onclick="switchTab('tab-absensi')" id="btn-tab-absensi" class="btn-brutal snap-center shrink-0 px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all focus:outline-none tab-inactive flex items-center justify-center">
+                    <i class="fas fa-calendar-check mr-2 text-sm sm:text-base text-blue-600"></i>Presensi
                 </button>
+                <div class="w-1 shrink-0 snap-end"></div>
             </div>
 
+            <!-- -->
             <!-- TAB CONTENT: NILAI AKADEMIK -->
             <div id="tab-nilai" class="tab-content block fade-in">
                 <!-- GRAFIK TREN NILAI -->
-                <div class="bg-white p-6 sm:p-8 rounded-2xl shadow-md border border-gray-100 mb-8">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+                <div class="bg-white p-5 sm:p-6 rounded-2xl shadow-sm border border-gray-100 mb-6">
+                    <div class="flex flex-row justify-between items-center mb-4">
                         <div>
-                            <h3 class="font-bold text-gray-900 text-xl"><i class="fas fa-chart-area text-primary-600 mr-2"></i> Grafik Tren Nilai Rata-Rata</h3>
-                            <p class="text-sm text-gray-500 mt-1">Pergerakan rata-rata nilai akademik per periode ujian.</p>
+                            <h3 class="font-bold text-gray-900 text-sm sm:text-base"><i class="fas fa-chart-area text-primary-600 mr-1.5"></i> Grafik Tren</h3>
                         </div>
-                        <div class="mt-4 sm:mt-0 bg-primary-50 px-4 py-2 rounded-lg border border-primary-100">
-                            <span class="text-xs text-primary-700 font-bold uppercase">Rata-rata Terakhir</span>
-                            <div id="avgScoreDisplay" class="text-2xl font-extrabold text-primary-900">0.0</div>
+                        <div class="bg-primary-50 px-3 py-1.5 rounded-lg border border-primary-100 flex items-center gap-2">
+                            <span class="text-[10px] text-primary-700 font-bold uppercase hidden sm:block">Rata-rata Terakhir:</span>
+                            <div id="avgScoreDisplay" class="text-lg sm:text-xl font-extrabold text-primary-900 leading-none">0.0</div>
                         </div>
                     </div>
-                    <div class="relative h-64 sm:h-80 w-full">
+                    <div class="relative h-48 sm:h-64 w-full">
                         <canvas id="trendChart"></canvas>
                     </div>
                 </div>
 
                 <!-- Period Selector -->
-                <div class="bg-gradient-to-r from-gray-50 to-white p-6 sm:p-8 rounded-2xl shadow-md border border-gray-200 mb-8 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div>
-                        <h3 class="font-bold text-gray-900 text-xl"><i class="fas fa-calendar-check text-primary-600 mr-2"></i> Detail Nilai Ujian</h3>
-                        <p class="text-sm text-gray-500 mt-1">Pilih periode ujian untuk melihat rincian nilai mata pelajaran secara spesifik.</p>
-                    </div>
-                    <div class="w-full md:w-1/3">
-                        <select id="examSelector" onchange="renderSelectedExamGrades(this.value)" class="w-full px-5 py-3.5 bg-white border-2 border-primary-200 rounded-xl focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition font-bold text-primary-900 shadow-sm cursor-pointer appearance-none">
+                <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 mb-6 relative">
+                    <label class="block font-bold text-gray-900 text-sm mb-2"><i class="fas fa-calendar-check text-primary-600 mr-1.5"></i> Pilih Periode Ujian</label>
+                    <div class="relative">
+                        <select id="examSelector" onchange="window.updateGradesView(this.value)" class="w-full pl-4 pr-10 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-0 focus:border-primary-500 outline-none transition font-bold text-xs sm:text-sm text-primary-900 cursor-pointer appearance-none">
                         </select>
+                        <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                     <!-- Ilmu Agama -->
-                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition duration-300">
-                        <div class="bg-gradient-to-r from-emerald-50 to-white py-4 px-6 border-b border-emerald-100 flex items-center">
-                            <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mr-3 text-lg"><i class="fas fa-moon"></i></div>
-                            <h3 class="font-bold text-emerald-900 text-lg">Ilmu Agama &amp; Diniyyah</h3>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="bg-emerald-50 py-3 px-4 border-b border-emerald-100 flex items-center">
+                            <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-600 flex items-center justify-center mr-2.5"><i class="fas fa-moon"></i></div>
+                            <h3 class="font-bold text-emerald-900 text-sm">Ilmu Agama &amp; Diniyyah</h3>
                         </div>
                         <ul class="divide-y divide-gray-100" id="list-diniyyah"></ul>
                     </div>
 
                     <!-- Ilmu Umum -->
-                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition duration-300">
-                        <div class="bg-gradient-to-r from-blue-50 to-white py-4 px-6 border-b border-blue-100 flex items-center">
-                            <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center mr-3 text-lg"><i class="fas fa-globe"></i></div>
-                            <h3 class="font-bold text-blue-900 text-lg">Ilmu Pengetahuan Umum</h3>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="bg-blue-50 py-3 px-4 border-b border-blue-100 flex items-center">
+                            <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center mr-2.5"><i class="fas fa-globe"></i></div>
+                            <h3 class="font-bold text-blue-900 text-sm">Ilmu Pengetahuan Umum</h3>
                         </div>
                         <ul class="divide-y divide-gray-100" id="list-umum"></ul>
                     </div>
 
                     <!-- Bahasa & Keterampilan -->
-                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden lg:col-span-2 hover:shadow-lg transition duration-300">
-                        <div class="bg-gradient-to-r from-amber-50 to-white py-4 px-6 border-b border-amber-100 flex items-center">
-                            <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mr-3 text-lg"><i class="fas fa-language"></i></div>
-                            <h3 class="font-bold text-amber-900 text-lg">Bahasa, Seni &amp; Keterampilan</h3>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden md:col-span-2">
+                        <div class="bg-amber-50 py-3 px-4 border-b border-amber-100 flex items-center">
+                            <div class="w-8 h-8 rounded-lg bg-amber-100 text-amber-600 flex items-center justify-center mr-2.5"><i class="fas fa-language"></i></div>
+                            <h3 class="font-bold text-amber-900 text-sm">Bahasa, Seni &amp; Keterampilan</h3>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2">
                             <ul class="divide-y divide-gray-100" id="list-bahasa1"></ul>
@@ -298,51 +303,45 @@
                 </div>
             </div>
 
+            <!-- -->
             <!-- TAB CONTENT: TAHFIZH -->
             <div id="tab-tahfizh" class="tab-content hidden fade-in">
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-5 mb-6">
                     <!-- Ziyadah Card -->
-                    <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 text-center border-b-4 border-b-emerald-500 hover:-translate-y-1 transition duration-300">
-                        <div class="w-16 h-16 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mx-auto mb-4 text-2xl">
-                            <i class="fas fa-book-reader"></i>
-                        </div>
-                        <h4 class="text-gray-500 text-xs font-bold uppercase tracking-widest">Hafalan Baru (Ziyadah)</h4>
-                        <p id="tahfizh-ziyadah" class="text-2xl font-bold text-gray-900 mt-2 font-serif">-</p>
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 text-center flex flex-col items-center">
+                        <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-500 flex items-center justify-center mb-2"><i class="fas fa-book-reader"></i></div>
+                        <h4 class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Hafalan (Ziyadah)</h4>
+                        <p id="tahfizh-ziyadah" class="text-sm sm:text-lg font-bold text-gray-900 mt-1 font-serif leading-tight">-</p>
                     </div>
                     <!-- Murojaah Card -->
-                    <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 text-center border-b-4 border-b-blue-500 hover:-translate-y-1 transition duration-300">
-                        <div class="w-16 h-16 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center mx-auto mb-4 text-2xl">
-                            <i class="fas fa-history"></i>
-                        </div>
-                        <h4 class="text-gray-500 text-xs font-bold uppercase tracking-widest">Status Murojaah</h4>
-                        <p id="tahfizh-murojaah" class="text-2xl font-bold text-gray-900 mt-2 font-serif">-</p>
+                    <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 text-center flex flex-col items-center">
+                        <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center mb-2"><i class="fas fa-history"></i></div>
+                        <h4 class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Murojaah</h4>
+                        <p id="tahfizh-murojaah" class="text-sm sm:text-lg font-bold text-gray-900 mt-1 font-serif leading-tight">-</p>
                     </div>
                     <!-- Halaqoh Card -->
-                    <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 text-center border-b-4 border-b-secondary-500 hover:-translate-y-1 transition duration-300">
-                        <div class="w-16 h-16 rounded-full bg-secondary-50 text-secondary-500 flex items-center justify-center mx-auto mb-4 text-2xl">
-                            <i class="fas fa-chalkboard-teacher"></i>
-                        </div>
-                        <h4 class="text-gray-500 text-xs font-bold uppercase tracking-widest">Pembimbing (Musyrifah)</h4>
-                        <p id="tahfizh-halaqoh" class="text-xl font-bold text-gray-900 mt-2">-</p>
+                    <div class="col-span-2 sm:col-span-1 bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 text-center flex flex-col items-center">
+                        <div class="w-10 h-10 rounded-full bg-amber-50 text-amber-500 flex items-center justify-center mb-2"><i class="fas fa-chalkboard-teacher"></i></div>
+                        <h4 class="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Musyrifah Halaqoh</h4>
+                        <p id="tahfizh-halaqoh" class="text-sm sm:text-base font-bold text-gray-900 mt-1">-</p>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-5 border-b border-gray-100 bg-white flex justify-between items-center">
-                        <h3 class="font-bold text-gray-900 text-lg"><i class="fas fa-list-alt mr-2 text-primary-600"></i>Log Setoran Tahfizh</h3>
-                        <span class="bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-bold tracking-wide border border-green-200 shadow-sm animate-pulse">Live</span>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-4 py-3.5 border-b border-gray-100 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-900 text-sm"><i class="fas fa-list-alt mr-1.5 text-primary-600"></i>Log Setoran</h3>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse min-w-[600px]">
+                        <table class="w-full text-left border-collapse min-w-[500px]">
                             <thead>
-                                <tr class="bg-gray-50 border-b border-gray-200 text-xs uppercase text-gray-500 font-bold tracking-wider">
-                                    <th class="py-4 px-6 w-40">Tanggal</th>
-                                    <th class="py-4 px-6 w-32">Kegiatan</th>
-                                    <th class="py-4 px-6 w-64">Capaian Surat / Juz</th>
-                                    <th class="py-4 px-6">Keterangan Tambahan</th>
+                                <tr class="bg-gray-50 border-b border-gray-100 text-[10px] uppercase text-gray-500 font-bold tracking-wider">
+                                    <th class="py-3 px-4 w-32">Tanggal</th>
+                                    <th class="py-3 px-4 w-24">Kegiatan</th>
+                                    <th class="py-3 px-4 w-48">Capaian Surat/Juz</th>
+                                    <th class="py-3 px-4">Ket</th>
                                 </tr>
                             </thead>
-                            <tbody id="tahfizh-tbody" class="text-sm divide-y divide-gray-100"></tbody>
+                            <tbody id="tahfizh-tbody" class="text-xs divide-y divide-gray-100"></tbody>
                         </table>
                     </div>
                 </div>
@@ -350,204 +349,133 @@
 
             <!-- TAB CONTENT: SIKAP & DISIPLIN -->
             <div id="tab-disiplin" class="tab-content hidden fade-in">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                    <!-- Poin Prestasi -->
-                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden flex hover:shadow-lg transition">
-                        <div class="bg-gradient-to-b from-green-500 to-green-600 text-white w-32 flex flex-col items-center justify-center p-4">
-                            <i class="fas fa-award text-5xl mb-2 drop-shadow-md"></i>
-                        </div>
-                        <div class="p-6 flex-1 flex flex-col justify-center">
-                            <h4 class="text-gray-500 font-bold uppercase text-xs tracking-widest mb-1">Total Prestasi (Merit)</h4>
-                            <div class="flex items-baseline">
-                                <span id="total-merit" class="text-5xl font-extrabold text-green-600 tracking-tight">0</span>
-                                <span class="text-sm text-gray-500 ml-2 font-medium mb-1.5">Poin Reward</span>
-                            </div>
-                            <p class="text-sm text-green-600 mt-2 font-semibold bg-green-50 px-3 py-1 rounded-lg inline-block w-max border border-green-100"><i class="fas fa-check-circle mr-1"></i> Data Real-time</p>
-                        </div>
+                <div class="grid grid-cols-2 gap-3 sm:gap-5 mb-6">
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 flex flex-col justify-center items-center text-center">
+                        <i class="fas fa-award text-3xl sm:text-4xl text-green-500 mb-2"></i>
+                        <h4 class="text-gray-400 font-bold uppercase text-[10px] tracking-wider mb-1">Prestasi (Merit)</h4>
+                        <span id="total-merit" class="text-3xl sm:text-4xl font-extrabold text-green-600">0</span>
                     </div>
-                    
-                    <!-- Poin Pelanggaran -->
-                    <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden flex hover:shadow-lg transition">
-                        <div class="bg-gradient-to-b from-red-500 to-red-600 text-white w-32 flex flex-col items-center justify-center p-4">
-                            <i class="fas fa-exclamation-triangle text-5xl mb-2 drop-shadow-md"></i>
-                        </div>
-                        <div class="p-6 flex-1 flex flex-col justify-center">
-                            <h4 class="text-gray-500 font-bold uppercase text-xs tracking-widest mb-1">Total Pelanggaran (Demerit)</h4>
-                            <div class="flex items-baseline">
-                                <span id="total-demerit" class="text-5xl font-extrabold text-red-600 tracking-tight">0</span>
-                                <span class="text-sm text-gray-500 ml-2 font-medium mb-1.5">Poin Penalti</span>
-                            </div>
-                            <p class="text-sm text-red-500 mt-2 font-semibold bg-red-50 px-3 py-1 rounded-lg inline-block w-max border border-red-100"><i class="fas fa-shield-alt mr-1"></i> Batas SP: 50 Poin</p>
-                        </div>
+                    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 sm:p-5 flex flex-col justify-center items-center text-center">
+                        <i class="fas fa-exclamation-triangle text-3xl sm:text-4xl text-red-500 mb-2"></i>
+                        <h4 class="text-gray-400 font-bold uppercase text-[10px] tracking-wider mb-1">Pelanggaran</h4>
+                        <span id="total-demerit" class="text-3xl sm:text-4xl font-extrabold text-red-600">0</span>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-5 border-b border-gray-100 bg-white flex justify-between items-center">
-                        <h3 class="font-bold text-gray-900 text-lg"><i class="fas fa-clipboard-list mr-2 text-primary-600"></i>Log Riwayat Kasus &amp; Prestasi</h3>
-                        <span class="bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-bold tracking-wide border border-green-200 shadow-sm animate-pulse">Live</span>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-4 py-3.5 border-b border-gray-100 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-900 text-sm"><i class="fas fa-clipboard-list mr-1.5 text-primary-600"></i>Log Riwayat Sikap</h3>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse min-w-[600px]">
+                        <table class="w-full text-left border-collapse min-w-[500px]">
                             <thead>
-                                <tr class="bg-gray-50 border-b border-gray-200 text-xs uppercase text-gray-500 font-bold tracking-wider">
-                                    <th class="py-4 px-6 w-40">Tanggal</th>
-                                    <th class="py-4 px-6">Keterangan Catatan</th>
-                                    <th class="py-4 px-6 w-32 text-center">Jenis</th>
-                                    <th class="py-4 px-6 w-24 text-right">Poin</th>
+                                <tr class="bg-gray-50 border-b border-gray-100 text-[10px] uppercase text-gray-500 font-bold tracking-wider">
+                                    <th class="py-3 px-4 w-32">Tanggal</th>
+                                    <th class="py-3 px-4">Keterangan</th>
+                                    <th class="py-3 px-4 w-24 text-center">Jenis</th>
+                                    <th class="py-3 px-4 w-16 text-right">Poin</th>
                                 </tr>
                             </thead>
-                            <tbody id="disiplin-tbody" class="text-sm divide-y divide-gray-100"></tbody>
+                            <tbody id="disiplin-tbody" class="text-xs divide-y divide-gray-100"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
+            <!-- -->
             <!-- TAB CONTENT: TABUNGAN -->
             <div id="tab-tabungan" class="tab-content hidden fade-in">
                 <!-- Saldo Card -->
-                <div class="bg-gradient-to-r from-emerald-500 to-emerald-700 rounded-3xl shadow-xl border border-emerald-400 p-8 sm:p-10 mb-8 text-white relative overflow-hidden flex items-center justify-between">
-                    <i class="fas fa-piggy-bank absolute -right-6 -bottom-10 text-8xl opacity-10 transform -rotate-12 scale-150"></i>
+                <div class="bg-[#15803d] rounded-2xl shadow-md border border-[#064e3b] p-6 sm:p-8 mb-6 text-white relative overflow-hidden flex items-center justify-between">
+                    <i class="fas fa-piggy-bank absolute -right-4 -bottom-6 text-6xl opacity-10 transform -rotate-12 scale-150 pointer-events-none"></i>
                     <div class="relative z-10">
-                        <h4 class="text-emerald-100 font-bold uppercase tracking-widest text-sm mb-2">Total Saldo Tabungan</h4>
+                        <h4 class="text-primary-100 font-bold uppercase tracking-wider text-xs mb-1">Saldo Tabungan</h4>
                         <div class="flex items-end">
-                            <span class="text-xl font-bold mr-2 mb-1">Rp</span>
-                            <div class="text-4xl sm:text-6xl font-extrabold tracking-tight drop-shadow-md" id="total-saldo-tabungan">0</div>
+                            <span class="text-sm sm:text-base font-bold mr-1.5 mb-1">Rp</span>
+                            <div class="text-3xl sm:text-5xl font-extrabold tracking-tight" id="total-saldo-tabungan">0</div>
                         </div>
-                    </div>
-                    <div class="relative z-10 hidden sm:flex w-20 h-20 bg-white/10 rounded-full backdrop-blur-md border border-white/20 items-center justify-center shadow-inner">
-                        <i class="fas fa-wallet text-4xl text-emerald-100"></i>
                     </div>
                 </div>
 
                 <!-- Tabel Riwayat Tabungan -->
-                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-5 border-b border-gray-100 bg-white flex justify-between items-center">
-                        <h3 class="font-bold text-gray-900 text-lg"><i class="fas fa-history mr-2 text-emerald-600"></i>Riwayat Transaksi Tabungan</h3>
-                        <span class="bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-bold tracking-wide border border-green-200 shadow-sm animate-pulse">Live</span>
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-4 py-3.5 border-b border-gray-100 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-900 text-sm"><i class="fas fa-history mr-1.5 text-emerald-600"></i>Riwayat Transaksi</h3>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse min-w-[600px]">
+                        <table class="w-full text-left border-collapse min-w-[500px]">
                             <thead>
-                                <tr class="bg-gray-50 border-b border-gray-200 text-xs uppercase text-gray-500 font-bold tracking-wider">
-                                    <th class="py-4 px-6 w-48">Tanggal &amp; Waktu</th>
-                                    <th class="py-4 px-6 w-32 text-center">Tipe</th>
-                                    <th class="py-4 px-6">Keterangan</th>
-                                    <th class="py-4 px-6 w-40 text-right">Nominal</th>
+                                <tr class="bg-gray-50 border-b border-gray-100 text-[10px] uppercase text-gray-500 font-bold tracking-wider">
+                                    <th class="py-3 px-4 w-40">Tanggal &amp; Waktu</th>
+                                    <th class="py-3 px-4 w-28 text-center">Tipe</th>
+                                    <th class="py-3 px-4">Keterangan</th>
+                                    <th class="py-3 px-4 w-32 text-right">Nominal</th>
                                 </tr>
                             </thead>
-                            <tbody id="tabungan-tbody" class="text-sm divide-y divide-gray-100"></tbody>
+                            <tbody id="tabungan-tbody" class="text-xs divide-y divide-gray-100"></tbody>
                         </table>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB CONTENT: ABSENSI / KEHADIRAN (BARU) -->
+            <!-- TAB CONTENT: ABSENSI -->
             <div id="tab-absensi" class="tab-content hidden fade-in">
                 <!-- Filter Bar Bulan Presensi -->
-                <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-                    <div>
-                        <h3 class="font-bold text-gray-900 text-xl flex items-center">
-                            <i class="fas fa-calendar-alt text-blue-600 mr-2.5"></i> Rekap Presensi &amp; Kehadiran
-                        </h3>
-                        <p class="text-sm text-gray-500 mt-1">Pantau kedisiplinan dan riwayat kehadiran harian ananda di madrasah.</p>
-                    </div>
-                    <div class="flex items-center gap-3 w-full sm:w-auto">
-                        <label for="filterBulanAbsensi" class="text-xs font-bold uppercase text-gray-500 whitespace-nowrap">Filter Bulan:</label>
-                        <select id="filterBulanAbsensi" onchange="renderPresensi(this.value)" class="w-full sm:w-auto px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-gray-800 outline-none transition">
+                <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 mb-5 relative">
+                    <label for="filterBulanAbsensi" class="block font-bold text-gray-900 text-sm mb-2"><i class="fas fa-calendar-alt text-blue-600 mr-1.5"></i> Filter Bulan Kehadiran</label>
+                    <div class="relative">
+                        <select id="filterBulanAbsensi" onchange="filterAbsensiData()" class="w-full pl-4 pr-10 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl focus:ring-0 focus:border-blue-500 outline-none transition font-bold text-xs sm:text-sm text-gray-800 cursor-pointer appearance-none">
                             <option value="ALL">Semua Bulan (Kumulatif)</option>
-                            <option value="09">September 2026</option>
-                            <option value="08">Agustus 2026</option>
-                            <option value="07">Juli 2026</option>
                         </select>
+                        <i class="fas fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 pointer-events-none"></i>
                     </div>
                 </div>
 
-                <!-- 5 Statistik Ringkasan Presensi -->
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-                    <!-- Persentase Kehadiran -->
-                    <div class="col-span-2 md:col-span-1 bg-white p-5 rounded-2xl shadow-md border border-gray-100 border-l-4 border-l-primary-600 flex flex-col justify-between">
-                        <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tingkat Kehadiran</span>
-                        <div class="my-2">
-                            <span id="stat-persen-hadir" class="text-3xl sm:text-4xl font-extrabold text-primary-700">100%</span>
-                        </div>
-                        <span class="text-[11px] text-gray-500 font-medium" id="stat-total-hari">0 Hari Tercatat</span>
+                <!-- Statistik Presensi -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+                    <div class="col-span-2 md:col-span-1 bg-white p-4 rounded-2xl shadow-sm border border-gray-100 border-b-4 border-b-primary-600 flex flex-col justify-center items-center text-center">
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Kehadiran</span>
+                        <span id="stat-persen-hadir" class="text-2xl sm:text-3xl font-extrabold text-primary-700 my-1">100%</span>
+                        <span class="text-[9px] text-gray-500 font-medium" id="stat-total-hari">0 Hari Tercatat</span>
                     </div>
-
-                    <!-- Hadir (H) -->
-                    <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 border-l-4 border-l-emerald-500 flex flex-col justify-between">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Hadir (H)</span>
-                            <span class="w-6 h-6 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center text-xs"><i class="fas fa-check"></i></span>
-                        </div>
-                        <div class="my-2">
-                            <span id="stat-count-hadir" class="text-3xl font-extrabold text-emerald-600">0</span>
-                        </div>
-                        <span class="text-[11px] text-emerald-700 font-semibold">Tepat Waktu</span>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 border-b-4 border-b-emerald-500 flex flex-col justify-center items-center">
+                        <span class="w-6 h-6 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center text-[10px] mb-1"><i class="fas fa-check"></i></span>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase">Hadir</span>
+                        <span id="stat-count-hadir" class="text-xl font-extrabold text-emerald-600">0</span>
                     </div>
-
-                    <!-- Sakit (S) -->
-                    <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 border-l-4 border-l-amber-500 flex flex-col justify-between">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Sakit (S)</span>
-                            <span class="w-6 h-6 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-xs"><i class="fas fa-procedures"></i></span>
-                        </div>
-                        <div class="my-2">
-                            <span id="stat-count-sakit" class="text-3xl font-extrabold text-amber-600">0</span>
-                        </div>
-                        <span class="text-[11px] text-amber-700 font-semibold">Surat Keterangan</span>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 border-b-4 border-b-amber-500 flex flex-col justify-center items-center">
+                        <span class="w-6 h-6 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center text-[10px] mb-1"><i class="fas fa-procedures"></i></span>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase">Sakit</span>
+                        <span id="stat-count-sakit" class="text-xl font-extrabold text-amber-600">0</span>
                     </div>
-
-                    <!-- Izin (I) -->
-                    <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 border-l-4 border-l-blue-500 flex flex-col justify-between">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Izin (I)</span>
-                            <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs"><i class="fas fa-envelope-open-text"></i></span>
-                        </div>
-                        <div class="my-2">
-                            <span id="stat-count-izin" class="text-3xl font-extrabold text-blue-600">0</span>
-                        </div>
-                        <span class="text-[11px] text-blue-700 font-semibold">Terkonfirmasi</span>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 border-b-4 border-b-blue-500 flex flex-col justify-center items-center">
+                        <span class="w-6 h-6 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-[10px] mb-1"><i class="fas fa-envelope-open-text"></i></span>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase">Izin</span>
+                        <span id="stat-count-izin" class="text-xl font-extrabold text-blue-600">0</span>
                     </div>
-
-                    <!-- Alpha (A) -->
-                    <div class="bg-white p-5 rounded-2xl shadow-md border border-gray-100 border-l-4 border-l-rose-500 flex flex-col justify-between">
-                        <div class="flex items-center justify-between">
-                            <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Alpha (A)</span>
-                            <span class="w-6 h-6 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-xs"><i class="fas fa-times"></i></span>
-                        </div>
-                        <div class="my-2">
-                            <span id="stat-count-alpha" class="text-3xl font-extrabold text-rose-600">0</span>
-                        </div>
-                        <span class="text-[11px] text-rose-700 font-semibold">Tanpa Keterangan</span>
+                    <div class="bg-white p-3 rounded-2xl shadow-sm border border-gray-100 border-b-4 border-b-rose-500 flex flex-col justify-center items-center">
+                        <span class="w-6 h-6 rounded-full bg-rose-50 text-rose-600 flex items-center justify-center text-[10px] mb-1"><i class="fas fa-times"></i></span>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase">Alpha</span>
+                        <span id="stat-count-alpha" class="text-xl font-extrabold text-rose-600">0</span>
                     </div>
                 </div>
 
-                <!-- Log Riwayat Absensi Lengkap -->
-                <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
-                    <div class="px-6 py-5 border-b border-gray-100 bg-white flex justify-between items-center">
-                        <h3 class="font-bold text-gray-900 text-lg flex items-center">
-                            <i class="fas fa-clipboard-check mr-2 text-blue-600"></i>Log Riwayat Presensi Harian
-                        </h3>
-                        <span id="absensi-row-counter" class="bg-blue-50 text-blue-700 text-xs px-3 py-1 rounded-full font-bold border border-blue-200">
-                            0 Pertemuan
-                        </span>
+                <!-- Log Presensi -->
+                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div class="px-4 py-3.5 border-b border-gray-100 flex justify-between items-center">
+                        <h3 class="font-bold text-gray-900 text-sm"><i class="fas fa-clipboard-check mr-1.5 text-blue-600"></i>Riwayat Harian</h3>
+                        <span id="absensi-row-counter" class="bg-blue-50 text-blue-700 text-[10px] px-2 py-0.5 rounded-md font-bold">0</span>
                     </div>
                     <div class="overflow-x-auto">
-                        <table class="w-full text-left border-collapse min-w-[650px]">
+                        <table class="w-full text-left border-collapse min-w-[500px]">
                             <thead>
-                                <tr class="bg-gray-50 border-b border-gray-200 text-xs uppercase text-gray-500 font-bold tracking-wider">
-                                    <th class="py-4 px-6 w-16 text-center">No</th>
-                                    <th class="py-4 px-6 w-48">Tanggal &amp; Hari</th>
-                                    <th class="py-4 px-6 w-32">Kelas</th>
-                                    <th class="py-4 px-6 w-36 text-center">Status Kehadiran</th>
-                                    <th class="py-4 px-6">Keterangan</th>
+                                <tr class="bg-gray-50 border-b border-gray-100 text-[10px] uppercase text-gray-500 font-bold tracking-wider">
+                                    <th class="py-3 px-4 w-32">Tanggal</th>
+                                    <th class="py-3 px-4 w-28 text-center">Status</th>
+                                    <th class="py-3 px-4">Keterangan</th>
                                 </tr>
                             </thead>
-                            <tbody id="absensi-tbody" class="text-sm divide-y divide-gray-100">
-                                <tr>
-                                    <td colspan="5" class="py-8 px-6 text-center text-gray-500 italic">Memuat data presensi santriwati...</td>
-                                </tr>
+                            <tbody id="absensi-tbody" class="text-xs divide-y divide-gray-100">
                             </tbody>
                         </table>
                     </div>
@@ -557,25 +485,12 @@
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="bg-gray-900 text-gray-400 py-8 border-t-4 border-secondary-500 mt-auto z-10 relative">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-4">
-            <p class="text-xs sm:text-sm font-medium">© 2026 Portal Akademik Wali Siswa - SMPQT Yanbu'ul Qur'an 1 Lil Banat.</p>
-            <div class="text-xs text-gray-300 bg-gray-800 px-4 py-2 rounded-xl shadow-inner border border-gray-700 font-semibold tracking-wide flex items-center">
-                <i class="fas fa-shield-alt mr-1.5 text-primary-500"></i> Sistem Server Terenkripsi
-            </div>
-        </div>
-    </footer>
-
+    <!-- -->
     <!-- Logika Interaktif & Database Client -->
     <script>
-        // ==========================================
         // KONFIGURASI SUPABASE & APPS SCRIPT
-        // ==========================================
         const SUPABASE_URL = 'https://vpdlfjbkfcuukyykrhua.supabase.co'; 
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZGxmamJrZmN1dWt5eWtyaHVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzkxNjUsImV4cCI6MjA5Nzc1NTE2NX0.QSHbi71ajuU_AggJJ5xVDeb6jffDRyyuF4C7aYeHW3Y';
-        
-        // Google Apps Script API URL untuk Tabungan (Sama dengan Admin)
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbx0jQYSSfrN2dD8Wb4kaul0eItZ5tEG5jHO-6yN_UXnSHDxyif0adevn_fhudLBJmYB4w/exec';
 
         let supabaseClient = null;
@@ -583,22 +498,16 @@
             supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         }
 
-        // ==========================================
         // STATE MANAGEMENT
-        // ==========================================
         let profilSantri = null; 
         let studentRecords = []; 
         let tahfizhRecords = []; 
         let disiplinRecords = []; 
         let allGrades = []; 
-        let trendChartInstance = null; 
-
-        // State Tabungan dari Google Sheets
         let dataTabunganSiswa = null; 
         let riwayatTabungan = [];
-
-        // State Presensi Siswa dari Supabase
         let absensiRecords = [];
+        let trendChartInstance = null; 
 
         const loginSection = document.getElementById('loginSection');
         const dashboardSection = document.getElementById('dashboardSection');
@@ -614,203 +523,76 @@
             const now = new Date();
             const year = now.getFullYear();
             const month = now.getMonth(); 
-            if (month >= 6) {
-                return `${year}/${year + 1}`;
-            } else {
-                return `${year - 1}/${year}`;
-            }
+            if (month >= 6) { return `${year}/${year + 1}`; } 
+            else { return `${year - 1}/${year}`; }
         }
 
-        // ==========================================
         // FUNGSI PENARIKAN DATA TERBARU DARI SUPABASE
-        // ==========================================
         async function fetchStudentData(nis) {
             try {
                 // 1. Tarik Data Profil
-                const { data: dataSantri, error: errSantri } = await supabaseClient
-                    .from('santri')
-                    .select('*')
-                    .eq('nis', nis)
-                    .limit(1);
-
-                if (errSantri || !dataSantri || dataSantri.length === 0) {
-                    throw new Error(`Data santri dengan NIS "${nis}" tidak ditemukan.`);
-                }
-                
+                const { data: dataSantri, error: errSantri } = await supabaseClient.from('santri').select('*').eq('nis', nis).limit(1);
+                if (errSantri || !dataSantri || dataSantri.length === 0) { throw new Error(`Data santri dengan NIS "${nis}" tidak ditemukan.`); }
                 profilSantri = dataSantri[0];
 
                 // 2. Tarik Jurnal Tahfizh
                 try {
-                    const { data: dataTahfizh } = await supabaseClient
-                        .from('log_setoran')
-                        .select('*')
-                        .eq('santri_id', profilSantri.id)
-                        .order('tanggal', { ascending: false });
-                    
+                    const { data: dataTahfizh } = await supabaseClient.from('log_setoran').select('*').eq('santri_id', profilSantri.id).order('tanggal', { ascending: false });
                     if (dataTahfizh) tahfizhRecords = dataTahfizh;
-                } catch(e) { console.log("Tahfizh error:", e); }
+                } catch(e) {}
 
-                // 3. Tarik Nilai Akademik dari Tabel Lama (ledger_nilai)
+                // 3. Tarik Nilai Akademik
                 let recordsLama = [];
                 try {
-                    const responseNilaiLama = await supabaseClient
-                        .from('ledger_nilai')
-                        .select('*')
-                        .ilike('nis', `%${nis}%`); 
-                    if (!responseNilaiLama.error && responseNilaiLama.data) {
-                        recordsLama = responseNilaiLama.data.map(r => ({ ...r, _source: 'ledger_nilai' }));
-                    }
-                } catch (e) {
-                    console.warn("ledger_nilai query warning:", e);
-                }
+                    const responseNilaiLama = await supabaseClient.from('ledger_nilai').select('*').ilike('nis', `%${nis}%`); 
+                    if (!responseNilaiLama.error && responseNilaiLama.data) { recordsLama = responseNilaiLama.data.map(r => ({ ...r, _source: 'ledger_nilai' })); }
+                } catch (e) {}
 
-                // 3b. Tarik Nilai Akademik dari Tabel Baru (daftar_nilai)
                 let recordsBaru = [];
                 try {
-                    const responseNilaiBaru = await supabaseClient
-                        .from('daftar_nilai')
-                        .select('*')
-                        .ilike('nis', `%${nis}%`);
-                    if (!responseNilaiBaru.error && responseNilaiBaru.data && responseNilaiBaru.data.length > 0) {
-                        // Grouping daftar_nilai (format baris per mapel) menjadi sesi ujian utuh
+                    const responseNilaiBaru = await supabaseClient.from('daftar_nilai').select('*').ilike('nis', `%${nis}%`);
+                    if (!responseNilaiBaru.error && responseNilaiBaru.data) {
                         const groupedSessions = {};
                         responseNilaiBaru.data.forEach(row => {
-                            const thn = (row.tahun || '').trim();
-                            const bln = (row.bulan || '').trim();
-                            const ujian = (row.nama_ujian || 'Ulangan').trim();
+                            const thn = (row.tahun || '').trim(); const bln = (row.bulan || '').trim(); const ujian = (row.nama_ujian || 'Ulangan').trim();
                             const sessionKey = `${thn}_${bln}_${ujian}`.toUpperCase();
-
                             if (!groupedSessions[sessionKey]) {
-                                groupedSessions[sessionKey] = {
-                                    _source: 'daftar_nilai',
-                                    tahun: thn,
-                                    bulan: bln,
-                                    kategori: ujian,
-                                    nama_ujian: ujian,
-                                    kelas: row.kelas || profilSantri.kelas || '',
-                                    items: []
-                                };
+                                groupedSessions[sessionKey] = { _source: 'daftar_nilai', tahun: thn, bulan: bln, kategori: ujian, nama_ujian: ujian, kelas: row.kelas || profilSantri.kelas || '', items: [] };
                             }
-
-                            groupedSessions[sessionKey].items.push({
-                                mapel: row.nama_mapel || '-',
-                                nilai: row.nilai !== null && row.nilai !== undefined ? row.nilai : '-',
-                                guru: row.nama_guru || '',
-                                cat: categorizeSubject(row.nama_mapel)
-                            });
+                            groupedSessions[sessionKey].items.push({ mapel: row.nama_mapel || '-', nilai: row.nilai, guru: row.nama_guru || '', cat: categorizeSubject(row.nama_mapel) });
                         });
-
                         recordsBaru = Object.values(groupedSessions);
                     }
-                } catch (e) {
-                    console.warn("daftar_nilai query warning:", e);
-                }
-
-                // Gabungkan kedua sumber data nilai
+                } catch (e) {}
+                
                 const combinedGrades = [...recordsLama, ...recordsBaru];
                 
                 // 4. Tarik Jurnal Disiplin
                 try {
-                    const responseDisiplin = await supabaseClient
-                        .from('jurnal_disiplin')
-                        .select('*')
-                        .ilike('nis', `%${nis}%`)
-                        .order('tanggal_pelanggaran', { ascending: false }); 
-                    
-                    if (!responseDisiplin.error) {
-                        disiplinRecords = responseDisiplin.data || [];
-                    }
-                } catch(e) { console.log("Disiplin error:", e); }
+                    const responseDisiplin = await supabaseClient.from('jurnal_disiplin').select('*').ilike('nis', `%${nis}%`).order('tanggal_pelanggaran', { ascending: false }); 
+                    if (!responseDisiplin.error) { disiplinRecords = responseDisiplin.data || []; }
+                } catch(e) {}
 
-                // 5. Tarik Presensi / Kehadiran Siswa (dari tabel presensi_siswa)
+                // 5. Tarik Presensi
                 try {
-                    const { data: dataAbsensi, error: errAbsensi } = await supabaseClient
-                        .from('presensi_siswa')
-                        .select('*')
-                        .or(`nis.eq.${nis},nama_siswa.ilike.%${profilSantri.nama.trim()}%`)
-                        .order('tanggal', { ascending: false })
-                        .limit(500);
-
-                    if (!errAbsensi && dataAbsensi) {
-                        absensiRecords = dataAbsensi;
-                    } else {
-                        absensiRecords = [];
-                    }
-                } catch(e) { 
-                    console.warn("Absensi query warning:", e); 
-                    absensiRecords = [];
-                }
+                    const { data: dataAbsensi, error: errAbsensi } = await supabaseClient.from('presensi_siswa').select('*').or(`nis.eq.${nis},nama_siswa.ilike.%${profilSantri.nama.trim()}%`).order('tanggal', { ascending: false }).limit(500);
+                    if (!errAbsensi && dataAbsensi) { absensiRecords = dataAbsensi; } else { absensiRecords = []; }
+                } catch(e) { absensiRecords = []; }
                 
                 return combinedGrades;
-            } catch (error) {
-                throw error;
-            }
+            } catch (error) { throw error; }
         }
 
-        // ==========================================
-        // HELPER KATEGORISASI MAPEL SECARA OTOMATIS
-        // ==========================================
         function categorizeSubject(mapelName) {
             const m = String(mapelName || '').toLowerCase().trim();
-            
-            // 1. Diniyyah / Ilmu Agama
-            if (
-                m.includes('pai') || m.includes('akhlaq') || m.includes('akhlak') ||
-                m.includes('tauhid') || m.includes('hadist') || m.includes('hadis') ||
-                m.includes('tafsir') || m.includes('fiqih') || m.includes('fiqh') ||
-                m.includes('fins') || m.includes('nahwu') || m.includes('qiraat') ||
-                m.includes('ubudiyyah') || m.includes('ubudiyah') || m.includes('imla') ||
-                m.includes('pegon') || m.includes('tajwid') || m.includes('tarikh') ||
-                m.includes('agama') || m.includes('diniyyah') || m.includes('shorof') ||
-                m.includes('tahfizh') || m.includes('al-qur') || m.includes('qur\'an')
-            ) {
-                return 'diniyyah';
-            }
-            
-            // 2. Ilmu Pengetahuan Umum
-            if (
-                m.includes('matematika') || m.includes('mtk') ||
-                m.includes('ipa') || m.includes('sains') ||
-                m.includes('ips') || m.includes('sosial') ||
-                m.includes('ppkn') || m.includes('pkn') || m.includes('pancasila')
-            ) {
-                return 'umum';
-            }
-            
-            // 3. Bahasa, Seni & Keterampilan
+            if (m.includes('pai') || m.includes('akhlaq') || m.includes('tauhid') || m.includes('hadist') || m.includes('tafsir') || m.includes('fiqih') || m.includes('fins') || m.includes('nahwu') || m.includes('qiraat') || m.includes('ubudiyyah') || m.includes('imla') || m.includes('pegon') || m.includes('tajwid') || m.includes('tarikh') || m.includes('agama') || m.includes('diniyyah') || m.includes('shorof') || m.includes('tahfizh') || m.includes('al-qur')) { return 'diniyyah'; }
+            if (m.includes('matematika') || m.includes('mtk') || m.includes('ipa') || m.includes('sains') || m.includes('ips') || m.includes('sosial') || m.includes('ppkn') || m.includes('pkn') || m.includes('pancasila')) { return 'umum'; }
             return 'bahasa';
         }
 
-        function getSubjectIcon(mapelName) {
-            const m = String(mapelName || '').toLowerCase().trim();
-            if (m.includes('qur') || m.includes('tafsir')) return 'fas fa-quran';
-            if (m.includes('hadis') || m.includes('hadist')) return 'fas fa-scroll';
-            if (m.includes('akhlaq') || m.includes('akhlak')) return 'fas fa-heart';
-            if (m.includes('tauhid')) return 'fas fa-fingerprint';
-            if (m.includes('fiqih') || m.includes('ubudiy')) return 'fas fa-praying-hands';
-            if (m.includes('imla') || m.includes('pegon') || m.includes('nahwu') || m.includes('fins')) return 'fas fa-book-open';
-            if (m.includes('pai') || m.includes('agama')) return 'fas fa-book';
-            if (m.includes('matematika') || m.includes('mtk')) return 'fas fa-square-root-alt';
-            if (m.includes('ipa') || m.includes('sains')) return 'fas fa-flask';
-            if (m.includes('ips')) return 'fas fa-globe-asia';
-            if (m.includes('ppkn') || m.includes('pkn')) return 'fas fa-flag';
-            if (m.includes('arab')) return 'fas fa-comment-dots';
-            if (m.includes('inggris')) return 'fas fa-comments';
-            if (m.includes('conversation')) return 'fas fa-headset';
-            if (m.includes('indonesia')) return 'fas fa-comment';
-            if (m.includes('jawa') || m.includes('adab')) return 'fas fa-pen-nib';
-            if (m.includes('informatika') || m.includes('komputer') || m.includes('tik')) return 'fas fa-laptop-code';
-            if (m.includes('seni') || m.includes('budaya')) return 'fas fa-palette';
-            if (m.includes('pjok') || m.includes('olahraga')) return 'fas fa-running';
-            return 'fas fa-graduation-cap';
-        }
-
-        // ==========================================
         // LOGIN LOGIC
-        // ==========================================
         async function handleLogin(e) {
             if(e) e.preventDefault(); 
-            
             const nisInput = document.getElementById('nis').value.trim();
             if(!nisInput) return;
 
@@ -824,487 +606,175 @@
             loginLoading.classList.add('flex');
 
             const showErr = (msg) => {
-                loginLoading.classList.add('hidden');
-                loginLoading.classList.remove('flex');
+                loginLoading.classList.add('hidden'); loginLoading.classList.remove('flex');
                 btnLogin.classList.remove('hidden');
-                document.getElementById('loginErrorText').innerText = msg;
-                loginError.classList.remove('hidden');
+                document.getElementById('loginErrorText').innerText = msg; loginError.classList.remove('hidden');
             };
 
-            if(!supabaseClient) {
-                showErr("Sistem error: Server database gagal dimuat. Cek koneksi internet Anda.");
-                return;
-            }
+            if(!supabaseClient) { showErr("Server database gagal dimuat. Cek internet Anda."); return; }
 
             try {
-                // Fetch Supabase Data (Menggabungkan ledger_nilai & daftar_nilai)
                 const rawMatchedData = await fetchStudentData(nisInput);
-                
-                // Fetch Google Sheets Data (Tabungan) secara paralel
                 try {
                     const [siswaRes, riwayatRes] = await Promise.all([
-                        fetch(SCRIPT_URL + '?action=getDataSiswa').then(res => res.json()),
-                        fetch(SCRIPT_URL + '?action=getRiwayat').then(res => res.json())
+                        fetch(SCRIPT_URL + '?action=getDataSiswa').then(res => res.json()), fetch(SCRIPT_URL + '?action=getRiwayat').then(res => res.json())
                     ]);
-
-                    if (siswaRes.status === 'success') {
-                        dataTabunganSiswa = siswaRes.data.find(s => s.nis === nisInput);
-                    }
-                    if (riwayatRes.status === 'success') {
-                        riwayatTabungan = riwayatRes.data.filter(r => r.nis === nisInput).sort((a, b) => b.timestamp.localeCompare(a.timestamp));
-                    }
-                } catch (apiErr) {
-                    console.error("Gagal mengambil data tabungan dari Google Sheets:", apiErr);
-                }
+                    if (siswaRes.status === 'success') { dataTabunganSiswa = siswaRes.data.find(s => s.nis === nisInput); }
+                    if (riwayatRes.status === 'success') { riwayatTabungan = riwayatRes.data.filter(r => r.nis === nisInput).sort((a, b) => b.timestamp.localeCompare(a.timestamp)); }
+                } catch (apiErr) { console.error(apiErr); }
 
                 if (profilSantri) {
                     if (rawMatchedData && rawMatchedData.length > 0) {
-                        // Tampilkan SEMUA data nilai ujian tanpa membuang tahun ajaran sebelumnya
                         rawMatchedData.sort((a, b) => {
-                            const thnA = String(a.tahun || a.Tahun || a.TAHUN || '');
-                            const thnB = String(b.tahun || b.Tahun || b.TAHUN || '');
-                            if (thnA !== thnB) {
-                                return thnA.localeCompare(thnB);
-                            }
-                            const blnA = (a.bulan || a.Bulan || a.BULAN || '').toUpperCase();
-                            const blnB = (b.bulan || b.Bulan || b.BULAN || '').toUpperCase();
-                            const scoreA = monthOrder[blnA] || 99;
-                            const scoreB = monthOrder[blnB] || 99;
-                            return scoreA - scoreB;
+                            const thnA = String(a.tahun || a.Tahun || a.TAHUN || ''); const thnB = String(b.tahun || b.Tahun || b.TAHUN || '');
+                            if (thnA !== thnB) return thnA.localeCompare(thnB);
+                            const blnA = (a.bulan || a.Bulan || a.BULAN || '').toUpperCase(); const blnB = (b.bulan || b.Bulan || b.BULAN || '').toUpperCase();
+                            return (monthOrder[blnA] || 99) - (monthOrder[blnB] || 99);
                         });
-
                         studentRecords = rawMatchedData;
-                        
                         try {
-                            const [resAllLama, resAllBaru] = await Promise.all([
-                                supabaseClient.from('ledger_nilai').select('*').limit(3000),
-                                supabaseClient.from('daftar_nilai').select('*').limit(3000)
-                            ]);
-
-                            const rawAllLama = resAllLama.data || [];
-                            const rawAllBaru = resAllBaru.data || [];
-
-                            // Normalisasi daftar_nilai angkatan untuk grafik
+                            const [resAllLama, resAllBaru] = await Promise.all([ supabaseClient.from('ledger_nilai').select('*').limit(3000), supabaseClient.from('daftar_nilai').select('*').limit(3000) ]);
                             const groupedBaruAll = {};
-                            rawAllBaru.forEach(row => {
-                                const thn = (row.tahun || '').trim();
-                                const bln = (row.bulan || '').trim();
-                                const ujian = (row.nama_ujian || 'Ulangan').trim();
-                                const studentNis = (row.nis || '').trim();
-                                const sKey = `${thn}|${bln}|${ujian}|${studentNis}`.toUpperCase();
-
-                                if (!groupedBaruAll[sKey]) {
-                                    groupedBaruAll[sKey] = {
-                                        _source: 'daftar_nilai',
-                                        tahun: thn,
-                                        bulan: bln,
-                                        kategori: ujian,
-                                        items: []
-                                    };
-                                }
-                                groupedBaruAll[sKey].items.push({
-                                    mapel: row.nama_mapel,
-                                    nilai: row.nilai
-                                });
+                            (resAllBaru.data || []).forEach(row => {
+                                const sKey = `${(row.tahun||'').trim()}|${(row.bulan||'').trim()}|${(row.nama_ujian||'').trim()}|${(row.nis||'').trim()}`.toUpperCase();
+                                if (!groupedBaruAll[sKey]) groupedBaruAll[sKey] = { _source: 'daftar_nilai', tahun: row.tahun, bulan: row.bulan, kategori: row.nama_ujian, items: [] };
+                                groupedBaruAll[sKey].items.push({ mapel: row.nama_mapel, nilai: row.nilai });
                             });
-
-                            allGrades = [...rawAllLama, ...Object.values(groupedBaruAll)];
-                        } catch(e) { 
-                            console.log("Gagal memuat rata-rata global:", e); 
-                        }
-                    } else {
-                        studentRecords = [];
-                        allGrades = [];
-                    }
-
+                            allGrades = [...(resAllLama.data || []), ...Object.values(groupedBaruAll)];
+                        } catch(e) {}
+                    } else { studentRecords = []; allGrades = []; }
                     masukKeDashboard();
                 }
-            } catch (err) {
-                showErr(err.message);
-            }
+            } catch (err) { showErr(err.message); }
         }
 
         function masukKeDashboard() {
-            loginSection.classList.add('hidden');
-            dashboardSection.classList.remove('hidden');
-            dashboardSection.classList.add('flex');
-
-            navActions.innerHTML = `
-                <button onclick="logout()" class="text-sm font-bold text-red-600 hover:text-white flex items-center transition border border-red-200 hover:bg-red-600 hover:border-red-600 bg-red-50 px-4 py-2 rounded-xl shadow-sm">
-                    <span class="hidden sm:inline mr-2">Tutup Rapor</span> <i class="fas fa-power-off"></i>
-                </button>
-            `;
-
-            // Tampilkan tahun ajaran terkini dari record terakhir
-            const latestRecord = studentRecords.length > 0 ? studentRecords[studentRecords.length - 1] : null;
-            const tahunAjaranTampil = latestRecord ? (latestRecord.tahun || latestRecord.Tahun || latestRecord.TAHUN || getTahunAjaranBerjalan()) : getTahunAjaranBerjalan();
+            loginSection.classList.add('hidden'); dashboardSection.classList.remove('hidden'); dashboardSection.classList.add('flex');
+            navActions.innerHTML = `<button onclick="logout()" class="text-xs font-bold text-red-600 flex items-center bg-red-50 border border-red-100 px-3 py-1.5 rounded-lg"><i class="fas fa-power-off mr-1.5"></i>Keluar</button>`;
             
-            document.getElementById('dashTahunAjaran').innerText = `Portal Wali TA. ${tahunAjaranTampil}`;
+            const latestRecord = studentRecords.length > 0 ? studentRecords[studentRecords.length - 1] : null;
+            const tahunAjaranTampil = latestRecord ? (latestRecord.tahun || latestRecord.Tahun || getTahunAjaranBerjalan()) : getTahunAjaranBerjalan();
+            
+            document.getElementById('dashTahunAjaran').innerText = `TA. ${tahunAjaranTampil}`;
             document.getElementById('dashNama').innerText = profilSantri.nama || '-';
             document.getElementById('dashNis').innerText = profilSantri.nis || '-';
             document.getElementById('dashKelas').innerText = profilSantri.kelas || '-';
 
-            populateExamSelector();
-            renderSelectedExamGrades();
-            renderTrendChart(); 
-            
-            renderTahfizhData();
-            renderDisiplinData(); 
-            renderTabunganData(); 
-            initAbsensiModule();
-            
+            populateExamSelector(); renderSelectedExamGrades(); renderTrendChart(); 
+            renderTahfizhData(); renderDisiplinData(); renderTabunganData(); initAbsensiModule(); 
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function logout() {
-            profilSantri = null;
-            studentRecords = [];
-            tahfizhRecords = [];
-            disiplinRecords = [];
-            allGrades = [];
-            dataTabunganSiswa = null;
-            riwayatTabungan = [];
-            absensiRecords = [];
-            
+            profilSantri = null; studentRecords = []; tahfizhRecords = []; disiplinRecords = []; allGrades = []; dataTabunganSiswa = null; riwayatTabungan = []; absensiRecords = [];
             document.getElementById('nis').value = '';
-            
-            if(trendChartInstance) {
-                trendChartInstance.destroy();
-            }
-
-            dashboardSection.classList.add('hidden');
-            dashboardSection.classList.remove('flex');
-            loginSection.classList.remove('hidden');
-            
-            const loginLoading = document.getElementById('loginLoading');
-            const btnLogin = document.getElementById('btnLogin');
-            const loginError = document.getElementById('loginError');
-
-            loginLoading.classList.add('hidden');
-            loginLoading.classList.remove('flex');
-            btnLogin.classList.remove('hidden');
-            loginError.classList.add('hidden');
-
-            navActions.innerHTML = `
-                <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm flex items-center">
-                    <i class="fas fa-shield-check text-green-600 mr-1.5"></i> Terenkripsi
-                </span>
-            `;
-
+            if(trendChartInstance) trendChartInstance.destroy();
+            dashboardSection.classList.add('hidden'); dashboardSection.classList.remove('flex'); loginSection.classList.remove('hidden');
+            document.getElementById('loginLoading').classList.add('hidden'); document.getElementById('loginLoading').classList.remove('flex');
+            document.getElementById('btnLogin').classList.remove('hidden'); document.getElementById('loginError').classList.add('hidden');
+            navActions.innerHTML = `<span class="text-[10px] sm:text-xs font-bold text-primary-700 bg-primary-50 px-2.5 py-1.5 rounded-lg border border-primary-200 flex items-center"><i class="fas fa-lock mr-1.5"></i> <span class="hidden sm:inline">Aman &amp; </span>Terenkripsi</span>`;
             switchTab('tab-nilai');
         }
 
-        // ==========================================
-        // RENDER DATA ABSENSI / KEHADIRAN (BARU)
-        // ==========================================
         function initAbsensiModule() {
             const filterBulan = document.getElementById('filterBulanAbsensi');
             filterBulan.innerHTML = '<option value="ALL">Semua Bulan (Kumulatif)</option>';
-
-            if (absensiRecords.length === 0) {
-                renderAbsensiTable([]);
-                updateAbsensiSummary([]);
-                return;
-            }
-
-            // Ekstrak bulan-bulan yang tersedia secara unik (Format: YYYY-MM)
-            const availableMonths = [...new Set(absensiRecords.map(r => {
-                if (!r.tanggal) return '';
-                return String(r.tanggal).substring(0, 7);
-            }))].filter(Boolean).sort().reverse();
-
-            const namaBulanIndo = {
-                '01': 'Januari', '02': 'Februari', '03': 'Maret', '04': 'April',
-                '05': 'Mei', '06': 'Juni', '07': 'Juli', '08': 'Agustus',
-                '09': 'September', '10': 'Oktober', '11': 'November', '12': 'Desember'
-            };
-
+            if (absensiRecords.length === 0) { renderAbsensiTable([]); updateAbsensiSummary([]); return; }
+            const availableMonths = [...new Set(absensiRecords.map(r => r.tanggal ? String(r.tanggal).substring(0, 7) : ''))].filter(Boolean).sort().reverse();
+            const namaBulanIndo = { '01': 'Januari', '02': 'Februari', '03': 'Maret', '04': 'April', '05': 'Mei', '06': 'Juni', '07': 'Juli', '08': 'Agustus', '09': 'September', '10': 'Oktober', '11': 'November', '12': 'Desember' };
             availableMonths.forEach(ym => {
                 const [year, month] = ym.split('-');
-                const label = `${namaBulanIndo[month] || month} ${year}`;
-                const opt = document.createElement('option');
-                opt.value = ym;
-                opt.textContent = label;
-                filterBulan.appendChild(opt);
+                filterBulan.appendChild(new Option(`${namaBulanIndo[month] || month} ${year}`, ym));
             });
-
-            // Jalankan filter awal (menampilkan semua atau bulan terkini)
             filterAbsensiData();
         }
 
         function filterAbsensiData() {
             const selectedYM = document.getElementById('filterBulanAbsensi').value;
-            let filtered = absensiRecords;
-
-            if (selectedYM !== 'ALL') {
-                filtered = absensiRecords.filter(r => r.tanggal && String(r.tanggal).startsWith(selectedYM));
-            }
-
-            updateAbsensiSummary(filtered);
-            renderAbsensiTable(filtered);
+            const filtered = selectedYM !== 'ALL' ? absensiRecords.filter(r => r.tanggal && String(r.tanggal).startsWith(selectedYM)) : absensiRecords;
+            updateAbsensiSummary(filtered); renderAbsensiTable(filtered);
         }
 
         function updateAbsensiSummary(records) {
             let hadir = 0, sakit = 0, izin = 0, alpha = 0;
-
             records.forEach(r => {
                 const s = String(r.status || '').trim().toLowerCase();
-                if (s === 'hadir') hadir++;
-                else if (s === 'sakit') sakit++;
-                else if (s === 'izin') izin++;
-                else if (s === 'alpha' || s === 'alpa') alpha++;
+                if (s === 'hadir') hadir++; else if (s === 'sakit') sakit++; else if (s === 'izin') izin++; else if (s === 'alpha' || s === 'alpa') alpha++;
             });
-
-            const total = records.length;
-            const persentase = total > 0 ? ((hadir / total) * 100).toFixed(1) : 100;
-
-            document.getElementById('stat-count-hadir').innerText = hadir;
-            document.getElementById('stat-count-sakit').innerText = sakit;
-            document.getElementById('stat-count-izin').innerText = izin;
-            document.getElementById('stat-count-alpha').innerText = alpha;
-            document.getElementById('stat-total-hari').innerText = `${total} Hari Pembelajaran`;
-
-            const persenElem = document.getElementById('stat-persen-hadir');
-            persenElem.innerText = total > 0 ? `${persentase}%` : '100%';
-
-            if (total === 0) {
-                persenElem.className = "text-3xl sm:text-4xl font-extrabold text-gray-400";
-            } else if (persentase >= 90) {
-                persenElem.className = "text-3xl sm:text-4xl font-extrabold text-emerald-600";
-            } else if (persentase >= 75) {
-                persenElem.className = "text-3xl sm:text-4xl font-extrabold text-amber-600";
-            } else {
-                persenElem.className = "text-3xl sm:text-4xl font-extrabold text-rose-600";
-            }
+            const total = records.length; const persentase = total > 0 ? ((hadir / total) * 100).toFixed(1) : 100;
+            document.getElementById('stat-count-hadir').innerText = hadir; document.getElementById('stat-count-sakit').innerText = sakit; document.getElementById('stat-count-izin').innerText = izin; document.getElementById('stat-count-alpha').innerText = alpha; document.getElementById('stat-total-hari').innerText = `${total} Hari Tercatat`;
+            const persenElem = document.getElementById('stat-persen-hadir'); persenElem.innerText = total > 0 ? `${persentase}%` : '100%';
+            persenElem.className = total === 0 ? "text-2xl sm:text-3xl font-extrabold text-gray-400 my-1" : (persentase >= 90 ? "text-2xl sm:text-3xl font-extrabold text-emerald-600 my-1" : (persentase >= 75 ? "text-2xl sm:text-3xl font-extrabold text-amber-600 my-1" : "text-2xl sm:text-3xl font-extrabold text-rose-600 my-1"));
         }
 
         function renderAbsensiTable(records) {
-            const tbody = document.getElementById('absensi-tbody');
-            const counter = document.getElementById('absensi-row-counter');
-            tbody.innerHTML = '';
-            counter.innerText = `${records.length} Pertemuan`;
-
-            if (records.length === 0) {
-                tbody.innerHTML = `
-                    <tr>
-                        <td colspan="5" class="py-10 px-6 text-center text-gray-500 italic">
-                            <i class="fas fa-calendar-times text-gray-300 text-4xl mb-3 block"></i>
-                            Belum ada riwayat absensi pada periode ini.
-                        </td>
-                    </tr>`;
-                return;
-            }
-
-            records.forEach((record, index) => {
-                // Format Hari dan Tanggal
-                let tglFormatted = "-";
-                let hari = "";
-                if (record.tanggal) {
-                    const dateObj = new Date(record.tanggal);
-                    if (!isNaN(dateObj.getTime())) {
-                        tglFormatted = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
-                        hari = dateObj.toLocaleDateString('id-ID', { weekday: 'long' });
-                    } else {
-                        tglFormatted = record.tanggal;
-                    }
-                }
-
-                // Badge Kehadiran
+            const tbody = document.getElementById('absensi-tbody'); const counter = document.getElementById('absensi-row-counter');
+            tbody.innerHTML = ''; counter.innerText = `${records.length} Baris`;
+            if (records.length === 0) { tbody.innerHTML = `<tr><td colspan="3" class="py-6 px-4 text-center text-gray-500 italic text-xs">Belum ada riwayat pada periode ini.</td></tr>`; return; }
+            records.forEach(record => {
+                let tglFormatted = "-"; if (record.tanggal) { const dateObj = new Date(record.tanggal); tglFormatted = !isNaN(dateObj.getTime()) ? dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : record.tanggal; }
                 const status = String(record.status || 'Hadir').trim();
                 let badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
-                let iconClass = "fas fa-check-circle";
-
-                if (status.toLowerCase() === 'sakit') {
-                    badgeClass = "bg-amber-50 text-amber-700 border-amber-200";
-                    iconClass = "fas fa-procedures";
-                } else if (status.toLowerCase() === 'izin') {
-                    badgeClass = "bg-blue-50 text-blue-700 border-blue-200";
-                    iconClass = "fas fa-envelope-open-text";
-                } else if (status.toLowerCase().includes('alpha') || status.toLowerCase().includes('alpa')) {
-                    badgeClass = "bg-rose-50 text-rose-700 border-rose-200";
-                    iconClass = "fas fa-times-circle";
-                }
-
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-gray-50 transition duration-150";
-                tr.innerHTML = `
-                    <td class="py-4 px-6 text-center font-mono text-xs text-gray-400 font-semibold">${index + 1}</td>
-                    <td class="py-4 px-6">
-                        <div class="font-bold text-gray-800">${tglFormatted}</div>
-                        ${hari ? `<div class="text-xs text-gray-500 font-medium">${hari}</div>` : ''}
-                    </td>
-                    <td class="py-4 px-6">
-                        <span class="px-2.5 py-1 bg-gray-100 text-gray-700 rounded-md font-semibold text-xs border border-gray-200">
-                            ${record.kelas || profilSantri.kelas || '-'}
-                        </span>
-                    </td>
-                    <td class="py-4 px-6 text-center">
-                        <span class="inline-flex items-center px-3 py-1.5 rounded-lg text-xs font-extrabold border ${badgeClass} shadow-sm">
-                            <i class="${iconClass} mr-1.5"></i> ${status}
-                        </span>
-                    </td>
-                    <td class="py-4 px-6 text-xs text-gray-500">
-                        ${record.keterangan || (status === 'Hadir' ? 'Mengikuti KBM tatap muka' : 'Izin tidak masuk')}
-                    </td>
-                `;
-                tbody.appendChild(tr);
+                if (status.toLowerCase() === 'sakit') badgeClass = "bg-amber-50 text-amber-700 border-amber-200"; else if (status.toLowerCase() === 'izin') badgeClass = "bg-blue-50 text-blue-700 border-blue-200"; else if (status.toLowerCase().includes('al')) badgeClass = "bg-rose-50 text-rose-700 border-rose-200";
+                tbody.innerHTML += `<tr class="hover:bg-gray-50"><td class="py-3 px-4 whitespace-nowrap font-medium text-gray-700">${tglFormatted}</td><td class="py-3 px-4 text-center"><span class="px-2 py-1 rounded-md text-[10px] font-bold border ${badgeClass}">${status}</span></td><td class="py-3 px-4 text-gray-500 line-clamp-1">${record.keterangan || '-'}</td></tr>`;
             });
         }
 
-        // ==========================================
-        // RENDER DATA TABUNGAN (DARI GOOGLE SHEETS)
-        // ==========================================
         function renderTabunganData() {
-            const tbody = document.getElementById('tabungan-tbody');
-            tbody.innerHTML = ''; 
-
+            const tbody = document.getElementById('tabungan-tbody'); tbody.innerHTML = ''; 
             const saldoAkhir = dataTabunganSiswa ? dataTabunganSiswa.tabungan : 0;
             document.getElementById('total-saldo-tabungan').innerText = new Intl.NumberFormat('id-ID').format(saldoAkhir);
-
-            if (riwayatTabungan.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="4" class="py-8 px-6 text-center text-gray-500 italic">Belum ada riwayat transaksi tabungan yang terekam di sistem.</td></tr>`;
-                return;
-            }
-
+            if (riwayatTabungan.length === 0) { tbody.innerHTML = `<tr><td colspan="4" class="py-6 px-4 text-center text-gray-500 italic text-xs">Belum ada transaksi.</td></tr>`; return; }
             riwayatTabungan.forEach(record => {
-                const badgeClass = "bg-emerald-50 text-emerald-700 border-emerald-200";
-                const jenisLabel = "Setoran Masuk";
-                const icon = '<i class="fas fa-arrow-down mr-1"></i>';
-
-                const row = document.createElement('tr');
-                row.className = "hover:bg-gray-50 transition duration-150";
-                row.innerHTML = `
-                    <td class="py-4 px-6 whitespace-nowrap text-gray-600 font-medium">${record.timestamp}</td>
-                    <td class="py-4 px-6 text-center">
-                        <span class="${badgeClass} border px-3 py-1.5 rounded-lg text-xs font-bold inline-block whitespace-nowrap shadow-sm">${icon} ${jenisLabel}</span>
-                    </td>
-                    <td class="py-4 px-6 text-gray-800 font-medium">Setoran Tabungan</td>
-                    <td class="py-4 px-6 text-right font-extrabold text-emerald-600 text-base">+ Rp ${new Intl.NumberFormat('id-ID').format(record.jumlah)}</td>
-                `;
-                tbody.appendChild(row);
+                tbody.innerHTML += `<tr class="hover:bg-gray-50"><td class="py-3 px-4 whitespace-nowrap font-medium text-gray-700">${record.timestamp}</td><td class="py-3 px-4 text-center"><span class="bg-emerald-50 text-emerald-700 border-emerald-200 border px-2 py-1 rounded-md text-[10px] font-bold"><i class="fas fa-arrow-down mr-1"></i>Masuk</span></td><td class="py-3 px-4 text-gray-500">Setoran</td><td class="py-3 px-4 text-right font-extrabold text-emerald-600">+ Rp ${new Intl.NumberFormat('id-ID').format(record.jumlah)}</td></tr>`;
             });
         }
 
         const getValHelper = (data, key) => {
-            if (!data) return '-';
-            if (data[key] !== undefined) return data[key];
-            const upper = key.toUpperCase();
-            if (data[upper] !== undefined) return data[upper];
-            const cap = key.charAt(0).toUpperCase() + key.slice(1);
-            if (data[cap] !== undefined) return data[cap];
+            if (!data) return '-'; if (data[key] !== undefined) return data[key];
+            const upper = key.toUpperCase(); if (data[upper] !== undefined) return data[upper];
+            const cap = key.charAt(0).toUpperCase() + key.slice(1); if (data[cap] !== undefined) return data[cap];
             return '-';
         };
 
-        // Mengambil daftar item mapel baik dari format lama maupun baru
         function getRecordItems(record) {
             if (!record) return [];
-
-            // Jika dari tabel baru (daftar_nilai) yang sudah digroup
-            if (record._source === 'daftar_nilai' && Array.isArray(record.items)) {
-                return record.items;
-            }
-
-            // Jika dari tabel lama (ledger_nilai)
-            const oldSubjectDefs = [
-                { key: 'pai', name: 'PAI (Umum)', cat: 'diniyyah' },
-                { key: 'akhlaq', name: 'Akhlaq', cat: 'diniyyah' },
-                { key: 'tauhid', name: 'Tauhid', cat: 'diniyyah' },
-                { key: 'hadist', name: 'Hadist', cat: 'diniyyah' },
-                { key: 'tafsir', name: 'Tafsir', cat: 'diniyyah' },
-                { key: 'fiqih', name: 'Fiqih', cat: 'diniyyah' },
-                { key: 'fins', name: 'Nahwu / Qiraatul Kitab', cat: 'diniyyah' },
-                { key: 'matematika', name: 'Matematika', cat: 'umum' },
-                { key: 'ipa', name: 'Ilmu Pengetahuan Alam (IPA)', cat: 'umum' },
-                { key: 'ips', name: 'Ilmu Pengetahuan Sosial (IPS)', cat: 'umum' },
-                { key: 'ppkn', name: 'Pendidikan Pancasila (PPKN)', cat: 'umum' },
-                { key: 'bahasa_indonesia', name: 'Bahasa Indonesia', cat: 'bahasa' },
-                { key: 'bahasa_inggris', name: 'Bahasa Inggris', cat: 'bahasa' },
-                { key: 'conversation', name: 'Conversation', cat: 'bahasa' },
-                { key: 'bahasa_arab', name: 'Bahasa Arab', cat: 'bahasa' },
-                { key: 'bahasa_jawa', name: 'Bahasa Jawa', cat: 'bahasa' },
-                { key: 'informatika', name: 'Informatika', cat: 'bahasa' },
-                { key: 'seni_budaya', name: 'Seni Budaya', cat: 'bahasa' },
-                { key: 'pjok', name: 'PJOK (Olahraga)', cat: 'bahasa' }
-            ];
-
+            if (record._source === 'daftar_nilai' && Array.isArray(record.items)) return record.items;
+            const oldSubjectDefs = [{ key: 'pai', name: 'PAI', cat: 'diniyyah' }, { key: 'akhlaq', name: 'Akhlaq', cat: 'diniyyah' }, { key: 'tauhid', name: 'Tauhid', cat: 'diniyyah' }, { key: 'hadist', name: 'Hadist', cat: 'diniyyah' }, { key: 'tafsir', name: 'Tafsir', cat: 'diniyyah' }, { key: 'fiqih', name: 'Fiqih', cat: 'diniyyah' }, { key: 'fins', name: 'Nahwu / Qiraatul Kitab', cat: 'diniyyah' }, { key: 'matematika', name: 'Matematika', cat: 'umum' }, { key: 'ipa', name: 'IPA', cat: 'umum' }, { key: 'ips', name: 'IPS', cat: 'umum' }, { key: 'ppkn', name: 'PPKN', cat: 'umum' }, { key: 'bahasa_indonesia', name: 'B. Indonesia', cat: 'bahasa' }, { key: 'bahasa_inggris', name: 'B. Inggris', cat: 'bahasa' }, { key: 'conversation', name: 'Conversation', cat: 'bahasa' }, { key: 'bahasa_arab', name: 'B. Arab', cat: 'bahasa' }, { key: 'bahasa_jawa', name: 'B. Jawa', cat: 'bahasa' }, { key: 'informatika', name: 'Informatika', cat: 'bahasa' }, { key: 'seni_budaya', name: 'Seni Budaya', cat: 'bahasa' }, { key: 'pjok', name: 'PJOK', cat: 'bahasa' }];
             const list = [];
-            oldSubjectDefs.forEach(def => {
-                const val = getValHelper(record, def.key);
-                if (val !== '-' && val !== null && val !== undefined && val !== '') {
-                    list.push({
-                        mapel: def.name,
-                        nilai: val,
-                        guru: '',
-                        cat: def.cat
-                    });
-                }
-            });
+            oldSubjectDefs.forEach(def => { const val = getValHelper(record, def.key); if (val !== '-' && val !== null && val !== undefined && val !== '') { list.push({ mapel: def.name, nilai: val, guru: '', cat: def.cat }); } });
             return list;
         }
 
         function calculateAverage(record) {
-            if (!record) return 0;
-            const items = getRecordItems(record);
-            if (items.length === 0) return 0;
-
-            let total = 0;
-            let count = 0;
-            items.forEach(item => {
-                const num = parseFloat(item.nilai);
-                if (!isNaN(num) && num > 0) {
-                    total += num;
-                    count++;
-                }
-            });
+            const items = getRecordItems(record); if (items.length === 0) return 0;
+            let total = 0; let count = 0;
+            items.forEach(item => { const num = parseFloat(item.nilai); if (!isNaN(num) && num > 0) { total += num; count++; } });
             return count > 0 ? (total / count).toFixed(1) : 0;
         }
 
         function renderTrendChart() {
             const ctx = document.getElementById('trendChart').getContext('2d');
-            const labels = [];
-            const dataPoints = [];
-
+            const labels = []; const dataPoints = [];
             studentRecords.forEach(record => {
-                const thn = record.tahun || record.Tahun || '';
-                const bln = record.bulan || record.Bulan || record.BULAN || '';
-                const ktg = record.kategori || record.Kategori || record.nama_ujian || '';
-                labels.push(`${bln} ${ktg}`.trim() || 'Periode');
-                const avg = calculateAverage(record);
-                dataPoints.push(avg);
+                const bln = record.bulan || record.Bulan || ''; const ktg = record.kategori || record.nama_ujian || '';
+                labels.push(`${bln} ${ktg}`.trim() || 'Periode'); dataPoints.push(calculateAverage(record));
             });
 
             const globalAveragesByPeriod = {};
             allGrades.forEach(record => {
-                const bln = record.bulan || record.Bulan || record.BULAN || '';
-                const ktg = record.kategori || record.Kategori || record.nama_ujian || '';
-                const label = `${bln} ${ktg}`.trim() || 'Periode';
-                
+                const bln = record.bulan || record.Bulan || ''; const ktg = record.kategori || record.nama_ujian || ''; const label = `${bln} ${ktg}`.trim() || 'Periode';
                 const avg = parseFloat(calculateAverage(record));
                 if (!isNaN(avg) && avg > 0) {
-                    if (!globalAveragesByPeriod[label]) {
-                        globalAveragesByPeriod[label] = { sum: 0, count: 0 };
-                    }
-                    globalAveragesByPeriod[label].sum += avg;
-                    globalAveragesByPeriod[label].count += 1;
+                    if (!globalAveragesByPeriod[label]) { globalAveragesByPeriod[label] = { sum: 0, count: 0 }; }
+                    globalAveragesByPeriod[label].sum += avg; globalAveragesByPeriod[label].count += 1;
                 }
             });
+            const globalDataPoints = labels.map(label => globalAveragesByPeriod[label] && globalAveragesByPeriod[label].count > 0 ? (globalAveragesByPeriod[label].sum / globalAveragesByPeriod[label].count).toFixed(1) : null);
 
-            const globalDataPoints = labels.map(label => {
-                if (globalAveragesByPeriod[label] && globalAveragesByPeriod[label].count > 0) {
-                    return (globalAveragesByPeriod[label].sum / globalAveragesByPeriod[label].count).toFixed(1);
-                }
-                return null; 
-            });
+            document.getElementById('avgScoreDisplay').innerText = dataPoints.length > 0 ? dataPoints[dataPoints.length - 1] : "0.0";
 
-            if(dataPoints.length > 0) {
-                document.getElementById('avgScoreDisplay').innerText = dataPoints[dataPoints.length - 1];
-            } else {
-                document.getElementById('avgScoreDisplay').innerText = "0.0";
-            }
-
-            if(trendChartInstance) {
-                trendChartInstance.destroy();
-            }
+            if(trendChartInstance) trendChartInstance.destroy();
             if (studentRecords.length === 0) return;
 
             trendChartInstance = new Chart(ctx, {
@@ -1312,256 +782,107 @@
                 data: {
                     labels: labels,
                     datasets: [
-                        {
-                            label: 'Nilai Santriwati',
-                            data: dataPoints,
-                            borderColor: '#16a34a', 
-                            backgroundColor: 'rgba(22, 163, 74, 0.1)',
-                            borderWidth: 3,
-                            pointBackgroundColor: '#ffffff',
-                            pointBorderColor: '#15803d',
-                            pointBorderWidth: 2,
-                            pointRadius: 5,
-                            pointHoverRadius: 7,
-                            fill: true,
-                            tension: 0.3
-                        },
-                        {
-                            label: 'Rata-Rata Angkatan',
-                            data: globalDataPoints,
-                            borderColor: '#f59e0b',
-                            backgroundColor: 'transparent',
-                            borderWidth: 2,
-                            borderDash: [5, 5], 
-                            pointBackgroundColor: '#f59e0b',
-                            pointBorderColor: '#fff',
-                            pointRadius: 4,
-                            pointHoverRadius: 6,
-                            fill: false,
-                            tension: 0.3
-                        }
+                        { label: 'Nilai Santriwati', data: dataPoints, borderColor: '#16a34a', backgroundColor: 'rgba(22, 163, 74, 0.1)', borderWidth: 3, pointBackgroundColor: '#ffffff', pointBorderColor: '#15803d', pointBorderWidth: 2, pointRadius: 4, fill: true, tension: 0.3 },
+                        { label: 'Rata-Rata Angkatan', data: globalDataPoints, borderColor: '#f59e0b', borderWidth: 2, borderDash: [5, 5], pointBackgroundColor: '#f59e0b', pointRadius: 3, fill: false, tension: 0.3 }
                     ]
                 },
                 options: {
                     responsive: true, maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: true, position: 'bottom', labels: { font: { family: 'Inter', size: 12 }, usePointStyle: true, boxWidth: 8 } },
-                        tooltip: { backgroundColor: '#14532d', titleFont: { family: 'Inter', size: 13 }, bodyFont: { family: 'Inter', size: 14, weight: 'bold' }, padding: 12, displayColors: true, callbacks: { label: function(context) { return context.dataset.label + ': ' + context.parsed.y; } } }
-                    },
-                    scales: {
-                        y: { min: 60, max: 100, ticks: { stepSize: 10, font: { family: 'Inter' } }, grid: { color: '#f1f5f9' }, border: { display: false } },
-                        x: { ticks: { font: { family: 'Inter' } }, grid: { display: false }, border: { display: false } }
-                    }
+                    plugins: { legend: { display: true, position: 'bottom', labels: { boxWidth: 8, font: {size: 10} } } },
+                    scales: { y: { min: 60, max: 100, ticks: { stepSize: 10 } } }
                 }
             });
         }
 
         function populateExamSelector() {
             examSelector.innerHTML = ''; 
-            if (studentRecords.length === 0) {
-                const option = document.createElement('option');
-                option.value = "";
-                option.text = "BELUM ADA DATA NILAI UJIAN";
-                examSelector.appendChild(option);
-                return;
-            }
+            if (studentRecords.length === 0) { examSelector.appendChild(new Option("BELUM ADA DATA", "")); return; }
             studentRecords.forEach((record, index) => {
-                const thn = record.tahun || record.Tahun || record.TAHUN || '';
-                const bln = record.bulan || record.Bulan || record.BULAN || '-';
-                const ktg = record.kategori || record.Kategori || record.nama_ujian || '-';
-                let label = '';
-                if (thn) label += `TA. ${thn} | `;
-                label += `${bln} - ${ktg}`;
-                const option = document.createElement('option');
-                option.value = index; 
-                option.text = label.toUpperCase();
-                examSelector.appendChild(option);
+                const thn = record.tahun || record.Tahun || ''; const bln = record.bulan || record.Bulan || '-'; const ktg = record.kategori || record.nama_ujian || '-';
+                examSelector.appendChild(new Option(`${thn ? 'TA. '+thn+' | ' : ''}${bln} - ${ktg}`.toUpperCase(), index));
             });
             examSelector.selectedIndex = studentRecords.length - 1;
         }
 
         function renderSelectedExamGrades(indexOverride) {
-            try {
-                if (studentRecords.length === 0) {
-                    const nullText = '<li class="p-6 text-center text-gray-500 text-sm font-medium">Data nilai akademik belum dimasukkan ke dalam sistem</li>';
-                    document.getElementById('list-diniyyah').innerHTML = nullText;
-                    document.getElementById('list-umum').innerHTML = nullText;
-                    document.getElementById('list-bahasa1').innerHTML = nullText;
-                    document.getElementById('list-bahasa2').innerHTML = nullText;
-                    return;
-                }
-
-                let selectedIndex = (indexOverride !== undefined && indexOverride !== '') ? parseInt(indexOverride) : parseInt(examSelector.value);
-                if (isNaN(selectedIndex) || selectedIndex < 0 || selectedIndex >= studentRecords.length) {
-                    selectedIndex = studentRecords.length - 1;
-                }
-                
-                const data = studentRecords[selectedIndex];
-                if(!data) return;
-
-                const items = getRecordItems(data);
-
-                const buatBaris = (label, nilai, icon, guru = '') => {
-                    const valStr = (nilai !== null && nilai !== undefined && nilai !== '') ? nilai : '-';
-                    const numVal = parseFloat(valStr);
-                    let badgeClass = 'bg-gray-100 text-gray-700 border-gray-200';
-                    if(!isNaN(numVal)) {
-                        if (numVal < 75) badgeClass = 'bg-red-50 text-red-700 border-red-200';
-                        else if (numVal >= 90) badgeClass = 'bg-green-50 text-green-800 border-green-200';
-                        else badgeClass = 'bg-blue-50 text-blue-800 border-blue-200';
-                    }
-                    return `
-                        <li class="px-6 py-4 flex justify-between items-center list-row border-l-4 border-transparent hover:border-primary-500 transition">
-                            <div class="flex items-center">
-                                <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center mr-3 shrink-0 text-gray-500">
-                                    <i class="${icon} text-base"></i>
-                                </div>
-                                <div>
-                                    <span class="text-sm font-semibold text-gray-800 block">${label}</span>
-                                    ${guru ? `<span class="text-xs text-gray-400 block font-normal"><i class="fas fa-chalkboard-teacher mr-1 text-[10px]"></i>${guru}</span>` : ''}
-                                </div>
-                            </div>
-                            <span class="font-extrabold px-3 py-1.5 rounded-lg text-sm ${badgeClass} border min-w-[3.5rem] text-center shadow-sm">${valStr}</span>
-                        </li>`;
-                };
-
-                // Pisahkan mata pelajaran berdasarkan kategori
-                const diniyyahItems = items.filter(it => it.cat === 'diniyyah');
-                const umumItems = items.filter(it => it.cat === 'umum');
-                const bahasaItems = items.filter(it => it.cat === 'bahasa');
-
-                const emptyNotice = '<li class="p-4 text-center text-gray-400 text-xs italic">Tidak ada mapel tercatat di sesi ini</li>';
-
-                // 1. Render Diniyyah
-                let htmlDiniyyah = '';
-                diniyyahItems.forEach(it => {
-                    htmlDiniyyah += buatBaris(it.mapel, it.nilai, getSubjectIcon(it.mapel), it.guru);
-                });
-                document.getElementById('list-diniyyah').innerHTML = htmlDiniyyah || emptyNotice;
-
-                // 2. Render Umum
-                let htmlUmum = '';
-                umumItems.forEach(it => {
-                    htmlUmum += buatBaris(it.mapel, it.nilai, getSubjectIcon(it.mapel), it.guru);
-                });
-                document.getElementById('list-umum').innerHTML = htmlUmum || emptyNotice;
-
-                // 3. Render Bahasa & Keterampilan (bagi ke 2 kolom)
-                let htmlBahasa1 = '';
-                let htmlBahasa2 = '';
-                const half = Math.ceil(bahasaItems.length / 2);
-                const col1 = bahasaItems.slice(0, half);
-                const col2 = bahasaItems.slice(half);
-
-                col1.forEach(it => {
-                    htmlBahasa1 += buatBaris(it.mapel, it.nilai, getSubjectIcon(it.mapel), it.guru);
-                });
-                col2.forEach(it => {
-                    htmlBahasa2 += buatBaris(it.mapel, it.nilai, getSubjectIcon(it.mapel), it.guru);
-                });
-
-                document.getElementById('list-bahasa1').innerHTML = htmlBahasa1 || (bahasaItems.length === 0 ? emptyNotice : '');
-                document.getElementById('list-bahasa2').innerHTML = htmlBahasa2 || (bahasaItems.length === 0 ? emptyNotice : '');
-
-            } catch (err) {
-                console.error("Gagal memperbarui nilai ujian:", err);
-            }
-        }
-
-        // Alias fungsi agar kompatibel dengan pemanggilan dari event onchange apapun
-        window.updateGradesView = function(val) {
-            renderSelectedExamGrades(val);
-        };
-
-        function renderTahfizhData() {
-            const tbody = document.getElementById('tahfizh-tbody');
-            tbody.innerHTML = ''; 
-            if (tahfizhRecords.length === 0) {
-                document.getElementById('tahfizh-ziyadah').innerText = "Belum Ada Data";
-                document.getElementById('tahfizh-murojaah').innerText = "Belum Ada Data";
-                document.getElementById('tahfizh-halaqoh').innerText = profilSantri.halaqoh || "-";
-                tbody.innerHTML = `<tr><td colspan="4" class="py-8 px-6 text-center text-gray-500 italic">Belum ada riwayat setoran tahfizh yang terekam di sistem.</td></tr>`;
+            if (studentRecords.length === 0) {
+                const nullText = '<li class="p-4 text-center text-gray-400 text-xs italic">Data belum dimasukkan</li>';
+                ['list-diniyyah', 'list-umum', 'list-bahasa1', 'list-bahasa2'].forEach(id => document.getElementById(id).innerHTML = nullText);
                 return;
             }
+            let selectedIndex = (indexOverride !== undefined && indexOverride !== '') ? parseInt(indexOverride) : parseInt(examSelector.value);
+            if (isNaN(selectedIndex) || selectedIndex < 0 || selectedIndex >= studentRecords.length) selectedIndex = studentRecords.length - 1;
+            
+            const data = studentRecords[selectedIndex]; if(!data) return;
+            const items = getRecordItems(data);
+
+            const getIcon = m => { const s=m.toLowerCase(); if(s.includes('qur')||s.includes('tafsir')) return 'fas fa-quran'; if(s.includes('hadis')) return 'fas fa-scroll'; if(s.includes('akhlaq')) return 'fas fa-heart'; if(s.includes('tauhid')) return 'fas fa-fingerprint'; if(s.includes('fiqih')||s.includes('ubudi')) return 'fas fa-praying-hands'; if(s.includes('imla')||s.includes('nahwu')) return 'fas fa-book-open'; if(s.includes('matematika')||s.includes('mtk')) return 'fas fa-square-root-alt'; if(s.includes('ipa')||s.includes('sains')) return 'fas fa-flask'; if(s.includes('ips')||s.includes('sosial')) return 'fas fa-globe-asia'; if(s.includes('ppkn')) return 'fas fa-flag'; if(s.includes('arab')||s.includes('inggris')||s.includes('indonesia')) return 'fas fa-comments'; if(s.includes('jawa')) return 'fas fa-pen-nib'; if(s.includes('komputer')||s.includes('tik')||s.includes('informatika')) return 'fas fa-laptop-code'; if(s.includes('seni')) return 'fas fa-palette'; if(s.includes('pjok')||s.includes('olahraga')) return 'fas fa-running'; return 'fas fa-book'; };
+
+            const buatBaris = (label, nilai, icon, guru = '') => {
+                const valStr = (nilai !== null && nilai !== undefined && nilai !== '') ? nilai : '-'; const numVal = parseFloat(valStr);
+                let badgeClass = 'bg-gray-100 text-gray-700 border-gray-200';
+                if(!isNaN(numVal)) badgeClass = numVal < 75 ? 'bg-red-50 text-red-700 border-red-200' : (numVal >= 90 ? 'bg-green-50 text-green-800 border-green-200' : 'bg-blue-50 text-blue-800 border-blue-200');
+                return `<li class="px-4 py-3 flex justify-between items-center list-row"><div class="flex items-center"><i class="${icon} w-5 text-gray-400 mr-2 text-center text-sm"></i><div><span class="text-xs font-bold text-gray-800 block">${label}</span>${guru ? `<span class="text-[9px] text-gray-400 block font-medium"><i class="fas fa-user-tie mr-1"></i>${guru}</span>` : ''}</div></div><span class="font-extrabold px-2.5 py-1.5 rounded-lg text-xs ${badgeClass} border min-w-[2.5rem] text-center shadow-sm ml-2">${valStr}</span></li>`;
+            };
+
+            const emptyNotice = '<li class="p-3 text-center text-gray-400 text-[10px] italic">Kosong</li>';
+            const html = cat => items.filter(it => it.cat === cat).map(it => buatBaris(it.mapel, it.nilai, getIcon(it.mapel), it.guru)).join('') || emptyNotice;
+
+            document.getElementById('list-diniyyah').innerHTML = html('diniyyah'); document.getElementById('list-umum').innerHTML = html('umum');
+            const bItems = items.filter(it => it.cat === 'bahasa'); const half = Math.ceil(bItems.length / 2);
+            document.getElementById('list-bahasa1').innerHTML = bItems.slice(0, half).map(it => buatBaris(it.mapel, it.nilai, getIcon(it.mapel), it.guru)).join('') || emptyNotice;
+            document.getElementById('list-bahasa2').innerHTML = bItems.slice(half).map(it => buatBaris(it.mapel, it.nilai, getIcon(it.mapel), it.guru)).join('');
+        }
+
+        window.updateGradesView = function(val) { renderSelectedExamGrades(val); };
+
+        function renderTahfizhData() {
+            const tbody = document.getElementById('tahfizh-tbody'); tbody.innerHTML = ''; 
+            if (tahfizhRecords.length === 0) { document.getElementById('tahfizh-halaqoh').innerText = profilSantri.halaqoh || "-"; tbody.innerHTML = `<tr><td colspan="4" class="py-6 text-center text-gray-400 italic text-xs">Belum ada setoran.</td></tr>`; return; }
+            
             const lastZiyadah = tahfizhRecords.find(r => r.kegiatan && r.kegiatan.toLowerCase().includes('ziyadah'));
-            if (lastZiyadah && lastZiyadah.juz_akhir && lastZiyadah.juz_akhir !== '-') {
-                document.getElementById('tahfizh-ziyadah').innerHTML = `Juz ${lastZiyadah.juz_akhir} <span class="text-sm text-gray-500 block sm:inline mt-1 sm:mt-0 font-normal">Pj. ${lastZiyadah.pojok_akhir || '-'}</span>`;
-            } else { document.getElementById('tahfizh-ziyadah').innerText = "Belum Ziyadah"; }
+            if (lastZiyadah && lastZiyadah.juz_akhir && lastZiyadah.juz_akhir !== '-') { document.getElementById('tahfizh-ziyadah').innerHTML = `Juz ${lastZiyadah.juz_akhir}<br><span class="text-[10px] text-gray-500 font-medium">Pj. ${lastZiyadah.pojok_akhir || '-'}</span>`; } 
+            
             const lastMurojaah = tahfizhRecords.find(r => r.kegiatan && r.kegiatan.toLowerCase().includes('muroja'));
-            if (lastMurojaah && lastMurojaah.juz_akhir && lastMurojaah.juz_akhir !== '-') {
-                document.getElementById('tahfizh-murojaah').innerHTML = `Juz ${lastMurojaah.juz_akhir} <span class="text-sm text-gray-500 block sm:inline mt-1 sm:mt-0 font-normal">Pj. ${lastMurojaah.pojok_akhir || '-'}</span>`;
-            } else { document.getElementById('tahfizh-murojaah').innerText = "Belum Murojaah"; }
-            const halaqohName = profilSantri.halaqoh || '-';
-            document.getElementById('tahfizh-halaqoh').innerText = halaqohName.replace('Ustdzh. ', '').replace('Ustzh. ', '');
+            if (lastMurojaah && lastMurojaah.juz_akhir && lastMurojaah.juz_akhir !== '-') { document.getElementById('tahfizh-murojaah').innerHTML = `Juz ${lastMurojaah.juz_akhir}<br><span class="text-[10px] text-gray-500 font-medium">Pj. ${lastMurojaah.pojok_akhir || '-'}</span>`; } 
+            
+            document.getElementById('tahfizh-halaqoh').innerText = (profilSantri.halaqoh || '-').replace('Ustdzh. ', '').replace('Ustzh. ', '');
 
             tahfizhRecords.forEach(record => {
-                let tglFormat = "-";
-                if(record.tanggal) {
-                    const dateObj = new Date(record.tanggal);
-                    tglFormat = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' });
-                }
-                const kgt = (record.kegiatan || '').trim();
-                let badgeClass = "bg-gray-100 text-gray-700 border-gray-200";
-                if (kgt.toLowerCase().includes('ziyadah')) badgeClass = "bg-green-50 text-green-700 border-green-200";
-                else if (kgt.toLowerCase().includes('muroja')) badgeClass = "bg-blue-50 text-blue-700 border-blue-200";
-                const jAwal = record.juz_awal || '-'; const pAwal = record.pojok_awal || '-'; const jAkhir = record.juz_akhir || '-'; const pAkhir = record.pojok_akhir || '-';
+                let tglFormat = "-"; if(record.tanggal) { const dateObj = new Date(record.tanggal); tglFormat = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }); }
+                const kgt = (record.kegiatan || '').trim(); const badgeClass = kgt.toLowerCase().includes('ziyadah') ? "bg-green-50 text-green-700 border-green-200" : "bg-blue-50 text-blue-700 border-blue-200";
+                const jA = record.juz_awal || '-'; const pA = record.pojok_awal || '-'; const jK = record.juz_akhir || '-'; const pK = record.pojok_akhir || '-';
                 let rangeAyat = '-';
-                if(jAwal !== '-' || jAkhir !== '-') {
-                     if (jAwal === jAkhir && pAwal === pAkhir) {
-                         rangeAyat = `<div class="inline-flex items-center"><span class="font-bold text-gray-800">Juz ${jAkhir}</span> <span class="text-xs text-gray-500 ml-1.5 px-2 py-0.5 bg-gray-100 border border-gray-200 rounded-md">Pj. ${pAkhir}</span></div>`;
-                     } else {
-                         rangeAyat = `<div class="inline-flex items-center flex-wrap gap-2"><div class="flex items-center"><span class="font-bold text-gray-800">Juz ${jAwal}</span> <span class="text-xs text-gray-500 ml-1.5 px-2 py-0.5 bg-gray-100 border border-gray-200 rounded-md">Pj. ${pAwal}</span></div><i class="fas fa-arrow-right text-gray-300 text-xs"></i><div class="flex items-center"><span class="font-bold text-gray-800">Juz ${jAkhir}</span> <span class="text-xs text-gray-500 ml-1.5 px-2 py-0.5 bg-gray-100 border border-gray-200 rounded-md">Pj. ${pAkhir}</span></div></div>`;
-                     }
+                if(jA !== '-' || jK !== '-') {
+                     if (jA === jK && pA === pK) rangeAyat = `<div class="font-bold text-gray-800 text-[11px]">Jz.${jK} <span class="text-gray-500 px-1 py-0.5 bg-gray-100 rounded">Pj.${pK}</span></div>`;
+                     else rangeAyat = `<div class="font-bold text-gray-800 text-[10px]">Jz.${jA} <span class="text-gray-500 px-1 py-0.5 bg-gray-100 rounded">Pj.${pA}</span> <i class="fas fa-caret-right text-gray-300"></i> Jz.${jK} <span class="text-gray-500 px-1 py-0.5 bg-gray-100 rounded">Pj.${pK}</span></div>`;
                 }
-                const row = document.createElement('tr');
-                row.className = "hover:bg-gray-50 transition duration-150";
-                row.innerHTML = `<td class="py-4 px-6 whitespace-nowrap text-gray-600 font-medium">${tglFormat}</td><td class="py-4 px-6"><span class="inline-block whitespace-nowrap px-3 py-1.5 rounded-lg text-xs font-bold ${badgeClass} border shadow-sm">${kgt}</span></td><td class="py-4 px-6">${rangeAyat}</td><td class="py-4 px-6 text-gray-500 text-xs leading-relaxed">${record.keterangan ? record.keterangan : ''}</td>`;
-                tbody.appendChild(row);
+                tbody.innerHTML += `<tr class="hover:bg-gray-50"><td class="py-3 px-4 font-medium">${tglFormat}</td><td class="py-3 px-4"><span class="px-2 py-1 rounded-md text-[9px] font-bold ${badgeClass} border">${kgt}</span></td><td class="py-3 px-4">${rangeAyat}</td><td class="py-3 px-4 text-gray-500 line-clamp-1">${record.keterangan || '-'}</td></tr>`;
             });
         }
 
         function renderDisiplinData() {
-            const tbody = document.getElementById('disiplin-tbody');
-            tbody.innerHTML = ''; 
+            const tbody = document.getElementById('disiplin-tbody'); tbody.innerHTML = ''; 
             let totalMerit = 0; let totalDemerit = 0;
-            if (disiplinRecords.length === 0) {
-                document.getElementById('total-merit').innerText = '0'; document.getElementById('total-demerit').innerText = '0';
-                tbody.innerHTML = `<tr><td colspan="4" class="py-8 px-6 text-center text-gray-500 italic">Ananda belum memiliki catatan kejadian/prestasi di asrama.</td></tr>`;
-                return;
-            }
+            if (disiplinRecords.length === 0) { document.getElementById('total-merit').innerText = '0'; document.getElementById('total-demerit').innerText = '0'; tbody.innerHTML = `<tr><td colspan="4" class="py-6 px-4 text-center text-gray-400 italic text-xs">Belum ada catatan sikap.</td></tr>`; return; }
             disiplinRecords.forEach(record => {
-                let tglFormat = "-";
-                if(record.tanggal_pelanggaran) {
-                    const dateObj = new Date(record.tanggal_pelanggaran);
-                    if(!isNaN(dateObj.getTime())) { tglFormat = dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }); } 
-                    else { tglFormat = record.tanggal_pelanggaran; }
-                }
-                const poin = parseInt(record.poin_pelanggaran) || 0;
-                let isPrestasi = false;
-                if (poin > 0) { isPrestasi = true; totalMerit += poin; } else if (poin < 0) { totalDemerit += Math.abs(poin); }
+                let tglFormat = "-"; if(record.tanggal_pelanggaran) { const dateObj = new Date(record.tanggal_pelanggaran); tglFormat = !isNaN(dateObj.getTime()) ? dateObj.toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' }) : record.tanggal_pelanggaran; }
+                const poin = parseInt(record.poin_pelanggaran) || 0; const isPrestasi = poin > 0;
+                if (isPrestasi) totalMerit += poin; else if (poin < 0) totalDemerit += Math.abs(poin);
                 const badgeClass = isPrestasi ? "bg-green-50 text-green-700 border-green-200" : "bg-red-50 text-red-700 border-red-200";
-                const jenisLabel = isPrestasi ? "Prestasi" : "Pelanggaran"; const poinLabel = (poin > 0 ? '+' : '') + poin; const poinClass = isPrestasi ? "text-green-600" : "text-red-600";
-                const row = document.createElement('tr');
-                row.className = "hover:bg-gray-50 transition duration-150";
-                row.innerHTML = `<td class="py-4 px-6 whitespace-nowrap text-gray-600 font-medium">${tglFormat}</td><td class="py-4 px-6"><div class="font-medium text-gray-800">${record.nama_pelanggaran || '-'}</div><div class="text-xs text-gray-500 font-normal mt-1">${record.keterangan || ''}</div></td><td class="py-4 px-6 text-center"><span class="${badgeClass} border px-3 py-1.5 rounded-lg text-xs font-bold inline-block whitespace-nowrap shadow-sm">${jenisLabel}</span></td><td class="py-4 px-6 text-right font-extrabold ${poinClass} text-base">${poinLabel}</td>`;
-                tbody.appendChild(row);
+                tbody.innerHTML += `<tr class="hover:bg-gray-50"><td class="py-3 px-4 font-medium">${tglFormat}</td><td class="py-3 px-4"><div class="font-bold text-gray-800 line-clamp-1">${record.nama_pelanggaran || '-'}</div><div class="text-[9px] text-gray-500">${record.keterangan || ''}</div></td><td class="py-3 px-4 text-center"><span class="${badgeClass} border px-2 py-1 rounded-md text-[9px] font-bold">${isPrestasi ? "Prestasi" : "Pelanggaran"}</span></td><td class="py-3 px-4 text-right font-extrabold ${isPrestasi ? "text-green-600" : "text-red-600"}">${poin > 0 ? '+'+poin : poin}</td></tr>`;
             });
             document.getElementById('total-merit').innerText = totalMerit; document.getElementById('total-demerit').innerText = totalDemerit;
         }
 
         function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => { if (el) el.classList.add('hidden'); });
-            const targetTab = document.getElementById(tabId);
-            if (targetTab) { targetTab.classList.remove('hidden'); }
-            
-            // Daftarkan semua id tombol tab termasuk tab-absensi
-            const btns = ['btn-tab-nilai', 'btn-tab-tahfizh', 'btn-tab-disiplin', 'btn-tab-tabungan', 'btn-tab-absensi'];
-            btns.forEach(id => {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.getElementById(tabId)?.classList.remove('hidden');
+            ['btn-tab-nilai', 'btn-tab-tahfizh', 'btn-tab-disiplin', 'btn-tab-tabungan', 'btn-tab-absensi'].forEach(id => {
                 const btn = document.getElementById(id);
                 if (btn) { btn.classList.remove('tab-active'); btn.classList.add('tab-inactive'); }
             });
-            const activeBtn = document.getElementById('btn-' + tabId);
-            if (activeBtn) { activeBtn.classList.remove('tab-inactive'); activeBtn.classList.add('tab-active'); }
+            document.getElementById('btn-' + tabId)?.classList.replace('tab-inactive', 'tab-active');
         }
     </script>
 </body>
