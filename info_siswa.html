@@ -164,7 +164,21 @@
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors">
                                 <i class="fas fa-id-card text-gray-400 text-lg group-focus-within:text-primary-600 transition"></i>
                             </div>
-                            <input type="tel" id="nis" required="" placeholder="Contoh: 25210166" class="w-full pl-12 pr-4 py-3.5 bg-blue-50/50 border-2 border-gray-200 rounded-xl focus:ring-0 focus:border-primary-500 focus:bg-white outline-none transition text-base font-bold text-gray-900 shadow-inner" onkeypress="if(event.key === 'Enter') handleLogin()">
+                            <input type="tel" id="nis" required="" placeholder="Contoh: 25210166" class="w-full pl-12 pr-4 py-3.5 bg-blue-50/50 border-2 border-gray-200 rounded-xl focus:ring-0 focus:border-primary-500 focus:bg-white outline-none transition text-base font-bold text-gray-900 shadow-inner" onkeypress="if(event.key === 'Enter') document.getElementById('password').focus()">
+                        </div>
+                    </div>
+                    
+                    <!-- Kolom Password Baru Ditambahkan -->
+                    <div>
+                        <label for="password" class="block text-xs sm:text-sm font-bold text-gray-700 mb-2">Kata Sandi (Password)</label>
+                        <div class="relative group z-30">
+                            <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none transition-colors">
+                                <i class="fas fa-lock text-gray-400 text-lg group-focus-within:text-primary-600 transition"></i>
+                            </div>
+                            <input type="password" id="password" required="" placeholder="Gunakan NIS jika belum diatur" class="w-full pl-12 pr-12 py-3.5 bg-blue-50/50 border-2 border-gray-200 rounded-xl focus:ring-0 focus:border-primary-500 focus:bg-white outline-none transition text-base font-bold text-gray-900 shadow-inner" onkeypress="if(event.key === 'Enter') handleLogin()">
+                            <div class="absolute inset-y-0 right-0 pr-4 flex items-center cursor-pointer" onclick="togglePassword()">
+                                <i class="fas fa-eye text-gray-400 hover:text-primary-600 transition" id="togglePasswordIcon"></i>
+                            </div>
                         </div>
                     </div>
                     
@@ -188,6 +202,28 @@
                     <i class="fas fa-exclamation-circle mt-0.5 mr-2 text-base"></i>
                     <span id="loginErrorText" class="leading-relaxed font-semibold">Error.</span>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Atur Password (Disembunyikan di awal) -->
+    <div id="passwordModal" class="hidden fixed inset-0 z-[100] items-center justify-center bg-gray-900/60 backdrop-blur-sm fade-in px-4">
+        <div class="bg-white p-6 sm:p-8 rounded-[2rem] shadow-2xl w-full max-w-sm border-2 border-secondary-500 relative transform transition-all">
+            <div class="text-center mb-6">
+                <div class="w-14 h-14 bg-secondary-100 text-secondary-600 rounded-2xl flex items-center justify-center mx-auto mb-3 text-2xl shadow-inner border border-secondary-200"><i class="fas fa-user-shield"></i></div>
+                <h3 class="font-bold text-gray-900 text-xl font-serif">Keamanan Akun</h3>
+                <p class="text-xs sm:text-sm text-gray-500 mt-2 font-medium leading-relaxed">Anda masih menggunakan password default (NIS). Demi keamanan privasi nilai, mohon buat kata sandi baru.</p>
+            </div>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5">Password Baru</label>
+                    <input type="password" id="newPassword" class="w-full px-4 py-3 bg-gray-50 border-2 border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:border-primary-500 focus:bg-white outline-none transition" placeholder="Minimal 6 karakter">
+                </div>
+                <div id="modalMsg" class="hidden text-[11px] font-bold px-3 py-2 rounded-lg text-center"></div>
+                <button onclick="saveNewPassword()" id="btnSavePassword" class="btn-brutal w-full bg-primary-700 text-white font-bold py-3 rounded-xl border-2 border-[#14532d] shadow-[0_4px_0_0_#14532d] flex items-center justify-center transition-all cursor-pointer">
+                    <i class="fas fa-save mr-2"></i> Simpan Password Baru
+                </button>
+                <button onclick="closePasswordModal()" class="w-full text-gray-400 text-xs font-bold py-2 hover:text-gray-700 transition">Nanti Saja, Lewati</button>
             </div>
         </div>
     </div>
@@ -528,12 +564,26 @@
         }
 
         // FUNGSI PENARIKAN DATA TERBARU DARI SUPABASE
-        async function fetchStudentData(nis) {
+        async function fetchStudentData(nis, passwordInput) {
             try {
                 // 1. Tarik Data Profil
                 const { data: dataSantri, error: errSantri } = await supabaseClient.from('santri').select('*').eq('nis', nis).limit(1);
                 if (errSantri || !dataSantri || dataSantri.length === 0) { throw new Error(`Data santri dengan NIS "${nis}" tidak ditemukan.`); }
                 profilSantri = dataSantri[0];
+
+                // Validasi Password
+                const dbPassword = profilSantri.Password || profilSantri.password; // Menghandle case-sensitivity kolom
+                if (dbPassword) {
+                    // Jika password sudah ada di DB
+                    if (passwordInput !== dbPassword) {
+                        throw new Error("Kata Sandi (Password) salah. Silakan coba lagi.");
+                    }
+                } else {
+                    // Jika belum ada password, cek apakah input = NIS
+                    if (passwordInput !== nis) {
+                        throw new Error("Kata Sandi salah. (Gunakan NIS sebagai password jika belum pernah diatur)");
+                    }
+                }
 
                 // 2. Tarik Jurnal Tahfizh
                 try {
@@ -594,7 +644,8 @@
         async function handleLogin(e) {
             if(e) e.preventDefault(); 
             const nisInput = document.getElementById('nis').value.trim();
-            if(!nisInput) return;
+            const passwordInput = document.getElementById('password').value; // Mengambil value password
+            if(!nisInput || !passwordInput) return;
 
             const loginError = document.getElementById('loginError');
             const btnLogin = document.getElementById('btnLogin');
@@ -614,7 +665,7 @@
             if(!supabaseClient) { showErr("Server database gagal dimuat. Cek internet Anda."); return; }
 
             try {
-                const rawMatchedData = await fetchStudentData(nisInput);
+                const rawMatchedData = await fetchStudentData(nisInput, passwordInput);
                 try {
                     const [siswaRes, riwayatRes] = await Promise.all([
                         fetch(SCRIPT_URL + '?action=getDataSiswa').then(res => res.json()), fetch(SCRIPT_URL + '?action=getRiwayat').then(res => res.json())
@@ -663,11 +714,21 @@
             populateExamSelector(); renderSelectedExamGrades(); renderTrendChart(); 
             renderTahfizhData(); renderDisiplinData(); renderTabunganData(); initAbsensiModule(); 
             window.scrollTo({ top: 0, behavior: 'smooth' });
+
+            // Cek jika password masih default (NIS) atau kosong, tampilkan notifikasi ubah password
+            const dbPassword = profilSantri.Password || profilSantri.password;
+            if (!dbPassword || dbPassword === profilSantri.nis) {
+                setTimeout(() => {
+                    document.getElementById('passwordModal').classList.remove('hidden');
+                    document.getElementById('passwordModal').classList.add('flex');
+                }, 1000); // Munculkan setelah 1 detik dashboard terbuka
+            }
         }
 
         function logout() {
             profilSantri = null; studentRecords = []; tahfizhRecords = []; disiplinRecords = []; allGrades = []; dataTabunganSiswa = null; riwayatTabungan = []; absensiRecords = [];
             document.getElementById('nis').value = '';
+            document.getElementById('password').value = '';
             if(trendChartInstance) trendChartInstance.destroy();
             dashboardSection.classList.add('hidden'); dashboardSection.classList.remove('flex'); loginSection.classList.remove('hidden');
             document.getElementById('loginLoading').classList.add('hidden'); document.getElementById('loginLoading').classList.remove('flex');
@@ -883,6 +944,79 @@
                 if (btn) { btn.classList.remove('tab-active'); btn.classList.add('tab-inactive'); }
             });
             document.getElementById('btn-' + tabId)?.classList.replace('tab-inactive', 'tab-active');
+        }
+
+        // ==========================================
+        // FUNGSI MANAJEMEN PASSWORD
+        // ==========================================
+        function togglePassword() {
+            const pwdInput = document.getElementById('password');
+            const icon = document.getElementById('togglePasswordIcon');
+            if (pwdInput.type === 'password') {
+                pwdInput.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                pwdInput.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        function closePasswordModal() {
+            const modal = document.getElementById('passwordModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.getElementById('newPassword').value = '';
+            document.getElementById('modalMsg').classList.add('hidden');
+        }
+
+        async function saveNewPassword() {
+            const newPass = document.getElementById('newPassword').value;
+            const btn = document.getElementById('btnSavePassword');
+            const msgBox = document.getElementById('modalMsg');
+
+            // Reset box message
+            msgBox.classList.remove('hidden', 'bg-green-100', 'text-green-700', 'bg-red-100', 'text-red-700');
+
+            if(newPass.length < 6) {
+                msgBox.innerText = "Password terlalu pendek. Minimal 6 karakter.";
+                msgBox.classList.add('bg-red-100', 'text-red-700');
+                msgBox.classList.remove('hidden');
+                return;
+            }
+
+            btn.innerHTML = '<div class="loader w-4 h-4 mr-2 border-2 border-t-white border-white/30" style="border-radius: 50%;"></div> Menyimpan...';
+            btn.disabled = true;
+
+            try {
+                // Update kolom "Password" di Supabase
+                const { error } = await supabaseClient
+                    .from('santri')
+                    .update({ Password: newPass })
+                    .eq('id', profilSantri.id);
+
+                if (error) throw error;
+
+                // Update info password di variabel memori lokal agar popup tidak muncul lagi
+                profilSantri.Password = newPass; 
+                
+                msgBox.innerText = "Password berhasil diperbarui!";
+                msgBox.classList.add('bg-green-100', 'text-green-700');
+                msgBox.classList.remove('hidden');
+                
+                // Tutup otomatis setelah berhasil
+                setTimeout(() => {
+                    closePasswordModal();
+                }, 1500);
+
+            } catch (err) {
+                console.error(err);
+                msgBox.innerText = "Gagal menghubungi server. Coba lagi.";
+                msgBox.classList.add('bg-red-100', 'text-red-700');
+                msgBox.classList.remove('hidden');
+            } finally {
+                btn.innerHTML = '<i class="fas fa-save mr-2"></i> Simpan Password Baru';
+                btn.disabled = false;
+            }
         }
     </script>
 </body>
