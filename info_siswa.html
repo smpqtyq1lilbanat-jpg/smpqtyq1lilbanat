@@ -1,20 +1,49 @@
 <!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portal Wali Santriwati - SMPQT Yanbu'ul Qur'an 1 Lil Banat</title>
     
     <!-- Favicon -->
-    <link rel="icon" type="image/png" href="logo.png">
+    <link rel="icon" type="image/png" href="https://www.smpqtyq1lilbanat.sch.id/logo.png">
     
     <!-- Google Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Merriweather:ital,wght@0,400;0,700;1,400&amp;family=Amiri:ital,wght@0,400;0,700;1,400&amp;display=swap" rel="stylesheet">
     
-    <!-- Tailwind CSS -->
+    <!-- Tailwind CSS CDN & Config -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        secondary: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                        arabic: ['Amiri', 'serif']
+                    }
+                }
+            }
+        }
+    </script>
     
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -25,79 +54,60 @@
     <!-- Chart.js untuk Grafik -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: {
-                            50: '#f0fdf4', 100: '#dcfce7', 500: '#22c55e', 600: '#16a34a',
-                            700: '#15803d', 800: '#166534', 900: '#14532d',
-                        },
-                        secondary: {
-                            400: '#fbbf24', 500: '#f59e0b', 600: '#d97706',
-                        }
-                    },
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                        serif: ['Merriweather', 'serif'],
-                        arabic: ['Amiri', 'serif'],
-                    }
-                }
-            }
-        }
-    </script>
-
+    <!-- Custom CSS persis sesuai stylesheet snapshot -->
     <style>
-        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #15803d; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #166534; }
+        ::-webkit-scrollbar-track { background: rgb(241, 241, 241); }
+        ::-webkit-scrollbar-thumb { background: rgb(21, 128, 61); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgb(22, 101, 52); }
 
-        .tab-active {
-            border-bottom: 3px solid #15803d;
-            color: #15803d;
-            font-weight: 700;
-            background-color: #f0fdf4;
+        .tab-active { 
+            border-bottom: 3px solid rgb(21, 128, 61); 
+            color: rgb(21, 128, 61); 
+            font-weight: 700; 
+            background-color: rgb(240, 253, 244); 
         }
-        .tab-inactive {
-            border-bottom: 3px solid transparent;
-            color: #6b7280;
-            font-weight: 500;
+        .tab-inactive { 
+            border-bottom: 3px solid transparent; 
+            color: rgb(107, 114, 128); 
+            font-weight: 500; 
         }
-        .tab-inactive:hover {
-            color: #374151;
-            border-bottom: 3px solid #d1d5db;
-            background-color: #f9fafb;
+        .tab-inactive:hover { 
+            color: rgb(55, 65, 81); 
+            border-bottom: 3px solid rgb(209, 213, 219); 
+            background-color: rgb(249, 250, 251); 
         }
-        
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #15803d;
-            border-radius: 50%;
-            width: 32px;
-            height: 32px;
-            animation: spin 1s linear infinite;
+
+        .loader { 
+            border-width: 4px; 
+            border-style: solid; 
+            border-color: rgb(21, 128, 61) rgb(243, 243, 243) rgb(243, 243, 243); 
+            border-image: none; 
+            border-radius: 50%; 
+            width: 32px; 
+            height: 32px; 
+            animation: 1s linear 0s infinite normal none running spin; 
         }
-        @keyframes spin {
+        @keyframes spin { 
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
 
-        .fade-in { animation: fadeIn 0.4s ease-in-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
+        .fade-in { 
+            animation: 0.4s ease-in-out 0s 1 normal none running fadeIn; 
+        }
+        @keyframes fadeIn { 
+            0% { opacity: 0; transform: translateY(12px); }
+            100% { opacity: 1; transform: translateY(0px); }
         }
 
-        .list-row {
-            transition: all 0.2s ease;
+        .list-row { 
+            transition: 0.2s; 
         }
-        .list-row:hover {
-            background-color: #f8fafc;
-            transform: translateX(4px);
-            border-left-color: #22c55e;
+        .list-row:hover { 
+            background-color: rgb(248, 250, 252); 
+            transform: translateX(4px); 
+            border-left-color: rgb(34, 197, 94); 
         }
     </style>
 </head>
@@ -108,8 +118,8 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between h-16 sm:h-20 items-center">
                 <!-- Logo -->
-                <a href="https://www.smpqtyq1lilbanat.sch.id" target="_blank" class="flex-shrink-0 flex items-center group">
-                    <img src="logo.png" alt="Logo SMPQT" class="w-10 h-10 sm:w-12 sm:h-12 mr-3 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                <a href="https://www.smpqtyq1lilbanat.sch.id/" target="_blank" class="flex-shrink-0 flex items-center group">
+                    <img src="https://www.smpqtyq1lilbanat.sch.id/logo.png" alt="Logo SMPQT" class="w-10 h-10 sm:w-12 sm:h-12 mr-3 object-contain" onerror="this.classList.add('hidden'); this.nextElementSibling.classList.remove('hidden'); this.nextElementSibling.classList.add('flex');">
                     <div class="hidden w-10 h-10 sm:w-12 sm:h-12 bg-primary-700 rounded-full items-center justify-center text-white font-bold text-lg mr-3 shadow-sm border border-secondary-500">YQ</div>
                     <div class="flex flex-col">
                         <span class="font-bold text-sm sm:text-base md:text-lg text-primary-900 leading-tight group-hover:text-primary-700 transition">Portal Wali Santriwati</span>
@@ -117,10 +127,13 @@
                     </div>
                 </a>
                 <!-- Nav Actions -->
-                <div id="navActions">
+                <div id="navActions" class="flex items-center gap-3">
                     <span class="text-xs font-medium text-gray-500 bg-gray-100 px-3 py-1.5 rounded-lg border border-gray-200 shadow-sm flex items-center">
                         <i class="fas fa-shield-check text-green-600 mr-1.5"></i> Terenkripsi
                     </span>
+                    <button id="btnLogout" onclick="handleLogout()" class="hidden text-xs font-semibold text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 px-3 py-1.5 rounded-lg transition items-center">
+                        <i class="fas fa-sign-out-alt mr-1"></i> Keluar
+                    </button>
                 </div>
             </div>
         </div>
@@ -139,7 +152,7 @@
                     <i class="fas fa-users text-4xl text-primary-700"></i>
                 </div>
                 <h2 class="text-2xl font-bold text-white font-serif relative z-10">Selamat Datang, Bapak/Ibu</h2>
-                <p class="text-primary-100 text-sm mt-3 relative z-10 leading-relaxed">Silakan masukkan NIS putri Anda untuk mengakses rekapitulasi akademik, kehadiran & asrama.</p>
+                <p class="text-primary-100 text-sm mt-3 relative z-10 leading-relaxed">Silakan masukkan NIS putri Anda untuk mengakses rekapitulasi akademik, kehadiran &amp; asrama.</p>
             </div>
             
             <div class="p-8 sm:p-10">
@@ -150,11 +163,11 @@
                             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                 <i class="fas fa-id-card text-gray-400 text-lg"></i>
                             </div>
-                            <input type="text" id="nis" required placeholder="Contoh: 25210166" class="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-base shadow-inner font-semibold text-gray-800" onkeypress="if(event.key === 'Enter') handleLogin()">
+                            <input type="text" id="nis" required="" placeholder="Contoh: 25210166" class="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none transition text-base shadow-inner font-semibold text-gray-800">
                         </div>
                     </div>
                     
-                    <button type="button" onclick="handleLogin()" id="btnLogin" class="w-full bg-primary-700 hover:bg-primary-800 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center text-base hover:-translate-y-0.5">
+                    <button type="button" id="btnLogin" onclick="handleLogin()" class="w-full bg-primary-700 hover:bg-primary-800 text-white font-bold py-3.5 px-4 rounded-xl transition-all shadow-lg hover:shadow-xl flex items-center justify-center text-base hover:-translate-y-0.5">
                         <span>Buka Rapor Interaktif</span> <i class="fas fa-arrow-right ml-2"></i>
                     </button>
                 </div>
@@ -164,7 +177,7 @@
                     <div class="loader mb-4"></div>
                     <p class="text-sm text-primary-700 font-semibold animate-pulse mt-4 text-center">
                         Memuat data santri...<br>
-                        <span class="text-xs font-normal text-gray-500">Mengkoneksikan ke Supabase & Cloud Storage</span>
+                        <span class="text-xs font-normal text-gray-500">Mengkoneksikan ke Supabase &amp; Cloud Storage</span>
                     </p>
                 </div>
                 
@@ -204,20 +217,20 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full -mt-8 relative z-20">
             <!-- Tab Navigation (5 Menu: Nilai, Tahfizh, Disiplin, Tabungan, dan Absensi) -->
             <div class="bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden mb-8 grid grid-cols-2 sm:grid-cols-5 divide-x divide-y sm:divide-y-0 divide-gray-100">
-                <button onclick="switchTab('tab-nilai')" id="btn-tab-nilai" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-active flex items-center justify-center">
-                    <i class="fas fa-chart-line mr-1.5 sm:mr-2 text-base sm:text-lg"></i><span class="hidden md:inline">Rapor</span> Akademik
+                <button id="btn-tab-nilai" onclick="switchTab('tab-nilai', this)" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-active flex items-center justify-center">
+                    <i class="fas fa-chart-line mr-1.5 sm:mr-2 text-base sm:text-lg"></i><span class="hidden md:inline">Rapor</span>&nbsp;Akademik
                 </button>
-                <button onclick="switchTab('tab-tahfizh')" id="btn-tab-tahfizh" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center">
-                    <i class="fas fa-quran mr-1.5 sm:mr-2 text-base sm:text-lg"></i><span class="hidden md:inline">Capaian</span> Tahfizh
+                <button id="btn-tab-tahfizh" onclick="switchTab('tab-tahfizh', this)" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center">
+                    <i class="fas fa-quran mr-1.5 sm:mr-2 text-base sm:text-lg"></i><span class="hidden md:inline">Capaian</span>&nbsp;Tahfizh
                 </button>
-                <button onclick="switchTab('tab-disiplin')" id="btn-tab-disiplin" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center">
-                    <i class="fas fa-balance-scale mr-1.5 sm:mr-2 text-base sm:text-lg"></i>Sikap <span class="hidden md:inline">& Disiplin</span>
+                <button id="btn-tab-disiplin" onclick="switchTab('tab-disiplin', this)" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center">
+                    <i class="fas fa-balance-scale mr-1.5 sm:mr-2 text-base sm:text-lg"></i>Sikap&nbsp;<span class="hidden md:inline">&amp; Disiplin</span>
                 </button>
-                <button onclick="switchTab('tab-tabungan')" id="btn-tab-tabungan" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center">
-                    <i class="fas fa-piggy-bank mr-1.5 sm:mr-2 text-base sm:text-lg text-emerald-600"></i><span class="hidden md:inline">Data</span> Tabungan
+                <button id="btn-tab-tabungan" onclick="switchTab('tab-tabungan', this)" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center">
+                    <i class="fas fa-piggy-bank mr-1.5 sm:mr-2 text-base sm:text-lg text-emerald-600"></i><span class="hidden md:inline">Data</span>&nbsp;Tabungan
                 </button>
-                <button onclick="switchTab('tab-absensi')" id="btn-tab-absensi" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center col-span-2 sm:col-span-1">
-                    <i class="fas fa-calendar-check mr-1.5 sm:mr-2 text-base sm:text-lg text-blue-600"></i>Presensi <span class="hidden md:inline">Santri</span>
+                <button id="btn-tab-absensi" onclick="switchTab('tab-absensi', this)" class="px-3 py-4 sm:py-5 text-xs sm:text-sm md:text-base transition-all focus:outline-none tab-inactive flex items-center justify-center col-span-2 sm:col-span-1">
+                    <i class="fas fa-calendar-check mr-1.5 sm:mr-2 text-base sm:text-lg text-blue-600"></i>Presensi&nbsp;<span class="hidden md:inline">Santri</span>
                 </button>
             </div>
 
@@ -247,7 +260,7 @@
                         <p class="text-sm text-gray-500 mt-1">Pilih periode ujian untuk melihat rincian nilai mata pelajaran secara spesifik.</p>
                     </div>
                     <div class="w-full md:w-1/3">
-                        <select id="examSelector" onchange="renderSelectedExamGrades()" class="w-full px-5 py-3.5 bg-white border-2 border-primary-200 rounded-xl focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition font-bold text-primary-900 shadow-sm cursor-pointer appearance-none">
+                        <select id="examSelector" onchange="renderSelectedExamGrades(this.value)" class="w-full px-5 py-3.5 bg-white border-2 border-primary-200 rounded-xl focus:ring-4 focus:ring-primary-500/20 focus:border-primary-500 outline-none transition font-bold text-primary-900 shadow-sm cursor-pointer appearance-none">
                         </select>
                     </div>
                 </div>
@@ -257,7 +270,7 @@
                     <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden hover:shadow-lg transition duration-300">
                         <div class="bg-gradient-to-r from-emerald-50 to-white py-4 px-6 border-b border-emerald-100 flex items-center">
                             <div class="w-10 h-10 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mr-3 text-lg"><i class="fas fa-moon"></i></div>
-                            <h3 class="font-bold text-emerald-900 text-lg">Ilmu Agama & Diniyyah</h3>
+                            <h3 class="font-bold text-emerald-900 text-lg">Ilmu Agama &amp; Diniyyah</h3>
                         </div>
                         <ul class="divide-y divide-gray-100" id="list-diniyyah"></ul>
                     </div>
@@ -275,7 +288,7 @@
                     <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden lg:col-span-2 hover:shadow-lg transition duration-300">
                         <div class="bg-gradient-to-r from-amber-50 to-white py-4 px-6 border-b border-amber-100 flex items-center">
                             <div class="w-10 h-10 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center mr-3 text-lg"><i class="fas fa-language"></i></div>
-                            <h3 class="font-bold text-amber-900 text-lg">Bahasa, Seni & Keterampilan</h3>
+                            <h3 class="font-bold text-amber-900 text-lg">Bahasa, Seni &amp; Keterampilan</h3>
                         </div>
                         <div class="grid grid-cols-1 md:grid-cols-2">
                             <ul class="divide-y divide-gray-100" id="list-bahasa1"></ul>
@@ -329,8 +342,7 @@
                                     <th class="py-4 px-6">Keterangan Tambahan</th>
                                 </tr>
                             </thead>
-                            <tbody id="tahfizh-tbody" class="text-sm divide-y divide-gray-100">
-                            </tbody>
+                            <tbody id="tahfizh-tbody" class="text-sm divide-y divide-gray-100"></tbody>
                         </table>
                     </div>
                 </div>
@@ -372,7 +384,7 @@
 
                 <div class="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
                     <div class="px-6 py-5 border-b border-gray-100 bg-white flex justify-between items-center">
-                        <h3 class="font-bold text-gray-900 text-lg"><i class="fas fa-clipboard-list mr-2 text-primary-600"></i>Log Riwayat Kasus & Prestasi</h3>
+                        <h3 class="font-bold text-gray-900 text-lg"><i class="fas fa-clipboard-list mr-2 text-primary-600"></i>Log Riwayat Kasus &amp; Prestasi</h3>
                         <span class="bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full font-bold tracking-wide border border-green-200 shadow-sm animate-pulse">Live</span>
                     </div>
                     <div class="overflow-x-auto">
@@ -385,8 +397,7 @@
                                     <th class="py-4 px-6 w-24 text-right">Poin</th>
                                 </tr>
                             </thead>
-                            <tbody id="disiplin-tbody" class="text-sm divide-y divide-gray-100">
-                            </tbody>
+                            <tbody id="disiplin-tbody" class="text-sm divide-y divide-gray-100"></tbody>
                         </table>
                     </div>
                 </div>
@@ -419,14 +430,13 @@
                         <table class="w-full text-left border-collapse min-w-[600px]">
                             <thead>
                                 <tr class="bg-gray-50 border-b border-gray-200 text-xs uppercase text-gray-500 font-bold tracking-wider">
-                                    <th class="py-4 px-6 w-48">Tanggal & Waktu</th>
+                                    <th class="py-4 px-6 w-48">Tanggal &amp; Waktu</th>
                                     <th class="py-4 px-6 w-32 text-center">Tipe</th>
                                     <th class="py-4 px-6">Keterangan</th>
                                     <th class="py-4 px-6 w-40 text-right">Nominal</th>
                                 </tr>
                             </thead>
-                            <tbody id="tabungan-tbody" class="text-sm divide-y divide-gray-100">
-                            </tbody>
+                            <tbody id="tabungan-tbody" class="text-sm divide-y divide-gray-100"></tbody>
                         </table>
                     </div>
                 </div>
@@ -438,14 +448,17 @@
                 <div class="bg-white p-6 rounded-2xl shadow-md border border-gray-100 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                     <div>
                         <h3 class="font-bold text-gray-900 text-xl flex items-center">
-                            <i class="fas fa-calendar-alt text-blue-600 mr-2.5"></i> Rekap Presensi & Kehadiran
+                            <i class="fas fa-calendar-alt text-blue-600 mr-2.5"></i> Rekap Presensi &amp; Kehadiran
                         </h3>
                         <p class="text-sm text-gray-500 mt-1">Pantau kedisiplinan dan riwayat kehadiran harian ananda di madrasah.</p>
                     </div>
                     <div class="flex items-center gap-3 w-full sm:w-auto">
                         <label for="filterBulanAbsensi" class="text-xs font-bold uppercase text-gray-500 whitespace-nowrap">Filter Bulan:</label>
-                        <select id="filterBulanAbsensi" onchange="filterAbsensiData()" class="w-full sm:w-auto px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-gray-800 outline-none transition">
+                        <select id="filterBulanAbsensi" onchange="renderPresensi(this.value)" class="w-full sm:w-auto px-4 py-2.5 bg-gray-50 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 text-sm font-semibold text-gray-800 outline-none transition">
                             <option value="ALL">Semua Bulan (Kumulatif)</option>
+                            <option value="09">September 2026</option>
+                            <option value="08">Agustus 2026</option>
+                            <option value="07">Juli 2026</option>
                         </select>
                     </div>
                 </div>
@@ -525,7 +538,7 @@
                             <thead>
                                 <tr class="bg-gray-50 border-b border-gray-200 text-xs uppercase text-gray-500 font-bold tracking-wider">
                                     <th class="py-4 px-6 w-16 text-center">No</th>
-                                    <th class="py-4 px-6 w-48">Tanggal & Hari</th>
+                                    <th class="py-4 px-6 w-48">Tanggal &amp; Hari</th>
                                     <th class="py-4 px-6 w-32">Kelas</th>
                                     <th class="py-4 px-6 w-36 text-center">Status Kehadiran</th>
                                     <th class="py-4 px-6">Keterangan</th>
@@ -547,13 +560,14 @@
     <!-- Footer -->
     <footer class="bg-gray-900 text-gray-400 py-8 border-t-4 border-secondary-500 mt-auto z-10 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center text-center md:text-left gap-4">
-            <p class="text-xs sm:text-sm font-medium">&copy; 2026 Portal Akademik Wali Siswa - SMPQT Yanbu'ul Qur'an 1 Lil Banat.</p>
-            <div class="text-xs text-gray-300 bg-gray-800 px-4 py-2 rounded-xl shadow-inner border border-gray-700 font-semibold tracking-wide">
+            <p class="text-xs sm:text-sm font-medium">© 2026 Portal Akademik Wali Siswa - SMPQT Yanbu'ul Qur'an 1 Lil Banat.</p>
+            <div class="text-xs text-gray-300 bg-gray-800 px-4 py-2 rounded-xl shadow-inner border border-gray-700 font-semibold tracking-wide flex items-center">
                 <i class="fas fa-shield-alt mr-1.5 text-primary-500"></i> Sistem Server Terenkripsi
             </div>
         </div>
     </footer>
 
+    <!-- Logika Interaktif & Database Client -->
     <script>
         // ==========================================
         // KONFIGURASI SUPABASE & APPS SCRIPT
@@ -636,11 +650,64 @@
                     if (dataTahfizh) tahfizhRecords = dataTahfizh;
                 } catch(e) { console.log("Tahfizh error:", e); }
 
-                // 3. Tarik Nilai Akademik
-                const responseNilai = await supabaseClient
-                    .from('ledger_nilai')
-                    .select('*')
-                    .ilike('nis', `%${nis}%`); 
+                // 3. Tarik Nilai Akademik dari Tabel Lama (ledger_nilai)
+                let recordsLama = [];
+                try {
+                    const responseNilaiLama = await supabaseClient
+                        .from('ledger_nilai')
+                        .select('*')
+                        .ilike('nis', `%${nis}%`); 
+                    if (!responseNilaiLama.error && responseNilaiLama.data) {
+                        recordsLama = responseNilaiLama.data.map(r => ({ ...r, _source: 'ledger_nilai' }));
+                    }
+                } catch (e) {
+                    console.warn("ledger_nilai query warning:", e);
+                }
+
+                // 3b. Tarik Nilai Akademik dari Tabel Baru (daftar_nilai)
+                let recordsBaru = [];
+                try {
+                    const responseNilaiBaru = await supabaseClient
+                        .from('daftar_nilai')
+                        .select('*')
+                        .ilike('nis', `%${nis}%`);
+                    if (!responseNilaiBaru.error && responseNilaiBaru.data && responseNilaiBaru.data.length > 0) {
+                        // Grouping daftar_nilai (format baris per mapel) menjadi sesi ujian utuh
+                        const groupedSessions = {};
+                        responseNilaiBaru.data.forEach(row => {
+                            const thn = (row.tahun || '').trim();
+                            const bln = (row.bulan || '').trim();
+                            const ujian = (row.nama_ujian || 'Ulangan').trim();
+                            const sessionKey = `${thn}_${bln}_${ujian}`.toUpperCase();
+
+                            if (!groupedSessions[sessionKey]) {
+                                groupedSessions[sessionKey] = {
+                                    _source: 'daftar_nilai',
+                                    tahun: thn,
+                                    bulan: bln,
+                                    kategori: ujian,
+                                    nama_ujian: ujian,
+                                    kelas: row.kelas || profilSantri.kelas || '',
+                                    items: []
+                                };
+                            }
+
+                            groupedSessions[sessionKey].items.push({
+                                mapel: row.nama_mapel || '-',
+                                nilai: row.nilai !== null && row.nilai !== undefined ? row.nilai : '-',
+                                guru: row.nama_guru || '',
+                                cat: categorizeSubject(row.nama_mapel)
+                            });
+                        });
+
+                        recordsBaru = Object.values(groupedSessions);
+                    }
+                } catch (e) {
+                    console.warn("daftar_nilai query warning:", e);
+                }
+
+                // Gabungkan kedua sumber data nilai
+                const combinedGrades = [...recordsLama, ...recordsBaru];
                 
                 // 4. Tarik Jurnal Disiplin
                 try {
@@ -657,7 +724,6 @@
 
                 // 5. Tarik Presensi / Kehadiran Siswa (dari tabel presensi_siswa)
                 try {
-                    // Cari berdasarkan NIS atau Nama Siswa secara paralel
                     const { data: dataAbsensi, error: errAbsensi } = await supabaseClient
                         .from('presensi_siswa')
                         .select('*')
@@ -675,10 +741,68 @@
                     absensiRecords = [];
                 }
                 
-                return responseNilai.data || [];
+                return combinedGrades;
             } catch (error) {
                 throw error;
             }
+        }
+
+        // ==========================================
+        // HELPER KATEGORISASI MAPEL SECARA OTOMATIS
+        // ==========================================
+        function categorizeSubject(mapelName) {
+            const m = String(mapelName || '').toLowerCase().trim();
+            
+            // 1. Diniyyah / Ilmu Agama
+            if (
+                m.includes('pai') || m.includes('akhlaq') || m.includes('akhlak') ||
+                m.includes('tauhid') || m.includes('hadist') || m.includes('hadis') ||
+                m.includes('tafsir') || m.includes('fiqih') || m.includes('fiqh') ||
+                m.includes('fins') || m.includes('nahwu') || m.includes('qiraat') ||
+                m.includes('ubudiyyah') || m.includes('ubudiyah') || m.includes('imla') ||
+                m.includes('pegon') || m.includes('tajwid') || m.includes('tarikh') ||
+                m.includes('agama') || m.includes('diniyyah') || m.includes('shorof') ||
+                m.includes('tahfizh') || m.includes('al-qur') || m.includes('qur\'an')
+            ) {
+                return 'diniyyah';
+            }
+            
+            // 2. Ilmu Pengetahuan Umum
+            if (
+                m.includes('matematika') || m.includes('mtk') ||
+                m.includes('ipa') || m.includes('sains') ||
+                m.includes('ips') || m.includes('sosial') ||
+                m.includes('ppkn') || m.includes('pkn') || m.includes('pancasila')
+            ) {
+                return 'umum';
+            }
+            
+            // 3. Bahasa, Seni & Keterampilan
+            return 'bahasa';
+        }
+
+        function getSubjectIcon(mapelName) {
+            const m = String(mapelName || '').toLowerCase().trim();
+            if (m.includes('qur') || m.includes('tafsir')) return 'fas fa-quran';
+            if (m.includes('hadis') || m.includes('hadist')) return 'fas fa-scroll';
+            if (m.includes('akhlaq') || m.includes('akhlak')) return 'fas fa-heart';
+            if (m.includes('tauhid')) return 'fas fa-fingerprint';
+            if (m.includes('fiqih') || m.includes('ubudiy')) return 'fas fa-praying-hands';
+            if (m.includes('imla') || m.includes('pegon') || m.includes('nahwu') || m.includes('fins')) return 'fas fa-book-open';
+            if (m.includes('pai') || m.includes('agama')) return 'fas fa-book';
+            if (m.includes('matematika') || m.includes('mtk')) return 'fas fa-square-root-alt';
+            if (m.includes('ipa') || m.includes('sains')) return 'fas fa-flask';
+            if (m.includes('ips')) return 'fas fa-globe-asia';
+            if (m.includes('ppkn') || m.includes('pkn')) return 'fas fa-flag';
+            if (m.includes('arab')) return 'fas fa-comment-dots';
+            if (m.includes('inggris')) return 'fas fa-comments';
+            if (m.includes('conversation')) return 'fas fa-headset';
+            if (m.includes('indonesia')) return 'fas fa-comment';
+            if (m.includes('jawa') || m.includes('adab')) return 'fas fa-pen-nib';
+            if (m.includes('informatika') || m.includes('komputer') || m.includes('tik')) return 'fas fa-laptop-code';
+            if (m.includes('seni') || m.includes('budaya')) return 'fas fa-palette';
+            if (m.includes('pjok') || m.includes('olahraga')) return 'fas fa-running';
+            return 'fas fa-graduation-cap';
         }
 
         // ==========================================
@@ -713,7 +837,7 @@
             }
 
             try {
-                // Fetch Supabase Data
+                // Fetch Supabase Data (Menggabungkan ledger_nilai & daftar_nilai)
                 const rawMatchedData = await fetchStudentData(nisInput);
                 
                 // Fetch Google Sheets Data (Tabungan) secara paralel
@@ -734,23 +858,14 @@
                 }
 
                 if (profilSantri) {
-                    const currentTA = getTahunAjaranBerjalan();
-                    
                     if (rawMatchedData && rawMatchedData.length > 0) {
-                        let matchedData = rawMatchedData.filter(record => {
-                            const thn = record.tahun || record.Tahun || record.TAHUN || '';
-                            return thn === currentTA;
-                        });
-
-                        if (matchedData.length === 0) {
-                            const fallbackTA = rawMatchedData[rawMatchedData.length - 1].tahun || rawMatchedData[rawMatchedData.length - 1].Tahun || rawMatchedData[rawMatchedData.length - 1].TAHUN || '';
-                            matchedData = rawMatchedData.filter(record => {
-                                const thn = record.tahun || record.Tahun || record.TAHUN || '';
-                                return thn === fallbackTA;
-                            });
-                        }
-
-                        matchedData.sort((a, b) => {
+                        // Tampilkan SEMUA data nilai ujian tanpa membuang tahun ajaran sebelumnya
+                        rawMatchedData.sort((a, b) => {
+                            const thnA = String(a.tahun || a.Tahun || a.TAHUN || '');
+                            const thnB = String(b.tahun || b.Tahun || b.TAHUN || '');
+                            if (thnA !== thnB) {
+                                return thnA.localeCompare(thnB);
+                            }
                             const blnA = (a.bulan || a.Bulan || a.BULAN || '').toUpperCase();
                             const blnB = (b.bulan || b.Bulan || b.BULAN || '').toUpperCase();
                             const scoreA = monthOrder[blnA] || 99;
@@ -758,18 +873,45 @@
                             return scoreA - scoreB;
                         });
 
-                        studentRecords = matchedData;
+                        studentRecords = rawMatchedData;
                         
                         try {
-                            const resAll = await supabaseClient.from('ledger_nilai').select('*').limit(5000);
-                            if(!resAll.error) {
-                                const activeTA = studentRecords[0].tahun || studentRecords[0].Tahun || studentRecords[0].TAHUN || currentTA;
-                                allGrades = (resAll.data || []).filter(record => {
-                                    const thn = record.tahun || record.Tahun || record.TAHUN || '';
-                                    return thn === activeTA;
+                            const [resAllLama, resAllBaru] = await Promise.all([
+                                supabaseClient.from('ledger_nilai').select('*').limit(3000),
+                                supabaseClient.from('daftar_nilai').select('*').limit(3000)
+                            ]);
+
+                            const rawAllLama = resAllLama.data || [];
+                            const rawAllBaru = resAllBaru.data || [];
+
+                            // Normalisasi daftar_nilai angkatan untuk grafik
+                            const groupedBaruAll = {};
+                            rawAllBaru.forEach(row => {
+                                const thn = (row.tahun || '').trim();
+                                const bln = (row.bulan || '').trim();
+                                const ujian = (row.nama_ujian || 'Ulangan').trim();
+                                const studentNis = (row.nis || '').trim();
+                                const sKey = `${thn}|${bln}|${ujian}|${studentNis}`.toUpperCase();
+
+                                if (!groupedBaruAll[sKey]) {
+                                    groupedBaruAll[sKey] = {
+                                        _source: 'daftar_nilai',
+                                        tahun: thn,
+                                        bulan: bln,
+                                        kategori: ujian,
+                                        items: []
+                                    };
+                                }
+                                groupedBaruAll[sKey].items.push({
+                                    mapel: row.nama_mapel,
+                                    nilai: row.nilai
                                 });
-                            }
-                        } catch(e) { console.log("Gagal memuat rata-rata global"); }
+                            });
+
+                            allGrades = [...rawAllLama, ...Object.values(groupedBaruAll)];
+                        } catch(e) { 
+                            console.log("Gagal memuat rata-rata global:", e); 
+                        }
                     } else {
                         studentRecords = [];
                         allGrades = [];
@@ -793,7 +935,9 @@
                 </button>
             `;
 
-            const tahunAjaranTampil = (studentRecords.length > 0) ? (studentRecords[0].tahun || studentRecords[0].Tahun || studentRecords[0].TAHUN || getTahunAjaranBerjalan()) : getTahunAjaranBerjalan();
+            // Tampilkan tahun ajaran terkini dari record terakhir
+            const latestRecord = studentRecords.length > 0 ? studentRecords[studentRecords.length - 1] : null;
+            const tahunAjaranTampil = latestRecord ? (latestRecord.tahun || latestRecord.Tahun || latestRecord.TAHUN || getTahunAjaranBerjalan()) : getTahunAjaranBerjalan();
             
             document.getElementById('dashTahunAjaran').innerText = `Portal Wali TA. ${tahunAjaranTampil}`;
             document.getElementById('dashNama').innerText = profilSantri.nama || '-';
@@ -807,7 +951,7 @@
             renderTahfizhData();
             renderDisiplinData(); 
             renderTabunganData(); 
-            initAbsensiModule(); // Inisialisasi Modul Presensi
+            initAbsensiModule();
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
@@ -1042,6 +1186,7 @@
         }
 
         const getValHelper = (data, key) => {
+            if (!data) return '-';
             if (data[key] !== undefined) return data[key];
             const upper = key.toUpperCase();
             if (data[upper] !== undefined) return data[upper];
@@ -1050,14 +1195,63 @@
             return '-';
         };
 
+        // Mengambil daftar item mapel baik dari format lama maupun baru
+        function getRecordItems(record) {
+            if (!record) return [];
+
+            // Jika dari tabel baru (daftar_nilai) yang sudah digroup
+            if (record._source === 'daftar_nilai' && Array.isArray(record.items)) {
+                return record.items;
+            }
+
+            // Jika dari tabel lama (ledger_nilai)
+            const oldSubjectDefs = [
+                { key: 'pai', name: 'PAI (Umum)', cat: 'diniyyah' },
+                { key: 'akhlaq', name: 'Akhlaq', cat: 'diniyyah' },
+                { key: 'tauhid', name: 'Tauhid', cat: 'diniyyah' },
+                { key: 'hadist', name: 'Hadist', cat: 'diniyyah' },
+                { key: 'tafsir', name: 'Tafsir', cat: 'diniyyah' },
+                { key: 'fiqih', name: 'Fiqih', cat: 'diniyyah' },
+                { key: 'fins', name: 'Nahwu / Qiraatul Kitab', cat: 'diniyyah' },
+                { key: 'matematika', name: 'Matematika', cat: 'umum' },
+                { key: 'ipa', name: 'Ilmu Pengetahuan Alam (IPA)', cat: 'umum' },
+                { key: 'ips', name: 'Ilmu Pengetahuan Sosial (IPS)', cat: 'umum' },
+                { key: 'ppkn', name: 'Pendidikan Pancasila (PPKN)', cat: 'umum' },
+                { key: 'bahasa_indonesia', name: 'Bahasa Indonesia', cat: 'bahasa' },
+                { key: 'bahasa_inggris', name: 'Bahasa Inggris', cat: 'bahasa' },
+                { key: 'conversation', name: 'Conversation', cat: 'bahasa' },
+                { key: 'bahasa_arab', name: 'Bahasa Arab', cat: 'bahasa' },
+                { key: 'bahasa_jawa', name: 'Bahasa Jawa', cat: 'bahasa' },
+                { key: 'informatika', name: 'Informatika', cat: 'bahasa' },
+                { key: 'seni_budaya', name: 'Seni Budaya', cat: 'bahasa' },
+                { key: 'pjok', name: 'PJOK (Olahraga)', cat: 'bahasa' }
+            ];
+
+            const list = [];
+            oldSubjectDefs.forEach(def => {
+                const val = getValHelper(record, def.key);
+                if (val !== '-' && val !== null && val !== undefined && val !== '') {
+                    list.push({
+                        mapel: def.name,
+                        nilai: val,
+                        guru: '',
+                        cat: def.cat
+                    });
+                }
+            });
+            return list;
+        }
+
         function calculateAverage(record) {
-            const subjects = ['pai', 'akhlaq', 'tauhid', 'hadist', 'tafsir', 'fiqih', 'fins', 'matematika', 'ipa', 'ips', 'ppkn', 'bahasa_indonesia', 'bahasa_inggris', 'conversation', 'bahasa_arab', 'bahasa_jawa', 'informatika', 'seni_budaya', 'pjok'];
+            if (!record) return 0;
+            const items = getRecordItems(record);
+            if (items.length === 0) return 0;
+
             let total = 0;
             let count = 0;
-            subjects.forEach(sub => {
-                const val = getValHelper(record, sub);
-                const num = parseFloat(val);
-                if (!isNaN(num)) {
+            items.forEach(item => {
+                const num = parseFloat(item.nilai);
+                if (!isNaN(num) && num > 0) {
                     total += num;
                     count++;
                 }
@@ -1071,8 +1265,9 @@
             const dataPoints = [];
 
             studentRecords.forEach(record => {
+                const thn = record.tahun || record.Tahun || '';
                 const bln = record.bulan || record.Bulan || record.BULAN || '';
-                const ktg = record.kategori || record.Kategori || record.KATEGORI || '';
+                const ktg = record.kategori || record.Kategori || record.nama_ujian || '';
                 labels.push(`${bln} ${ktg}`.trim() || 'Periode');
                 const avg = calculateAverage(record);
                 dataPoints.push(avg);
@@ -1081,7 +1276,7 @@
             const globalAveragesByPeriod = {};
             allGrades.forEach(record => {
                 const bln = record.bulan || record.Bulan || record.BULAN || '';
-                const ktg = record.kategori || record.Kategori || record.KATEGORI || '';
+                const ktg = record.kategori || record.Kategori || record.nama_ujian || '';
                 const label = `${bln} ${ktg}`.trim() || 'Periode';
                 
                 const avg = parseFloat(calculateAverage(record));
@@ -1173,7 +1368,7 @@
             studentRecords.forEach((record, index) => {
                 const thn = record.tahun || record.Tahun || record.TAHUN || '';
                 const bln = record.bulan || record.Bulan || record.BULAN || '-';
-                const ktg = record.kategori || record.Kategori || record.KATEGORI || '-';
+                const ktg = record.kategori || record.Kategori || record.nama_ujian || '-';
                 let label = '';
                 if (thn) label += `TA. ${thn} | `;
                 label += `${bln} - ${ktg}`;
@@ -1185,35 +1380,98 @@
             examSelector.selectedIndex = studentRecords.length - 1;
         }
 
-        function renderSelectedExamGrades() {
-            if (studentRecords.length === 0) {
-                const nullText = '<li class="p-6 text-center text-gray-500 text-sm font-medium">Data nilai akademik belum dimasukkan ke dalam sistem</li>';
-                document.getElementById('list-diniyyah').innerHTML = nullText;
-                document.getElementById('list-umum').innerHTML = nullText;
-                document.getElementById('list-bahasa1').innerHTML = nullText;
-                document.getElementById('list-bahasa2').innerHTML = nullText;
-                return;
-            }
-            const selectedIndex = examSelector.value;
-            const data = studentRecords[selectedIndex];
-            if(!data) return;
-            const buatBaris = (label, nilai, icon) => {
-                const valStr = (nilai !== null && nilai !== undefined && nilai !== '') ? nilai : '-';
-                const numVal = parseInt(valStr);
-                let badgeClass = 'bg-gray-100 text-gray-700 border-gray-200';
-                if(!isNaN(numVal)) {
-                    if (numVal < 75) badgeClass = 'bg-red-50 text-red-700 border-red-200';
-                    else if (numVal >= 90) badgeClass = 'bg-green-50 text-green-800 border-green-200';
-                    else badgeClass = 'bg-blue-50 text-blue-800 border-blue-200';
+        function renderSelectedExamGrades(indexOverride) {
+            try {
+                if (studentRecords.length === 0) {
+                    const nullText = '<li class="p-6 text-center text-gray-500 text-sm font-medium">Data nilai akademik belum dimasukkan ke dalam sistem</li>';
+                    document.getElementById('list-diniyyah').innerHTML = nullText;
+                    document.getElementById('list-umum').innerHTML = nullText;
+                    document.getElementById('list-bahasa1').innerHTML = nullText;
+                    document.getElementById('list-bahasa2').innerHTML = nullText;
+                    return;
                 }
-                return `<li class="px-6 py-4 flex justify-between items-center list-row border-l-4 border-transparent"><span class="text-sm font-semibold text-gray-700 flex items-center"><i class="${icon} w-6 text-gray-400 mr-3 text-center text-lg"></i>${label}</span><span class="font-extrabold px-3 py-1.5 rounded-lg text-sm ${badgeClass} border min-w-[3.5rem] text-center shadow-sm">${valStr}</span></li>`;
-            };
-            const getVal = (key) => getValHelper(data, key);
-            document.getElementById('list-diniyyah').innerHTML = buatBaris('PAI (Umum)', getVal('pai'), 'fas fa-book') + buatBaris('Akhlaq', getVal('akhlaq'), 'fas fa-heart') + buatBaris('Tauhid', getVal('tauhid'), 'fas fa-fingerprint') + buatBaris('Hadist', getVal('hadist'), 'fas fa-scroll') + buatBaris('Tafsir', getVal('tafsir'), 'fas fa-quran') + buatBaris('Fiqih', getVal('fiqih'), 'fas fa-praying-hands') + buatBaris('Nahwu / Qiraatul Kitab', getVal('fins'), 'fas fa-book-open');
-            document.getElementById('list-umum').innerHTML = buatBaris('Matematika', getVal('matematika'), 'fas fa-square-root-alt') + buatBaris('Ilmu Pengetahuan Alam (IPA)', getVal('ipa'), 'fas fa-flask') + buatBaris('Ilmu Pengetahuan Sosial (IPS)', getVal('ips'), 'fas fa-globe-asia') + buatBaris('Pendidikan Pancasila (PPKN)', getVal('ppkn'), 'fas fa-flag');
-            document.getElementById('list-bahasa1').innerHTML = buatBaris('Bahasa Indonesia', getVal('bahasa_indonesia'), 'fas fa-comment') + buatBaris('Bahasa Inggris', getVal('bahasa_inggris'), 'fas fa-comments') + buatBaris('Conversation', getVal('conversation'), 'fas fa-headset') + buatBaris('Bahasa Arab', getVal('bahasa_arab'), 'fas fa-comment-dots');
-            document.getElementById('list-bahasa2').innerHTML = buatBaris('Bahasa Jawa', getVal('bahasa_jawa'), 'fas fa-pen-nib') + buatBaris('Informatika', getVal('informatika'), 'fas fa-laptop-code') + buatBaris('Seni Budaya', getVal('seni_budaya'), 'fas fa-palette') + buatBaris('PJOK (Olahraga)', getVal('pjok'), 'fas fa-running');
+
+                let selectedIndex = (indexOverride !== undefined && indexOverride !== '') ? parseInt(indexOverride) : parseInt(examSelector.value);
+                if (isNaN(selectedIndex) || selectedIndex < 0 || selectedIndex >= studentRecords.length) {
+                    selectedIndex = studentRecords.length - 1;
+                }
+                
+                const data = studentRecords[selectedIndex];
+                if(!data) return;
+
+                const items = getRecordItems(data);
+
+                const buatBaris = (label, nilai, icon, guru = '') => {
+                    const valStr = (nilai !== null && nilai !== undefined && nilai !== '') ? nilai : '-';
+                    const numVal = parseFloat(valStr);
+                    let badgeClass = 'bg-gray-100 text-gray-700 border-gray-200';
+                    if(!isNaN(numVal)) {
+                        if (numVal < 75) badgeClass = 'bg-red-50 text-red-700 border-red-200';
+                        else if (numVal >= 90) badgeClass = 'bg-green-50 text-green-800 border-green-200';
+                        else badgeClass = 'bg-blue-50 text-blue-800 border-blue-200';
+                    }
+                    return `
+                        <li class="px-6 py-4 flex justify-between items-center list-row border-l-4 border-transparent hover:border-primary-500 transition">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 rounded-lg bg-gray-50 flex items-center justify-center mr-3 shrink-0 text-gray-500">
+                                    <i class="${icon} text-base"></i>
+                                </div>
+                                <div>
+                                    <span class="text-sm font-semibold text-gray-800 block">${label}</span>
+                                    ${guru ? `<span class="text-xs text-gray-400 block font-normal"><i class="fas fa-chalkboard-teacher mr-1 text-[10px]"></i>${guru}</span>` : ''}
+                                </div>
+                            </div>
+                            <span class="font-extrabold px-3 py-1.5 rounded-lg text-sm ${badgeClass} border min-w-[3.5rem] text-center shadow-sm">${valStr}</span>
+                        </li>`;
+                };
+
+                // Pisahkan mata pelajaran berdasarkan kategori
+                const diniyyahItems = items.filter(it => it.cat === 'diniyyah');
+                const umumItems = items.filter(it => it.cat === 'umum');
+                const bahasaItems = items.filter(it => it.cat === 'bahasa');
+
+                const emptyNotice = '<li class="p-4 text-center text-gray-400 text-xs italic">Tidak ada mapel tercatat di sesi ini</li>';
+
+                // 1. Render Diniyyah
+                let htmlDiniyyah = '';
+                diniyyahItems.forEach(it => {
+                    htmlDiniyyah += buatBaris(it.mapel, it.nilai, getSubjectIcon(it.mapel), it.guru);
+                });
+                document.getElementById('list-diniyyah').innerHTML = htmlDiniyyah || emptyNotice;
+
+                // 2. Render Umum
+                let htmlUmum = '';
+                umumItems.forEach(it => {
+                    htmlUmum += buatBaris(it.mapel, it.nilai, getSubjectIcon(it.mapel), it.guru);
+                });
+                document.getElementById('list-umum').innerHTML = htmlUmum || emptyNotice;
+
+                // 3. Render Bahasa & Keterampilan (bagi ke 2 kolom)
+                let htmlBahasa1 = '';
+                let htmlBahasa2 = '';
+                const half = Math.ceil(bahasaItems.length / 2);
+                const col1 = bahasaItems.slice(0, half);
+                const col2 = bahasaItems.slice(half);
+
+                col1.forEach(it => {
+                    htmlBahasa1 += buatBaris(it.mapel, it.nilai, getSubjectIcon(it.mapel), it.guru);
+                });
+                col2.forEach(it => {
+                    htmlBahasa2 += buatBaris(it.mapel, it.nilai, getSubjectIcon(it.mapel), it.guru);
+                });
+
+                document.getElementById('list-bahasa1').innerHTML = htmlBahasa1 || (bahasaItems.length === 0 ? emptyNotice : '');
+                document.getElementById('list-bahasa2').innerHTML = htmlBahasa2 || (bahasaItems.length === 0 ? emptyNotice : '');
+
+            } catch (err) {
+                console.error("Gagal memperbarui nilai ujian:", err);
+            }
         }
+
+        // Alias fungsi agar kompatibel dengan pemanggilan dari event onchange apapun
+        window.updateGradesView = function(val) {
+            renderSelectedExamGrades(val);
+        };
 
         function renderTahfizhData() {
             const tbody = document.getElementById('tahfizh-tbody');
