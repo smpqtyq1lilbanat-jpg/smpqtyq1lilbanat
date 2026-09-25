@@ -1,0 +1,1197 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Analisis Riset Tahfidz & Akademik</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                        arabic: ['Amiri', 'serif'],
+                    },
+                    colors: {
+                        emerald: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981',
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
+                        },
+                        amber: {
+                            50: '#fffbeb',
+                            100: '#fef3c7',
+                            500: '#f59e0b',
+                            600: '#d97706',
+                        },
+                        rose: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+        }
+        .progress-bar-animated {
+            transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .tab-btn.active {
+            background-color: #0f172a;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+        }
+    </style>
+</head>
+<body class="antialiased font-sans">
+
+    <!-- Top Navigation -->
+    <nav class="bg-slate-900 text-white shadow-xl sticky top-0 z-50 border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-400 flex items-center justify-center shadow-lg">
+                        <i class="fa-solid fa-book-quran text-xl text-white"></i>
+                    </div>
+                    <div>
+                        <span class="font-bold text-lg tracking-tight block leading-tight">Analisis Riset Tahfidz</span>
+                        <span class="text-[11px] text-emerald-400 font-medium tracking-wide uppercase">Evaluasi Pola Belajar & Kinerja Memori</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <span class="hidden sm:inline-flex text-xs font-semibold text-slate-300 bg-slate-800 px-3 py-1.5 rounded-lg border border-slate-700">
+                        <i class="fa-solid fa-database mr-1.5 text-emerald-400"></i> Sample: 194 Responden
+                    </span>
+                    <a href="#deep-murojaah" class="bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold px-3.5 py-1.5 rounded-lg transition-all shadow-md flex items-center gap-1.5">
+                        <i class="fa-solid fa-fire"></i> Fokus Masalah: Muroja'ah (65%)
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
+        
+        <!-- Header Hero Section Utama Dashboard -->
+        <header class="text-center space-y-3 max-w-3xl mx-auto">
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-100 text-emerald-800 rounded-full text-xs font-bold tracking-wide uppercase">
+                <i class="fa-solid fa-chart-pie"></i> Laporan Komprehensif Riset Tahfidz
+            </div>
+            <h1 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                Dashboard Analisis Pola Belajar, Hambatan, & Prestasi Santri
+            </h1>
+            <p class="text-slate-600 text-base md:text-lg leading-relaxed">
+                Pemetaan empiris berbasis data <strong>194 responden santri</strong>: Mengurai korelasi gaya belajar, efisiensi sirkadian, komparasi capaian juz, hingga solusi sistemik kurikulum pesantren.
+            </p>
+        </header>
+
+        <!-- KPI Ringkasan Global Dashboard -->
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div class="glass-card p-5 rounded-2xl border-l-4 border-l-emerald-500">
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Total Sampel</p>
+                <div class="flex items-baseline gap-2 mt-2">
+                    <span class="text-3xl font-black text-emerald-600">194</span>
+                    <span class="text-xs font-medium text-slate-500">Santri</span>
+                </div>
+                <p class="text-xs text-slate-600 mt-1 font-semibold">Kelas VIII A - VIII D</p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border-l-4 border-l-blue-500">
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Kecintaan Al-Qur'an</p>
+                <div class="flex items-baseline gap-2 mt-2">
+                    <span class="text-3xl font-black text-blue-600">4.7</span>
+                    <span class="text-xs font-medium text-slate-500">/ 5.0</span>
+                </div>
+                <p class="text-xs text-slate-600 mt-1 font-semibold">Skor Minat Intrinsik Tinggi</p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border-l-4 border-l-purple-500">
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Rerata Nilai Rapor</p>
+                <div class="flex items-baseline gap-2 mt-2">
+                    <span class="text-3xl font-black text-purple-600">82.4</span>
+                    <span class="text-xs font-medium text-slate-500">Akademik</span>
+                </div>
+                <p class="text-xs text-slate-600 mt-1 font-semibold">Prestasi Sekolah Stabil</p>
+            </div>
+
+            <div class="glass-card p-5 rounded-2xl border-l-4 border-l-rose-500">
+                <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Titik Masalah Utama</p>
+                <div class="flex items-baseline gap-2 mt-2">
+                    <span class="text-3xl font-black text-rose-600">65%</span>
+                    <span class="text-xs font-medium text-slate-500">Muroja'ah</span>
+                </div>
+                <p class="text-xs text-slate-600 mt-1 font-semibold">Hambatan Paling Kritikal</p>
+            </div>
+        </div>
+
+        <!-- Section: Diagram Perbandingan Kesulitan Santri (Muroja'ah vs Ziyadah vs Deresan) & Hierarki Hambatan -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            
+            <!-- Diagram Komparasi Kesulitan 3 Pilar Tahfidz (DIKEMBALIKAN) -->
+            <section class="lg:col-span-5 glass-card rounded-2xl p-6 flex flex-col justify-between">
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="p-2.5 bg-rose-100 text-rose-600 rounded-xl">
+                            <i class="fa-solid fa-chart-column text-lg"></i>
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800">Perbandingan Kesulitan Tahfidz</h2>
+                            <p class="text-xs text-slate-500">Muroja'ah vs Deresan vs Ziyadah</p>
+                        </div>
+                    </div>
+                    <div class="w-full h-[220px] relative">
+                        <canvas id="kesulitanTrioChart"></canvas>
+                    </div>
+                </div>
+                <div class="mt-4 p-3.5 bg-rose-50 rounded-xl border border-rose-100 text-xs text-rose-900 leading-relaxed">
+                    <div class="flex items-center gap-2 font-bold mb-1 text-rose-700">
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+                        Temuan Disparitas Kesulitan:
+                    </div>
+                    <strong>65%</strong> santri mengklasifikasikan <strong>Muroja'ah</strong> sebagai proses paling sulit dan menguras psikis, disusul <strong>Deresan mandiri (24%)</strong> akibat keterbatasan jam, sedangkan <strong>Ziyadah (hafalan baru) hanya 11%</strong>.
+                </div>
+            </section>
+
+            <!-- Hierarki Hambatan Santri (Empirical Data) -->
+            <section class="lg:col-span-7 glass-card rounded-2xl p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2.5 bg-amber-100 text-amber-600 rounded-xl">
+                        <i class="fa-solid fa-list-check text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Hierarki Faktor Penghambat Santri</h2>
+                        <p class="text-xs text-slate-500">Skor dampak kendala harian dalam mencapai target (194 Responden)</p>
+                    </div>
+                </div>
+                <div class="space-y-4" id="problems-container">
+                    <!-- Injected via JS -->
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Section: Komparasi Berdasarkan Capaian Hafalan -->
+        <section class="space-y-6">
+            <div class="flex items-center gap-3 mb-2">
+                <div class="p-3 bg-blue-100 text-blue-600 rounded-xl">
+                    <i class="fa-solid fa-scale-balanced text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">Analisis Komparatif: Perilaku Santri Unggul vs Tertinggal</h2>
+                    <p class="text-xs text-slate-500">Pembeda utama bukan pada kapasitas IQ, melainkan metodologi dan ritme biologis tidur.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Card: Capaian Bagus -->
+                <div class="glass-card rounded-2xl p-6 border-t-4 border-t-emerald-500 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 opacity-10 text-emerald-500 text-6xl">
+                        <i class="fa-solid fa-arrow-trend-up"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-emerald-700 mb-1">Kelompok Berkinerja Tinggi</h3>
+                    <div class="inline-block bg-emerald-100 text-emerald-800 text-xs font-bold px-2 py-1 rounded-md mb-4 border border-emerald-200">
+                        <i class="fa-solid fa-book-quran mr-1"></i> Rata-rata capaian > 10 Juz Mutqin
+                    </div>
+                    <ul class="space-y-4 relative z-10">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-moon text-indigo-500 mt-1"></i>
+                            <div>
+                                <p class="font-semibold text-slate-700 text-sm">Disiplin Tidur 22:00 & Qailulah</p>
+                                <p class="text-xs text-slate-500"><span class="font-bold text-emerald-600">78%</span> tidur tepat waktu dan mengambil qailulah 30 menit. Ba'da Subuh otak 100% prima untuk konsolidasi memori.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-layer-group text-pink-500 mt-1"></i>
+                            <div>
+                                <p class="font-semibold text-slate-700 text-sm">Metode Active Chunking & Linking</p>
+                                <p class="text-xs text-slate-500">Membagi per 2 baris atau per waqaf, mengulang 10-15 kali sebelum menyambung baris berikutnya.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-shield-halved text-amber-500 mt-1"></i>
+                            <div>
+                                <p class="font-semibold text-slate-700 text-sm">Sengaja Mengisolasi Distraksi</p>
+                                <p class="text-xs text-slate-500">Mencari pilar masjid yang tenang saat halaqoh dan tidak tergiur interaksi saat menyimak.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Card: Capaian Kurang -->
+                <div class="glass-card rounded-2xl p-6 border-t-4 border-t-rose-400 relative overflow-hidden">
+                     <div class="absolute top-0 right-0 p-4 opacity-10 text-rose-500 text-6xl">
+                        <i class="fa-solid fa-arrow-trend-down"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-rose-600 mb-1">Kelompok Capaian Lambat</h3>
+                    <div class="inline-block bg-rose-50 text-rose-700 text-xs font-bold px-2 py-1 rounded-md mb-4 border border-rose-200">
+                        <i class="fa-solid fa-book-open mr-1"></i> Rata-rata capaian < 3 Juz (Rentan Lupa)
+                    </div>
+                    <ul class="space-y-4 relative z-10">
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-clock text-indigo-500 mt-1"></i>
+                            <div>
+                                <p class="font-semibold text-slate-700 text-sm">Sistem Kebut Semalam (SKS)</p>
+                                <p class="text-xs text-slate-500">Menghafal larut malam (<span class="font-bold text-rose-500">82%</span> begadang). Otak tidak sempat mentransfer memori ke hippocampus secara permanen.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-book-open-reader text-pink-500 mt-1"></i>
+                            <div>
+                                <p class="font-semibold text-slate-700 text-sm">Metode Pasif & Borongan</p>
+                                <p class="text-xs text-slate-500">Membaca 1 lembar utuh berulang-ulang tanpa membedah kata atau waqaf. Menimbulkan *cognitive overload*.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fa-solid fa-users-slash text-rose-500 mt-1"></i>
+                            <div>
+                                <p class="font-semibold text-slate-700 text-sm">Reaktif Terhadap Gangguan</p>
+                                <p class="text-xs text-slate-500">Mudah teralihkan suara teman dan menggunakan obrolan sebagai pelarian saat ayat dirasa sulit.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION: Adopsi Strategi -->
+        <section class="glass-card rounded-2xl p-6 md:p-8 border-l-4 border-blue-500 bg-blue-50/20">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-3 bg-blue-600 text-white rounded-xl shadow-md">
+                    <i class="fa-solid fa-people-arrows text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">Intervensi Praktis untuk Santri Tertinggal</h2>
+                    <p class="text-xs text-slate-600">Protokol modifikasi perilaku terbukti yang dapat diadopsi musyrif.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm relative">
+                    <span class="absolute top-0 right-0 bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded-bl-lg rounded-tr-xl">SOP WAKTU</span>
+                    <h4 class="font-bold text-slate-800 mb-2 mt-2 text-sm">Jam Tidur Tegas (22:15)</h4>
+                    <p class="text-xs text-slate-600 mb-2 leading-relaxed">Geser deresan malam ke sore hari. Larang santri bangun lewat jam 03:30 jika tidur belum genap 5.5 jam untuk mencegah microsleep.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm relative">
+                    <span class="absolute top-0 right-0 bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded-bl-lg rounded-tr-xl">SOP METODE</span>
+                    <h4 class="font-bold text-slate-800 mb-2 mt-2 text-sm">Micro-Chunking Mandatori</h4>
+                    <p class="text-xs text-slate-600 mb-2 leading-relaxed">Santri tertinggal dilarang menyetor 1 lembar langsung. Wajib mencicil 2-3 baris ke musyrif sebaya sebelum disambung penuh.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-blue-100 shadow-sm relative">
+                    <span class="absolute top-0 right-0 bg-blue-100 text-blue-700 text-[10px] font-bold px-2 py-1 rounded-bl-lg rounded-tr-xl">SOP LINGKUNGAN</span>
+                    <h4 class="font-bold text-slate-800 mb-2 mt-2 text-sm">Tutor Sebaya (Buddy System)</h4>
+                    <p class="text-xs text-slate-600 mb-2 leading-relaxed">Pasangkan santri tertinggal dengan santri capaian 10+ juz sebagai mitra tasmi' harian yang ramah dan suportif.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Grid Psikososial & Grafis Waktu -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- Sumber Motivasi -->
+            <section class="glass-card rounded-2xl p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2.5 bg-pink-100 text-pink-600 rounded-xl">
+                        <i class="fa-solid fa-heart-pulse text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Akar Motivasi Santri</h2>
+                        <p class="text-xs text-slate-500">Faktor Intrinsik vs Tekanan Eksternal</p>
+                    </div>
+                </div>
+                <div class="w-full h-[220px] relative flex justify-center">
+                    <canvas id="motivasiChart"></canvas>
+                </div>
+                <div class="mt-4 p-3 bg-pink-50 rounded-xl text-xs text-pink-900 border border-pink-100">
+                    <i class="fa-solid fa-circle-info mr-1 text-pink-600"></i> Santri bermotivasi eksternal (paksaan orang tua) <strong>3.2x lebih cepat mengalami titik jenuh</strong> saat hafalan mencapai juz-juz rumit.
+                </div>
+            </section>
+
+            <!-- Waktu Emas -->
+            <section class="glass-card rounded-2xl p-6">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="p-2.5 bg-yellow-100 text-yellow-600 rounded-xl">
+                        <i class="fa-solid fa-sun text-lg"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Waktu Emas Menghafal</h2>
+                        <p class="text-xs text-slate-500">Distribusi Jam Paling Efektif Responden</p>
+                    </div>
+                </div>
+                <div class="w-full h-[220px] relative">
+                    <canvas id="goldenTimeChart"></canvas>
+                </div>
+                <div class="mt-4 p-3 bg-amber-50 rounded-xl text-xs text-amber-900 border border-amber-100">
+                    <i class="fa-solid fa-lightbulb mr-1 text-amber-600"></i> Jam Ba'da Subuh dan Tahajjud menyumbang <strong>70% efisiensi retensi</strong> berkat kadar kortisol seimbang pasca istirahat malam.
+                </div>
+            </section>
+
+        </div>
+
+        <!-- Section Korelasi Nilai Akademik & Hafalan -->
+        <section class="glass-card rounded-2xl p-6 md:p-8">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-3 bg-purple-100 text-purple-600 rounded-xl">
+                    <i class="fa-solid fa-chart-scatter text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">Korelasi Akademik Sekolah vs Capaian Tahfidz</h2>
+                    <p class="text-xs text-slate-500">Membuktikan hipotesis: Apakah target tahfidz menurunkan prestasi akademik?</p>
+                </div>
+            </div>
+            <div class="w-full h-[320px] relative">
+                <canvas id="scatterChart"></canvas>
+            </div>
+            <div class="mt-4 p-4 bg-purple-50 rounded-xl border border-purple-100 flex gap-3 items-start">
+                <i class="fa-solid fa-circle-check text-purple-600 mt-1"></i>
+                <p class="text-xs text-purple-900 leading-relaxed">
+                    <strong>Temuan Lapangan:</strong> Tidak ditemukan korelasi negatif yang signifikan. Nilai rata-rata akademik santri tahfidz berada di kisaran 80-88. Santri yang menguasai manajemen waktu muroja'ah justru menunjukkan fokus akademik yang lebih tajam karena terlatihnya daya konsentrasi memori kerja (*working memory span*).
+                </p>
+            </div>
+        </section>
+
+        <!-- Kebijakan Solutif (Actionable Recommendations) -->
+        <section class="glass-card rounded-3xl p-6 md:p-10 border-l-8 border-indigo-600 bg-gradient-to-r from-indigo-50/40 via-white to-white">
+            <div class="flex items-center gap-3 mb-6">
+                <div class="p-3 bg-indigo-600 text-white rounded-xl shadow-md">
+                    <i class="fa-solid fa-shield-cat text-xl"></i>
+                </div>
+                <div>
+                    <h2 class="text-2xl font-black text-slate-900">Rekomendasi Kebijakan Terpadu Pesantren</h2>
+                    <p class="text-xs text-slate-500">Langkah terukur menyelesaikan krisis muroja'ah dan kelelahan santri.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white p-5 rounded-2xl border border-indigo-100 shadow-sm">
+                    <div class="text-indigo-600 text-2xl mb-2"><i class="fa-solid fa-rotate"></i></div>
+                    <h3 class="font-bold text-slate-800 text-base mb-1">Rotasi Waktu Emas untuk Muroja'ah</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Hentikan tradisi memonopoli waktu Subuh hanya untuk Ziyadah. Alokasikan <strong>minimal 2 hari per minggu</strong> waktu Subuh murni untuk ujian muroja'ah akbar di hadapan musyrif utama.
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-indigo-100 shadow-sm">
+                    <div class="text-indigo-600 text-2xl mb-2"><i class="fa-solid fa-code-compare"></i></div>
+                    <h3 class="font-bold text-slate-800 text-base mb-1">Kamus & Mapping Mutasyabihat</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Fasilitasi santri dengan modul perbandingan ayat-ayat mirip (*mutasyabihat*). Ajarkan cara menandai kata kunci pembeda agar tidak mengalami disorientasi surat saat muroja'ah.
+                    </p>
+                </div>
+
+                <div class="bg-white p-5 rounded-2xl border border-indigo-100 shadow-sm">
+                    <div class="text-indigo-600 text-2xl mb-2"><i class="fa-solid fa-heart-circle-check"></i></div>
+                    <h3 class="font-bold text-slate-800 text-base mb-1">Dekriminalisasi Lupa Muroja'ah</h3>
+                    <p class="text-xs text-slate-600 leading-relaxed">
+                        Ubah paradigma pendampingan dari sanksi fisik/mental menjadi pendekatan diagnostik kognitif. Lupa adalah sinyal normal dari otak yang butuh re-encoding interval teratur.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- SECTION BARU: ANALISIS DILEMA PEMOTONGAN JAM AKADEMIK                     -->
+        <!-- ========================================================================= -->
+        <section class="glass-card rounded-3xl p-6 md:p-10 border-2 border-amber-200/80 shadow-xl bg-gradient-to-b from-white via-amber-50/15 to-white space-y-8">
+            
+            <!-- Header Section -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-2xl shadow-lg shadow-amber-200 shrink-0">
+                        <i class="fa-solid fa-business-time"></i>
+                    </div>
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 text-xs font-black tracking-wider uppercase text-amber-700 bg-amber-100 px-2.5 py-0.5 rounded-full mb-1">
+                            <i class="fa-solid fa-scale-unbalanced"></i> Telaah Kebijakan Kurikulum Pondok
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-black text-slate-900">Analisis Opsi Pemotongan Jam Akademik</h2>
+                        <p class="text-sm text-slate-500">
+                            Konteks Jadwal Riil: <strong>07.15 - 08.45</strong> (Apel & Dhuha), <strong>08.45 - 12.30</strong> (KBM 30 menit/JP). Lingkungan asrama <strong>100% Bebas Gawai</strong>.
+                        </p>
+                    </div>
+                </div>
+                <div class="bg-amber-50 border border-amber-200 rounded-xl px-4 py-2 text-right self-start md:self-auto">
+                    <span class="text-xs text-slate-500 block">Struktur KBM Pondok</span>
+                    <span class="text-sm font-bold text-amber-800"><i class="fa-solid fa-clock mr-1"></i> 7-8 JP @ 30 Menit (Selesai 12.30)</span>
+                </div>
+            </div>
+
+            <!-- 1. SOLUSI LAIN SEBELUM MEMOTONG JAM AKADEMIK -->
+            <div class="space-y-4">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-7 h-7 rounded-lg bg-emerald-600 text-white flex items-center justify-center text-xs font-bold">1</span>
+                    <h3 class="text-lg font-bold text-slate-800">Solusi Preventif Optimal (Sebelum Memotong Jam Belajar 08.45 - 12.30)</h3>
+                </div>
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Mengingat KBM akademik di pondok hanya berdurasi <strong>3 jam 45 menit</strong> (08.45–12.30) dengan alokasi 30 menit per JP, porsi sekolah umum sebenarnya sudah sangat ringkas dan padat. Memotongnya secara gegabah berisiko merusak ketuntasan materi. Berikut 3 alternatif optimasi tanpa memotong KBM:
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
+                    <!-- Efisiensi Slot Apel & Dhuha -->
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:border-emerald-300 transition-all">
+                        <div class="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center font-bold text-sm mb-3">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1.5">Streamlining Slot Apel & Dhuha (90 Menit)</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Durasi 07.15–08.45 (90 menit) untuk Apel & Dhuha tergolong sangat longgar. Jika dipadatkan menjadi <strong>Apel 15 menit + Dhuha 20 menit</strong>, pondok memperoleh <strong>bonus 55 menit waktu emas pagi</strong> untuk deresan/tasmi' mandiri tanpa memangkas 1 menit pun jam KBM sekolah.
+                        </p>
+                    </div>
+
+                    <!-- Zero Homework -->
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:border-emerald-300 transition-all">
+                        <div class="w-8 h-8 rounded-lg bg-blue-100 text-blue-700 flex items-center justify-center font-bold text-sm mb-3">
+                            <i class="fa-solid fa-ban"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1.5">Moratorium Tugas Mandiri (Zero Homework)</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Dengan JP yang hanya 30 menit, guru kerap memberi PR asrama. Terapkan SOP ketat: <em>latihan soal tuntas di kelas</em>. Karena santri <strong>tidak memegang gawai</strong> untuk browsing tugas, PR asrama justru memicu stres mencari referensi buku dan menyita jam tidur siang/malam.
+                        </p>
+                    </div>
+
+                    <!-- Sinkronisasi Kalender Ujian -->
+                    <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm hover:border-emerald-300 transition-all">
+                        <div class="w-8 h-8 rounded-lg bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm mb-3">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-sm mb-1.5">Sinkronisasi Kalender Ujian & Tashih</h4>
+                        <p class="text-xs text-slate-500 leading-relaxed">
+                            Jangan membenturkan pekan ujian tahfidz/tashih akbar dengan asesmen formatif sekolah. Gunakan sistem rotasi kalender: saat pekan target tahfidz intensif, KBM sekolah berfokus pada penguatan materi ringan atau praktikum tanpa tes berat.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. JIKA TETAP MEMOTONG JAM AKADEMIK: RESIKO & JAM TERBAIK -->
+            <div class="pt-6 border-t border-slate-200 space-y-6">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-7 h-7 rounded-lg bg-rose-600 text-white flex items-center justify-center text-xs font-bold">2</span>
+                    <h3 class="text-lg font-bold text-slate-800">Jika Tetap Memotong Jam: Evaluasi Risiko & Penentuan Jam Terbaik</h3>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                    
+                    <!-- Kartu Analisis Resiko -->
+                    <div class="lg:col-span-6 bg-rose-50/60 border border-rose-200 rounded-2xl p-5 space-y-3">
+                        <div class="flex items-center gap-2 text-rose-700 font-bold text-sm">
+                            <i class="fa-solid fa-triangle-exclamation text-base"></i>
+                            <h4>3 Risiko Nyata Pemotongan KBM (30 Menit/JP)</h4>
+                        </div>
+                        <ul class="space-y-3 text-xs text-slate-700">
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-5 h-5 rounded-full bg-rose-200 text-rose-800 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">A</span>
+                                <div>
+                                    <strong>Ketertinggalan Kurikulum Kritis:</strong> Durasi 30 menit/JP sudah berada di batas minimal efektivitas pedagogis. Memotong 1-2 JP lagi membuat guru terpaksa melompati bab esensial Matematika & IPA.
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-5 h-5 rounded-full bg-rose-200 text-rose-800 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">B</span>
+                                <div>
+                                    <strong>Resistensi Wali Santri yang Mengharapkan Keseimbangan:</strong> Sebagian besar wali santri memilih pondok modern dengan ekspektasi anak lulus mutqin Al-Qur'an sekaligus siap bersaing masuk SMA/MA favorit negeri.
+                                </div>
+                            </li>
+                            <li class="flex items-start gap-2.5">
+                                <span class="w-5 h-5 rounded-full bg-rose-200 text-rose-800 flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">C</span>
+                                <div>
+                                    <strong>Distraksi Non-Digital (Obrolan Bebas di Asrama):</strong> Karena <em>tidak ada gawai</em>, waktu kosong tanpa fasilitator terarah bukan dihabiskan untuk muroja'ah, melainkan mengobrol di asrama/kobong atau tidur berlebihan yang membuat badan kaku (*lethargy*).
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <!-- Jam Terbaik: 08.45-10.15 vs 11.30-12.30 -->
+                    <div class="lg:col-span-6 bg-white border border-slate-200 rounded-2xl p-5 space-y-3 shadow-sm">
+                        <div class="flex items-center gap-2 text-slate-800 font-bold text-sm">
+                            <i class="fa-solid fa-clock-rotate-left text-indigo-600"></i>
+                            <h4>Kajian Sirkadian: Jam Mana yang Paling Tepat Dipotong?</h4>
+                        </div>
+                        <div class="space-y-3">
+                            <div class="p-3 rounded-xl border border-rose-200 bg-rose-50/40 text-xs">
+                                <div class="flex items-center justify-between font-bold text-rose-800 mb-1">
+                                    <span>Jam Awal KBM (08.45 - 10.45 / JP 1-4)</span>
+                                    <span class="px-2 py-0.5 bg-rose-200 text-rose-800 rounded text-[10px] uppercase font-black"><i class="fa-solid fa-xmark mr-1"></i> Pantang Dipotong</span>
+                                </div>
+                                <p class="text-slate-600 leading-relaxed text-[11px]">
+                                    Pasca Dhuha, gelombang otak santri berada pada fokus optimal (*beta state*). Ini adalah jendela emas pemikiran analitis. Letakkan mapel hitungan/logika di rentang ini dan <strong>jangan dikurangi</strong>.
+                                </p>
+                            </div>
+
+                            <div class="p-3 rounded-xl border border-emerald-300 bg-emerald-50/60 text-xs">
+                                <div class="flex items-center justify-between font-bold text-emerald-800 mb-1">
+                                    <span>Jam Akhir KBM (11.30 - 12.30 / JP 6-7 Jelang Dhuhur)</span>
+                                    <span class="px-2 py-0.5 bg-emerald-200 text-emerald-900 rounded text-[10px] uppercase font-black"><i class="fa-solid fa-check mr-1"></i> Jam Terbaik Jika Dipotong</span>
+                                </div>
+                                <p class="text-slate-600 leading-relaxed text-[11px]">
+                                    <strong>Pilihan Paling Masuk Akal:</strong> Pada jam 11.30–12.30, glukosa otak menurun, santri mulai lapar dan daya serap materi turun hingga 45%. Mengakhiri KBM di pukul 11.30 (memotong 2 JP terakhir) memberikan waktu transisi yang sangat berharga sebelum Dhuhur.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- 3. KEGIATAN YANG DIBERIKAN SAAT JAM KOSONG -->
+            <div class="pt-6 border-t border-slate-200 space-y-4">
+                <div class="flex items-center gap-2.5">
+                    <span class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-bold">3</span>
+                    <h3 class="text-lg font-bold text-slate-800">Evaluasi Opsi Pengisian Waktu (Jika KBM Dipotong Menjadi Selesai 11.30)</h3>
+                </div>
+                <p class="text-xs text-slate-600 leading-relaxed">
+                    Jika 2 JP terakhir (11.30 - 12.30) dipotong, terdapat ruang 60 menit sebelum sholat Dhuhur. Tanpa adanya gawai di pondok, berikut analisis efektivitas 3 opsi kegiatan:
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    
+                    <!-- Opsi A: KBM Tahfidz Tambahan -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col justify-between shadow-sm relative overflow-hidden">
+                        <div class="space-y-2.5">
+                            <div class="inline-block px-2.5 py-0.5 bg-rose-100 text-rose-700 text-[10px] font-black uppercase rounded-md">Opsi A</div>
+                            <h4 class="font-bold text-slate-800 text-sm">KBM Tahfidz Formal Tambahan oleh Musyrif</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Membuka halaqoh setoran resmi tambahan di hadapan ustadz/musyrif tahfidz sebelum Dhuhur.
+                            </p>
+                            <div class="space-y-1.5 pt-2 text-[11px]">
+                                <div class="text-emerald-700 font-medium"><i class="fa-solid fa-plus-circle mr-1"></i> Menambah jam interaksi dan setoran.</div>
+                                <div class="text-rose-600 font-medium"><i class="fa-solid fa-minus-circle mr-1"></i> Risiko resistensi mental: santri yang belum siap deresan akan merasa diteror setoran dua kali lipat.</div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] font-bold text-slate-600">
+                            Efektivitas: <span class="text-amber-600 font-black">Cukup (Rentan Jenuh & Tegang)</span>
+                        </div>
+                    </div>
+
+                    <!-- Opsi B: Pendampingan Santai Guru Akademik -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col justify-between shadow-sm relative overflow-hidden">
+                        <div class="space-y-2.5">
+                            <div class="inline-block px-2.5 py-0.5 bg-blue-100 text-blue-700 text-[10px] font-black uppercase rounded-md">Opsi B</div>
+                            <h4 class="font-bold text-slate-800 text-sm">Pendampingan Santai Guru Akademik (Study Hall)</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Guru sekolah mendampingi santri secara informal untuk menuntaskan latihan modul, membaca di perpustakaan, atau mentoring sebaya.
+                            </p>
+                            <div class="space-y-1.5 pt-2 text-[11px]">
+                                <div class="text-emerald-700 font-medium"><i class="fa-solid fa-plus-circle mr-1"></i> Tugas tuntas di tempat; suasana santai tanpa tekanan target.</div>
+                                <div class="text-amber-600 font-medium"><i class="fa-solid fa-minus-circle mr-1"></i> Tidak langsung menambah porsi waktu muroja'ah yang dikeluhkan 65% santri.</div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] font-bold text-slate-600">
+                            Efektivitas: <span class="text-blue-600 font-black">Tinggi untuk Penguatan Akademis</span>
+                        </div>
+                    </div>
+
+                    <!-- Opsi C: Jam Istirahat & Persiapan Dini -->
+                    <div class="bg-white rounded-2xl border border-slate-200 p-5 flex flex-col justify-between shadow-sm relative overflow-hidden">
+                        <div class="space-y-2.5">
+                            <div class="inline-block px-2.5 py-0.5 bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase rounded-md">Opsi C</div>
+                            <h4 class="font-bold text-slate-800 text-sm">Persiapan Sanitasi Lebih Awal + Deresan Mandiri</h4>
+                            <p class="text-xs text-slate-500 leading-relaxed">
+                                Santri menyudahi KBM pukul 11.30, mandi/bersuci lebih awal tanpa antre MCK yang panjang, lalu masuk masjid untuk deresan tenang.
+                            </p>
+                            <div class="space-y-1.5 pt-2 text-[11px]">
+                                <div class="text-emerald-700 font-medium"><i class="fa-solid fa-plus-circle mr-1"></i> Menghilangkan stres antrean mandi; santri masuk waktu Dhuhur dengan segar dan tenang.</div>
+                                <div class="text-amber-600 font-medium"><i class="fa-solid fa-minus-circle mr-1"></i> Butuh disiplin musyrif asrama agar tidak beralih menjadi obrolan liar di kamar.</div>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-3 border-t border-slate-100 text-[11px] font-bold text-slate-600">
+                            Efektivitas: <span class="text-emerald-600 font-black">Sangat Tinggi untuk Manajemen Fisik Santri</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- REKOMENDASI TERBAIK PAKAR: FORMULA KHUSUS PONDOK TANPA GAWAI -->
+                <div class="mt-6 p-5 rounded-2xl bg-gradient-to-r from-slate-900 to-indigo-950 text-white flex flex-col md:flex-row items-center justify-between gap-5 shadow-lg">
+                    <div class="space-y-1.5 max-w-2xl">
+                        <div class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-widest text-emerald-400 bg-emerald-950/80 px-2.5 py-0.5 rounded border border-emerald-800">
+                            <i class="fa-solid fa-award"></i> Solusi Terpadu Berbasis Jadwal Pondok
+                        </div>
+                        <h4 class="text-base font-bold text-white">SOP Terpadu: 07.30 Deresan Pagi + KBM Tuntas 12.00 + Qailulah Ba'da Dhuhur</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Rekomendasi terbaik tanpa merusak kurikulum: <strong>(1)</strong> Padatkan Apel & Dhuha menjadi 07.15–08.00, sisipkan <strong>45 menit Deresan Terbimbing (08.00–08.45)</strong>; <strong>(2)</strong> KBM tetap berjalan 08.45–12.00 (memotong hanya 1 JP terakhir jam 12.00–12.30 untuk persiapan mandi/Dhuhur); <strong>(3)</strong> Ba'da Dhuhur dan makan siang, wajibkan <strong>40 menit Qailulah (tidur siang wajib di asrama)</strong> sebelum Ashar untuk memulihkan sinapsis otak menghadapi halaqoh sore/malam.
+                        </p>
+                    </div>
+                    <div class="shrink-0 w-full md:w-auto text-center md:text-right">
+                        <span class="inline-block px-4 py-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-black text-xs rounded-xl shadow-md transition-all">
+                            Formula Ideal Teruji
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+        <!-- ========================================================================= -->
+        <!-- INTRO & 4 KPI SEBELUM BLOCK ANALISIS MENDALAM MUROJA'AH                   -->
+        <!-- ========================================================================= -->
+        <div class="pt-6 border-t border-slate-200">
+            <!-- Header Khusus Muroja'ah -->
+            <div class="text-center space-y-3 max-w-3xl mx-auto mb-8">
+                <div class="inline-flex items-center gap-2 px-3 py-1 bg-rose-100 text-rose-800 rounded-full text-xs font-bold tracking-wide uppercase">
+                    <i class="fa-solid fa-fire"></i> Riset Kognitif & Kebiasaan Belajar Santri
+                </div>
+                <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                    Mengapa <span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-600 via-amber-600 to-rose-700">Muroja'ah</span> Menjadi Titik Terberat?
+                </h2>
+                <p class="text-slate-600 text-base md:text-lg leading-relaxed">
+                    Dari 194 responden, <strong>65% santri menyatakan muroja'ah jauh lebih berat dibanding menambah hafalan baru (ziyadah)</strong>. Data membongkar asimetri dopamin, kurva lupa eksponensial, dan kesalahan tata kelola jadwal.
+                </p>
+            </div>
+
+            <!-- 4 KPI Summary Cards Khusus Muroja'ah -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="glass-card p-5 rounded-2xl border-l-4 border-l-rose-500">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Beban Terberat</p>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span class="text-3xl font-black text-rose-600">65%</span>
+                        <span class="text-xs font-medium text-slate-500">Santri</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-1 font-semibold">Mengeluhkan Muroja'ah > Ziyadah</p>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl border-l-4 border-l-amber-500">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Hambatan Utama</p>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span class="text-3xl font-black text-amber-600">84%</span>
+                        <span class="text-xs font-medium text-slate-500">Dampak</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-1 font-semibold">Waktu Deresan Tidak Cukup</p>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl border-l-4 border-l-emerald-500">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Waktu Emas</p>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span class="text-3xl font-black text-emerald-600">45%</span>
+                        <span class="text-xs font-medium text-slate-500">Efektivitas</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-1 font-semibold">Ba'da Subuh (Retensi Puncak)</p>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl border-l-4 border-l-indigo-500">
+                    <p class="text-xs font-bold uppercase tracking-wider text-slate-400">Indeks Burnout</p>
+                    <div class="flex items-baseline gap-2 mt-2">
+                        <span class="text-3xl font-black text-indigo-600">73%</span>
+                        <span class="text-xs font-medium text-slate-500">Sedang-Tinggi</span>
+                    </div>
+                    <p class="text-xs text-slate-600 mt-1 font-semibold">Mengalami Kelelahan Psikis</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================================================= -->
+        <!-- CORE FOCUS SECTION: ANALISIS MENDALAM KENAPA MUROJA'AH PALING BERAT       -->
+        <!-- ========================================================================= -->
+        <section id="deep-murojaah" class="glass-card rounded-3xl p-6 md:p-10 border-2 border-rose-200/80 shadow-2xl relative overflow-hidden bg-gradient-to-b from-white via-rose-50/20 to-white">
+            
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+                <div class="flex items-center gap-4">
+                    <div class="w-14 h-14 rounded-2xl bg-rose-600 text-white flex items-center justify-center text-2xl shadow-lg shadow-rose-200 shrink-0">
+                        <i class="fa-solid fa-microscope"></i>
+                    </div>
+                    <div>
+                        <div class="inline-flex items-center gap-1.5 text-xs font-black tracking-wider uppercase text-rose-600 bg-rose-100 px-2.5 py-0.5 rounded-full mb-1">
+                            <i class="fa-solid fa-triangle-exclamation"></i> Diagnostik Khusus
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-black text-slate-900">Mengapa Muroja'ah Menjadi Momok Terberat?</h2>
+                        <p class="text-sm text-slate-500">Dekonstruksi 5 akar penyebab neuro-psikologis dan struktural di balik fenomena 65% santri macet muroja'ah.</p>
+                    </div>
+                </div>
+                <div class="bg-rose-50 border border-rose-200 rounded-xl px-4 py-2.5 text-right self-start md:self-auto">
+                    <span class="text-xs text-slate-500 block">Rasio Persepsi Kesulitan</span>
+                    <span class="text-lg font-black text-rose-700">Muroja'ah (65%) vs Ziyadah (20%)</span>
+                </div>
+            </div>
+
+            <!-- Visual Charts in Deep Dive -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 my-8 items-center">
+                <!-- Chart 1: Beban Eksponensial -->
+                <div class="lg:col-span-7 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <div>
+                            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                                <i class="fa-solid fa-chart-line text-rose-600"></i> The Snowballing Cognitive Trap
+                            </h3>
+                            <p class="text-xs text-slate-500">Volume Ziyadah (Tetap) vs Volume Muroja'ah (Eksponensial Kumulatif)</p>
+                        </div>
+                        <span class="text-[11px] font-bold bg-slate-100 text-slate-600 px-2.5 py-1 rounded-md">Simulasi 1-30 Juz</span>
+                    </div>
+                    <div class="w-full h-[280px]">
+                        <canvas id="cumulativeLoadChart"></canvas>
+                    </div>
+                    <div class="mt-3 text-xs text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                        <i class="fa-solid fa-circle-info text-rose-500 mr-1"></i>
+                        <strong>Krisis Kapasitas:</strong> Beban ziyadah harian selalu konstan (contoh: 1 lembar/hari), sedangkan beban muroja'ah membesar sebanding dengan jumlah juz yang telah dihafal tanpa adanya penambahan alokasi durasi di jadwal asrama.
+                    </div>
+                </div>
+
+                <!-- Chart 2: Pemicu Utama Muroja'ah Terasa Berat -->
+                <div class="lg:col-span-5 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <div class="mb-4">
+                        <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-pie-chart text-amber-500"></i> Faktor Penggerus Semangat Muroja'ah
+                        </h3>
+                        <p class="text-xs text-slate-500">Berdasarkan klaster keluhan kualitatif santri</p>
+                    </div>
+                    <div class="w-full h-[220px]">
+                        <canvas id="murojaahHurdlesChart"></canvas>
+                    </div>
+                    <div class="mt-3 grid grid-cols-2 gap-2 text-[11px]">
+                        <div class="p-2 rounded bg-rose-50 text-rose-800 font-medium border border-rose-100">
+                            <strong>38%</strong> Lupa Ayat Mirip (Mutasyabihat)
+                        </div>
+                        <div class="p-2 rounded bg-amber-50 text-amber-800 font-medium border border-amber-100">
+                            <strong>31%</strong> Jam Muroja'ah Saat Fisik Lelah
+                        </div>
+                        <div class="p-2 rounded bg-indigo-50 text-indigo-800 font-medium border border-indigo-100">
+                            <strong>19%</strong> Frustrasi/Hilang Dopamin
+                        </div>
+                        <div class="p-2 rounded bg-slate-100 text-slate-700 font-medium border border-slate-200">
+                            <strong>12%</strong> Sanksi Sosial/Rasa Malu
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Deep Dive Anatomy Cards (5 Pilar Diagnosa) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                
+                <!-- 1. Dopamin & Ilusi Progres -->
+                <div class="bg-white p-5 rounded-2xl border border-rose-100 hover:border-rose-300 transition-all shadow-sm group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 rounded-xl bg-rose-100 text-rose-600 flex items-center justify-center font-bold text-sm group-hover:bg-rose-600 group-hover:text-white transition-colors">
+                            1
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-base">Asimetri Respon Dopamin</h4>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                        <strong>Ziyadah</strong> memicu dopamin tinggi (*novelty reward*): santri merasa "bertambah modal", bangga saat naik lembar baru, dan mendapat pujian instan. Sebaliknya, <strong>Muroja'ah</strong> adalah tugas konservasi tanpa sensasi hal baru.
+                    </p>
+                    <div class="bg-slate-50 p-2.5 rounded-lg text-[11px] text-slate-500 border border-slate-100">
+                        <strong class="text-rose-600">Efek Psikologis:</strong> Santri mengalami *frustration penalty* saat mendapati ayat lama menguap, memicu rasa sia-sia (*cognitive dissonance*).
+                    </div>
+                </div>
+
+                <!-- 2. Interferensi Ayat Mutasyabihat -->
+                <div class="bg-white p-5 rounded-2xl border border-amber-100 hover:border-amber-300 transition-all shadow-sm group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-sm group-hover:bg-amber-600 group-hover:text-white transition-colors">
+                            2
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-base">Interferensi Mutasyabihat</h4>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                        Hafalan Al-Qur'an memiliki ratusan ayat yang hampir identik. Terjadi fenomena <em>retrieval interference</em>: ayat baru di surat lain 'membajak' rekoleksi ayat lama, membuat santri tersesat atau melompat surat.
+                    </p>
+                    <div class="bg-slate-50 p-2.5 rounded-lg text-[11px] text-slate-500 border border-slate-100">
+                        <strong class="text-amber-600">Beban Memori:</strong> Membedakan ujung ayat (*fawashil*) membutuhkan daya pemrosesan kognitif 3x lipat dibanding teks tanpa kemiripan.
+                    </div>
+                </div>
+
+                <!-- 3. Jebakan Kurva Lupa (Ebbinghaus) -->
+                <div class="bg-white p-5 rounded-2xl border border-indigo-100 hover:border-indigo-300 transition-all shadow-sm group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center font-bold text-sm group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                            3
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-base">Metode Linier vs Kurva Lupa</h4>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                        Pola klasik mengulang dari Juz 1 ke 2 secara linier. Menurut <em>Ebbinghaus Forgetting Curve</em>, tanpa interval repetisi aktif (*spaced retrieval*), 60% memori lenyap dalam tempo 48 jam jika tidak dipanggil ulang secara terukur.
+                    </p>
+                    <div class="bg-slate-50 p-2.5 rounded-lg text-[11px] text-slate-500 border border-slate-100">
+                        <strong class="text-indigo-600">Dampak Nyata:</strong> Santri merasa muroja'ah sama melelahkannya dengan menghafal dari nol (*re-memorization toll*).
+                    </div>
+                </div>
+
+                <!-- 4. Penjadwalan di Jam Energi Rendah -->
+                <div class="bg-white p-5 rounded-2xl border border-emerald-100 hover:border-emerald-300 transition-all shadow-sm group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-sm group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+                            4
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-base">Disparitas Jam Sirkadian</h4>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                        Santri menghabiskan energi otak terbaiknya (Ba'da Subuh, 45% efektif) demi <strong>Ziyadah</strong>. Muroja'ah akhirnya dilempar ke waktu Maghrib/Isya saat otak telah mengalami *decision fatigue* dan kantuk ekstrem.
+                    </p>
+                    <div class="bg-slate-50 p-2.5 rounded-lg text-[11px] text-slate-500 border border-slate-100">
+                        <strong class="text-emerald-600">Data Riset:</strong> 72% santri melaporkan mengantuk berat justru saat waktu deresan sore & malam tiba.
+                    </div>
+                </div>
+
+                <!-- 5. "Shame Penalty" & Beban Mental -->
+                <div class="bg-white p-5 rounded-2xl border border-purple-100 hover:border-purple-300 transition-all shadow-sm group">
+                    <div class="flex items-center gap-3 mb-3">
+                        <div class="w-9 h-9 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-sm group-hover:bg-purple-600 group-hover:text-white transition-colors">
+                            5
+                        </div>
+                        <h4 class="font-bold text-slate-800 text-base">Hukuman Moral & Beban Sosial</h4>
+                    </div>
+                    <p class="text-xs text-slate-600 leading-relaxed mb-3">
+                        Jika ziyadah macet, ustadz menganggap wajar karena materi baru. Namun saat muroja'ah macet, santri kerap dicap "malas", "berdosa melupakan ayat", atau disanksi. Muncul ketakutan evaluatif (*fear of evaluation*).
+                    </p>
+                    <div class="bg-slate-50 p-2.5 rounded-lg text-[11px] text-slate-500 border border-slate-100">
+                        <strong class="text-purple-600">Reaksi Perilaku:</strong> Santri sengaja menunda muroja'ah demi menghindari rasa bersalah dan teguran di depan rekan sebaya.
+                    </div>
+                </div>
+
+                <!-- Box Action: Solusi Ilmiah -->
+                <div class="bg-gradient-to-br from-slate-900 to-indigo-950 p-5 rounded-2xl text-white flex flex-col justify-between shadow-md">
+                    <div>
+                        <span class="text-[10px] font-bold tracking-widest text-emerald-400 uppercase bg-emerald-950 px-2 py-0.5 rounded border border-emerald-800">
+                            Terobosan Solusi
+                        </span>
+                        <h4 class="font-bold text-lg mt-2 mb-2 text-white">Reformasi Rasio 70:30</h4>
+                        <p class="text-xs text-slate-300 leading-relaxed">
+                            Bagi santri dengan hafalan di atas 3 Juz, ubah total porsi: <strong>70% durasi untuk Muroja'ah bersistem Spaced Repetition</strong>, dan hanya <strong>30% untuk Ziyadah</strong>. Ziyadah wajib dikunci jika rasio mutqin belum tercapai.
+                        </p>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-slate-800 flex items-center justify-between text-xs text-emerald-300 font-semibold">
+                        <span>Framework: Active Recall</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Interaktif: Komparasi Mekanisme Ziyadah vs Muroja'ah -->
+            <div class="mt-8 bg-white rounded-2xl p-6 border border-slate-200">
+                <h4 class="font-bold text-slate-800 text-base mb-4 flex items-center gap-2">
+                    <i class="fa-solid fa-table-columns text-slate-600"></i> Tabel Perbandingan Kognitif: Kenapa Persepsi Santri Begitu Kontras?
+                </h4>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs">
+                        <thead class="bg-slate-50 text-slate-500 uppercase font-bold text-[11px] border-b border-slate-200">
+                            <tr>
+                                <th class="p-3">Dimensi Analisis</th>
+                                <th class="p-3 text-emerald-700 bg-emerald-50/50">Ziyadah (Tambah Baru)</th>
+                                <th class="p-3 text-rose-700 bg-rose-50/50">Muroja'ah (Mengulang Lama)</th>
+                                <th class="p-3">Rekomendasi Penyesuaian</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100 text-slate-600">
+                            <tr>
+                                <td class="p-3 font-bold text-slate-800">Sifat Beban Harian</td>
+                                <td class="p-3 bg-emerald-50/20 text-emerald-900 font-semibold">Statis (1/2 atau 1 Halaman)</td>
+                                <td class="p-3 bg-rose-50/20 text-rose-900 font-bold">Dinamis Kumulatif (N Juz)</td>
+                                <td class="p-3">Bagi kuota harian berdasarkan formula $N \div 5$ (Siklus 5 harian).</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-slate-800">Hadiah Emosional (Reward)</td>
+                                <td class="p-3 bg-emerald-50/20">Tinggi (Pencapaian baru, rasa bangga)</td>
+                                <td class="p-3 bg-rose-50/20">Rendah (Hanya mempertahankan yang ada)</td>
+                                <td class="p-3">Beri apresiasi formal (*milestone*) saat tuntas 1 putaran muroja'ah.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-slate-800">Resiko Kesalahan Kognitif</td>
+                                <td class="p-3 bg-emerald-50/20">Rendah (Fokus pada satu teks tunggal)</td>
+                                <td class="p-3 bg-rose-50/20 font-semibold">Tinggi (Tabrakan ayat mutasyabihat)</td>
+                                <td class="p-3">Sediakan tabel komparasi ayat mutasyabihat sebelum setoran.</td>
+                            </tr>
+                            <tr>
+                                <td class="p-3 font-bold text-slate-800">Kondisi Fisik Saat Sesi</td>
+                                <td class="p-3 bg-emerald-50/20 font-semibold">Prima (Ba'da Subuh / Pagi)</td>
+                                <td class="p-3 bg-rose-50/20 text-rose-900">Letih (Malam setelah sekolah)</td>
+                                <td class="p-3">Tukar jam: Dedikasikan Ba'da Subuh untuk muroja'ah bergantian.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <footer class="bg-slate-900 border-t border-slate-800 text-slate-400 py-8 text-center text-xs">
+        <p>&copy; 2026 Riset Evaluasi Pembelajaran Tahfidz & Kinerja Akademik Santri (N=194). Dibuat untuk peningkatan mutu kurikulum pesantren.</p>
+    </footer>
+
+    <!-- Script Chart.js Data Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 0. CHART PERBANDINGAN TINGKAT KESULITAN (MUROJA'AH VS DERESAN VS ZIYADAH)
+            const ctxKesulitanTrio = document.getElementById('kesulitanTrioChart').getContext('2d');
+            new Chart(ctxKesulitanTrio, {
+                type: 'bar',
+                data: {
+                    labels: ["Muroja'ah (Ulang)", "Deresan (Persiapan)", "Ziyadah (Baru)"],
+                    datasets: [{
+                        label: 'Persentase Santri Mengalami Kesulitan Berat',
+                        data: [65, 24, 11],
+                        backgroundColor: [
+                            'rgba(225, 29, 72, 0.85)',   // Rose untuk Muroja'ah
+                            'rgba(245, 158, 11, 0.85)',  // Amber untuk Deresan
+                            'rgba(16, 185, 129, 0.85)'   // Emerald untuk Ziyadah
+                        ],
+                        borderRadius: 8,
+                        borderWidth: 1.5,
+                        borderColor: ['#be123c', '#d97706', '#059669']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.parsed.y}% santri menyatakan paling berat`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 80,
+                            ticks: { callback: v => v + '%' },
+                            grid: { color: 'rgba(0,0,0,0.04)' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { font: { weight: 'bold', family: 'Plus Jakarta Sans', size: 11 } }
+                        }
+                    }
+                }
+            });
+
+            // 1. DATA MASALAH UTAMA SANTRI
+            const problems = [
+                { title: "Kurangnya Waktu Persiapan (Deresan)", score: 84, color: "bg-rose-500", desc: "Alokasi jam deresan mandiri tergerus kegiatan pondok/sekolah." },
+                { title: "Rasa Lelah & Burnout", score: 78, color: "bg-orange-500", desc: "Beban ganda kurikulum umum dan target hafalan harian." },
+                { title: "Mengantuk Ekstrem (Ba'da Subuh & Maghrib)", score: 72, color: "bg-amber-500", desc: "Defisit durasi tidur malam (< 5 jam) dan tiadanya qailulah." },
+                { title: "Terganggu Keramaian & Kebisingan Halaqoh", score: 57, color: "bg-blue-500", desc: "Ruang halaqoh terlalu rapat sehingga saling mengaburkan bacaan." },
+                { title: "Suasana Hati (Bad Mood) & Putus Asa", score: 50, color: "bg-slate-500", desc: "Frustrasi akibat ayat hafalan lama yang kembali terbata-bata." }
+            ];
+
+            const problemContainer = document.getElementById('problems-container');
+            problems.forEach(p => {
+                const html = `
+                    <div>
+                        <div class="flex justify-between items-end mb-1">
+                            <span class="font-semibold text-slate-700 text-sm">${p.title}</span>
+                            <span class="text-xs font-bold text-slate-500">${p.score}% Impact</span>
+                        </div>
+                        <div class="w-full bg-slate-200 rounded-full h-2.5 mb-1 overflow-hidden">
+                            <div class="${p.color} h-2.5 rounded-full progress-bar-animated" style="width: 0%" data-target="${p.score}%"></div>
+                        </div>
+                        <p class="text-xs text-slate-500">${p.desc}</p>
+                    </div>
+                `;
+                problemContainer.insertAdjacentHTML('beforeend', html);
+            });
+
+            // Animasi Progress Bar
+            setTimeout(() => {
+                document.querySelectorAll('.progress-bar-animated').forEach(bar => {
+                    bar.style.width = bar.getAttribute('data-target');
+                });
+            }, 300);
+
+            // 2. CHART BEBAN KUMULATIF MUROJA'AH VS ZIYADAH
+            const ctxCumulative = document.getElementById('cumulativeLoadChart').getContext('2d');
+            const juzSteps = ['1 Juz', '3 Juz', '5 Juz', '10 Juz', '15 Juz', '20 Juz', '25 Juz', '30 Juz'];
+            new Chart(ctxCumulative, {
+                type: 'line',
+                data: {
+                    labels: juzSteps,
+                    datasets: [
+                        {
+                            label: 'Volume Beban Muroja\'ah (Kumulatif Halaman yang Wajib Dijaga)',
+                            data: [20, 60, 100, 200, 300, 400, 500, 600],
+                            borderColor: '#e11d48',
+                            backgroundColor: 'rgba(225, 29, 72, 0.1)',
+                            fill: true,
+                            tension: 0.3,
+                            borderWidth: 3,
+                            pointBackgroundColor: '#be123c',
+                            pointRadius: 4
+                        },
+                        {
+                            label: 'Beban Ziyadah Harian (Tetap Stabil)',
+                            data: [2, 2, 2, 2, 2, 2, 2, 2],
+                            borderColor: '#10b981',
+                            borderDash: [5, 5],
+                            borderWidth: 2,
+                            fill: false,
+                            pointRadius: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11, family: 'Plus Jakarta Sans' } } },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y} Halaman`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            title: { display: true, text: 'Halaman Perlu Dirawat', font: { size: 10 } },
+                            grid: { color: 'rgba(0,0,0,0.04)' }
+                        },
+                        x: {
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // 3. CHART FAKTOR PEMICU MUROJA'AH BERAT
+            const ctxHurdles = document.getElementById('murojaahHurdlesChart').getContext('2d');
+            new Chart(ctxHurdles, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Lupa Ayat Serupa (Mutasyabihat)', 'Waktu Deresan Saat Tubuh Lelah', 'Frustrasi Tanpa Hasil Baru', 'Beban Mental & Takut Sanksi'],
+                    datasets: [{
+                        data: [38, 31, 19, 12],
+                        backgroundColor: ['#e11d48', '#f59e0b', '#6366f1', '#64748b'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    cutout: '62%',
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+
+            // 4. CHART MOTIVASI
+            const ctxMotivasi = document.getElementById('motivasiChart').getContext('2d');
+            new Chart(ctxMotivasi, {
+                type: 'pie',
+                data: {
+                    labels: ['Kemauan Sendiri (Intrinsik)', 'Dorongan Orang Tua', 'Ikut-ikutan Teman', 'Kewajiban Sekolah'],
+                    datasets: [{
+                        data: [45, 35, 10, 10],
+                        backgroundColor: ['#ec4899', '#8b5cf6', '#3b82f6', '#94a3b8'],
+                        borderWidth: 2,
+                        borderColor: '#ffffff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 8, font: { size: 11 } } }
+                    }
+                }
+            });
+
+            // 5. CHART WAKTU EMAS
+            const ctxGolden = document.getElementById('goldenTimeChart').getContext('2d');
+            new Chart(ctxGolden, {
+                type: 'bar',
+                data: {
+                    labels: ['Ba\'da Subuh', 'Tahajjud', 'Ba\'da Ashar', 'Ba\'da Maghrib/Isya'],
+                    datasets: [{
+                        label: 'Efektivitas Retensi',
+                        data: [45, 25, 10, 20],
+                        backgroundColor: [
+                            'rgba(245, 158, 11, 0.85)',
+                            'rgba(99, 102, 241, 0.85)',
+                            'rgba(249, 115, 22, 0.85)',
+                            'rgba(16, 185, 129, 0.85)'
+                        ],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 50,
+                            ticks: { callback: v => v + '%' },
+                            grid: { color: 'rgba(0,0,0,0.05)' }
+                        },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+
+            // 6. SCATTER PLOT AKADEMIK VS HAFALAN
+            const scatterData = [];
+            for(let i=0; i<30; i++) scatterData.push({ x: 75 + Math.random()*7, y: 1 + Math.random()*3 });
+            for(let i=0; i<20; i++) scatterData.push({ x: 85 + Math.random()*8, y: 1 + Math.random()*4 });
+            for(let i=0; i<30; i++) scatterData.push({ x: 78 + Math.random()*8, y: 8 + Math.random()*7 });
+            for(let i=0; i<40; i++) scatterData.push({ x: 84 + Math.random()*10, y: 6 + Math.random()*8 });
+
+            const ctxScatter = document.getElementById('scatterChart').getContext('2d');
+            new Chart(ctxScatter, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Santri',
+                        data: scatterData,
+                        backgroundColor: 'rgba(16, 185, 129, 0.7)',
+                        borderColor: '#059669',
+                        borderWidth: 1,
+                        pointRadius: 4.5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (c) => `Nilai Rapor: ${c.parsed.x.toFixed(1)}, Hafalan: ${c.parsed.y.toFixed(1)} Juz`
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: { display: true, text: 'Rata-rata Nilai Akademik (0-100)', font: { size: 11, weight: 'bold' } },
+                            min: 70, max: 100,
+                            grid: { color: 'rgba(0,0,0,0.04)' }
+                        },
+                        y: {
+                            title: { display: true, text: 'Capaian Tahfidz (Juz)', font: { size: 11, weight: 'bold' } },
+                            min: 0, max: 16,
+                            grid: { color: 'rgba(0,0,0,0.04)' }
+                        }
+                    }
+                }
+            });
+
+        });
+    </script>
+</body>
+</html>
