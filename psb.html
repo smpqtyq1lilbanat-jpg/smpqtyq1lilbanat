@@ -3,16 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informasi PSB 2026/2027 - SMPQT Yanbu'ul Qur'an 1 Lil Banat</title>
+    <title>Informasi PSB 2027/2028 - SMPQT Yanbu'ul Qur'an 1 Lil Banat</title>
     
-    <!-- Favicon (Ikon Tab Browser) -->
+    <!-- Favicon -->
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="logo.png">
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Inter untuk body, Poppins untuk heading (lebih modern) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Merriweather:ital,wght@0,400;0,700;1,400&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -27,270 +27,398 @@
                 extend: {
                     colors: {
                         primary: {
-                            50: '#f0fdf4',
-                            100: '#dcfce7',
-                            500: '#22c55e',
-                            600: '#16a34a',
-                            700: '#15803d',
-                            800: '#166534',
-                            900: '#14532d',
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            500: '#10b981', // Emerald 500
+                            600: '#059669',
+                            700: '#047857',
+                            800: '#065f46',
+                            900: '#064e3b',
                         },
                         secondary: {
-                            400: '#fbbf24',
-                            500: '#f59e0b',
+                            400: '#fbbf24', // Amber 400
+                            500: '#f59e0b', // Amber 500
                             600: '#d97706',
                         }
                     },
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
-                        serif: ['Merriweather', 'serif'],
+                        heading: ['Poppins', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'soft': '0 10px 40px -10px rgba(0,0,0,0.08)',
+                        'glow': '0 0 20px rgba(245, 158, 11, 0.5)',
                     }
                 }
             }
         }
     </script>
+    <style>
+        /* Custom scrollbar for a polished look */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
 </head>
-<body class="font-sans text-gray-800 bg-slate-50 antialiased selection:bg-primary-500 selection:text-white">
+<body class="font-sans text-gray-700 bg-slate-50 antialiased selection:bg-secondary-500 selection:text-white">
 
-    <!-- Simple Navbar -->
-    <nav class="w-full z-40 bg-white shadow-sm sticky top-0">
+    <!-- Glassmorphism Navbar -->
+    <nav class="fixed w-full z-50 top-0 transition-all duration-300 bg-white/70 backdrop-blur-lg border-b border-white/20 shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center h-16">
-                <a href="index.html" class="flex items-center text-primary-800 hover:text-primary-600 transition font-medium">
-                    <i class="fas fa-arrow-left mr-2"></i> Kembali ke Beranda
+            <div class="flex justify-between items-center h-20">
+                <a href="index.html" class="group flex items-center px-4 py-2 bg-slate-100/50 rounded-full hover:bg-primary-50 text-slate-600 hover:text-primary-700 transition-all duration-300 font-medium text-sm">
+                    <i class="fas fa-arrow-left mr-2 group-hover:-translate-x-1 transition-transform"></i> Beranda
                 </a>
-                <div class="flex items-center">
-                    <img src="logo.png" alt="Logo SMPQT" class="w-10 h-10 object-contain" onerror="this.style.display='none'">
-                    <span class="font-bold text-primary-900 ml-2 hidden sm:block">SMPQT Yanbu'ul Qur'an 1</span>
+                <div class="flex items-center space-x-3">
+                    <div class="bg-white p-1.5 rounded-full shadow-sm border border-slate-100">
+                        <img src="logo.png" alt="Logo" class="w-10 h-10 object-contain rounded-full" onerror="this.src='https://placehold.co/100x100/064e3b/ffffff?text=YQ'">
+                    </div>
+                    <span class="font-heading font-bold text-primary-900 text-lg hidden sm:block tracking-tight">
+                        SMPQT Yanbu'ul Qur'an 1
+                    </span>
                 </div>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Header -->
-    <header class="relative bg-primary-900 text-white pt-20 pb-24 overflow-hidden">
-        <div class="absolute inset-0 z-0 opacity-20">
-            <img src="foto gedung.png" alt="Background" class="w-full h-full object-cover">
+    <!-- Hero Header with Gradients -->
+    <header class="relative pt-32 pb-28 lg:pt-40 lg:pb-36 overflow-hidden bg-gradient-to-br from-primary-900 via-primary-800 to-primary-900">
+        <!-- Decorative Background Elements -->
+        <div class="absolute inset-0 z-0">
+            <img src="foto gedung.png" alt="Background" class="w-full h-full object-cover opacity-20 mix-blend-overlay" onerror="this.style.display='none'">
+            <div class="absolute inset-0 bg-gradient-to-t from-primary-900 via-transparent to-transparent opacity-80"></div>
+            <!-- Glow blobs -->
+            <div class="absolute top-0 left-1/4 w-96 h-96 bg-primary-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-40 animate-pulse"></div>
+            <div class="absolute bottom-0 right-1/4 w-96 h-96 bg-secondary-500 rounded-full mix-blend-multiply filter blur-[128px] opacity-20"></div>
         </div>
-        <div class="relative z-10 max-w-5xl mx-auto px-4 text-center">
-            <span class="inline-block py-1.5 px-4 rounded-full bg-secondary-500 text-white font-bold text-sm tracking-wider mb-6 animate-pulse shadow-lg">
-                KUOTA TERBATAS: 250 PENDAFTAR
-            </span>
-            <h1 class="text-4xl md:text-5xl font-extrabold font-serif mb-4 leading-tight">
-                Penerimaan Santri Baru (PSB) <br>
-                <span class="text-secondary-400">Tahun Ajaran 2026/2027</span>
+
+        <div class="relative z-10 max-w-5xl mx-auto px-4 text-center flex flex-col items-center">
+            <!-- Badge -->
+            <div class="inline-flex items-center px-4 py-2 rounded-full bg-secondary-500/10 border border-secondary-500/30 text-secondary-400 font-semibold text-sm tracking-wide mb-8 backdrop-blur-sm shadow-[0_0_15px_rgba(245,158,11,0.2)]">
+                <i class="fas fa-star mr-2 animate-spin-slow"></i> KUOTA TERBATAS: 250 PENDAFTAR
+            </div>
+            
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-extrabold font-heading text-white mb-6 leading-tight tracking-tight">
+                Penerimaan Santri Baru <br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-secondary-400 to-amber-200">
+                    Tahun Ajaran 2027/2028
+                </span>
             </h1>
-            <p class="text-lg text-primary-100 max-w-2xl mx-auto mb-10">
-                Bergabunglah bersama kami mewujudkan generasi Qur'ani yang unggul, berkarakter, dan menguasai IPTEK.
+            
+            <p class="text-lg md:text-xl text-primary-50 max-w-2xl mx-auto mb-10 font-light leading-relaxed">
+                Bergabunglah bersama kami mewujudkan generasi Qur'ani yang unggul, berkarakter, dan menguasai IPTEK di era digital.
             </p>
-            <a href="https://psb.ptyqsapa.com/" target="_blank" class="inline-flex items-center justify-center bg-white text-primary-800 hover:bg-gray-100 px-8 py-4 rounded-full font-bold text-lg transition shadow-xl transform hover:-translate-y-1">
-                Daftar Sekarang <i class="fas fa-external-link-alt ml-2 text-sm"></i>
+            
+            <!-- Primary CTA -->
+            <a href="https://psb.yqbs1.or.id/" target="_blank" class="group relative inline-flex items-center justify-center px-8 py-4 font-bold text-white transition-all duration-300 bg-gradient-to-r from-secondary-500 to-orange-500 rounded-full shadow-glow hover:shadow-[0_0_30px_rgba(245,158,11,0.6)] hover:-translate-y-1 overflow-hidden">
+                <span class="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-gradient-to-b from-transparent via-transparent to-black"></span>
+                <span class="relative flex items-center text-lg">
+                    Daftar Sekarang <i class="fas fa-arrow-right ml-3 group-hover:translate-x-2 transition-transform"></i>
+                </span>
             </a>
         </div>
-        <!-- Decorative wave -->
-        <div class="absolute bottom-0 w-full overflow-hidden leading-none rotate-180">
-            <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none" class="relative block w-full h-[40px] md:h-[60px]">
+
+        <!-- Decorative Bottom Wave -->
+        <div class="absolute bottom-0 w-full overflow-hidden leading-none rotate-180 translate-y-[1px]">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none" class="relative block w-full h-[50px] md:h-[80px]">
                 <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="fill-slate-50"></path>
             </svg>
         </div>
     </header>
 
     <!-- Alur Pendaftaran (Timeline) -->
-    <section class="py-16 -mt-10 relative z-20">
-        <div class="max-w-7xl mx-auto px-4">
-            <h2 class="text-2xl font-bold text-center text-primary-900 mb-10 font-serif">Alur Pendaftaran (STEP)</h2>
-            <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+    <section class="py-16 bg-slate-50 relative z-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-secondary-500 font-bold tracking-wider uppercase text-sm mb-2">Langkah Mudah</h2>
+                <h3 class="text-3xl md:text-4xl font-bold font-heading text-slate-900">Alur Pendaftaran PSB</h3>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-6 relative">
+                <!-- Connecting Line for Desktop -->
+                <div class="hidden lg:block absolute top-1/2 left-8 right-8 h-0.5 bg-gradient-to-r from-primary-200 via-secondary-300 to-primary-200 -translate-y-1/2 z-0"></div>
+
                 <!-- Step 1 -->
-                <div class="bg-white rounded-xl p-6 shadow-lg border-t-4 border-primary-500 text-center hover:-translate-y-2 transition duration-300">
-                    <div class="w-12 h-12 bg-primary-100 text-primary-700 font-bold rounded-full flex items-center justify-center mx-auto mb-4 text-xl">01</div>
-                    <h3 class="font-bold text-gray-800 mb-2">Pendaftaran Online</h3>
-                    <p class="text-sm text-gray-500">15 Okt - 10 Des 2025</p>
+                <div class="relative z-10 bg-white rounded-3xl p-6 shadow-soft hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-slate-100 group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-primary-50 to-primary-100 text-primary-600 rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-sm group-hover:scale-110 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300 rotate-3 group-hover:rotate-0">
+                        <i class="fas fa-globe text-2xl"></i>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-xs font-bold text-primary-500 mb-1 block">LANGKAH 01</span>
+                        <h4 class="font-bold text-slate-800 mb-2 font-heading">Pendaftaran Online</h4>
+                        <p class="text-sm text-slate-500 bg-slate-50 py-1.5 px-3 rounded-lg inline-block">15 Okt - 10 Des 2026</p>
+                    </div>
                 </div>
+
                 <!-- Step 2 -->
-                <div class="bg-white rounded-xl p-6 shadow-lg border-t-4 border-primary-500 text-center hover:-translate-y-2 transition duration-300">
-                    <div class="w-12 h-12 bg-primary-100 text-primary-700 font-bold rounded-full flex items-center justify-center mx-auto mb-4 text-xl">02</div>
-                    <h3 class="font-bold text-gray-800 mb-2">Seleksi Administrasi</h3>
-                    <p class="text-sm text-gray-500">11 - 18 Des 2025</p>
+                <div class="relative z-10 bg-white rounded-3xl p-6 shadow-soft hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-slate-100 group lg:translate-y-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-primary-50 to-primary-100 text-primary-600 rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-sm group-hover:scale-110 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300 -rotate-3 group-hover:rotate-0">
+                        <i class="fas fa-file-signature text-2xl"></i>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-xs font-bold text-primary-500 mb-1 block">LANGKAH 02</span>
+                        <h4 class="font-bold text-slate-800 mb-2 font-heading">Seleksi Administrasi</h4>
+                        <p class="text-sm text-slate-500 bg-slate-50 py-1.5 px-3 rounded-lg inline-block">11 - 18 Des 2026</p>
+                    </div>
                 </div>
-                <!-- Step 3 -->
-                <div class="bg-white rounded-xl p-6 shadow-lg border-t-4 border-secondary-500 text-center hover:-translate-y-2 transition duration-300 relative">
-                    <span class="absolute -top-3 right-2 bg-red-500 text-white text-[10px] px-2 py-1 rounded-full font-bold animate-bounce">Karantina</span>
-                    <div class="w-12 h-12 bg-secondary-100 text-secondary-600 font-bold rounded-full flex items-center justify-center mx-auto mb-4 text-xl">03</div>
-                    <h3 class="font-bold text-gray-800 mb-2">Seleksi Tahfidh & Akademik</h3>
-                    <p class="text-sm text-gray-500">24 - 26 Des 2025</p>
+
+                <!-- Step 3 (Highlight) -->
+                <div class="relative z-10 bg-white rounded-3xl p-6 shadow-[0_10px_40px_-10px_rgba(245,158,11,0.2)] hover:shadow-[0_20px_50px_-10px_rgba(245,158,11,0.3)] hover:-translate-y-3 transition-all duration-300 border border-secondary-200 group ring-4 ring-secondary-50/50">
+                    <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-red-500 to-pink-500 text-white text-[10px] px-3 py-1 rounded-full font-bold shadow-md whitespace-nowrap">Karantina</span>
+                    <div class="w-16 h-16 bg-gradient-to-br from-secondary-400 to-orange-500 text-white rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-lg group-hover:scale-110 transition-all duration-300">
+                        <i class="fas fa-book-quran text-2xl"></i>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-xs font-bold text-secondary-500 mb-1 block">LANGKAH 03</span>
+                        <h4 class="font-bold text-slate-800 mb-2 font-heading">Tahfidh & Akademik</h4>
+                        <p class="text-sm text-slate-700 bg-secondary-50 py-1.5 px-3 rounded-lg inline-block font-medium">24 - 26 Des 2026</p>
+                    </div>
                 </div>
+
                 <!-- Step 4 -->
-                <div class="bg-white rounded-xl p-6 shadow-lg border-t-4 border-primary-500 text-center hover:-translate-y-2 transition duration-300">
-                    <div class="w-12 h-12 bg-primary-100 text-primary-700 font-bold rounded-full flex items-center justify-center mx-auto mb-4 text-xl">04</div>
-                    <h3 class="font-bold text-gray-800 mb-2">Pengumuman Hasil</h3>
-                    <p class="text-sm text-gray-500">4 Januari 2026</p>
+                <div class="relative z-10 bg-white rounded-3xl p-6 shadow-soft hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-slate-100 group lg:translate-y-4">
+                    <div class="w-16 h-16 bg-gradient-to-br from-primary-50 to-primary-100 text-primary-600 rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-sm group-hover:scale-110 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300 rotate-3 group-hover:rotate-0">
+                        <i class="fas fa-bullhorn text-2xl"></i>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-xs font-bold text-primary-500 mb-1 block">LANGKAH 04</span>
+                        <h4 class="font-bold text-slate-800 mb-2 font-heading">Pengumuman Hasil</h4>
+                        <p class="text-sm text-slate-500 bg-slate-50 py-1.5 px-3 rounded-lg inline-block">4 Januari 2027</p>
+                    </div>
                 </div>
+
                 <!-- Step 5 -->
-                <div class="bg-white rounded-xl p-6 shadow-lg border-t-4 border-primary-500 text-center hover:-translate-y-2 transition duration-300">
-                    <div class="w-12 h-12 bg-primary-100 text-primary-700 font-bold rounded-full flex items-center justify-center mx-auto mb-4 text-xl">05</div>
-                    <h3 class="font-bold text-gray-800 mb-2">Daftar Ulang</h3>
-                    <p class="text-sm text-gray-500">5 - 10 Januari 2026</p>
+                <div class="relative z-10 bg-white rounded-3xl p-6 shadow-soft hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 border border-slate-100 group">
+                    <div class="w-16 h-16 bg-gradient-to-br from-primary-50 to-primary-100 text-primary-600 rounded-2xl flex items-center justify-center mb-6 mx-auto shadow-sm group-hover:scale-110 group-hover:bg-primary-600 group-hover:text-white transition-all duration-300 -rotate-3 group-hover:rotate-0">
+                        <i class="fas fa-user-check text-2xl"></i>
+                    </div>
+                    <div class="text-center">
+                        <span class="text-xs font-bold text-primary-500 mb-1 block">LANGKAH 05</span>
+                        <h4 class="font-bold text-slate-800 mb-2 font-heading">Daftar Ulang</h4>
+                        <p class="text-sm text-slate-500 bg-slate-50 py-1.5 px-3 rounded-lg inline-block">5 - 10 Januari 2027</p>
+                    </div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Info & Syarat -->
-    <section class="py-12 bg-white border-y border-gray-100">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-2 gap-12">
-            <!-- Syarat -->
-            <div>
-                <h3 class="text-2xl font-bold text-primary-900 mb-6 font-serif flex items-center">
-                    <i class="fas fa-clipboard-list text-secondary-500 mr-3"></i> Syarat Pendaftaran
-                </h3>
-                <ul class="space-y-4">
-                    <li class="flex items-start">
-                        <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
-                        <span class="text-gray-700">File foto terbaru ukuran 3 x 4 (baju putih, kerudung putih, latar belakang warna merah).</span>
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
-                        <span class="text-gray-700">Scan surat keterangan aktif sekolah (atau ijazah bagi yang sudah lulus).</span>
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
-                        <span class="text-gray-700">Scan Kartu Keluarga (KK) dan Akta Kelahiran.</span>
-                    </li>
-                    <li class="flex items-start">
-                        <i class="fas fa-check text-green-500 mt-1 mr-3"></i>
-                        <span class="text-gray-700">Memiliki nomor WA dan Email yang aktif.</span>
-                    </li>
-                </ul>
+    <section class="py-20 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+                
+                <!-- Left Column: Syarat & Materi -->
+                <div class="space-y-12">
+                    <!-- Syarat -->
+                    <div class="bg-slate-50 p-8 rounded-3xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow">
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 bg-secondary-100 text-secondary-500 rounded-xl flex items-center justify-center mr-4">
+                                <i class="fas fa-clipboard-list text-xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold font-heading text-slate-800">Syarat Pendaftaran</h3>
+                        </div>
+                        <ul class="space-y-4">
+                            <li class="flex items-start bg-white p-4 rounded-2xl shadow-sm border border-slate-50">
+                                <div class="bg-green-100 rounded-full p-1 mt-0.5 mr-3 flex-shrink-0">
+                                    <i class="fas fa-check text-primary-500 text-sm w-4 h-4 flex items-center justify-center"></i>
+                                </div>
+                                <span class="text-slate-600 text-sm leading-relaxed">File foto terbaru ukuran 3x4 (baju putih, kerudung putih, latar belakang warna merah).</span>
+                            </li>
+                            <li class="flex items-start bg-white p-4 rounded-2xl shadow-sm border border-slate-50">
+                                <div class="bg-green-100 rounded-full p-1 mt-0.5 mr-3 flex-shrink-0">
+                                    <i class="fas fa-check text-primary-500 text-sm w-4 h-4 flex items-center justify-center"></i>
+                                </div>
+                                <span class="text-slate-600 text-sm leading-relaxed">Scan surat keterangan aktif sekolah (atau ijazah bagi yang sudah lulus).</span>
+                            </li>
+                            <li class="flex items-start bg-white p-4 rounded-2xl shadow-sm border border-slate-50">
+                                <div class="bg-green-100 rounded-full p-1 mt-0.5 mr-3 flex-shrink-0">
+                                    <i class="fas fa-check text-primary-500 text-sm w-4 h-4 flex items-center justify-center"></i>
+                                </div>
+                                <span class="text-slate-600 text-sm leading-relaxed">Scan Kartu Keluarga (KK) dan Akta Kelahiran.</span>
+                            </li>
+                            <li class="flex items-start bg-white p-4 rounded-2xl shadow-sm border border-slate-50">
+                                <div class="bg-green-100 rounded-full p-1 mt-0.5 mr-3 flex-shrink-0">
+                                    <i class="fas fa-check text-primary-500 text-sm w-4 h-4 flex items-center justify-center"></i>
+                                </div>
+                                <span class="text-slate-600 text-sm leading-relaxed">Memiliki nomor WA dan Email yang aktif.</span>
+                            </li>
+                        </ul>
+                    </div>
 
-                <h3 class="text-2xl font-bold text-primary-900 mt-10 mb-6 font-serif flex items-center">
-                    <i class="fas fa-file-alt text-secondary-500 mr-3"></i> Materi Ujian Seleksi
-                </h3>
-                <div class="bg-slate-50 p-6 rounded-xl border border-gray-100">
-                    <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-700">
-                        <li><i class="fas fa-angle-right text-primary-500 mr-2"></i> Tes Baca Al-Qur'an</li>
-                        <li><i class="fas fa-angle-right text-primary-500 mr-2"></i> Hafalan khusus (ditentukan panitia)</li>
-                        <li><i class="fas fa-angle-right text-primary-500 mr-2"></i> Hafalan QS. Adh-Dhuha s.d An-Nas</li>
-                        <li><i class="fas fa-angle-right text-primary-500 mr-2"></i> Tes Imla' dan Pegon</li>
-                        <li><i class="fas fa-angle-right text-primary-500 mr-2"></i> Tes Tertulis Umum & PAI</li>
-                    </ul>
-                </div>
-            </div>
-
-            <!-- Tata Cara -->
-            <div>
-                <h3 class="text-2xl font-bold text-primary-900 mb-6 font-serif flex items-center">
-                    <i class="fas fa-laptop text-secondary-500 mr-3"></i> Tata Cara Pendaftaran
-                </h3>
-                <div class="space-y-6">
-                    <div class="flex">
-                        <div class="flex-shrink-0 mr-4">
-                            <div class="w-8 h-8 rounded-full bg-primary-600 text-white flex items-center justify-center font-bold text-sm">1</div>
+                    <!-- Materi -->
+                    <div>
+                        <div class="flex items-center mb-6">
+                            <div class="w-12 h-12 bg-primary-100 text-primary-600 rounded-xl flex items-center justify-center mr-4">
+                                <i class="fas fa-book-open text-xl"></i>
+                            </div>
+                            <h3 class="text-2xl font-bold font-heading text-slate-800">Materi Ujian Seleksi</h3>
                         </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800">Buat Akun PSB</h4>
-                            <p class="text-gray-600 text-sm mt-1">Buat akun pendaftaran melalui website <a href="https://psb.ptyqsapa.com/" target="_blank" class="text-blue-600 hover:underline font-medium">psb.ptyqsapa.com</a></p>
-                        </div>
-                    </div>
-                    <div class="flex">
-                        <div class="flex-shrink-0 mr-4">
-                            <div class="w-8 h-8 rounded-full bg-primary-600 text-white flex items-center justify-center font-bold text-sm">2</div>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800">Isi Formulir</h4>
-                            <p class="text-gray-600 text-sm mt-1">Lengkapi data diri dan unggah berkas persyaratan yang diminta.</p>
-                        </div>
-                    </div>
-                    <div class="flex">
-                        <div class="flex-shrink-0 mr-4">
-                            <div class="w-8 h-8 rounded-full bg-primary-600 text-white flex items-center justify-center font-bold text-sm">3</div>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800">Bayar Administrasi Pendaftaran</h4>
-                            <p class="text-gray-600 text-sm mt-1">Lakukan pembayaran sebesar <strong>Rp 650.000,-</strong> melalui Virtual Account (VA) yang akan muncul maksimal 24 jam setelah pendaftaran.</p>
-                        </div>
-                    </div>
-                    <div class="flex">
-                        <div class="flex-shrink-0 mr-4">
-                            <div class="w-8 h-8 rounded-full bg-primary-600 text-white flex items-center justify-center font-bold text-sm">4</div>
-                        </div>
-                        <div>
-                            <h4 class="font-bold text-gray-800">Unduh Bukti</h4>
-                            <p class="text-gray-600 text-sm mt-1">Unduh dan simpan bukti pendaftaran Anda.</p>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="flex items-center bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                                <i class="fas fa-chevron-right text-secondary-500 mr-3 text-sm"></i>
+                                <span class="text-slate-700 text-sm font-medium">Tes Baca Al-Qur'an</span>
+                            </div>
+                            <div class="flex items-center bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                                <i class="fas fa-chevron-right text-secondary-500 mr-3 text-sm"></i>
+                                <span class="text-slate-700 text-sm font-medium">Hafalan khusus panitia</span>
+                            </div>
+                            <div class="flex items-center bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                                <i class="fas fa-chevron-right text-secondary-500 mr-3 text-sm"></i>
+                                <span class="text-slate-700 text-sm font-medium">Hafalan QS. Adh-Dhuha - An-Nas</span>
+                            </div>
+                            <div class="flex items-center bg-slate-50 p-3.5 rounded-xl border border-slate-100">
+                                <i class="fas fa-chevron-right text-secondary-500 mr-3 text-sm"></i>
+                                <span class="text-slate-700 text-sm font-medium">Tes Imla' dan Pegon</span>
+                            </div>
+                            <div class="flex items-center bg-slate-50 p-3.5 rounded-xl border border-slate-100 sm:col-span-2">
+                                <i class="fas fa-chevron-right text-secondary-500 mr-3 text-sm"></i>
+                                <span class="text-slate-700 text-sm font-medium">Tes Tertulis Umum & Pendidikan Agama Islam (PAI)</span>
+                            </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Right Column: Tata Cara -->
+                <div>
+                    <div class="sticky top-28 bg-gradient-to-b from-primary-900 to-primary-800 p-8 md:p-10 rounded-[2rem] shadow-xl text-white relative overflow-hidden">
+                        <!-- BG pattern -->
+                        <div class="absolute top-0 right-0 opacity-10 transform translate-x-1/3 -translate-y-1/4">
+                            <i class="fas fa-laptop text-9xl"></i>
+                        </div>
+                        
+                        <h3 class="text-2xl font-bold font-heading mb-8 relative z-10 flex items-center">
+                            <i class="fas fa-laptop-code text-secondary-400 mr-4 text-3xl"></i> 
+                            Tata Cara Pendaftaran
+                        </h3>
+                        
+                        <div class="space-y-8 relative z-10">
+                            <!-- Line connector -->
+                            <div class="absolute left-[1.15rem] top-8 bottom-8 w-0.5 bg-primary-700/50"></div>
+                            
+                            <div class="flex relative">
+                                <div class="flex-shrink-0 mr-5 relative z-10">
+                                    <div class="w-10 h-10 rounded-full bg-secondary-500 text-white flex items-center justify-center font-bold text-lg shadow-lg ring-4 ring-primary-900">1</div>
+                                </div>
+                                <div class="pt-1.5">
+                                    <h4 class="font-bold text-white text-lg font-heading">Buat Akun PSB</h4>
+                                    <p class="text-primary-100 text-sm mt-2 leading-relaxed">Kunjungi website pendaftaran resmi kami di <a href="https://psb.yqbs1.or.id/" target="_blank" class="text-secondary-300 hover:text-white underline font-semibold transition-colors">psb.yqbs1.or.id</a> untuk membuat akun baru.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex relative">
+                                <div class="flex-shrink-0 mr-5 relative z-10">
+                                    <div class="w-10 h-10 rounded-full bg-primary-700 text-white flex items-center justify-center font-bold text-lg shadow-lg ring-4 ring-primary-900">2</div>
+                                </div>
+                                <div class="pt-1.5">
+                                    <h4 class="font-bold text-white text-lg font-heading">Isi Formulir</h4>
+                                    <p class="text-primary-100 text-sm mt-2 leading-relaxed">Lengkapi seluruh data diri dengan benar dan unggah berkas persyaratan yang diminta ke dalam sistem.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex relative">
+                                <div class="flex-shrink-0 mr-5 relative z-10">
+                                    <div class="w-10 h-10 rounded-full bg-primary-700 text-white flex items-center justify-center font-bold text-lg shadow-lg ring-4 ring-primary-900">3</div>
+                                </div>
+                                <div class="pt-1.5">
+                                    <h4 class="font-bold text-white text-lg font-heading">Bayar Administrasi</h4>
+                                    <p class="text-primary-100 text-sm mt-2 leading-relaxed">Lakukan pembayaran biaya pendaftaran sebesar <strong class="text-secondary-300 bg-black/20 px-2 py-0.5 rounded">Rp 650.000,-</strong> melalui Virtual Account (VA) yang muncul maks 24 jam.</p>
+                                </div>
+                            </div>
+                            
+                            <div class="flex relative">
+                                <div class="flex-shrink-0 mr-5 relative z-10">
+                                    <div class="w-10 h-10 rounded-full bg-primary-700 text-white flex items-center justify-center font-bold text-lg shadow-lg ring-4 ring-primary-900">4</div>
+                                </div>
+                                <div class="pt-1.5">
+                                    <h4 class="font-bold text-white text-lg font-heading">Unduh Bukti</h4>
+                                    <p class="text-primary-100 text-sm mt-2 leading-relaxed">Setelah pembayaran terverifikasi, unduh dan simpan bukti pendaftaran serta kartu ujian Anda.</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mt-10 pt-8 border-t border-primary-700/50 text-center relative z-10">
+                            <a href="https://psb.yqbs1.or.id/" target="_blank" class="inline-block w-full bg-white text-primary-900 hover:bg-slate-100 px-6 py-4 rounded-xl font-bold transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-center">
+                                Mulai Pendaftaran <i class="fas fa-external-link-alt ml-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </section>
 
     <!-- Rincian Biaya -->
-    <section class="py-16 bg-slate-50">
-        <div class="max-w-5xl mx-auto px-4">
-            <div class="text-center mb-10">
-                <h2 class="text-3xl font-bold text-primary-900 font-serif">Rincian Biaya Pendidikan</h2>
-                <p class="text-gray-600 mt-2">Transparan dan terjangkau untuk fasilitas pendidikan Boarding School terbaik.</p>
+    <section class="py-20 bg-slate-50 border-t border-slate-200/60">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-secondary-500 font-bold tracking-wider uppercase text-sm mb-2">Investasi Akhirat</h2>
+                <h3 class="text-3xl md:text-4xl font-bold font-heading text-slate-900">Rincian Biaya Pendidikan</h3>
+                <p class="text-slate-500 mt-4 max-w-2xl mx-auto">Biaya yang transparan dan terjangkau untuk fasilitas pendidikan Boarding School terpadu dengan standar kualitas terbaik.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Daftar Ulang -->
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-                    <div class="bg-primary-800 py-4 text-center">
-                        <h3 class="text-xl font-bold text-white">Biaya Daftar Ulang</h3>
-                        <p class="text-primary-200 text-sm">Dibayarkan 1x saat diterima</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-12 items-stretch">
+                <!-- Daftar Ulang Card -->
+                <div class="bg-white rounded-[2rem] shadow-soft hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 flex flex-col h-full group">
+                    <div class="bg-gradient-to-r from-primary-800 to-primary-600 p-8 text-center relative overflow-hidden">
+                        <div class="absolute -right-4 -top-4 w-24 h-24 bg-white/10 rounded-full blur-xl"></div>
+                        <h3 class="text-2xl font-bold text-white font-heading relative z-10">Biaya Daftar Ulang</h3>
+                        <p class="text-primary-100 text-sm mt-2 relative z-10 bg-black/10 inline-block px-3 py-1 rounded-full">Dibayarkan 1x saat diterima</p>
                     </div>
-                    <div class="p-6">
-                        <table class="w-full text-left text-sm mb-6">
-                            <tbody class="divide-y divide-gray-100">
-                                <tr>
-                                    <td class="py-3 text-gray-700">1. Uang Pangkal (Fasilitas Kamar)</td>
-                                    <td class="py-3 text-right font-medium">Rp 3.000.000</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3 text-gray-700">2. Seragam Pondok & Sekolah (8 Stel) & Perlengkapan</td>
-                                    <td class="py-3 text-right font-medium">Rp 2.500.000</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3 text-gray-700">3. Buku, Kitab, dan LKS</td>
-                                    <td class="py-3 text-right font-medium">Rp 2.000.000</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3 text-gray-700">4. Infaq Pengembangan Institusi</td>
-                                    <td class="py-3 text-right font-medium">Rp 9.000.000</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="bg-primary-50 rounded-lg p-4 flex justify-between items-center border border-primary-100">
-                            <span class="font-bold text-primary-900">Total Biaya Masuk</span>
-                            <span class="text-2xl font-extrabold text-primary-700">Rp 16.500.000</span>
+                    <div class="p-8 flex-grow flex flex-col">
+                        <ul class="space-y-4 mb-8 flex-grow">
+                            <li class="flex justify-between items-center py-2 border-b border-slate-50 text-sm sm:text-base">
+                                <span class="text-slate-600 flex items-center"><i class="fas fa-bed text-primary-300 w-6"></i> Uang Pangkal (Fasilitas Kamar)</span>
+                                <span class="font-semibold text-slate-800">Rp 3.000.000</span>
+                            </li>
+                            <li class="flex justify-between items-center py-2 border-b border-slate-50 text-sm sm:text-base">
+                                <span class="text-slate-600 flex items-center"><i class="fas fa-tshirt text-primary-300 w-6"></i> Seragam (8 Stel) & Perlengkapan</span>
+                                <span class="font-semibold text-slate-800">Rp 2.500.000</span>
+                            </li>
+                            <li class="flex justify-between items-center py-2 border-b border-slate-50 text-sm sm:text-base">
+                                <span class="text-slate-600 flex items-center"><i class="fas fa-book text-primary-300 w-6"></i> Buku, Kitab, dan LKS</span>
+                                <span class="font-semibold text-slate-800">Rp 2.000.000</span>
+                            </li>
+                            <li class="flex justify-between items-center py-2 border-b border-slate-50 text-sm sm:text-base">
+                                <span class="text-slate-600 flex items-center"><i class="fas fa-building text-primary-300 w-6"></i> Infaq Pengembangan Institusi</span>
+                                <span class="font-semibold text-slate-800">Rp 9.000.000</span>
+                            </li>
+                        </ul>
+                        <div class="mt-auto bg-primary-50 rounded-2xl p-6 flex justify-between items-center border border-primary-100 group-hover:bg-primary-100 transition-colors">
+                            <span class="font-bold text-primary-900 font-heading">Total Masuk</span>
+                            <span class="text-2xl font-extrabold text-primary-600 font-heading">Rp 16.500.000</span>
                         </div>
                     </div>
                 </div>
 
-                <!-- Syahriyah -->
-                <div class="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100 flex flex-col">
-                    <div class="bg-secondary-500 py-4 text-center">
-                        <h3 class="text-xl font-bold text-white">Syahriyah Bulanan</h3>
-                        <p class="text-amber-100 text-sm">Dibayarkan setiap bulan</p>
+                <!-- Syahriyah Card -->
+                <div class="bg-white rounded-[2rem] shadow-soft hover:shadow-xl transition-all duration-300 overflow-hidden border border-slate-100 flex flex-col h-full group">
+                    <div class="bg-gradient-to-r from-secondary-500 to-orange-400 p-8 text-center relative overflow-hidden">
+                        <div class="absolute -left-4 -bottom-4 w-24 h-24 bg-white/20 rounded-full blur-xl"></div>
+                        <h3 class="text-2xl font-bold text-white font-heading relative z-10">Syahriyah Bulanan</h3>
+                        <p class="text-orange-50 text-sm mt-2 relative z-10 bg-black/10 inline-block px-3 py-1 rounded-full">Dibayarkan setiap bulan</p>
                     </div>
-                    <div class="p-6 flex-grow flex flex-col">
-                        <table class="w-full text-left text-sm mb-6 flex-grow">
-                            <tbody class="divide-y divide-gray-100">
-                                <tr>
-                                    <td class="py-3 text-gray-700">
-                                        Operasional Pondok & Sekolah <br>
-                                        <span class="text-xs text-gray-500">(Makan 3x, snack, laundry, kesehatan, dll)</span>
-                                    </td>
-                                    <td class="py-3 text-right font-medium align-top">Rp 1.700.000</td>
-                                </tr>
-                                <tr>
-                                    <td class="py-3 text-gray-700">Program Tabungan Umroh (Wajib)</td>
-                                    <td class="py-3 text-right font-medium">Rp 400.000</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                        <div class="bg-amber-50 rounded-lg p-4 flex justify-between items-center border border-amber-200 mt-auto">
-                            <span class="font-bold text-secondary-600">Total Bulanan</span>
-                            <span class="text-2xl font-extrabold text-secondary-600">Rp 2.100.000</span>
+                    <div class="p-8 flex-grow flex flex-col">
+                        <ul class="space-y-6 mb-8 flex-grow">
+                            <li class="flex justify-between items-start py-2 border-b border-slate-50">
+                                <div class="text-slate-600 flex items-start">
+                                    <i class="fas fa-utensils text-secondary-300 w-6 mt-1"></i> 
+                                    <div>
+                                        <span class="block sm:text-base text-sm">Operasional Pondok & Sekolah</span>
+                                        <span class="text-xs text-slate-400 mt-1 block">Makan 3x, snack, laundry, kesehatan, dll.</span>
+                                    </div>
+                                </div>
+                                <span class="font-semibold text-slate-800 sm:text-base text-sm whitespace-nowrap ml-2">Rp 1.700.000</span>
+                            </li>
+                            <li class="flex justify-between items-center py-2 border-b border-slate-50">
+                                <span class="text-slate-600 flex items-center sm:text-base text-sm"><i class="fas fa-plane text-secondary-300 w-6"></i> Tabungan Umroh (Wajib)</span>
+                                <span class="font-semibold text-slate-800 sm:text-base text-sm">Rp 400.000</span>
+                            </li>
+                        </ul>
+                        <div class="mt-auto bg-amber-50 rounded-2xl p-6 flex justify-between items-center border border-amber-100 group-hover:bg-amber-100 transition-colors">
+                            <span class="font-bold text-secondary-700 font-heading">Total Bulanan</span>
+                            <span class="text-2xl font-extrabold text-secondary-600 font-heading">Rp 2.100.000</span>
                         </div>
                     </div>
                 </div>
@@ -299,67 +427,107 @@
     </section>
 
     <!-- Beasiswa YAQRO -->
-    <section class="py-12 bg-white">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="bg-gradient-to-br from-primary-800 to-primary-900 rounded-2xl p-8 shadow-2xl text-white relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-8 opacity-10">
-                    <i class="fas fa-award text-9xl"></i>
+    <section class="py-20 bg-white">
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="bg-gradient-to-br from-slate-900 via-primary-900 to-slate-900 rounded-[2.5rem] p-8 md:p-12 shadow-2xl text-white relative overflow-hidden flex flex-col md:flex-row items-center gap-10">
+                <!-- Decorative Elements -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-secondary-500 rounded-full mix-blend-overlay filter blur-[80px] opacity-40"></div>
+                <div class="absolute -bottom-10 -left-10 text-white/5 transform -rotate-12 pointer-events-none">
+                    <i class="fas fa-award text-[15rem]"></i>
                 </div>
-                <div class="relative z-10">
-                    <span class="bg-secondary-500 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-4 inline-block">Jalur Khusus</span>
-                    <h2 class="text-3xl font-bold font-serif mb-2">Program Beasiswa YAQRO'</h2>
-                    <p class="text-primary-100 mb-6">(Yatim atau Fuqoro') - <strong class="text-white">Gratis 100% untuk Kuota 10 Siswi</strong></p>
-                    
-                    <div class="bg-white/10 rounded-xl p-5 border border-white/20">
-                        <h4 class="font-semibold mb-3">Syarat Tambahan Beasiswa:</h4>
-                        <ul class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                            <li><i class="fas fa-check-circle text-secondary-400 mr-2"></i> Melampirkan Surat Ket. Tidak Mampu (Desa)</li>
-                            <li><i class="fas fa-check-circle text-secondary-400 mr-2"></i> Fotocopy KIP (Opsional)</li>
-                            <li><i class="fas fa-check-circle text-secondary-400 mr-2"></i> Lulus Seleksi PSB</li>
-                            <li><i class="fas fa-check-circle text-secondary-400 mr-2"></i> Bersedia untuk disurvey</li>
-                            <li><i class="fas fa-check-circle text-secondary-400 mr-2"></i> Foto Rumah (Depan, Tamu, Toilet, Dapur)</li>
-                            <li><i class="fas fa-check-circle text-secondary-400 mr-2"></i> Melampirkan rekening listrik 3 bln terakhir</li>
-                        </ul>
-                    </div>
+                
+                <!-- Content -->
+                <div class="relative z-10 flex-1">
+                    <span class="bg-gradient-to-r from-secondary-400 to-secondary-500 text-white text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider mb-6 inline-block shadow-md">
+                        <i class="fas fa-star text-[10px] mr-1"></i> Jalur Khusus
+                    </span>
+                    <h2 class="text-3xl md:text-4xl font-bold font-heading mb-3">Program Beasiswa YAQRO'</h2>
+                    <p class="text-primary-100 text-lg mb-6 flex items-center">
+                        (Yatim atau Fuqoro') <span class="mx-3 w-1.5 h-1.5 rounded-full bg-secondary-400"></span> 
+                        <strong class="text-secondary-400 text-xl font-heading">Gratis 100%</strong> 
+                    </p>
+                    <p class="bg-white/10 backdrop-blur-sm border border-white/20 px-4 py-2 rounded-lg inline-block text-sm">
+                        <i class="fas fa-users mr-2 text-secondary-400"></i> Terbatas untuk Kuota <strong>10 Siswi</strong>
+                    </p>
+                </div>
+                
+                <!-- Requirements List -->
+                <div class="relative z-10 w-full md:w-[45%] bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-6 shadow-inner">
+                    <h4 class="font-semibold text-secondary-300 mb-4 font-heading border-b border-white/10 pb-2">Syarat Tambahan:</h4>
+                    <ul class="space-y-3 text-sm text-slate-200">
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary-400 mt-0.5 mr-3"></i> Surat Ket. Tidak Mampu (Desa)
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary-400 mt-0.5 mr-3"></i> Fotocopy KIP (Opsional)
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary-400 mt-0.5 mr-3"></i> Lulus Seleksi Utama PSB
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary-400 mt-0.5 mr-3"></i> Bersedia untuk disurvey
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary-400 mt-0.5 mr-3"></i> Foto Rumah (Depan, Tamu, Toilet, Dapur)
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fas fa-check-circle text-secondary-400 mt-0.5 mr-3"></i> Rekening listrik 3 bln terakhir
+                        </li>
+                    </ul>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Testimoni -->
-    <section class="py-16 bg-slate-100">
-        <div class="max-w-6xl mx-auto px-4">
-            <h2 class="text-2xl font-bold text-center text-primary-900 mb-10 font-serif">Kata Wali Santri</h2>
+    <section class="py-20 bg-slate-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-secondary-500 font-bold tracking-wider uppercase text-sm mb-2">Suara Mereka</h2>
+                <h3 class="text-3xl md:text-4xl font-bold font-heading text-slate-900">Kata Wali Santri</h3>
+            </div>
+            
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <!-- Testi 1 -->
-                <div class="bg-white p-8 rounded-2xl shadow-md">
-                    <div class="text-secondary-400 text-4xl mb-4"><i class="fas fa-quote-left"></i></div>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-6 italic">
-                        "Alhamdulillah, setelah menyekolahkan anak saya di sini, saya merasakan perubahan signifikan. Ia kini lebih santun, hormat kepada orang tua, dan semakin peduli lingkungan. Dari segi hafalan, alhamdulillah sudah mencapai 12 juz. YQBS 1 Pati tidak hanya mengajarkan hafalan, tetapi juga membimbing menjadikan Al-Qur'an pedoman hidup nyata."
-                    </p>
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 mr-4">
-                            <i class="fas fa-user-tie"></i>
+                <div class="bg-white p-8 md:p-10 rounded-[2rem] shadow-sm hover:shadow-xl transition-shadow relative border border-slate-100">
+                    <div class="absolute top-8 right-10 text-secondary-100 text-6xl font-serif">"</div>
+                    <div class="relative z-10">
+                        <div class="flex text-secondary-400 mb-6 text-sm">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                         </div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-sm">Kurnia Setiya Putra, S.Sos.</h4>
-                            <p class="text-xs text-gray-500">Professional ESQ Trainer</p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-8 italic">
+                            "Alhamdulillah, setelah menyekolahkan anak saya di sini, saya merasakan perubahan signifikan. Ia kini lebih santun, hormat kepada orang tua, dan semakin peduli lingkungan. Dari segi hafalan, alhamdulillah sudah mencapai 12 juz. YQBS 1 Pati tidak hanya mengajarkan hafalan, tetapi juga membimbing menjadikan Al-Qur'an pedoman hidup nyata."
+                        </p>
+                        <div class="flex items-center pt-6 border-t border-slate-50">
+                            <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 mr-4 flex-shrink-0">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm font-heading">Kurnia Setiya Putra, S.Sos.</h4>
+                                <p class="text-xs text-slate-500">Professional ESQ Trainer</p>
+                            </div>
                         </div>
                     </div>
                 </div>
+
                 <!-- Testi 2 -->
-                <div class="bg-white p-8 rounded-2xl shadow-md">
-                    <div class="text-secondary-400 text-4xl mb-4"><i class="fas fa-quote-left"></i></div>
-                    <p class="text-gray-600 text-sm leading-relaxed mb-6 italic">
-                        "Saya sangat senang bisa memondokkan anak saya di sini. Anak-anak merasa nyaman berkat bimbingan guru yang penuh dedikasi. Sistem pembelajarannya menggabungkan sekolah formal dengan tahfidz Al-Qur'an. Meskipun berat, keduanya dikelola dengan sangat baik, membuktikan manajemen yang kuat."
-                    </p>
-                    <div class="flex items-center">
-                        <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 mr-4">
-                            <i class="fas fa-user-tie"></i>
+                <div class="bg-white p-8 md:p-10 rounded-[2rem] shadow-sm hover:shadow-xl transition-shadow relative border border-slate-100">
+                    <div class="absolute top-8 right-10 text-secondary-100 text-6xl font-serif">"</div>
+                    <div class="relative z-10">
+                        <div class="flex text-secondary-400 mb-6 text-sm">
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
                         </div>
-                        <div>
-                            <h4 class="font-bold text-gray-900 text-sm">Dr. H. Hilmy Muhammad, MA</h4>
-                            <p class="text-xs text-gray-500">Anggota DPD RI</p>
+                        <p class="text-slate-600 text-sm leading-relaxed mb-8 italic">
+                            "Saya sangat senang bisa memondokkan anak saya di sini. Anak-anak merasa nyaman berkat bimbingan guru yang penuh dedikasi. Sistem pembelajarannya menggabungkan sekolah formal dengan tahfidz Al-Qur'an. Meskipun berat, keduanya dikelola dengan sangat baik, membuktikan manajemen yang kuat dan profesional."
+                        </p>
+                        <div class="flex items-center pt-6 border-t border-slate-50">
+                            <div class="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center text-primary-600 mr-4 flex-shrink-0">
+                                <i class="fas fa-user-tie"></i>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-900 text-sm font-heading">Dr. H. Hilmy Muhammad, MA</h4>
+                                <p class="text-xs text-slate-500">Anggota DPD RI</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -368,30 +536,78 @@
     </section>
 
     <!-- Footer & Kontak -->
-    <footer class="bg-primary-900 text-gray-300 py-12 border-t-4 border-secondary-500">
-        <div class="max-w-5xl mx-auto px-4 text-center">
-            <h3 class="text-2xl font-bold text-white mb-6 font-serif">Pusat Informasi & Pendaftaran</h3>
-            
-            <div class="flex flex-col md:flex-row justify-center gap-6 mb-8">
-                <a href="https://wa.me/6281228734789" target="_blank" class="bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-full font-semibold transition flex items-center justify-center">
-                    <i class="fab fa-whatsapp mr-2 text-xl"></i> Admin 1 (0812-2873-4789)
-                </a>
-                <a href="https://wa.me/6281228734790" target="_blank" class="bg-green-600 hover:bg-green-500 text-white px-6 py-3 rounded-full font-semibold transition flex items-center justify-center">
-                    <i class="fab fa-whatsapp mr-2 text-xl"></i> Admin 2 (0812-2873-4790)
-                </a>
+    <footer class="bg-slate-900 pt-20 pb-10 border-t-[6px] border-secondary-500">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-12 mb-16">
+                <!-- Branding -->
+                <div class="md:col-span-5">
+                    <div class="flex items-center mb-6">
+                        <img src="logo.png" alt="Logo SMPQT" class="w-12 h-12 bg-white p-1 rounded-full mr-4" onerror="this.style.display='none'">
+                        <h3 class="text-xl font-bold text-white font-heading">SMPQT Yanbu'ul Qur'an 1</h3>
+                    </div>
+                    <p class="text-slate-400 text-sm leading-relaxed mb-6">
+                        Lembaga pendidikan Islam berbasisi asrama (Boarding School) khusus putri yang memadukan kurikulum nasional dan kurikulum pesantren tahfidh Al-Qur'an.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="https://www.instagram.com/smpqtyq1lilbanat/" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-secondary-500 hover:text-white transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.youtube.com/@yqbs1patiputri" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-secondary-500 hover:text-white transition-colors">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                        <a href="mailto:yqbs1pati@gmail.com" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-secondary-500 hover:text-white transition-colors">
+                            <i class="fas fa-envelope"></i>
+                        </a>
+                        <a href="https://yqbs1.or.id/" target="_blank" class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:bg-secondary-500 hover:text-white transition-colors">
+                            <i class="fas fa-globe"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Kontak -->
+                <div class="md:col-span-7">
+                    <h4 class="text-white font-bold font-heading mb-6 uppercase tracking-wider text-sm">Layanan Informasi Pendaftaran</h4>
+                    
+                    <div class="flex flex-col sm:flex-row gap-4 mb-8">
+                        <a href="https://wa.me/6281228734789" target="_blank" class="flex-1 bg-[#25D366]/10 hover:bg-[#25D366] border border-[#25D366]/30 text-[#25D366] hover:text-white px-6 py-4 rounded-2xl transition-all flex items-center group">
+                            <div class="bg-[#25D366]/20 group-hover:bg-white/20 p-3 rounded-xl mr-4 transition-colors">
+                                <i class="fab fa-whatsapp text-2xl"></i>
+                            </div>
+                            <div>
+                                <span class="block text-xs font-bold uppercase tracking-wider opacity-80 mb-1">Hubungi Admin 1</span>
+                                <span class="block font-medium">0812-2873-4789</span>
+                            </div>
+                        </a>
+                        
+                        <a href="https://wa.me/6281228734790" target="_blank" class="flex-1 bg-[#25D366]/10 hover:bg-[#25D366] border border-[#25D366]/30 text-[#25D366] hover:text-white px-6 py-4 rounded-2xl transition-all flex items-center group">
+                            <div class="bg-[#25D366]/20 group-hover:bg-white/20 p-3 rounded-xl mr-4 transition-colors">
+                                <i class="fab fa-whatsapp text-2xl"></i>
+                            </div>
+                            <div>
+                                <span class="block text-xs font-bold uppercase tracking-wider opacity-80 mb-1">Hubungi Admin 2</span>
+                                <span class="block font-medium">0812-2873-4790</span>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <div class="flex items-start text-slate-400 text-sm">
+                        <i class="fas fa-map-marker-alt text-secondary-500 mt-1 mr-3 text-lg"></i>
+                        <p class="leading-relaxed">
+                            <strong class="text-slate-300 block mb-1">Kampus SMPQT Yanbu'ul Qur'an 1 Lil Banat</strong>
+                            Jl. Raya Pati-Tayu KM 06, Desa Sukoharjo, Kec. Wedarijaksa, <br class="hidden sm:block"> Kab. Pati - Jawa Tengah (Kode Pos: 59152)
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div class="flex justify-center space-x-6 mb-8 text-xl">
-                <a href="https://www.instagram.com/smpqtyq1lilbanat/" class="hover:text-secondary-400 transition"><i class="fab fa-instagram"></i></a>
-                <a href="https://www.youtube.com/@yqbs1patiputri" class="hover:text-secondary-400 transition"><i class="fab fa-youtube"></i></a>
-                <a href="mailto:yqbs1pati@gmail.com" class="hover:text-secondary-400 transition"><i class="fas fa-envelope"></i></a>
-                <a href="https://yqbs1.or.id/" class="hover:text-secondary-400 transition"><i class="fas fa-globe"></i></a>
+            <!-- Copyright -->
+            <div class="border-t border-slate-800 pt-8 flex flex-col md:flex-row justify-between items-center text-xs text-slate-500">
+                <p>&copy; 2026 SMPQT Yanbu'ul Qur'an 1 Lil Banat. All rights reserved.</p>
+                <div class="flex space-x-4 mt-4 md:mt-0">
+                    <a href="https://psb.yqbs1.or.id/" class="hover:text-secondary-400 transition-colors">Portal Pendaftaran</a>
+                    <a href="index.html" class="hover:text-secondary-400 transition-colors">Website Utama</a>
+                </div>
             </div>
-
-            <p class="text-sm text-gray-400 border-t border-gray-700 pt-6">
-                <strong>SMPQT Yanbu'ul Qur'an 1 Lil Banat (Khusus Putri)</strong><br>
-                Jl. Raya Pati-Tayu KM 06, Desa Sukoharjo, Kec. Wedarijaksa, Kab. Pati - Jawa Tengah
-            </p>
         </div>
     </footer>
 
