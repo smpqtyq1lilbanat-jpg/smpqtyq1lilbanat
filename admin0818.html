@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Data Santriwati - SMPQT Yanbu'ul Qur'an 1</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://www.smpqtyq1lilbanat.sch.id/logo.png">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            200: '#bbf7d0',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                            800: '#166534',
+                            900: '#14532d',
+                        },
+                        secondary: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Merriweather', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 6px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        
+        .btn-brutal {
+            transition: all 0.15s ease;
+        }
+        .btn-brutal:active {
+            transform: translateY(3px);
+            box-shadow: 0 0px 0 0 #064e3b !important;
+        }
+        .fade-in {
+            animation: fadeIn 0.25s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="font-sans bg-slate-100 text-gray-800 min-h-screen flex flex-col selection:bg-primary-200 selection:text-primary-900">
+
+    <!-- Top Navigation Bar -->
+    <nav class="bg-white/95 backdrop-blur-md shadow-sm sticky top-0 z-40 border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center gap-3">
+                    <img src="https://www.smpqtyq1lilbanat.sch.id/logo.png" alt="Logo" class="w-9 h-9 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div class="hidden w-9 h-9 bg-primary-700 rounded-xl items-center justify-center text-white font-bold text-sm shadow-sm">YQ</div>
+                    <div>
+                        <span class="font-extrabold text-base sm:text-lg text-primary-900 block leading-none">Database Santriwati</span>
+                        <span class="text-[11px] text-gray-500 font-medium">SMPQT Yanbu'ul Qur'an 1 Lil Banat</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 sm:gap-3">
+                    <button onclick="fetchSantri()" title="Muat Ulang Data" class="p-2.5 text-gray-600 hover:text-primary-700 bg-gray-100 hover:bg-primary-50 rounded-xl transition cursor-pointer">
+                        <i id="refreshIcon" class="fas fa-sync-alt"></i>
+                    </button>
+                    <button onclick="openFormModal()" class="btn-brutal bg-primary-700 hover:bg-primary-800 text-white font-bold text-xs sm:text-sm px-4 py-2.5 rounded-xl border-2 border-[#064e3b] shadow-[0_3px_0_0_#064e3b] flex items-center gap-2 cursor-pointer">
+                        <i class="fas fa-plus"></i>
+                        <span>Tambah Santri</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full flex-grow">
+        
+        <!-- Summary Cards -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-primary-50 text-primary-700 flex items-center justify-center text-xl shrink-0">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Total Santri</p>
+                    <h3 id="statTotal" class="text-2xl font-extrabold text-gray-900">0</h3>
+                </div>
+            </div>
+            
+            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shrink-0">
+                    <i class="fas fa-user-check"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Status Aktif</p>
+                    <h3 id="statAktif" class="text-2xl font-extrabold text-emerald-600">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center text-xl shrink-0">
+                    <i class="fas fa-door-open"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Jumlah Kamar</p>
+                    <h3 id="statKamar" class="text-2xl font-extrabold text-blue-600">0</h3>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 flex items-center gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-amber-50 text-amber-600 flex items-center justify-center text-xl shrink-0">
+                    <i class="fas fa-key"></i>
+                </div>
+                <div>
+                    <p class="text-[11px] font-bold text-gray-400 uppercase tracking-wider">Password Diatur</p>
+                    <h3 id="statPassword" class="text-2xl font-extrabold text-amber-600">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter & Search Bar -->
+        <div class="bg-white p-4 sm:p-5 rounded-2xl shadow-sm border border-gray-100 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-3 sm:gap-4">
+                <!-- Search Input -->
+                <div class="md:col-span-5 relative">
+                    <i class="fas fa-search absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <input type="text" id="searchInput" oninput="applyFilters()" placeholder="Cari NIS, Nama, Musyrifah, atau Kamar..." class="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-100 outline-none transition">
+                </div>
+
+                <!-- Filter Kelas -->
+                <div class="md:col-span-2 relative">
+                    <select id="filterKelas" onchange="applyFilters()" class="w-full pl-3.5 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 focus:bg-white focus:border-primary-500 outline-none appearance-none cursor-pointer">
+                        <option value="">Semua Kelas</option>
+                    </select>
+                    <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none"></i>
+                </div>
+
+                <!-- Filter Kamar -->
+                <div class="md:col-span-2 relative">
+                    <select id="filterKamar" onchange="applyFilters()" class="w-full pl-3.5 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 focus:bg-white focus:border-primary-500 outline-none appearance-none cursor-pointer">
+                        <option value="">Semua Kamar</option>
+                    </select>
+                    <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none"></i>
+                </div>
+
+                <!-- Filter Jenjang -->
+                <div class="md:col-span-3 relative">
+                    <select id="filterJenjang" onchange="applyFilters()" class="w-full pl-3.5 pr-8 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 focus:bg-white focus:border-primary-500 outline-none appearance-none cursor-pointer">
+                        <option value="">Semua Jenjang</option>
+                    </select>
+                    <i class="fas fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-xs text-gray-400 pointer-events-none"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Table Container -->
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="px-5 py-4 border-b border-gray-100 flex flex-wrap justify-between items-center gap-2">
+                <div class="flex items-center gap-2">
+                    <h2 class="font-bold text-gray-900 text-sm sm:text-base">Daftar Santriwati</h2>
+                    <span id="filteredBadge" class="bg-primary-50 text-primary-700 border border-primary-200 text-xs font-bold px-2.5 py-0.5 rounded-lg">0 data</span>
+                </div>
+                <div class="text-xs text-gray-400 font-medium">
+                    Klik ikon <i class="fas fa-edit text-blue-600 mx-0.5"></i> untuk mengedit data baris
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse min-w-[950px]">
+                    <thead>
+                        <tr class="bg-gray-50/80 border-b border-gray-200 text-[11px] uppercase text-gray-500 font-bold tracking-wider">
+                            <th class="py-3.5 px-4 w-12 text-center">No</th>
+                            <th class="py-3.5 px-4 w-28">NIS</th>
+                            <th class="py-3.5 px-4">Nama Lengkap</th>
+                            <th class="py-3.5 px-4 w-24 text-center">Kelas</th>
+                            <th class="py-3.5 px-4">Halaqoh / Musyrifah</th>
+                            <th class="py-3.5 px-4 w-20 text-center">Kamar</th>
+                            <th class="py-3.5 px-4 w-24 text-center">Jenjang</th>
+                            <th class="py-3.5 px-4 w-28 text-center">Status</th>
+                            <th class="py-3.5 px-4 w-32">Password</th>
+                            <th class="py-3.5 px-4 w-28 text-center sticky right-0 bg-gray-50/95 shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.03)]">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody id="santriTableBody" class="text-xs sm:text-sm divide-y divide-gray-100">
+                        <!-- Baris data akan dirender via JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- MODAL TAMBAH / EDIT SANTRI -->
+    <div id="formModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4 overflow-y-auto">
+        <div class="bg-white rounded-[1.75rem] shadow-2xl w-full max-w-xl border border-gray-100 overflow-hidden fade-in my-auto">
+            <!-- Modal Header -->
+            <div class="bg-primary-700 px-6 py-4 flex justify-between items-center text-white">
+                <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-xl bg-white/15 flex items-center justify-center">
+                        <i id="modalIcon" class="fas fa-user-edit"></i>
+                    </div>
+                    <div>
+                        <h3 id="modalTitle" class="font-bold text-base sm:text-lg font-serif">Edit Data Santriwati</h3>
+                        <p id="modalSubtitle" class="text-[11px] text-primary-100">Perbarui informasi biodata dan akun portal santri</p>
+                    </div>
+                </div>
+                <button onclick="closeFormModal()" class="w-8 h-8 rounded-lg bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition cursor-pointer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <!-- Modal Form -->
+            <form id="santriForm" onsubmit="saveSantriData(event)" class="p-6 space-y-4">
+                <input type="hidden" id="fieldId">
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <!-- NIS -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">NIS <span class="text-red-500">*</span></label>
+                        <input type="text" id="fieldNis" required placeholder="Contoh: 26210188" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:bg-white focus:border-primary-500 outline-none transition">
+                    </div>
+
+                    <!-- Jenjang -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">Jenjang</label>
+                        <select id="fieldJenjang" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 focus:bg-white focus:border-primary-500 outline-none transition">
+                            <option value="SMP">SMP</option>
+                            <option value="MA">MA</option>
+                            <option value="MTs">MTs</option>
+                            <option value="PDF">PDF</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Nama Lengkap -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5">Nama Lengkap Santriwati <span class="text-red-500">*</span></label>
+                    <input type="text" id="fieldNama" required placeholder="Masukkan nama lengkap" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-gray-900 uppercase focus:bg-white focus:border-primary-500 outline-none transition">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <!-- Kelas -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">Kelas</label>
+                        <input type="text" id="fieldKelas" placeholder="Contoh: 7-A" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-gray-900 uppercase focus:bg-white focus:border-primary-500 outline-none transition">
+                    </div>
+
+                    <!-- Kamar -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">Nomor Kamar</label>
+                        <input type="text" id="fieldKamar" placeholder="Contoh: 17" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-bold text-gray-900 focus:bg-white focus:border-primary-500 outline-none transition">
+                    </div>
+
+                    <!-- Status Aktif -->
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1.5">Status Santri</label>
+                        <select id="fieldStatus" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-semibold text-gray-900 focus:bg-white focus:border-primary-500 outline-none transition">
+                            <option value="">(Kosong / Default)</option>
+                            <option value="Aktif">Aktif</option>
+                            <option value="Nonaktif">Nonaktif</option>
+                            <option value="Alumni">Alumni</option>
+                            <option value="Boyong">Boyong</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Halaqoh -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1.5">Halaqoh (Musyrifah)</label>
+                    <input type="text" id="fieldHalaqoh" placeholder="Contoh: Ustdzh. Siti Shofiyah Ali" class="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium text-gray-900 focus:bg-white focus:border-primary-500 outline-none transition">
+                </div>
+
+                <!-- Password Portal -->
+                <div class="bg-amber-50/70 p-3.5 rounded-xl border border-amber-200/80">
+                    <div class="flex justify-between items-center mb-1.5">
+                        <label class="block text-xs font-bold text-amber-900">Password Portal Wali</label>
+                        <button type="button" onclick="resetPasswordToNis()" class="text-[11px] font-bold text-primary-700 hover:underline cursor-pointer">
+                            <i class="fas fa-magic mr-1"></i>Samakan dengan NIS
+                        </button>
+                    </div>
+                    <div class="relative">
+                        <input type="text" id="fieldPassword" placeholder="Kosongkan jika belum diatur (NULL)" class="w-full px-3.5 py-2 bg-white border border-amber-200 rounded-lg text-sm font-mono font-semibold text-gray-900 focus:border-amber-500 outline-none transition">
+                    </div>
+                    <p class="text-[10px] text-amber-700 mt-1">Jika dikosongkan, wali santri dapat masuk menggunakan NIS sebagai password default.</p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="pt-2 flex items-center justify-end gap-3 border-t border-gray-100">
+                    <button type="button" onclick="closeFormModal()" class="px-4 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-gray-600 hover:bg-gray-100 transition cursor-pointer">
+                        Batal
+                    </button>
+                    <button type="submit" id="btnSubmitForm" class="btn-brutal bg-primary-700 hover:bg-primary-800 text-white font-bold text-xs sm:text-sm px-6 py-2.5 rounded-xl border-2 border-[#064e3b] shadow-[0_3px_0_0_#064e3b] flex items-center gap-2 cursor-pointer">
+                        <i class="fas fa-save"></i>
+                        <span>Simpan Perubahan</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL KONFIRMASI HAPUS (Pengganti confirm() bawaan browser) -->
+    <div id="deleteModal" class="hidden fixed inset-0 z-50 items-center justify-center bg-gray-900/60 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-6 text-center border border-gray-100 fade-in">
+            <div class="w-14 h-14 rounded-2xl bg-red-50 text-red-600 flex items-center justify-center text-2xl mx-auto mb-4">
+                <i class="fas fa-trash-alt"></i>
+            </div>
+            <h3 class="font-bold text-lg text-gray-900 font-serif">Hapus Data Santri?</h3>
+            <p class="text-xs sm:text-sm text-gray-500 mt-2 leading-relaxed">
+                Anda akan menghapus data <strong id="deleteTargetName" class="text-gray-800">Nama Santri</strong> (<span id="deleteTargetNis" class="font-mono">0000</span>). Tindakan ini tidak dapat dibatalkan.
+            </p>
+            <div class="mt-6 flex gap-3">
+                <button onclick="closeDeleteModal()" class="flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-gray-600 bg-gray-100 hover:bg-gray-200 transition cursor-pointer">
+                    Batal
+                </button>
+                <button id="btnConfirmDelete" onclick="executeDelete()" class="flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-bold text-white bg-red-600 hover:bg-red-700 shadow-sm transition cursor-pointer">
+                    Ya, Hapus
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-5 right-5 z-[60] transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none">
+        <div id="toastContent" class="flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border text-xs sm:text-sm font-bold bg-white text-gray-800 border-gray-200">
+            <i id="toastIcon" class="fas fa-check-circle text-emerald-500 text-lg"></i>
+            <span id="toastMessage">Pesan notifikasi</span>
+        </div>
+    </div>
+
+    <!-- LOGIC SCRIPT -->
+    <script>
+        // Konfigurasi Supabase (Sesuai proyek Anda)
+        const SUPABASE_URL = 'https://vpdlfjbkfcuukyykrhua.supabase.co'; 
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZwZGxmamJrZmN1dWt5eWtyaHVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODIxNzkxNjUsImV4cCI6MjA5Nzc1NTE2NX0.QSHbi71ajuU_AggJJ5xVDeb6jffDRyyuF4C7aYeHW3Y';
+        
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        // State Aplikasi
+        let allSantri = [];
+        let filteredSantri = [];
+        let deleteTargetId = null;
+
+        // Inisialisasi saat halaman dimuat
+        window.addEventListener('DOMContentLoaded', () => {
+            fetchSantri();
+        });
+
+        // Fungsi Escape HTML untuk mencegah XSS
+        function escapeHtml(text) {
+            if (text === null || text === undefined) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Menampilkan Notifikasi Toast
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const icon = document.getElementById('toastIcon');
+            const msg = document.getElementById('toastMessage');
+            const content = document.getElementById('toastContent');
+
+            msg.innerText = message;
+            if (type === 'success') {
+                icon.className = 'fas fa-check-circle text-emerald-500 text-lg';
+                content.className = 'flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border text-xs sm:text-sm font-bold bg-white text-gray-800 border-emerald-200';
+            } else {
+                icon.className = 'fas fa-exclamation-circle text-red-500 text-lg';
+                content.className = 'flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border text-xs sm:text-sm font-bold bg-red-50 text-red-800 border-red-200';
+            }
+
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3200);
+        }
+
+        // Mengambil seluruh data dari tabel 'santri'
+        async function fetchSantri() {
+            const tbody = document.getElementById('santriTableBody');
+            const refreshIcon = document.getElementById('refreshIcon');
+            
+            refreshIcon.classList.add('fa-spin');
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="10" class="py-12 text-center text-gray-400">
+                        <i class="fas fa-circle-notch fa-spin text-2xl text-primary-600 mb-2"></i>
+                        <p class="text-xs font-semibold">Memuat data santriwati dari Supabase...</p>
+                    </td>
+                </tr>
+            `;
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('santri')
+                    .select('*')
+                    .order('kelas', { ascending: true })
+                    .order('nama', { ascending: true });
+
+                if (error) throw error;
+
+                allSantri = data || [];
+                updateStats();
+                populateFilterOptions();
+                applyFilters();
+            } catch (err) {
+                console.error('Error fetching santri:', err);
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="py-10 text-center text-red-500">
+                            <i class="fas fa-exclamation-triangle text-2xl mb-2"></i>
+                            <p class="text-xs font-bold">Gagal memuat data: ${escapeHtml(err.message)}</p>
+                        </td>
+                    </tr>
+                `;
+                showToast('Gagal mengambil data dari server', 'error');
+            } finally {
+                refreshIcon.classList.remove('fa-spin');
+            }
+        }
+
+        // Memperbarui Kartu Statistik
+        function updateStats() {
+            document.getElementById('statTotal').innerText = allSantri.length;
+            
+            const aktifCount = allSantri.filter(s => !s.status_aktif || s.status_aktif.toLowerCase() === 'aktif').length;
+            document.getElementById('statAktif').innerText = aktifCount;
+
+            const uniqueKamar = new Set(allSantri.map(s => s.kamar).filter(Boolean));
+            document.getElementById('statKamar').innerText = uniqueKamar.size;
+
+            const hasPasswordCount = allSantri.filter(s => (s.Password || s.password) && String(s.Password || s.password).trim() !== '').length;
+            document.getElementById('statPassword').innerText = hasPasswordCount;
+        }
+
+        // Mengisi Dropdown Filter Kelas, Kamar, Jenjang secara dinamis
+        function populateFilterOptions() {
+            const kelasSelect = document.getElementById('filterKelas');
+            const kamarSelect = document.getElementById('filterKamar');
+            const jenjangSelect = document.getElementById('filterJenjang');
+
+            const currentKelas = kelasSelect.value;
+            const currentKamar = kamarSelect.value;
+            const currentJenjang = jenjangSelect.value;
+
+            const kelasList = [...new Set(allSantri.map(s => s.kelas).filter(Boolean))].sort();
+            const kamarList = [...new Set(allSantri.map(s => s.kamar).filter(Boolean))].sort((a, b) => Number(a) - Number(b) || a.localeCompare(b));
+            const jenjangList = [...new Set(allSantri.map(s => s.jenjang).filter(Boolean))].sort();
+
+            kelasSelect.innerHTML = '<option value="">Semua Kelas</option>' + kelasList.map(k => `<option value="${escapeHtml(k)}">Kelas ${escapeHtml(k)}</option>`).join('');
+            kamarSelect.innerHTML = '<option value="">Semua Kamar</option>' + kamarList.map(k => `<option value="${escapeHtml(k)}">Kamar ${escapeHtml(k)}</option>`).join('');
+            jenjangSelect.innerHTML = '<option value="">Semua Jenjang</option>' + jenjangList.map(j => `<option value="${escapeHtml(j)}">${escapeHtml(j)}</option>`).join('');
+
+            kelasSelect.value = currentKelas;
+            kamarSelect.value = currentKamar;
+            jenjangSelect.value = currentJenjang;
+        }
+
+        // Menerapkan Pencarian dan Filter
+        function applyFilters() {
+            const query = document.getElementById('searchInput').value.toLowerCase().trim();
+            const kelasFilter = document.getElementById('filterKelas').value;
+            const kamarFilter = document.getElementById('filterKamar').value;
+            const jenjangFilter = document.getElementById('filterJenjang').value;
+
+            filteredSantri = allSantri.filter(s => {
+                const matchSearch = !query || 
+                    (s.nis && s.nis.toLowerCase().includes(query)) ||
+                    (s.nama && s.nama.toLowerCase().includes(query)) ||
+                    (s.halaqoh && s.halaqoh.toLowerCase().includes(query)) ||
+                    (s.kamar && String(s.kamar).toLowerCase().includes(query));
+
+                const matchKelas = !kelasFilter || s.kelas === kelasFilter;
+                const matchKamar = !kamarFilter || String(s.kamar) === kamarFilter;
+                const matchJenjang = !jenjangFilter || s.jenjang === jenjangFilter;
+
+                return matchSearch && matchKelas && matchKamar && matchJenjang;
+            });
+
+            document.getElementById('filteredBadge').innerText = `${filteredSantri.length} data`;
+            renderTable();
+        }
+
+        // Merender Baris Tabel
+        function renderTable() {
+            const tbody = document.getElementById('santriTableBody');
+            
+            if (filteredSantri.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="py-12 text-center text-gray-400">
+                            <i class="fas fa-folder-open text-3xl mb-2 text-gray-300"></i>
+                            <p class="text-xs font-semibold">Tidak ada data santriwati yang cocok dengan pencarian.</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = filteredSantri.map((s, index) => {
+                const pwd = s.Password !== undefined ? s.Password : s.password;
+                const statusText = s.status_aktif || 'Aktif';
+                const isAktif = statusText.toLowerCase() === 'aktif';
+                const statusBadge = isAktif 
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200' 
+                    : 'bg-gray-100 text-gray-600 border-gray-200';
+
+                return `
+                    <tr class="hover:bg-primary-50/40 transition-colors group">
+                        <td class="py-3 px-4 text-center text-gray-400 font-medium">${index + 1}</td>
+                        <td class="py-3 px-4 font-mono font-bold text-primary-800">${escapeHtml(s.nis || '-')}</td>
+                        <td class="py-3 px-4 font-bold text-gray-900">${escapeHtml(s.nama || '-')}</td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 font-bold text-xs">
+                                ${escapeHtml(s.kelas || '-')}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-gray-600 font-medium">${escapeHtml(s.halaqoh || '-')}</td>
+                        <td class="py-3 px-4 text-center font-bold text-gray-700">${escapeHtml(s.kamar || '-')}</td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="px-2 py-0.5 rounded-md bg-gray-100 text-gray-700 font-bold text-[11px]">
+                                ${escapeHtml(s.jenjang || '-')}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 text-center">
+                            <span class="px-2.5 py-1 rounded-full border text-[11px] font-bold ${statusBadge}">
+                                ${escapeHtml(statusText)}
+                            </span>
+                        </td>
+                        <td class="py-3 px-4 font-mono text-xs">
+                            ${pwd 
+                                ? `<span class="bg-amber-50 text-amber-800 border border-amber-200 px-2 py-0.5 rounded font-semibold">${escapeHtml(pwd)}</span>` 
+                                : `<span class="text-gray-400 italic text-[11px]">NULL (Default)</span>`
+                            }
+                        </td>
+                        <td class="py-3 px-4 text-center sticky right-0 bg-white group-hover:bg-primary-50/40 shadow-[-4px_0_6px_-2px_rgba(0,0,0,0.03)]">
+                            <div class="flex items-center justify-center gap-1.5">
+                                <button onclick="openFormModal('${s.id}')" title="Edit Data" class="w-8 h-8 rounded-lg bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white flex items-center justify-center transition cursor-pointer">
+                                    <i class="fas fa-edit text-xs"></i>
+                                </button>
+                                <button onclick="openDeleteModal('${s.id}')" title="Hapus Data" class="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-600 text-red-600 hover:text-white flex items-center justify-center transition cursor-pointer">
+                                    <i class="fas fa-trash-alt text-xs"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // MODAL TAMBAH & EDIT
+        // ==========================================
+        function openFormModal(id = null) {
+            const modal = document.getElementById('formModal');
+            const form = document.getElementById('santriForm');
+            form.reset();
+
+            if (id) {
+                // Mode Edit
+                const santri = allSantri.find(item => item.id === id);
+                if (!santri) return;
+
+                document.getElementById('modalTitle').innerText = 'Edit Data Santriwati';
+                document.getElementById('modalSubtitle').innerText = `Memperbarui data NIS: ${santri.nis}`;
+                document.getElementById('modalIcon').className = 'fas fa-user-edit';
+
+                document.getElementById('fieldId').value = santri.id;
+                document.getElementById('fieldNis').value = santri.nis || '';
+                document.getElementById('fieldNama').value = santri.nama || '';
+                document.getElementById('fieldKelas').value = santri.kelas || '';
+                document.getElementById('fieldHalaqoh').value = santri.halaqoh || '';
+                document.getElementById('fieldKamar').value = santri.kamar || '';
+                document.getElementById('fieldJenjang').value = santri.jenjang || 'SMP';
+                document.getElementById('fieldStatus').value = santri.status_aktif || '';
+                
+                const pwd = santri.Password !== undefined ? santri.Password : santri.password;
+                document.getElementById('fieldPassword').value = pwd || '';
+            } else {
+                // Mode Tambah Baru
+                document.getElementById('modalTitle').innerText = 'Tambah Santriwati Baru';
+                document.getElementById('modalSubtitle').innerText = 'Masukkan data santriwati baru ke database';
+                document.getElementById('modalIcon').className = 'fas fa-user-plus';
+                document.getElementById('fieldId').value = '';
+                document.getElementById('fieldJenjang').value = 'SMP';
+            }
+
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeFormModal() {
+            const modal = document.getElementById('formModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function resetPasswordToNis() {
+            const nisVal = document.getElementById('fieldNis').value.trim();
+            if (!nisVal) {
+                showToast('Isi kolom NIS terlebih dahulu!', 'error');
+                return;
+            }
+            document.getElementById('fieldPassword').value = nisVal;
+        }
+
+        // Menyimpan Data (Insert atau Update) ke Supabase
+        async function saveSantriData(e) {
+            e.preventDefault();
+            const btn = document.getElementById('btnSubmitForm');
+            const originalHTML = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Menyimpan...</span>';
+
+            const id = document.getElementById('fieldId').value;
+            const passwordVal = document.getElementById('fieldPassword').value.trim();
+            const statusVal = document.getElementById('fieldStatus').value;
+
+            const payload = {
+                nis: document.getElementById('fieldNis').value.trim(),
+                nama: document.getElementById('fieldNama').value.trim().toUpperCase(),
+                kelas: document.getElementById('fieldKelas').value.trim().toUpperCase(),
+                halaqoh: document.getElementById('fieldHalaqoh').value.trim(),
+                kamar: document.getElementById('fieldKamar').value.trim(),
+                jenjang: document.getElementById('fieldJenjang').value,
+                status_aktif: statusVal === '' ? null : statusVal,
+                Password: passwordVal === '' ? null : passwordVal
+            };
+
+            try {
+                if (id) {
+                    // Update baris yang ada
+                    const { error } = await supabaseClient
+                        .from('santri')
+                        .update(payload)
+                        .eq('id', id);
+
+                    if (error) throw error;
+                    showToast('Data santriwati berhasil diperbarui!');
+                } else {
+                    // Insert baris baru
+                    const { error } = await supabaseClient
+                        .from('santri')
+                        .insert([payload]);
+
+                    if (error) throw error;
+                    showToast('Santriwati baru berhasil ditambahkan!');
+                }
+
+                closeFormModal();
+                await fetchSantri();
+            } catch (err) {
+                console.error('Error saving data:', err);
+                showToast(`Gagal menyimpan: ${err.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = originalHTML;
+            }
+        }
+
+        // ==========================================
+        // MODAL HAPUS DATA
+        // ==========================================
+        function openDeleteModal(id) {
+            const santri = allSantri.find(item => item.id === id);
+            if (!santri) return;
+
+            deleteTargetId = id;
+            document.getElementById('deleteTargetName').innerText = santri.nama || '-';
+            document.getElementById('deleteTargetNis').innerText = santri.nis || '-';
+
+            const modal = document.getElementById('deleteModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeDeleteModal() {
+            deleteTargetId = null;
+            const modal = document.getElementById('deleteModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        async function executeDelete() {
+            if (!deleteTargetId) return;
+            const btn = document.getElementById('btnConfirmDelete');
+            const originalText = btn.innerText;
+            btn.disabled = true;
+            btn.innerText = 'Menghapus...';
+
+            try {
+                const { error } = await supabaseClient
+                    .from('santri')
+                    .delete()
+                    .eq('id', deleteTargetId);
+
+                if (error) throw error;
+
+                showToast('Data santriwati telah dihapus.');
+                closeDeleteModal();
+                await fetchSantri();
+            } catch (err) {
+                console.error('Error deleting:', err);
+                showToast(`Gagal menghapus: ${err.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerText = originalText;
+            }
+        }
+    </script>
+</body>
+</html>
