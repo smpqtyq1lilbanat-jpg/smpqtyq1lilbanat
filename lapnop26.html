@@ -1,0 +1,2202 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Laporan Survei Kepuasan Wali Santri 2026/2027 — SMPQT YQBS 1 Pati</title>
+
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            emeraldDeep: '#065f46',
+            emeraldMid: '#047857',
+            tealAccent: '#0f766e',
+            warmGold: '#d97706',
+            slateBg: '#f8fafc',
+          },
+          boxShadow: {
+            soft: '0 4px 20px -2px rgba(15, 23, 42, 0.06), 0 2px 6px -1px rgba(15, 23, 42, 0.04)',
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* Gaya dasar dan transisi halus */
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+
+    /* Animasi kemunculan slide */
+    @keyframes fadeSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .tab-section {
+      display: none;
+    }
+    .tab-section.active {
+      display: block;
+      animation: fadeSlideUp 0.28s ease-out forwards;
+    }
+
+    /* Pola geometris Islami halus untuk header & sidebar */
+    .islamic-pattern {
+      background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px),
+                        radial-gradient(rgba(217, 119, 6, 0.14) 1px, transparent 1px);
+      background-size: 24px 24px;
+      background-position: 0 0, 12px 12px;
+    }
+
+    /* Scrollbar halus khusus area konten utama */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+
+    /* Mode Cetak / PDF: Buka semua container flex/scroll agar 7 slide tercetak rapi */
+    @media print {
+      html, body, .app-shell, .main-col, main {
+        height: auto !important;
+        min-height: auto !important;
+        overflow: visible !important;
+        display: block !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+      }
+      #sidebar, #top-header, #presentation-footer, #mobile-overlay, .no-print {
+        display: none !important;
+      }
+      main {
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+      .tab-section {
+        display: block !important;
+        opacity: 1 !important;
+        transform: none !important;
+        page-break-after: always;
+        margin-bottom: 2rem;
+      }
+      .tab-section:last-of-type {
+        page-break-after: auto;
+      }
+      .print-break-avoid {
+        break-inside: avoid;
+      }
+      canvas {
+        max-width: 100% !important;
+      }
+    }
+  </style>
+</head>
+<body class="bg-slateBg text-slate-900 antialiased selection:bg-emerald-100 selection:text-emerald-900 overflow-hidden">
+
+  <!-- Overlay Sidebar Mobile -->
+  <div id="mobile-overlay" class="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 hidden lg:hidden transition-opacity" onclick="toggleMobileMenu(false)"></div>
+
+  <!-- ========================================================= -->
+  <!-- APP SHELL: FULL-HEIGHT FLEX (ANTI-OVERLAP FOOTER)         -->
+  <!-- ========================================================= -->
+  <div class="app-shell h-screen overflow-hidden flex w-full">
+
+    <!-- Sidebar Navigasi (Fixed Drawer di Mobile, Flex Item di Desktop) -->
+    <aside id="sidebar" class="fixed lg:static inset-y-0 left-0 z-50 w-72 shrink-0 h-screen bg-emeraldDeep text-white flex flex-col shadow-xl transform -translate-x-full lg:translate-x-0 transition-transform duration-300 ease-in-out islamic-pattern">
+      <!-- Logo & Identitas Lembaga -->
+      <div class="p-5 border-b border-white/10 shrink-0">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-warmGold flex items-center justify-center shadow-lg text-emerald-950 font-extrabold text-lg">
+              YQ
+            </div>
+            <div>
+              <span class="text-[11px] font-semibold uppercase tracking-wider text-amber-300 block">SMPQT Yanbu'ul Qur'an</span>
+              <span class="text-sm font-bold text-white leading-tight block">1 Lil Banat • Pati</span>
+            </div>
+          </div>
+          <button onclick="toggleMobileMenu(false)" class="lg:hidden p-1.5 rounded-lg hover:bg-white/10 text-emerald-100" aria-label="Tutup Menu">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+        <div class="mt-3.5 bg-white/10 rounded-xl p-3 border border-white/10">
+          <p class="text-[10px] text-emerald-100/80 uppercase tracking-wider font-semibold">Laporan Eksekutif</p>
+          <p class="text-xs font-semibold text-white mt-0.5">Survei Kepuasan Wali Santri 2026/2027</p>
+          <div class="mt-1.5 flex items-center gap-2 text-[11px] text-amber-200">
+            <i data-lucide="calendar" class="w-3.5 h-3.5"></i>
+            <span>16–19 Nov 2026 &bull; n = 57</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Daftar Navigasi 7 Slide Presentasi -->
+      <nav class="flex-1 overflow-y-auto px-3.5 py-4 space-y-1.5" aria-label="Navigasi Bagian Laporan">
+        <button onclick="switchSection(0)" data-nav-index="0" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-sm font-semibold transition-all">
+          <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold nav-badge">1</span>
+          <span class="flex-1 leading-snug">Ringkasan Eksekutif</span>
+        </button>
+        <button onclick="switchSection(1)" data-nav-index="1" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-sm font-semibold transition-all">
+          <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold nav-badge">2</span>
+          <span class="flex-1 leading-snug flex items-center justify-between gap-1.5">
+            <span>Sorotan Kritis</span>
+            <span class="px-1.5 py-0.5 rounded-md bg-rose-500 text-white text-[10px] font-extrabold uppercase tracking-wide">5 Poin</span>
+          </span>
+        </button>
+        <button onclick="switchSection(2)" data-nav-index="2" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-sm font-semibold transition-all">
+          <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold nav-badge">3</span>
+          <span class="flex-1 leading-snug">Analisis 11 Aspek</span>
+        </button>
+        <button onclick="switchSection(3)" data-nav-index="3" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-sm font-semibold transition-all">
+          <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold nav-badge">4</span>
+          <span class="flex-1 leading-snug">Profil Kelas & Halaqoh</span>
+        </button>
+        <button onclick="switchSection(4)" data-nav-index="4" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-sm font-semibold transition-all">
+          <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold nav-badge">5</span>
+          <span class="flex-1 leading-snug">Pembelajaran Tablet</span>
+        </button>
+        <button onclick="switchSection(5)" data-nav-index="5" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-sm font-semibold transition-all">
+          <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold nav-badge">6</span>
+          <span class="flex-1 leading-snug">Analisis Kualitatif</span>
+        </button>
+        <button onclick="switchSection(6)" data-nav-index="6" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-sm font-semibold transition-all">
+          <span class="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold nav-badge">7</span>
+          <span class="flex-1 leading-snug">Rekomendasi & Action Plan</span>
+        </button>
+      </nav>
+
+      <!-- Tombol Cetak / PDF di Sidebar -->
+      <div class="p-4 border-t border-white/10 space-y-2 shrink-0">
+        <button onclick="window.print()" class="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-warmGold hover:bg-amber-600 text-white font-semibold text-sm shadow-md transition">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+          <span>Mode Cetak / PDF</span>
+        </button>
+        <p class="text-[11px] text-center text-emerald-100/70">Navigasi cepat: <kbd class="px-1.5 py-0.5 bg-white/15 rounded text-white">←</kbd> <kbd class="px-1.5 py-0.5 bg-white/15 rounded text-white">→</kbd></p>
+      </div>
+    </aside>
+
+    <!-- Kolom Kanan Utama: Top Header + Scrollable Main + Non-Overlapping Footer -->
+    <div class="main-col flex-1 flex flex-col min-w-0 h-screen overflow-hidden bg-slateBg">
+
+      <!-- 1. TOP HEADER BAR (shrink-0) -->
+      <header id="top-header" class="shrink-0 bg-white border-b border-slate-200 px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between gap-3 z-20 shadow-[0_1px_3px_rgba(15,23,42,0.04)]">
+        <div class="flex items-center gap-3 min-w-0">
+          <button onclick="toggleMobileMenu(true)" class="lg:hidden p-2 rounded-xl bg-emerald-50 text-emeraldDeep hover:bg-emerald-100 transition shrink-0" aria-label="Buka Menu Navigasi">
+            <i data-lucide="menu" class="w-5 h-5"></i>
+          </button>
+          <div class="min-w-0">
+            <div class="flex items-center gap-2">
+              <span class="text-[11px] font-bold uppercase tracking-wider text-emeraldMid truncate">YQBS 1 Pati &bull; Survei Wali Santri 2026/2027</span>
+              <span id="header-slide-pill" class="hidden sm:inline-flex px-2 py-0.5 rounded-full bg-emerald-50 text-emeraldDeep text-[10px] font-extrabold border border-emerald-200">Slide 1 / 7</span>
+            </div>
+            <h1 id="header-slide-title" class="text-sm sm:text-base font-extrabold text-slate-900 truncate">Ringkasan Eksekutif</h1>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 shrink-0">
+          <button onclick="window.print()" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emeraldDeep hover:bg-emeraldMid text-white font-semibold text-xs sm:text-sm shadow-xs transition">
+            <i data-lucide="printer" class="w-4 h-4"></i>
+            <span class="hidden sm:inline">Mode Cetak / PDF</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- 2. AREA KONTEN UTAMA (flex-1 overflow-y-auto dengan ruang napas pb-16) -->
+      <main id="scroll-container" class="flex-1 overflow-y-auto px-4 sm:px-6 lg:px-8 pt-6 pb-16">
+        <div class="max-w-7xl mx-auto">
+
+          <!-- ========================================================= -->
+          <!-- SLIDE 1: RINGKASAN EKSEKUTIF                              -->
+          <!-- ========================================================= -->
+          <section id="section-0" class="tab-section active space-y-6">
+            <!-- Hero Banner -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emeraldDeep via-emeraldMid to-teal-900 text-white p-6 sm:p-8 shadow-soft islamic-pattern">
+              <div class="relative z-10 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+                <div class="max-w-3xl">
+                  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/20 text-amber-200 text-xs font-semibold mb-3">
+                    <i data-lucide="award" class="w-3.5 h-3.5"></i>
+                    <span>Laporan Resmi Evaluasi Mutu Lembaga</span>
+                  </div>
+                  <h2 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight">
+                    Hasil Survei Kepuasan Wali Santri 2026/2027
+                  </h2>
+                  <p class="mt-2.5 text-sm sm:text-base text-emerald-50/90 font-medium">
+                    SMPQT Yanbu'ul Qur'an 1 Lil Banat (YQBS 1 Pati) &bull; Periode 16–19 November 2026 &bull; 57 Responden Lengkap (Kelas 7: 42 / 73,7% &bull; Kelas 8: 15 / 26,3% &bull; 21 Halaqoh)
+                  </p>
+                </div>
+                <div class="flex flex-col items-start lg:items-end justify-center bg-white/10 backdrop-blur-sm border border-white/15 rounded-2xl p-4 min-w-[205px]">
+                  <span class="text-xs uppercase tracking-wider text-emerald-100 font-semibold">Indeks Gabungan</span>
+                  <div class="flex items-baseline gap-1.5 mt-1">
+                    <span class="text-4xl font-extrabold text-amber-300">4,34</span>
+                    <span class="text-sm text-emerald-100">/ 5,00</span>
+                  </div>
+                  <span class="mt-1.5 inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-400/20 text-emerald-100 text-xs font-semibold">
+                    <i data-lucide="trending-up" class="w-3.5 h-3.5"></i> Kategori Tinggi (86,8%)
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4 Kartu KPI Utama -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5">
+              <!-- KPI 1 -->
+              <div class="bg-white rounded-2xl p-5 shadow-soft border border-slate-100 hover:border-emerald-200 transition print-break-avoid">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Total Responden</span>
+                  <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emeraldDeep flex items-center justify-center">
+                    <i data-lucide="users" class="w-5 h-5"></i>
+                  </div>
+                </div>
+                <div class="mt-3 flex items-baseline gap-2">
+                  <span class="text-3xl font-extrabold text-slate-900">57</span>
+                  <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">100% Lengkap</span>
+                </div>
+                <p class="mt-2 text-xs text-slate-600 leading-relaxed">
+                  Kelas 7: <strong class="text-slate-800">42 (73,7%)</strong> &bull; Kelas 8: <strong class="text-slate-800">15 (26,3%)</strong> &bull; Tersebar di <strong class="text-slate-800">21 Halaqoh</strong>.
+                </p>
+              </div>
+
+              <!-- KPI 2 -->
+              <div class="bg-white rounded-2xl p-5 shadow-soft border border-slate-100 hover:border-teal-200 transition print-break-avoid">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Kepuasan Gabungan</span>
+                  <div class="w-10 h-10 rounded-xl bg-teal-50 text-tealAccent flex items-center justify-center">
+                    <i data-lucide="star" class="w-5 h-5"></i>
+                  </div>
+                </div>
+                <div class="mt-3 flex items-baseline gap-2">
+                  <span class="text-3xl font-extrabold text-slate-900">4,34</span>
+                  <span class="text-sm font-semibold text-slate-400">/ 5,00</span>
+                </div>
+                <p class="mt-2 text-xs text-slate-600 leading-relaxed">
+                  Rata-rata dari <strong class="text-teal-700">11 aspek layanan</strong> pendidikan, tahfiz, karakter, dan kepesantrenan.
+                </p>
+              </div>
+
+              <!-- KPI 3 -->
+              <div class="bg-white rounded-2xl p-5 shadow-soft border border-slate-100 hover:border-amber-200 transition print-break-avoid">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Dukungan Tablet</span>
+                  <div class="w-10 h-10 rounded-xl bg-amber-50 text-warmGold flex items-center justify-center">
+                    <i data-lucide="tablet" class="w-5 h-5"></i>
+                  </div>
+                </div>
+                <div class="mt-3 flex items-baseline gap-2">
+                  <span class="text-3xl font-extrabold text-slate-900">84,2%</span>
+                  <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 text-amber-800">Setuju (4,30)</span>
+                </div>
+                <p class="mt-2 text-xs text-slate-600 leading-relaxed">
+                  <strong class="text-slate-800">48 dari 57 wali santri</strong> setuju/sangat setuju; pilihan utama: cicilan sekolah (43,9%).
+                </p>
+              </div>
+
+              <!-- KPI 4: 5 Sorotan Kritis -->
+              <div class="bg-rose-50/80 rounded-2xl p-5 shadow-soft border border-rose-200 hover:border-rose-300 transition print-break-avoid flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center justify-between">
+                    <span class="text-xs font-extrabold uppercase tracking-wider text-rose-700">Sorotan Kritis</span>
+                    <div class="w-10 h-10 rounded-xl bg-rose-100 text-rose-700 flex items-center justify-center">
+                      <i data-lucide="alert-octagon" class="w-5 h-5"></i>
+                    </div>
+                  </div>
+                  <div class="mt-3 flex items-baseline gap-2">
+                    <span class="text-3xl font-extrabold text-rose-800">5</span>
+                    <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-rose-600 text-white">Evaluasi Internal</span>
+                  </div>
+                  <p class="mt-2 text-xs text-rose-900/90 leading-relaxed">
+                    Pengasuhan, sarapan 50%, Takhasus 2 JP, penguatan karakter & akses perpustakaan.
+                  </p>
+                </div>
+                <button onclick="switchSection(1)" class="no-print mt-3 inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold transition shadow-xs">
+                  <span>Buka Slide 2: Sorotan Kritis</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+
+            <!-- Ringkasan 3 Kolom: Kekuatan Utama | Area Terlemah | Ringkasan 5 Sorotan Kritis Internal -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              <!-- Kolom 1: Kekuatan Utama -->
+              <div class="bg-white rounded-2xl p-6 shadow-soft border border-slate-100 border-t-4 border-t-emeraldDeep print-break-avoid">
+                <div class="flex items-center gap-3 mb-4">
+                  <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emeraldDeep flex items-center justify-center">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                  </div>
+                  <h3 class="text-base font-bold text-slate-900">Kekuatan Utama</h3>
+                </div>
+                <ul class="space-y-3 text-sm text-slate-700">
+                  <li class="flex items-start gap-2.5">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 mt-0.5 shrink-0"></i>
+                    <span><strong>Pembinaan Tahfiz (4,51)</strong> meraih skor rata-rata dan persentase Sangat Puas tertinggi (68,4%).</span>
+                  </li>
+                  <li class="flex items-start gap-2.5">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 mt-0.5 shrink-0"></i>
+                    <span><strong>Karakter & Tanggung Jawab (4,49)</strong> mencatat 93,0% puas dengan <strong>0% ketidakpuasan</strong> (skor min. 3).</span>
+                  </li>
+                  <li class="flex items-start gap-2.5">
+                    <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-600 mt-0.5 shrink-0"></i>
+                    <span><strong>Keamanan Sekolah & Asrama (4,42)</strong> serta <strong>Komunikasi Pesantren (4,39)</strong> berada di atas rata-rata lembaga.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Kolom 2: Area Terlemah -->
+              <div class="bg-white rounded-2xl p-6 shadow-soft border border-slate-100 border-t-4 border-t-warmGold print-break-avoid">
+                <div class="flex items-center gap-3 mb-4">
+                  <div class="w-9 h-9 rounded-xl bg-amber-50 text-warmGold flex items-center justify-center">
+                    <i data-lucide="target" class="w-5 h-5"></i>
+                  </div>
+                  <h3 class="text-base font-bold text-slate-900">Area Terlemah Survei</h3>
+                </div>
+                <ul class="space-y-3 text-sm text-slate-700">
+                  <li class="flex items-start gap-2.5">
+                    <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600 mt-0.5 shrink-0"></i>
+                    <span><strong>Pengembangan Minat Bakat (4,16)</strong> & <strong>Ekstrakurikuler (4,18)</strong> menjadi dua indikator terbawah.</span>
+                  </li>
+                  <li class="flex items-start gap-2.5">
+                    <i data-lucide="alert-circle" class="w-4 h-4 text-amber-600 mt-0.5 shrink-0"></i>
+                    <span><strong>Komunikasi Sekolah/Akademik (4,26)</strong> masih perlu peningkatan dokumentasi rutin & update portal.</span>
+                  </li>
+                  <li class="flex items-start gap-2.5">
+                    <i data-lucide="alert-circle" class="w-4 h-4 text-rose-600 mt-0.5 shrink-0"></i>
+                    <span><strong>Anomali Kelas 7C (3,95)</strong> (n=10; min 2,73) menjadi satu-satunya rombel di bawah skor 4,00.</span>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Kolom 3: Ringkasan 5 Sorotan Kritis Internal -->
+              <div class="bg-rose-50/70 rounded-2xl p-6 shadow-soft border border-rose-200 border-t-4 border-t-rose-600 print-break-avoid flex flex-col justify-between">
+                <div>
+                  <div class="flex items-center gap-3 mb-4">
+                    <div class="w-9 h-9 rounded-xl bg-rose-600 text-white flex items-center justify-center shadow-xs">
+                      <i data-lucide="flame" class="w-5 h-5"></i>
+                    </div>
+                    <h3 class="text-base font-bold text-rose-950">5 Sorotan Kritis Internal</h3>
+                  </div>
+                  <ol class="space-y-2 text-xs sm:text-sm text-rose-950/90">
+                    <li><strong class="text-rose-700">01.</strong> Kekerasan verbal & fisik oknum pengasuhan.</li>
+                    <li><strong class="text-rose-700">02.</strong> ~50% santri tidak sarapan setiap hari.</li>
+                    <li><strong class="text-amber-800">03.</strong> Takhasus 2 JP korbankan jam akademik & standar Dinas.</li>
+                    <li><strong class="text-teal-800">04.</strong> Penguatan karakter melemah tanpa kekompakan.</li>
+                    <li><strong class="text-slate-800">05.</strong> Perpustakaan pasif akibat akses waktu ditutup.</li>
+                  </ol>
+                </div>
+                <button onclick="switchSection(1)" class="no-print mt-4 inline-flex items-center justify-center gap-1.5 w-full py-2 px-3 rounded-xl bg-white hover:bg-rose-100 text-rose-700 border border-rose-200 text-xs font-bold transition">
+                  <span>Tinjau Analisis Lengkap Slide 2</span>
+                  <i data-lucide="arrow-right" class="w-3.5 h-3.5"></i>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ========================================================= -->
+          <!-- SLIDE 2: SOROTAN KRITIS & EVALUASI INTERNAL (5 HIGHLIGHT) -->
+          <!-- ========================================================= -->
+          <section id="section-1" class="tab-section space-y-6">
+            <!-- Header Banner Khusus Sorotan Kritis -->
+            <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-rose-900 via-rose-800 to-red-900 text-white p-6 sm:p-8 shadow-soft">
+              <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                <div class="max-w-3xl">
+                  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 border border-white/25 text-rose-100 text-xs font-bold mb-3">
+                    <i data-lucide="shield-alert" class="w-3.5 h-3.5 text-amber-300"></i>
+                    <span>Slide 2 &bull; Evaluasi Internal Prioritas</span>
+                  </div>
+                  <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
+                    Sorotan Kritis & Evaluasi Internal Lembaga
+                  </h2>
+                  <p class="mt-2 text-sm text-rose-100/90 leading-relaxed">
+                    5 poin highlight strategis yang membutuhkan keputusan cepat pimpinan pondok, yayasan, dan dewan guru, dipetakan langsung dengan bukti Survei Kepuasan Wali Santri 2026/2027.
+                  </p>
+                </div>
+                <div class="flex items-center gap-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4 shrink-0">
+                  <div class="text-center px-2.5 border-r border-white/20">
+                    <span class="block text-2xl font-extrabold text-amber-300">2</span>
+                    <span class="text-[11px] uppercase tracking-wider text-rose-100 font-semibold">Kritis</span>
+                  </div>
+                  <div class="text-center px-2.5 border-r border-white/20">
+                    <span class="block text-2xl font-extrabold text-white">2</span>
+                    <span class="text-[11px] uppercase tracking-wider text-rose-100 font-semibold">Tinggi</span>
+                  </div>
+                  <div class="text-center px-2.5">
+                    <span class="block text-2xl font-extrabold text-emerald-300">1</span>
+                    <span class="text-[11px] uppercase tracking-wider text-rose-100 font-semibold">Prioritas</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Filter Interaktif Diskusi Rapat -->
+            <div class="flex flex-wrap items-center justify-between gap-3 no-print">
+              <div id="highlight-filters" class="flex flex-wrap gap-2">
+                <button onclick="setHighlightFilter('all')" data-hl-filter="all" class="hl-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-rose-700 text-white shadow-sm transition">
+                  Semua (5)
+                </button>
+                <button onclick="setHighlightFilter('pengasuhan_gizi')" data-hl-filter="pengasuhan_gizi" class="hl-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:border-rose-300 hover:text-rose-700 transition">
+                  Pengasuhan & Gizi (2)
+                </button>
+                <button onclick="setHighlightFilter('akademik')" data-hl-filter="akademik" class="hl-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:border-amber-300 hover:text-amber-700 transition">
+                  Akademik & Kurikulum (1)
+                </button>
+                <button onclick="setHighlightFilter('karakter_literasi')" data-hl-filter="karakter_literasi" class="hl-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:border-teal-300 hover:text-teal-700 transition">
+                  Karakter & Literasi (2)
+                </button>
+              </div>
+              <span class="text-xs font-semibold text-slate-500">Filter kategori untuk fokus pembahasan rapat</span>
+            </div>
+
+            <!-- Kontainer 5 Kartu Sorotan Kritis Bernomor (01-05) -->
+            <div id="critical-highlights-container" class="space-y-4">
+              <!-- Diisi melalui JavaScript -->
+            </div>
+          </section>
+
+          <!-- ========================================================= -->
+          <!-- SLIDE 3: ANALISIS KEPUASAN 11 ASPEK                       -->
+          <!-- ========================================================= -->
+          <section id="section-2" class="tab-section space-y-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-tealAccent">Slide 3 &bull; Evaluasi Kuantitatif</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Analisis 11 Aspek Kepuasan</h2>
+                <p class="text-sm text-slate-600 mt-1">Perbandingan skor rata-rata (skala 1–5) dan sebaran distribusi jawaban dari 57 wali santri.</p>
+              </div>
+              <!-- Toggle Mode Grafik -->
+              <div class="inline-flex bg-slate-200/80 p-1 rounded-xl self-start md:self-auto no-print">
+                <button id="btn-chart-mean" onclick="setAspectChartMode('mean')" class="px-3.5 py-2 rounded-lg text-xs font-bold transition bg-white text-emeraldDeep shadow-xs">
+                  Rata-Rata Skor (1–5)
+                </button>
+                <button id="btn-chart-stacked" onclick="setAspectChartMode('stacked')" class="px-3.5 py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900">
+                  Distribusi 100% (Skor 1–5)
+                </button>
+              </div>
+            </div>
+
+            <!-- Kontainer Grafik Interaktif 11 Aspek -->
+            <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-slate-100 print-break-avoid">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                <h3 id="aspect-chart-title" class="text-base font-bold text-slate-800">Grafik Batang Horizontal: Rata-Rata Skor per Aspek (Rata-rata Gabungan: 4,34)</h3>
+                <span class="text-xs font-semibold text-slate-500 bg-slate-100 px-2.5 py-1 rounded-full">n = 57 Responden</span>
+              </div>
+              <div class="relative w-full h-[430px] sm:h-[460px]">
+                <canvas id="aspectChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Tabel Interaktif 11 Aspek (Dapat Diurutkan) -->
+            <div class="bg-white rounded-2xl shadow-soft border border-slate-100 overflow-hidden print-break-avoid">
+              <div class="p-5 sm:p-6 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <h3 class="text-base font-bold text-slate-900">Tabel Statistik 11 Aspek Layanan</h3>
+                  <p class="text-xs text-slate-500 mt-0.5">Klik tajuk kolom untuk mengurutkan secara menaik atau menurun.</p>
+                </div>
+                <div class="flex items-center gap-2 text-xs">
+                  <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-emerald-600"></span> &ge; 4,40 Unggul
+                  </span>
+                  <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-50 text-amber-800 font-semibold">
+                    <span class="w-2 h-2 rounded-full bg-amber-500"></span> &lt; 4,25 Perlu Atensi
+                  </span>
+                </div>
+              </div>
+              <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse text-sm">
+                  <thead>
+                    <tr class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
+                      <th class="py-3.5 px-4 font-bold cursor-pointer hover:text-emeraldDeep" onclick="sortAspectTable('name')">
+                        Aspek Penilaian <span class="text-slate-400 ml-1">↕</span>
+                      </th>
+                      <th class="py-3.5 px-3 font-bold text-center cursor-pointer hover:text-emeraldDeep" onclick="sortAspectTable('mean')">
+                        Rata-Rata <span class="text-slate-400 ml-0.5">↕</span>
+                      </th>
+                      <th class="py-3.5 px-3 font-bold text-center cursor-pointer hover:text-emeraldDeep" onclick="sortAspectTable('puas')">
+                        % Puas (4–5) <span class="text-slate-400 ml-0.5">↕</span>
+                      </th>
+                      <th class="py-3.5 px-3 font-bold text-center cursor-pointer hover:text-emeraldDeep" onclick="sortAspectTable('sangatPuas')">
+                        % Sangat Puas (5) <span class="text-slate-400 ml-0.5">↕</span>
+                      </th>
+                      <th class="py-3.5 px-4 font-bold text-center">Distribusi (Skor 1 / 2 / 3 / 4 / 5)</th>
+                    </tr>
+                  </thead>
+                  <tbody id="aspect-table-body" class="divide-y divide-slate-100">
+                    <!-- Diisi melalui JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+
+          <!-- ========================================================= -->
+          <!-- SLIDE 4: PROFIL KELAS & 21 HALAQOH                        -->
+          <!-- ========================================================= -->
+          <section id="section-3" class="tab-section space-y-6">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-tealAccent">Slide 4 &bull; Segmentasi Unit</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Profil Kepuasan per Kelas & 21 Halaqoh</h2>
+              <p class="text-sm text-slate-600 mt-1">Pemetaan skor rata-rata di 9 rombongan belajar (Kelas 7 & 8) dan 21 halaqoh untuk deteksi anomali spesifik.</p>
+            </div>
+
+            <!-- Grafik Kelas + Kartu Anomali 7C -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              <div class="lg:col-span-2 bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-slate-100 print-break-avoid">
+                <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                  <div>
+                    <h3 class="text-base font-bold text-slate-900">Rata-Rata Kepuasan per Kelas</h3>
+                    <p class="text-xs text-slate-500">Kelas 7C disorot merah sebagai anomali terendah (3,95)</p>
+                  </div>
+                  <span class="text-xs font-semibold text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-full">Rata-rata Sekolah: 4,34</span>
+                </div>
+                <div class="relative w-full h-72 sm:h-80">
+                  <canvas id="classChart"></canvas>
+                </div>
+              </div>
+
+              <!-- Highlight Anomali Kelas 7C & Ringkasan Kelas -->
+              <div class="space-y-4">
+                <div class="bg-rose-50 rounded-2xl p-5 border border-rose-200 shadow-soft print-break-avoid">
+                  <div class="flex items-center gap-2.5 text-rose-800 font-bold text-sm mb-2">
+                    <i data-lucide="alert-octagon" class="w-5 h-5 text-rose-600"></i>
+                    <span>Sorotan Anomali: Kelas 7C</span>
+                  </div>
+                  <div class="flex items-baseline gap-2 my-2">
+                    <span class="text-3xl font-extrabold text-rose-700">3,95</span>
+                    <span class="text-xs font-semibold text-rose-600">(n = 10 &bull; min 2,73)</span>
+                  </div>
+                  <p class="text-xs text-rose-900/90 leading-relaxed">
+                    Satu-satunya kelas dengan rata-rata di bawah 4,00 (skor individu terendah <strong>2,73</strong>). Terpaut <strong>-0,60 poin</strong> dari Kelas 7E (4,55) dan memerlukan audit pendampingan khusus wali kelas & halaqoh terkait.
+                  </p>
+                </div>
+
+                <div class="bg-white rounded-2xl p-5 border border-slate-100 shadow-soft print-break-avoid">
+                  <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">Ringkasan Rentang Kelas</h4>
+                  <div class="space-y-2 text-xs">
+                    <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+                      <span class="font-semibold text-slate-700">Tertinggi (n &ge; 5): Kelas 7E</span>
+                      <span class="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">4,55 (n=8)</span>
+                    </div>
+                    <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+                      <span class="font-semibold text-slate-700">Tertinggi ke-2: Kelas 7D</span>
+                      <span class="font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded">4,50 (n=10)</span>
+                    </div>
+                    <div class="flex justify-between items-center py-1.5 border-b border-slate-100">
+                      <span class="font-semibold text-slate-700">Kelas 8 Terbanyak: Kelas 8D</span>
+                      <span class="font-bold text-teal-700 bg-teal-50 px-2 py-0.5 rounded">4,40 (n=9)</span>
+                    </div>
+                    <div class="flex justify-between items-center py-1.5">
+                      <span class="font-semibold text-slate-700">Sampel Kecil (n=1): 8B & 8C</span>
+                      <span class="font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded">5,00 & 4,82</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Grafik & Tabel Interaktif 21 Halaqoh -->
+            <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-slate-100 space-y-5 print-break-avoid">
+              <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h3 class="text-base font-bold text-slate-900">Peta Kepuasan 21 Halaqoh</h3>
+                  <p class="text-xs text-slate-500 mt-0.5">5 halaqoh dengan skor &lt; 4,00 ditandai merah sebagai prioritas supervisi pengasuhan.</p>
+                </div>
+                <!-- Kontrol Filter & Urutkan Halaqoh -->
+                <div class="flex flex-wrap items-center gap-2 no-print">
+                  <div class="relative">
+                    <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                    <input id="halaqoh-search" type="text" placeholder="Cari halaqoh..." oninput="renderHalaqohData()" class="pl-9 pr-3 py-1.5 text-xs border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 w-40 sm:w-44" />
+                  </div>
+                  <select id="halaqoh-sort" onchange="renderHalaqohData()" class="px-3 py-1.5 text-xs font-semibold border border-slate-200 rounded-xl bg-slate-50 text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <option value="score-asc">Skor: Terendah → Tertinggi</option>
+                    <option value="score-desc">Skor: Tertinggi → Terendah</option>
+                    <option value="n-desc">Responden: Terbanyak</option>
+                    <option value="num-asc">Nomor Halaqoh (1 → 23)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Grafik Bar Halaqoh -->
+              <div class="relative w-full h-72 sm:h-80">
+                <canvas id="halaqohChart"></canvas>
+              </div>
+
+              <!-- Tabel Halaqoh Responsif -->
+              <div class="overflow-x-auto border border-slate-100 rounded-xl">
+                <table class="w-full text-left border-collapse text-xs sm:text-sm">
+                  <thead>
+                    <tr class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
+                      <th class="py-3 px-4 font-bold">Nama Halaqoh</th>
+                      <th class="py-3 px-4 font-bold text-center">Responden (n)</th>
+                      <th class="py-3 px-4 font-bold text-center">Rata-Rata Skor</th>
+                      <th class="py-3 px-4 font-bold">Visualisasi Skor</th>
+                      <th class="py-3 px-4 font-bold text-center">Status Supervisi</th>
+                    </tr>
+                  </thead>
+                  <tbody id="halaqoh-table-body" class="divide-y divide-slate-100">
+                    <!-- Diisi melalui JavaScript -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Catatan Kualitas Data -->
+            <div class="bg-slate-100/90 rounded-2xl p-5 shadow-soft border border-slate-200 border-l-4 border-l-slate-600 print-break-avoid">
+              <div class="flex items-start gap-3">
+                <div class="w-9 h-9 rounded-xl bg-white text-slate-700 flex items-center justify-center shadow-xs shrink-0">
+                  <i data-lucide="file-search" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-slate-600 bg-slate-200 px-2 py-0.5 rounded-full">Catatan Kualitas Data</span>
+                  <h4 class="text-sm font-bold text-slate-900 mt-1">Deteksi Pasangan Teks Keluhan/Saran Identik pada Kelas 7D</h4>
+                  <p class="text-xs sm:text-sm text-slate-700 mt-1 leading-relaxed">
+                    Seluruh 57 respons terisi lengkap (0 data kosong). Audit teks menemukan <strong>1 pasang entri dengan teks keluhan dan saran identik persis</strong> pada <strong>baris 30 (Halaqoh 4, Kelas 7D)</strong> dan <strong>baris 32 (Halaqoh 12, Kelas 7D)</strong> yang dikirim berselang 20 menit—mengindikasikan kemungkinan pengisian ulang atau penggunaan draf aspirasi bersama.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ========================================================= -->
+          <!-- SLIDE 5: KEBIJAKAN PEMBELAJARAN DIGITAL (TABLET)          -->
+          <!-- ========================================================= -->
+          <section id="section-4" class="tab-section space-y-6">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-tealAccent">Slide 5 &bull; Transformasi Digital</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Kebijakan Pembelajaran Digital (Tablet)</h2>
+              <p class="text-sm text-slate-600 mt-1">Analisis persetujuan, preferensi skema pengadaan, dan kesiapan finansial wali santri menjelang implementasi Januari.</p>
+            </div>
+
+            <!-- Banner Spesifikasi Rencana Pengadaan -->
+            <div class="bg-gradient-to-r from-emeraldDeep to-tealAccent text-white rounded-2xl p-5 sm:p-6 shadow-soft flex flex-col md:flex-row md:items-center justify-between gap-4 print-break-avoid">
+              <div class="flex items-start gap-4">
+                <div class="w-12 h-12 rounded-2xl bg-amber-400/20 border border-amber-300/30 flex items-center justify-center shrink-0">
+                  <i data-lucide="tablet-smartphone" class="w-6 h-6 text-amber-300"></i>
+                </div>
+                <div>
+                  <h3 class="text-base font-bold text-white">Parameter Rencana Pengadaan Tablet</h3>
+                  <p class="text-xs sm:text-sm text-emerald-100 mt-1">
+                    Target implementasi: <strong class="text-amber-300">Januari</strong> &bull; Spesifikasi Min.: <strong class="text-white">RAM 4GB / ROM 32GB</strong> &bull; Kisaran Harga: <strong class="text-white">Rp2.000.000 – Rp3.000.000</strong>
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 bg-white/10 px-4 py-2.5 rounded-xl border border-white/15 shrink-0">
+                <div class="text-right">
+                  <span class="block text-[11px] uppercase tracking-wider text-emerald-200">Total Setuju (Skor 4–5)</span>
+                  <span class="text-xl font-extrabold text-amber-300">84,2% <span class="text-xs font-normal text-white">(48/57)</span></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3 Grafik Utama Kebijakan Tablet -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+              <!-- Grafik 1: Persetujuan -->
+              <div class="bg-white rounded-2xl p-5 shadow-soft border border-slate-100 flex flex-col print-break-avoid">
+                <div class="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 class="text-sm font-bold text-slate-900">1. Distribusi Persetujuan</h3>
+                    <p class="text-xs text-slate-500">Skala 1–5 &bull; Rata-rata 4,30</p>
+                  </div>
+                  <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700">84,2% Setuju</span>
+                </div>
+                <div class="relative flex-1 min-h-[235px]">
+                  <canvas id="tabletApprovalChart"></canvas>
+                </div>
+              </div>
+
+              <!-- Grafik 2: Metode Pengadaan -->
+              <div class="bg-white rounded-2xl p-5 shadow-soft border border-slate-100 flex flex-col print-break-avoid">
+                <div class="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 class="text-sm font-bold text-slate-900">2. Metode Pengadaan</h3>
+                    <p class="text-xs text-slate-500">Preferensi 57 wali santri</p>
+                  </div>
+                  <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700">43,9% Cicilan</span>
+                </div>
+                <div class="relative flex-1 min-h-[235px]">
+                  <canvas id="tabletMethodChart"></canvas>
+                </div>
+              </div>
+
+              <!-- Grafik 3: Kesiapan Finansial -->
+              <div class="bg-white rounded-2xl p-5 shadow-soft border border-slate-100 flex flex-col print-break-avoid">
+                <div class="flex items-center justify-between mb-3">
+                  <div>
+                    <h3 class="text-sm font-bold text-slate-900">3. Kesiapan Finansial</h3>
+                    <p class="text-xs text-slate-500">Skala 1–3 &bull; Rata-rata 2,53</p>
+                  </div>
+                  <span class="text-xs font-bold px-2 py-0.5 rounded-full bg-teal-50 text-teal-700">54,4% Sangat Siap</span>
+                </div>
+                <div class="relative flex-1 min-h-[235px]">
+                  <canvas id="tabletReadinessChart"></canvas>
+                </div>
+              </div>
+            </div>
+
+            <!-- Matriks Tabulasi Silang (Cross-Tab) Visual -->
+            <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-slate-100 print-break-avoid">
+              <div class="mb-4">
+                <h3 class="text-base font-bold text-slate-900">Matriks Cross-Tab: Metode Pengadaan vs. Kesiapan Finansial</h3>
+                <p class="text-xs text-slate-500 mt-0.5">Korelasi antara tingkat kesiapan finansial keluarga (Skala 1–3) dengan skema pembayaran yang dipilih.</p>
+              </div>
+
+              <div class="overflow-x-auto">
+                <table class="w-full text-sm border-collapse">
+                  <thead>
+                    <tr class="bg-slate-50 text-slate-600 text-xs uppercase tracking-wider border-b border-slate-200">
+                      <th class="py-3.5 px-4 text-left font-bold">Metode Pengadaan Pilihan</th>
+                      <th class="py-3.5 px-4 text-center font-bold">Skor 1<br><span class="font-normal text-[10px] text-slate-400">(Kurang Siap)</span></th>
+                      <th class="py-3.5 px-4 text-center font-bold">Skor 2<br><span class="font-normal text-[10px] text-slate-400">(Cukup Siap)</span></th>
+                      <th class="py-3.5 px-4 text-center font-bold">Skor 3<br><span class="font-normal text-[10px] text-slate-400">(Sangat Siap)</span></th>
+                      <th class="py-3.5 px-4 text-center font-bold bg-slate-100">Total (%)</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 text-center">
+                    <tr>
+                      <td class="py-3.5 px-4 text-left font-bold text-slate-800 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-amber-500"></span> Cicilan melalui sekolah
+                      </td>
+                      <td class="py-3.5 px-4"><span class="inline-block w-12 py-1 rounded-lg bg-rose-100 text-rose-800 font-bold">1</span></td>
+                      <td class="py-3.5 px-4"><span class="inline-block w-12 py-1 rounded-lg bg-amber-200 text-amber-950 font-extrabold">14</span></td>
+                      <td class="py-3.5 px-4"><span class="inline-block w-12 py-1 rounded-lg bg-emerald-100 text-emerald-900 font-bold">10</span></td>
+                      <td class="py-3.5 px-4 font-extrabold bg-slate-50 text-slate-900">25 (43,9%)</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3.5 px-4 text-left font-bold text-slate-800 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-teal-600"></span> Beli mandiri
+                      </td>
+                      <td class="py-3.5 px-4"><span class="inline-block w-12 py-1 rounded-lg bg-slate-100 text-slate-400 font-medium">0</span></td>
+                      <td class="py-3.5 px-4"><span class="inline-block w-12 py-1 rounded-lg bg-teal-100 text-teal-900 font-bold">10</span></td>
+                      <td class="py-3.5 px-4"><span class="inline-block w-12 py-1 rounded-lg bg-teal-100 text-teal-900 font-bold">8</span></td>
+                      <td class="py-3.5 px-4 font-extrabold bg-slate-50 text-slate-900">18 (31,6%)</td>
+                    </tr>
+                    <tr>
+                      <td class="py-3.5 px-4 text-left font-bold text-slate-800 flex items-center gap-2">
+                        <span class="w-3 h-3 rounded-full bg-emerald-700"></span> Tunai melalui sekolah
+                      </td>
+                      <td class="py-3.5 px-4"><span class="inline-block w-12 py-1 rounded-lg bg-slate-100 text-slate-400 font-medium">0</span></td>
+                      <td class="py-3.5 px-4"><span class="inline-block w-12 py-1 rounded-lg bg-slate-100 text-slate-600 font-semibold">1</span></td>
+                      <td class="py-3.5 px-4"><span class="inline-block w-12 py-1 rounded-lg bg-emerald-200 text-emerald-950 font-extrabold">13</span></td>
+                      <td class="py-3.5 px-4 font-extrabold bg-slate-50 text-slate-900">14 (24,6%)</td>
+                    </tr>
+                  </tbody>
+                  <tfoot>
+                    <tr class="bg-slate-100/90 font-extrabold text-slate-900 border-t-2 border-slate-200 text-center">
+                      <td class="py-3.5 px-4 text-left">Total Responden</td>
+                      <td class="py-3.5 px-4">1 (1,8%)</td>
+                      <td class="py-3.5 px-4">25 (43,9%)</td>
+                      <td class="py-3.5 px-4">31 (54,4%)</td>
+                      <td class="py-3.5 px-4">57 (100%)</td>
+                    </tr>
+                  </tfoot>
+                </table>
+              </div>
+
+              <div class="mt-4 p-4 rounded-xl bg-emerald-50/70 border border-emerald-100 text-xs sm:text-sm text-emerald-950 flex items-start gap-3">
+                <i data-lucide="lightbulb" class="w-5 h-5 text-emerald-700 shrink-0 mt-0.5"></i>
+                <p>
+                  <strong>Implikasi Kebijakan:</strong> Mayoritas keluarga dengan kesiapan finansial menengah (Skor 2) memilih <strong>cicilan melalui sekolah (14 dari 25 orang)</strong> atau <strong>beli mandiri (10 orang)</strong>, sedangkan jalur tunai hampir seluruhnya dipilih kelompok sangat siap (13 dari 14 orang). Menyediakan skema cicilan sekolah yang ringan dan panduan spesifikasi beli mandiri adalah kunci kelancaran implementasi.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- ========================================================= -->
+          <!-- SLIDE 6: ANALISIS KUALITATIF (HARAPAN, KELUHAN & SARAN)   -->
+          <!-- ========================================================= -->
+          <section id="section-5" class="tab-section space-y-6">
+            <div>
+              <span class="text-xs font-bold uppercase tracking-wider text-tealAccent">Slide 6 &bull; Suara Wali Santri</span>
+              <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Analisis Kualitatif: Harapan, Keluhan & Saran</h2>
+              <p class="text-sm text-slate-600 mt-1">Pemetaan aspirasi terbuka dari 57 wali santri yang dikelompokkan secara tematik beserta kutipan representatif.</p>
+            </div>
+
+            <!-- Grafik Batang Horizontal Harapan Utama Wali Santri -->
+            <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-slate-100 print-break-avoid">
+              <div class="flex items-center gap-2.5 mb-4">
+                <div class="w-9 h-9 rounded-xl bg-emerald-50 text-emeraldDeep flex items-center justify-center">
+                  <i data-lucide="heart-handshake" class="w-5 h-5"></i>
+                </div>
+                <div>
+                  <h3 class="text-base font-bold text-slate-900">Harapan Utama Wali Santri</h3>
+                  <p class="text-xs text-slate-500">Persentase responden yang menyebut tiap pilar harapan (n = 57; multi-jawaban)</p>
+                </div>
+              </div>
+              <div class="relative w-full h-64 sm:h-72">
+                <canvas id="harapanChart"></canvas>
+              </div>
+            </div>
+
+            <!-- Banner Peringatan Kritis: Insiden Bullying & Santri Boyong -->
+            <div class="bg-rose-50 rounded-2xl p-5 sm:p-6 border border-rose-200 border-l-4 border-l-rose-600 shadow-soft print-break-avoid">
+              <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+                <div class="w-11 h-11 rounded-2xl bg-rose-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <i data-lucide="shield-alert" class="w-6 h-6"></i>
+                </div>
+                <div class="space-y-1.5">
+                  <span class="inline-block px-2.5 py-0.5 rounded-full bg-rose-600 text-white text-[10px] font-extrabold uppercase tracking-wider">Peringatan Kritis — Risiko Tinggi</span>
+                  <h3 class="text-base sm:text-lg font-extrabold text-rose-950">Laporan Insiden Bullying Fisik/Verbal & Kekhawatiran Santri Boyong</h3>
+                  <p class="text-xs sm:text-sm text-rose-900/90 leading-relaxed">
+                    Ditemukan laporan spesifik mengenai <strong>perundungan fisik (santri ditendang di area perut oleh teman halaqoh)</strong> dan <strong>verbal (fitnah)</strong> dengan respons awal yang dinilai kurang tegas hingga memicu rencana wali santri memindahkan anaknya. Beberapa wali juga menyoroti kekhawatiran atas angka <strong>santriwati yang boyong</strong> serta perlunya akses langsung ke <strong>Guru BK/konselor</strong>.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Peta Tema Keluhan & Saran dengan Filter 7 Kategori -->
+            <div class="space-y-4">
+              <div>
+                <h3 class="text-base font-bold text-slate-900">Peta 7 Kategori Tema Keluhan, Saran & Kutipan Representatif</h3>
+                <p class="text-xs text-slate-500">Pilih kategori tema di bawah untuk menyaring temuan kualitatif.</p>
+              </div>
+
+              <div id="qualitative-filters" class="flex flex-wrap gap-2 no-print">
+                <!-- Diisi melalui JavaScript -->
+              </div>
+
+              <div id="qualitative-cards" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Diisi melalui JavaScript -->
+              </div>
+            </div>
+          </section>
+
+          <!-- ========================================================= -->
+          <!-- SLIDE 7: PETA JALAN REKOMENDASI & ACTION PLAN TERPADU     -->
+          <!-- ========================================================= -->
+          <section id="section-6" class="tab-section space-y-6">
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+              <div>
+                <span class="text-xs font-bold uppercase tracking-wider text-tealAccent">Slide 7 &bull; Peta Jalan Tindak Lanjut</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900 mt-1">Peta Jalan Rekomendasi & Action Plan Terpadu</h2>
+                <p class="text-sm text-slate-600 mt-1">9 rencana aksi strategis yang menjawab hasil Survei Wali Santri sekaligus 5 Sorotan Kritis Evaluasi Internal.</p>
+              </div>
+              <!-- Filter Horizon Prioritas -->
+              <div id="roadmap-filters" class="flex flex-wrap gap-1.5 bg-slate-200/80 p-1 rounded-xl self-start md:self-auto no-print">
+                <button onclick="filterActionPlan('all')" data-prio="all" class="prio-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-emeraldDeep shadow-xs transition">Semua (9)</button>
+                <button onclick="filterActionPlan('segera')" data-prio="segera" class="prio-btn px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition">Segera (0–30 Hari)</button>
+                <button onclick="filterActionPlan('pendek')" data-prio="pendek" class="prio-btn px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition">Pendek (1–3 Bln)</button>
+                <button onclick="filterActionPlan('menengah')" data-prio="menengah" class="prio-btn px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition">Menengah (Semester)</button>
+              </div>
+            </div>
+
+            <!-- Daftar 9 Kartu Action Plan -->
+            <div id="action-plan-grid" class="grid grid-cols-1 lg:grid-cols-2 gap-5">
+              <!-- Diisi melalui JavaScript -->
+            </div>
+
+            <!-- Penutup Presentasi -->
+            <div class="bg-gradient-to-r from-emeraldDeep to-tealAccent rounded-2xl p-6 text-white shadow-soft flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 print-break-avoid">
+              <div>
+                <h3 class="text-base font-bold">Siap untuk Rapat Evaluasi Pimpinan Pondok, Yayasan & Dewan Guru</h3>
+                <p class="text-xs sm:text-sm text-emerald-100 mt-1">Mengintegrasikan 57 respons valid Survei Kepuasan Wali Santri 2026/2027 dan 5 Poin Sorotan Kritis Internal.</p>
+              </div>
+              <button onclick="window.print()" class="no-print shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white text-emeraldDeep font-bold text-xs sm:text-sm hover:bg-emerald-50 transition shadow-sm">
+                <i data-lucide="download" class="w-4 h-4"></i>
+                <span>Cetak / Simpan PDF</span>
+              </button>
+            </div>
+          </section>
+
+        </div>
+      </main>
+
+      <!-- 3. FOOTER NAVIGASI SLIDE (shrink-0, BUKAN position: fixed — ANTI OVERLAP) -->
+      <footer id="presentation-footer" class="shrink-0 bg-white border-t border-slate-200 px-4 sm:px-8 py-3.5 z-20">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-3">
+          <button id="btn-prev" onclick="navigateStep(-1)" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 font-semibold text-xs sm:text-sm transition disabled:opacity-40 disabled:cursor-not-allowed">
+            <i data-lucide="arrow-left" class="w-4 h-4"></i>
+            <span class="hidden sm:inline">Sebelumnya</span>
+          </button>
+
+          <div class="flex flex-col items-center min-w-0">
+            <span id="slide-indicator-title" class="text-xs sm:text-sm font-bold text-slate-800 truncate max-w-[200px] sm:max-w-md">Slide 1: Ringkasan Eksekutif</span>
+            <div class="flex items-center gap-1.5 mt-1">
+              <span id="slide-dots" class="flex items-center gap-1.5"></span>
+              <span id="slide-counter" class="text-[11px] font-semibold text-slate-400 ml-1.5">1 / 7</span>
+            </div>
+          </div>
+
+          <button id="btn-next" onclick="navigateStep(1)" class="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-emeraldDeep hover:bg-emeraldMid text-white font-semibold text-xs sm:text-sm transition disabled:opacity-40 disabled:cursor-not-allowed">
+            <span class="hidden sm:inline">Berikutnya</span>
+            <i data-lucide="arrow-right" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </footer>
+
+    </div>
+  </div>
+
+  <!-- ========================================================= -->
+  <!-- LOGIKA DATA, GRAFIK CHART.JS & INTERAKTIVITAS LENGKAP     -->
+  <!-- ========================================================= -->
+  <script>
+    // =========================================================================
+    // 1. DATASET EKSAK 7 SLIDE
+    // =========================================================================
+
+    const SECTION_TITLES = [
+      'Slide 1: Ringkasan Eksekutif',
+      'Slide 2: Sorotan Kritis & Evaluasi Internal',
+      'Slide 3: Analisis 11 Aspek Kepuasan',
+      'Slide 4: Profil Kelas & 21 Halaqoh',
+      'Slide 5: Kebijakan Pembelajaran Digital (Tablet)',
+      'Slide 6: Analisis Kualitatif Wali Santri',
+      'Slide 7: Peta Jalan Rekomendasi & Action Plan'
+    ];
+
+    const SHORT_TITLES = [
+      'Ringkasan Eksekutif',
+      'Sorotan Kritis & Evaluasi Internal',
+      'Analisis 11 Aspek Kepuasan',
+      'Profil Kelas & 21 Halaqoh',
+      'Kebijakan Pembelajaran Digital (Tablet)',
+      'Analisis Kualitatif Wali Santri',
+      'Peta Jalan Rekomendasi & Action Plan'
+    ];
+
+    // SLIDE 2: 5 POIN HIGHLIGHT KRITIS
+    const CRITICAL_HIGHLIGHTS = [
+      {
+        num: '01',
+        category: 'pengasuhan_gizi',
+        badge: 'KRITIS — PENGASUHAN',
+        badgeClass: 'bg-rose-600 text-white',
+        cardBorder: 'border-rose-200 border-l-rose-600',
+        numBg: 'bg-rose-600 text-white',
+        icon: 'shield-alert',
+        iconClass: 'bg-rose-100 text-rose-700',
+        title: 'Treatmen Pengasuhan Ustadzah yang Masih Mengandung Kekerasan Verbal Maupun Fisik',
+        summary: 'Masih ditemukan praktik pendisiplinan keras oleh oknum ustadzah yang mengandung unsur kekerasan verbal maupun fisik terhadap santriwati.',
+        details: [
+          'Pendekatan pendisiplinan keras yang mengandung bentakan, perendahan martabat, atau kontak fisik bertentangan dengan prinsip pengasuhan ramah anak dan memicu tekanan psikis santri.',
+          'Respons awal yang kurang tegas terhadap laporan perundungan (bullying) antarsantri memperburuk rasa aman di lingkungan asrama.'
+        ],
+        surveyLink: 'Berkaitan erat dengan laporan spesifik wali santri mengenai insiden perundungan fisik (ditendang di area perut) & fitnah verbal di halaqoh, keluhan pendisiplinan yang mempermalukan anak di depan umum, serta kekhawatiran atas angka santriwati yang boyong.'
+      },
+      {
+        num: '02',
+        category: 'pengasuhan_gizi',
+        badge: 'TINGGI — GIZI & KATERING',
+        badgeClass: 'bg-rose-500 text-white',
+        cardBorder: 'border-rose-200 border-l-rose-500',
+        numBg: 'bg-rose-500 text-white',
+        icon: 'utensils-crossed',
+        iconClass: 'bg-rose-100 text-rose-700',
+        title: 'Sekitar 50% Santri Tidak Sarapan Setiap Hari (Kecuali Menu Disukai)',
+        summary: 'Sekitar separuh (50%) santri melewatkan sarapan setiap pagi, kecuali pada hari-hari tertentu saat menu yang disajikan sesuai selera mereka.',
+        hasBreakfastGauge: true,
+        details: [
+          'Berangkat belajar dan menyetorkan hafalan dalam kondisi perut kosong menurunkan konsentrasi akademik, mempercepat kelelahan, dan memicu keluhan kesehatan lambung.',
+          'Mendorong ketergantungan santri pada jajanan kantin atau pesanan makanan dari luar pondok untuk menggantikan asupan pagi.'
+        ],
+        surveyLink: 'Mengonfirmasi keluhan 26,3% responden survei (15 wali santri) mengenai variasi menu makanan harian, selera makan santri, kebutuhan peningkatan protein, sayur segar, dan buah.'
+      },
+      {
+        num: '03',
+        category: 'akademik',
+        badge: 'KRITIS — AKADEMIK & KURIKULUM',
+        badgeClass: 'bg-amber-600 text-white',
+        cardBorder: 'border-amber-200 border-l-amber-600',
+        numBg: 'bg-amber-600 text-white',
+        icon: 'clock-alert',
+        iconClass: 'bg-amber-100 text-amber-800',
+        title: 'Evaluasi Kegiatan Takhasus (Jam Tambahan Tahfidz 2 JP/Hari di Jam Akademik)',
+        summary: 'Kegiatan Takhasus (jam tambahan tahfidz 2 JP setiap hari di jam akademik) tidak efektif meningkatkan capaian hafalan padahal sudah mengorbankan alokasi jam akademik.',
+        details: [
+          'Dilema Struktural: Jam akademik yang waktunya sudah sangat terbatas akibat terpotong Takhasus justru masih diminta menambahkan program pengembangan minat dan bakat.',
+          'Konsekuensi Serius: Sekolah tidak lagi mampu mengejar standar kurikulum Dinas Pendidikan yang diinginkan apabila struktur jam belajar ini tidak segera dievaluasi.'
+        ],
+        surveyLink: 'Tercermin pada dua skor terendah survei di Pengembangan Minat Bakat (4,16) & Ekstrakurikuler (4,18), serta keluhan 38,6% wali santri (22 responden) tentang beban ganda akademik–tahfidz, risiko burnout, dan kebutuhan penguatan pelajaran umum.'
+      },
+      {
+        num: '04',
+        category: 'karakter_literasi',
+        badge: 'TINGGI — PENGUATAN KARAKTER',
+        badgeClass: 'bg-teal-700 text-white',
+        cardBorder: 'border-teal-200 border-l-teal-700',
+        numBg: 'bg-teal-700 text-white',
+        icon: 'users-round',
+        iconClass: 'bg-teal-100 text-teal-800',
+        title: 'Melemahnya Kegiatan Penguatan Karakter Tanpa Koordinasi, Kesepakatan & Kekompakan Bersama',
+        summary: 'Berbagai program pembiasaan dan penguatan karakter mulai kendur karena belum adanya koordinasi, kesepakatan standar, dan kekompakan pelaksanaan lintas unit/pengampu.',
+        subPrograms: [
+          { label: 'Program Kemandirian Santri', desc: 'Pembiasaan langsung aksi (berinisiatif merapikan/melaksanakan tugas) tanpa harus disuruh.' },
+          { label: 'Doa Bersama Sebelum Makan', desc: 'Tradisi adab makan berjamaah yang mulai melemah konsistensinya di ruang makan/asrama.' },
+          { label: 'Program Bahasa Inggris Pondok', desc: 'Pembiasaan percakapan harian Bahasa Inggris di lingkungan pondok yang belum berjalan kompak.' }
+        ],
+        details: [],
+        surveyLink: 'Sangat vital untuk dijaga karena harapan wali santri bertumpu kuat pada akhlak & kesholehahan (52,6%), kemandirian (33,3%), serta penguasaan bahasa asing & skill (10,5%).'
+      },
+      {
+        num: '05',
+        category: 'karakter_literasi',
+        badge: 'PRIORITAS — LITERASI & FASILITAS',
+        badgeClass: 'bg-slate-700 text-white',
+        cardBorder: 'border-slate-200 border-l-slate-700',
+        numBg: 'bg-slate-700 text-white',
+        icon: 'library',
+        iconClass: 'bg-slate-100 text-slate-700',
+        title: 'Perpustakaan Tidak Berkembang Akibat Ketiadaan Akses Waktu Kunjungan',
+        summary: 'Ruang perpustakaan menjadi pasif dan tidak berkembang karena santri tidak memiliki akses waktu kunjungan yang memadai.',
+        details: [
+          'Setelah santri pulang sekolah, mereka sudah tidak diperbolehkan lagi berkunjung ke perpustakaan, sementara durasi istirahat sekolah sangat sempit.',
+          'Akibatnya fasilitas koleksi buku belum berkontribusi optimal terhadap budaya literasi maupun pengayaan referensi belajar santri.'
+        ],
+        surveyLink: 'Berkaitan dengan aspirasi wali santri terhadap pengayaan referensi belajar akademik serta pemanfaatan optimal fasilitas sekolah yang sudah tersedia (skor fasilitas sekolah 4,33).'
+      }
+    ];
+
+    // SLIDE 3: 11 ASPEK KEPUASAN (DATA EKSAK)
+    const ASPECTS_DATA = [
+      { name: 'Kualitas pembinaan tahfiz', mean: 4.51, puas: 84.2, sangatPuas: 68.4, dist: [0, 1, 8, 9, 39] },
+      { name: 'Perkembangan karakter & tanggung jawab', mean: 4.49, puas: 93.0, sangatPuas: 56.1, dist: [0, 0, 4, 21, 32] },
+      { name: 'Keamanan & ketertiban sekolah', mean: 4.42, puas: 91.2, sangatPuas: 50.9, dist: [0, 0, 5, 23, 29] },
+      { name: 'Keamanan & ketertiban asrama', mean: 4.42, puas: 91.2, sangatPuas: 52.6, dist: [0, 1, 4, 22, 30] },
+      { name: 'Komunikasi pesantren/tahfiz – wali santri', mean: 4.39, puas: 84.2, sangatPuas: 56.1, dist: [0, 1, 8, 16, 32] },
+      { name: 'Kualitas pembelajaran akademik', mean: 4.33, puas: 86.0, sangatPuas: 49.1, dist: [0, 1, 7, 21, 28] },
+      { name: 'Fasilitas & kebersihan lingkungan sekolah', mean: 4.33, puas: 91.2, sangatPuas: 45.6, dist: [1, 0, 4, 26, 26] },
+      { name: 'Fasilitas & kebersihan lingkungan asrama', mean: 4.28, puas: 87.7, sangatPuas: 42.1, dist: [0, 1, 6, 26, 24] },
+      { name: 'Komunikasi sekolah/akademik – wali santri', mean: 4.26, puas: 82.5, sangatPuas: 45.6, dist: [0, 1, 9, 21, 26] },
+      { name: 'Ekstrakurikuler & minat bakat', mean: 4.18, puas: 78.9, sangatPuas: 40.4, dist: [0, 1, 11, 22, 23] },
+      { name: 'Pengembangan minat bakat', mean: 4.16, puas: 77.2, sangatPuas: 40.4, dist: [0, 1, 12, 21, 23] }
+    ];
+
+    // SLIDE 4: DATA 9 KELAS (DATA EKSAK)
+    const CLASSES_DATA = [
+      { label: '7A', n: 9, mean: 4.29 },
+      { label: '7B', n: 5, mean: 4.29 },
+      { label: '7C', n: 10, mean: 3.95 },
+      { label: '7D', n: 10, mean: 4.50 },
+      { label: '7E', n: 8, mean: 4.55 },
+      { label: '8A', n: 4, mean: 4.30 },
+      { label: '8B', n: 1, mean: 5.00 },
+      { label: '8C', n: 1, mean: 4.82 },
+      { label: '8D', n: 9, mean: 4.40 }
+    ];
+
+    // SLIDE 4: DATA 21 HALAQOH (DATA EKSAK)
+    const HALAQOH_DATA = [
+      { num: 6,  name: 'Halaqoh 6',  n: 1, mean: 3.18 },
+      { num: 23, name: 'Halaqoh 23', n: 4, mean: 3.61 },
+      { num: 4,  name: 'Halaqoh 4',  n: 1, mean: 3.73 },
+      { num: 10, name: 'Halaqoh 10', n: 2, mean: 3.95 },
+      { num: 7,  name: 'Halaqoh 7',  n: 2, mean: 3.95 },
+      { num: 17, name: 'Halaqoh 17', n: 2, mean: 4.05 },
+      { num: 12, name: 'Halaqoh 12', n: 7, mean: 4.10 },
+      { num: 8,  name: 'Halaqoh 8',  n: 1, mean: 4.18 },
+      { num: 15, name: 'Halaqoh 15', n: 2, mean: 4.23 },
+      { num: 19, name: 'Halaqoh 19', n: 4, mean: 4.23 },
+      { num: 13, name: 'Halaqoh 13', n: 2, mean: 4.36 },
+      { num: 16, name: 'Halaqoh 16', n: 3, mean: 4.42 },
+      { num: 11, name: 'Halaqoh 11', n: 3, mean: 4.45 },
+      { num: 9,  name: 'Halaqoh 9',  n: 3, mean: 4.58 },
+      { num: 22, name: 'Halaqoh 22', n: 4, mean: 4.61 },
+      { num: 2,  name: 'Halaqoh 2',  n: 4, mean: 4.64 },
+      { num: 21, name: 'Halaqoh 21', n: 2, mean: 4.73 },
+      { num: 1,  name: 'Halaqoh 1',  n: 4, mean: 4.77 },
+      { num: 18, name: 'Halaqoh 18', n: 3, mean: 4.85 },
+      { num: 14, name: 'Halaqoh 14', n: 2, mean: 4.91 },
+      { num: 20, name: 'Halaqoh 20', n: 1, mean: 5.00 }
+    ];
+
+    // SLIDE 6: 7 KATEGORI KUALITATIF (DATA EKSAK)
+    const QUALITATIVE_ISSUES = [
+      {
+        id: 'akademik',
+        short: 'Akademik–Tahfidz',
+        title: 'Keseimbangan Akademik–Tahfidz',
+        count: 22,
+        pct: '38,6%',
+        icon: 'book-open',
+        color: 'emerald',
+        points: [
+          'Pengaturan jadwal tugas, ujian, dan setoran hafalan secara proporsional untuk mencegah kelelahan mental (burnout).',
+          'Keseimbangan antara hafalan baru (ziyadah) dan pengulangan (murojaah) serta evaluasi efektivitas jam tambahan (Highlight #03).',
+          'Permintaan jam tambahan/remedial untuk pelajaran umum esensial (terutama Matematika) dan variasi metode mengajar.'
+        ],
+        quote: '“Mohon keseimbangan antara target hafalan dan pelajaran umum seperti Matematika agar anak tidak burnout namun tetap kuat secara akademik.”'
+      },
+      {
+        id: 'komunikasi',
+        short: 'Komunikasi & Dokumentasi',
+        title: 'Komunikasi & Dokumentasi',
+        count: 19,
+        pct: '33,3%',
+        icon: 'message-square',
+        color: 'teal',
+        points: [
+          'Minimnya dokumentasi foto/video kegiatan di grup kelas maupun halaqoh membuat wali santri merasa kurang terhubung.',
+          'Permintaan percepatan pembaruan data nilai akademik dan capaian tahfiz di portal wali santri.',
+          'Usulan penambahan frekuensi telepon/video call (saat ini 1x/bulan 10 menit) menjadi 1–2x/minggu atau telepon koperasi di akhir pekan.'
+        ],
+        quote: '“Kami sangat berharap ada kiriman dokumentasi rutin kegiatan kelas/halaqoh dan update berkala portal tahfiz agar kami memantau perkembangan ananda.”'
+      },
+      {
+        id: 'fasilitas',
+        short: 'Fasilitas, AC & Kesehatan',
+        title: 'Fasilitas, AC & Kesehatan',
+        count: 17,
+        pct: '29,8%',
+        icon: 'building-2',
+        color: 'sky',
+        points: [
+          'Keluhan AC kelas tidak dinyalakan saat pembelajaran berlangsung dan kejelasan aturan penggunaan AC saat istirahat siang.',
+          'Usulan penyediaan kotak P3K di tiap halaqoh, pemeriksaan kesehatan berkala bersama puskesmas, dan siaga armada darurat ke RS.',
+          'Optimalisasi fasilitas sekolah termasuk pembukaan akses waktu kunjungan perpustakaan pasca-sekolah (Highlight #05).'
+        ],
+        quote: '“AC kelas mohon dinyalakan saat KBM agar nyaman belajar, dan sebaiknya tiap halaqoh dilengkapi kotak P3K serta pemeriksaan kesehatan berkala.”'
+      },
+      {
+        id: 'makanan',
+        short: 'Makanan, Gizi & Air',
+        title: 'Makanan, Gizi, Kantin & Air Minum',
+        count: 15,
+        pct: '26,3%',
+        icon: 'utensils',
+        color: 'amber',
+        points: [
+          'Keluhan variasi menu harian dan kebutuhan peningkatan asupan protein, sayur segar, serta buah; sejalan dengan temuan ~50% santri tidak sarapan (Highlight #02).',
+          'Perbaikan rasa air minum pondok agar santri mau minum air putih secara cukup.',
+          'Penyesuaian harga jajanan kantin agar lebih terjangkau dan penambahan variasi kebutuhan santri di kantin.'
+        ],
+        quote: '“Menu makan mohon lebih variatif dengan protein, sayur, dan buah yang cukup agar anak mau makan rutin dan tidak bergantung pada jajan luar.”'
+      },
+      {
+        id: 'minat',
+        short: 'Minat Bakat & Bahasa',
+        title: 'Minat Bakat, Ekskul & Bahasa',
+        count: 13,
+        pct: '22,8%',
+        icon: 'sparkles',
+        color: 'indigo',
+        points: [
+          'Pelonggaran kebijakan batas maksimal 1 ekstrakurikuler agar santri dapat mengeksplorasi lebih banyak potensi.',
+          'Usulan ekskul renang (memanfaatkan kolam yang ada), public speaking, dan penguatan kembali pembiasaan Bahasa Arab & Inggris (Highlight #04).',
+          'Dorongan keikutsertaan santri dalam lomba-lomba akademik maupun non-akademik.'
+        ],
+        quote: '“Sayang jika dibatasi 1 ekskul dan kolam renang belum dimanfaatkan; mohon pembiasaan bahasa Inggris–Arab dan public speaking juga diperkuat.”'
+      },
+      {
+        id: 'pengasuhan',
+        short: 'Pengasuhan, Bullying & BK',
+        title: 'Pengasuhan Humanis, Anti-Bullying & BK',
+        count: 11,
+        pct: '19,3%',
+        icon: 'shield-alert',
+        color: 'rose',
+        points: [
+          'Laporan insiden perundungan fisik (ditendang di area perut) & verbal (fitnah) di halaqoh yang respons awalnya dinilai kurang tegas.',
+          'Penghapusan kekerasan verbal/fisik dan pola pendisiplinan yang mempermalukan anak di depan umum (Highlight #01).',
+          'Kekhawatiran angka santriwati boyong serta permintaan akses kontak resmi Guru BK/konselor bagi wali santri.'
+        ],
+        quote: '“Mohon tindak tegas kasus bullying di halaqoh dan buka kontak Guru BK agar orang tua bisa berkoordinasi sebelum anak tertekan atau ingin pindah.”'
+      },
+      {
+        id: 'sambangan',
+        short: 'Sambangan & Keterlambatan',
+        title: 'Kebijakan Sambangan & Keterlambatan',
+        count: 4,
+        pct: '7,0%',
+        icon: 'clock',
+        color: 'slate',
+        points: [
+          'Usulan kebijakan izin menginap saat jadwal sambangan khusus bagi wali santri yang datang dari luar kota/jarak jauh.',
+          'Permintaan kelonggaran batas toleransi keterlambatan pengantaran santri akibat kemacetan di area pondok putra.'
+        ],
+        quote: '“Bagi wali santri luar kota mohon dipertimbangkan opsi izin menginap saat sambangan dan toleransi waktu pengantaran bila terjadi macet.”'
+      }
+    ];
+
+    // SLIDE 7: 9 RENCANA AKSI STRATEGIS TERPADU
+    const ACTION_PLANS = [
+      // HORIZON 1: JANGKA SEGERA (0-30 HARI)
+      {
+        priority: 'segera',
+        priorityLabel: 'Jangka Segera (0–30 Hari)',
+        badgeClass: 'bg-rose-100 text-rose-800 border-rose-200',
+        borderClass: 'border-l-rose-600',
+        tag: 'Highlight #01 & Anti-Bullying',
+        title: 'Penegakan Zero Tolerance Kekerasan Pengasuhan & Anti-Bullying',
+        owner: 'Pimpinan Pondok / Pengasuhan / Yayasan',
+        steps: [
+          'Investigasi tuntas & sanksi tegas atas laporan kekerasan verbal/fisik oknum ustadzah serta insiden bullying fisik/verbal di halaqoh.',
+          'Pelatihan wajib Pengasuhan Humanis & Disiplin Positif serta penandatanganan pakta integritas bagi seluruh ustadzah/musyrifah.'
+        ],
+        kpi: '0 kasus kekerasan verbal/fisik & bullying berulang; 100% pengasuh menandatangani kode etik ramah anak.'
+      },
+      {
+        priority: 'segera',
+        priorityLabel: 'Jangka Segera (0–30 Hari)',
+        badgeClass: 'bg-rose-100 text-rose-800 border-rose-200',
+        borderClass: 'border-l-rose-600',
+        tag: 'Highlight #02 & Gizi',
+        title: 'Audit Menu Sarapan & Katering (Atasi 50% Santri Tidak Sarapan)',
+        owner: 'Unit Dapur / Ahli Gizi / Pengasuhan',
+        steps: [
+          'Survei cepat selera sarapan santri & redesain siklus menu pagi 14 harian yang lebih variatif, hangat, dan kaya protein, sayur & buah.',
+          'Monitoring kehadiran sarapan per halaqoh setiap pagi serta evaluasi keterjangkauan harga kantin.'
+        ],
+        kpi: 'Menurunkan angka santri tidak sarapan dari ~50% menjadi < 15% dalam 30 hari pertama.'
+      },
+      {
+        priority: 'segera',
+        priorityLabel: 'Jangka Segera (0–30 Hari)',
+        badgeClass: 'bg-rose-100 text-rose-800 border-rose-200',
+        borderClass: 'border-l-rose-600',
+        tag: 'Anomali 7C & Layanan BK',
+        title: 'Audit Khusus Kelas 7C, 5 Halaqoh <4,00 & Pembukaan Kanal BK',
+        owner: 'Guru BK / Wali Kelas 7C / Kepala Sekolah',
+        steps: [
+          'Audit mendalam kondisi akademik & kepengasuhan Kelas 7C (3,95) serta Halaqoh 6, 23, 4, 10, dan 7.',
+          'Membuka kanal kontak resmi Guru BK/Konselor bagi wali santri untuk pencegahan dini stres dan santri boyong.'
+        ],
+        kpi: '100% wali santri memiliki kontak resmi BK; rencana pemulihan Kelas 7C & 5 halaqoh prioritas berjalan dalam 2 pekan.'
+      },
+      // HORIZON 2: JANGKA PENDEK (1-3 BULAN)
+      {
+        priority: 'pendek',
+        priorityLabel: 'Jangka Pendek (1–3 Bulan)',
+        badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+        borderClass: 'border-l-warmGold',
+        tag: 'Highlight #03 (Strategis)',
+        title: 'Evaluasi Total & Penataan Ulang Program Takhasus (2 JP/Hari)',
+        owner: 'Kepala Sekolah / Waka Kurikulum / Koord. Tahfidz',
+        steps: [
+          'Audit efektivitas Takhasus 2 JP/hari untuk mengembalikan jam akademik agar sekolah kembali memenuhi standar Dinas Pendidikan.',
+          'Optimalisasi kualitas ziyadah–murojaah di jam pesantren serta pembukaan kelas tambahan/remedial pelajaran umum (Matematika).'
+        ],
+        kpi: '100% alokasi jam standar Dinas Pendidikan terpenuhi; capaian hafalan tetap terjaga tanpa burnout akademik.'
+      },
+      {
+        priority: 'pendek',
+        priorityLabel: 'Jangka Pendek (1–3 Bulan)',
+        badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+        borderClass: 'border-l-warmGold',
+        tag: 'Highlight #04',
+        title: 'Konsolidasi & SOP Bersama Penguatan Karakter Lintas Unit',
+        owner: 'Pimpinan Pondok / Kesiswaan / Pengasuhan',
+        steps: [
+          'Menyepakati SOP penguatan karakter lintas guru & ustadzah agar berjalan kompak tanpa disparitas antarhalaqoh.',
+          'Mengaktifkan kembali: (1) Kemandirian santri langsung aksi tanpa disuruh, (2) Doa bersama sebelum makan, dan (3) Program Bahasa Inggris pondok.'
+        ],
+        kpi: '3 program karakter prioritas terlaksana seragam di 100% halaqoh dengan evaluasi rutin bulanan.'
+      },
+      {
+        priority: 'pendek',
+        priorityLabel: 'Jangka Pendek (1–3 Bulan)',
+        badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+        borderClass: 'border-l-warmGold',
+        tag: 'Highlight #05',
+        title: 'Revitalisasi Jam Operasional & Akses Perpustakaan Pasca-Sekolah',
+        owner: 'Kepala Perpustakaan / Kurikulum / Pengasuhan',
+        steps: [
+          'Membuka jadwal resmi kunjungan perpustakaan pasca-sekolah (sore terjadwal) serta akhir pekan bagi santriwati.',
+          'Menghidupkan program literasi terjadwal per kelas/halaqoh agar koleksi perpustakaan dimanfaatkan aktif.'
+        ],
+        kpi: 'Perpustakaan beroperasi aktif di luar jam KBM; rata-rata kunjungan literasi santri meningkat tiap bulan.'
+      },
+      {
+        priority: 'pendek',
+        priorityLabel: 'Jangka Pendek (1–3 Bulan)',
+        badgeClass: 'bg-amber-100 text-amber-800 border-amber-200',
+        borderClass: 'border-l-warmGold',
+        tag: 'Kebijakan Tablet Januari',
+        title: 'Peluncuran Skema Cicilan Tablet & Panduan Beli Mandiri',
+        owner: 'Manajemen / Keuangan / Tim IT',
+        steps: [
+          'Menyediakan skema cicilan melalui sekolah sebagai jalur utama (diminati 43,9% wali santri & mayoritas kesiapan finansial menengah).',
+          'Menerbitkan panduan spesifikasi standar (min. RAM 4GB/ROM 32GB) dan kontrol keamanan digital bagi jalur beli mandiri (31,6%).'
+        ],
+        kpi: '100% santri siap perangkat pembelajaran digital tepat waktu pada Januari tanpa beban finansial mendadak.'
+      },
+      // HORIZON 3: JANGKA MENENGAH (SEMESTER BERJALAN)
+      {
+        priority: 'menengah',
+        priorityLabel: 'Jangka Menengah (Semester)',
+        badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+        borderClass: 'border-l-emeraldDeep',
+        tag: 'Komunikasi & Minat Bakat',
+        title: 'Standarisasi Dokumentasi Mingguan, Portal & Ekskul Unggulan',
+        owner: 'Humas / Kesiswaan / Wali Kelas',
+        steps: [
+          'Menetapkan SOP unggahan foto/video kegiatan kelas & halaqoh rutin setiap pekan serta pembaruan portal wali santri per 2 pekan.',
+          'Mengkaji pelonggaran batas maksimal 1 ekskul dan mengaktifkan ekskul renang (optimalisasi kolam) serta public speaking.'
+        ],
+        kpi: 'Skor Komunikasi Sekolah (4,26) dan Pengembangan Minat Bakat (4,16) meningkat menjadi ≥ 4,40.'
+      },
+      {
+        priority: 'menengah',
+        priorityLabel: 'Jangka Menengah (Semester)',
+        badgeClass: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+        borderClass: 'border-l-emeraldDeep',
+        tag: 'Fasilitas, Kesehatan & Sambangan',
+        title: 'Filtrasi Air Minum, P3K 21 Halaqoh, SOP AC & Evaluasi Sambangan',
+        owner: 'Sarpras / UKS / Pengasuhan',
+        steps: [
+          'Audit sistem filtrasi air minum asrama, penetapan SOP operasional AC kelas saat KBM, serta pengadaan P3K di seluruh 21 halaqoh.',
+          'Pemeriksaan berkala bersama puskesmas, siaga transportasi rujukan RS, serta peninjauan aturan sambangan wali luar kota.'
+        ],
+        kpi: '21/21 halaqoh dilengkapi P3K aktif; kualitas air minum & kenyamanan ruang kelas memenuhi standar.'
+      }
+    ];
+
+    // =========================================================================
+    // 2. STATE APLIKASI & INSTANSI CHART.JS
+    // =========================================================================
+
+    let currentSection = 0;
+    let activeHighlightFilter = 'all';
+    let aspectChartMode = 'mean';
+    let aspectSortKey = 'mean';
+    let aspectSortDir = 'desc';
+    let activeQualFilter = 'all';
+    let activeActionFilter = 'all';
+
+    let charts = {
+      aspect: null,
+      classChart: null,
+      halaqoh: null,
+      tabletApproval: null,
+      tabletMethod: null,
+      tabletReadiness: null,
+      harapan: null
+    };
+
+    Chart.defaults.font.family = "'Plus Jakarta Sans', system-ui, sans-serif";
+    Chart.defaults.color = '#475569';
+
+    // =========================================================================
+    // 3. NAVIGASI SLIDE & KONTROL SIDEBAR
+    // =========================================================================
+
+    function switchSection(index) {
+      if (index < 0 || index >= SECTION_TITLES.length) return;
+      currentSection = index;
+
+      document.querySelectorAll('.tab-section').forEach((sec, idx) => {
+        sec.classList.toggle('active', idx === index);
+      });
+
+      document.querySelectorAll('.nav-btn').forEach((btn, idx) => {
+        const badge = btn.querySelector('.nav-badge');
+        if (idx === index) {
+          btn.className = 'nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-sm font-bold bg-white text-emeraldDeep shadow-md transition-all';
+          badge.className = 'w-7 h-7 rounded-lg flex items-center justify-center text-xs font-extrabold bg-emeraldDeep text-amber-300 nav-badge';
+        } else {
+          btn.className = 'nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-left text-sm font-medium text-emerald-50/90 hover:bg-white/10 transition-all';
+          badge.className = 'w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold bg-white/15 text-emerald-100 nav-badge';
+        }
+      });
+
+      // Update top header & footer indicators
+      document.getElementById('header-slide-title').textContent = SHORT_TITLES[index];
+      document.getElementById('header-slide-pill').textContent = `Slide ${index + 1} / ${SECTION_TITLES.length}`;
+      document.getElementById('slide-indicator-title').textContent = SECTION_TITLES[index];
+      document.getElementById('slide-counter').textContent = `${index + 1} / ${SECTION_TITLES.length}`;
+      document.getElementById('btn-prev').disabled = index === 0;
+      document.getElementById('btn-next').disabled = index === SECTION_TITLES.length - 1;
+
+      const dotsContainer = document.getElementById('slide-dots');
+      dotsContainer.innerHTML = SECTION_TITLES.map((_, i) => `
+        <button onclick="switchSection(${i})" class="h-2 rounded-full transition-all ${i === index ? 'w-6 bg-emeraldDeep' : 'w-2 bg-slate-300 hover:bg-slate-400'}" aria-label="Ke Slide ${i + 1}"></button>
+      `).join('');
+
+      toggleMobileMenu(false);
+
+      // Reset posisi gulir khusus pada container <main>
+      const scrollEl = document.getElementById('scroll-container');
+      if (scrollEl) scrollEl.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Resize semua grafik agar proporsional pada slide yang baru tampil
+      setTimeout(() => {
+        Object.values(charts).forEach(ch => {
+          if (ch) ch.resize();
+        });
+      }, 60);
+    }
+
+    function navigateStep(delta) {
+      switchSection(currentSection + delta);
+    }
+
+    function toggleMobileMenu(show) {
+      const sidebar = document.getElementById('sidebar');
+      const overlay = document.getElementById('mobile-overlay');
+      if (show) {
+        sidebar.classList.remove('-translate-x-full');
+        overlay.classList.remove('hidden');
+      } else {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT' || e.target.tagName === 'TEXTAREA') return;
+      if (e.key === 'ArrowRight') navigateStep(1);
+      if (e.key === 'ArrowLeft') navigateStep(-1);
+    });
+
+    // =========================================================================
+    // 4. SLIDE 2: RENDER 5 POIN HIGHLIGHT KRITIS
+    // =========================================================================
+
+    function setHighlightFilter(cat) {
+      activeHighlightFilter = cat;
+      document.querySelectorAll('.hl-filter-btn').forEach(btn => {
+        const isMatch = btn.getAttribute('data-hl-filter') === cat;
+        btn.className = isMatch
+          ? 'hl-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-rose-700 text-white shadow-sm transition'
+          : 'hl-filter-btn px-4 py-2 rounded-xl text-xs font-bold bg-white text-slate-600 border border-slate-200 hover:border-rose-300 hover:text-rose-700 transition';
+      });
+      renderCriticalHighlights();
+    }
+
+    function renderCriticalHighlights() {
+      const container = document.getElementById('critical-highlights-container');
+      const items = activeHighlightFilter === 'all'
+        ? CRITICAL_HIGHLIGHTS
+        : CRITICAL_HIGHLIGHTS.filter(item => item.category === activeHighlightFilter);
+
+      container.innerHTML = items.map(item => `
+        <article class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-l-4 ${item.cardBorder} print-break-avoid">
+          <div class="flex flex-col sm:flex-row sm:items-start gap-4">
+            <div class="flex sm:flex-col items-center gap-2.5 shrink-0">
+              <div class="w-12 h-12 rounded-2xl ${item.numBg} flex items-center justify-center font-extrabold text-lg shadow-sm">
+                ${item.num}
+              </div>
+              <div class="w-10 h-10 rounded-xl ${item.iconClass} flex items-center justify-center">
+                <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+              </div>
+            </div>
+
+            <div class="flex-1 space-y-3">
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold uppercase tracking-wider ${item.badgeClass}">
+                  ${item.badge}
+                </span>
+              </div>
+
+              <h3 class="text-lg sm:text-xl font-extrabold text-slate-900 leading-snug">
+                ${item.title}
+              </h3>
+
+              <p class="text-sm font-semibold text-slate-800 leading-relaxed">
+                ${item.summary}
+              </p>
+
+              ${item.hasBreakfastGauge ? `
+                <div class="bg-rose-50/90 border border-rose-200 rounded-xl p-4 my-2">
+                  <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+                    <span class="text-xs font-extrabold uppercase tracking-wider text-rose-800 flex items-center gap-1.5">
+                      <i data-lucide="activity" class="w-4 h-4 text-rose-600"></i>
+                      Indikator Kritis: ~50% Santri Melewatkan Sarapan Setiap Hari
+                    </span>
+                    <span class="text-xs font-extrabold text-rose-700 bg-white px-2.5 py-0.5 rounded-full border border-rose-200">50% Tidak Sarapan vs 50% Sarapan</span>
+                  </div>
+                  <div class="w-full h-5 bg-emerald-200 rounded-full overflow-hidden flex shadow-inner">
+                    <div class="h-full bg-gradient-to-r from-rose-600 to-red-500 flex items-center justify-center text-[10px] sm:text-xs font-extrabold text-white" style="width: 50%">
+                      50% Tidak Sarapan Rutin
+                    </div>
+                    <div class="h-full bg-emerald-600 flex items-center justify-center text-[10px] sm:text-xs font-extrabold text-white" style="width: 50%">
+                      50% Sarapan / Menu Disukai
+                    </div>
+                  </div>
+                </div>
+              ` : ''}
+
+              ${item.subPrograms ? `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3 pt-1">
+                  ${item.subPrograms.map(sp => `
+                    <div class="bg-teal-50/70 border border-teal-200/80 rounded-xl p-3.5">
+                      <div class="flex items-center gap-1.5 text-xs font-extrabold text-teal-900 mb-1">
+                        <i data-lucide="check-square" class="w-3.5 h-3.5 text-teal-700 shrink-0"></i>
+                        <span>${sp.label}</span>
+                      </div>
+                      <p class="text-xs text-slate-700 leading-relaxed">${sp.desc}</p>
+                    </div>
+                  `).join('')}
+                </div>
+              ` : ''}
+
+              ${item.details.length > 0 ? `
+                <ul class="space-y-1.5 text-xs sm:text-sm text-slate-700">
+                  ${item.details.map(d => `
+                    <li class="flex items-start gap-2">
+                      <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mt-2 shrink-0"></span>
+                      <span class="leading-relaxed">${d}</span>
+                    </li>
+                  `).join('')}
+                </ul>
+              ` : ''}
+
+              <div class="mt-2 p-3.5 rounded-xl bg-slate-50 border border-slate-200/80 text-xs sm:text-sm text-slate-700 flex items-start gap-2.5">
+                <i data-lucide="link-2" class="w-4 h-4 text-emeraldDeep shrink-0 mt-0.5"></i>
+                <p class="leading-relaxed">
+                  <strong class="text-emeraldDeep">Keterkaitan dengan Survei Wali Santri:</strong> ${item.surveyLink}
+                </p>
+              </div>
+            </div>
+          </div>
+        </article>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    // =========================================================================
+    // 5. SLIDE 3: GRAFIK & TABEL 11 ASPEK KEPUASAN
+    // =========================================================================
+
+    function setAspectChartMode(mode) {
+      aspectChartMode = mode;
+      const btnMean = document.getElementById('btn-chart-mean');
+      const btnStacked = document.getElementById('btn-chart-stacked');
+      const titleEl = document.getElementById('aspect-chart-title');
+
+      if (mode === 'mean') {
+        btnMean.className = 'px-3.5 py-2 rounded-lg text-xs font-bold transition bg-white text-emeraldDeep shadow-xs';
+        btnStacked.className = 'px-3.5 py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900';
+        titleEl.textContent = 'Grafik Batang Horizontal: Rata-Rata Skor per Aspek (Rata-rata Gabungan: 4,34)';
+      } else {
+        btnStacked.className = 'px-3.5 py-2 rounded-lg text-xs font-bold transition bg-white text-emeraldDeep shadow-xs';
+        btnMean.className = 'px-3.5 py-2 rounded-lg text-xs font-bold transition text-slate-600 hover:text-slate-900';
+        titleEl.textContent = 'Grafik Stacked Bar 100%: Distribusi Skor 1–5 per Aspek';
+      }
+      renderAspectChart();
+    }
+
+    function renderAspectChart() {
+      const ctx = document.getElementById('aspectChart').getContext('2d');
+      if (charts.aspect) charts.aspect.destroy();
+
+      const labels = ASPECTS_DATA.map(a => a.name);
+
+      if (aspectChartMode === 'mean') {
+        const values = ASPECTS_DATA.map(a => a.mean);
+        const colors = values.map(v => v >= 4.40 ? '#065f46' : v >= 4.25 ? '#0f766e' : '#d97706');
+
+        charts.aspect = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Rata-Rata Skor',
+              data: values,
+              backgroundColor: colors,
+              borderRadius: 8,
+              barPercentage: 0.7
+            }]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                min: 3.5,
+                max: 5.0,
+                ticks: { stepSize: 0.25 },
+                grid: { color: '#f1f5f9' }
+              },
+              y: {
+                grid: { display: false },
+                ticks: { font: { size: 11.5, weight: '600' } }
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (c) => ` Rata-rata: ${c.parsed.x.toFixed(2).replace('.', ',')} / 5,00`
+                }
+              }
+            }
+          }
+        });
+      } else {
+        const total = 57;
+        const pct = (idx) => ASPECTS_DATA.map(a => +((a.dist[idx] / total) * 100).toFixed(1));
+
+        charts.aspect = new Chart(ctx, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [
+              { label: 'Skor 1 (Sangat Tidak Puas)', data: pct(0), backgroundColor: '#dc2626' },
+              { label: 'Skor 2 (Kurang Puas)', data: pct(1), backgroundColor: '#f97316' },
+              { label: 'Skor 3 (Cukup)', data: pct(2), backgroundColor: '#eab308' },
+              { label: 'Skor 4 (Puas)', data: pct(3), backgroundColor: '#14b8a6' },
+              { label: 'Skor 5 (Sangat Puas)', data: pct(4), backgroundColor: '#065f46' }
+            ]
+          },
+          options: {
+            indexAxis: 'y',
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                stacked: true,
+                min: 0,
+                max: 100,
+                ticks: { callback: v => v + '%' },
+                grid: { color: '#f1f5f9' }
+              },
+              y: {
+                stacked: true,
+                grid: { display: false },
+                ticks: { font: { size: 11.5, weight: '600' } }
+              }
+            },
+            plugins: {
+              legend: { position: 'bottom', labels: { boxWidth: 12, font: { size: 11 } } },
+              tooltip: {
+                callbacks: {
+                  label: (c) => ` ${c.dataset.label}: ${c.parsed.x.toFixed(1).replace('.', ',')}%`
+                }
+              }
+            }
+          }
+        });
+      }
+    }
+
+    function sortAspectTable(key) {
+      if (aspectSortKey === key) {
+        aspectSortDir = aspectSortDir === 'asc' ? 'desc' : 'asc';
+      } else {
+        aspectSortKey = key;
+        aspectSortDir = key === 'name' ? 'asc' : 'desc';
+      }
+      renderAspectTable();
+    }
+
+    function renderAspectTable() {
+      const sorted = [...ASPECTS_DATA].sort((a, b) => {
+        const valA = a[aspectSortKey];
+        const valB = b[aspectSortKey];
+        if (typeof valA === 'string') {
+          return aspectSortDir === 'asc' ? valA.localeCompare(valB) : valB.localeCompare(valA);
+        }
+        return aspectSortDir === 'asc' ? valA - valB : valB - valA;
+      });
+
+      const tbody = document.getElementById('aspect-table-body');
+      tbody.innerHTML = sorted.map(row => {
+        const badgeClass = row.mean >= 4.40
+          ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+          : row.mean >= 4.25
+          ? 'bg-teal-50 text-teal-800 border-teal-200'
+          : 'bg-amber-50 text-amber-800 border-amber-200';
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition">
+            <td class="py-3.5 px-4 font-semibold text-slate-800">${row.name}</td>
+            <td class="py-3.5 px-3 text-center">
+              <span class="inline-block px-2.5 py-0.5 rounded-full text-xs font-extrabold border ${badgeClass}">
+                ${row.mean.toFixed(2).replace('.', ',')}
+              </span>
+            </td>
+            <td class="py-3.5 px-3 text-center font-semibold text-slate-700">${row.puas.toFixed(1).replace('.', ',')}%</td>
+            <td class="py-3.5 px-3 text-center font-semibold text-emeraldDeep">${row.sangatPuas.toFixed(1).replace('.', ',')}%</td>
+            <td class="py-3.5 px-4 text-center">
+              <div class="inline-flex items-center gap-1 text-[11px] font-bold">
+                <span class="w-6 py-0.5 rounded bg-rose-50 text-rose-700" title="Skor 1">${row.dist[0]}</span>
+                <span class="w-6 py-0.5 rounded bg-orange-50 text-orange-700" title="Skor 2">${row.dist[1]}</span>
+                <span class="w-6 py-0.5 rounded bg-amber-50 text-amber-700" title="Skor 3">${row.dist[2]}</span>
+                <span class="w-6 py-0.5 rounded bg-teal-50 text-teal-700" title="Skor 4">${row.dist[3]}</span>
+                <span class="w-7 py-0.5 rounded bg-emerald-100 text-emerald-900" title="Skor 5">${row.dist[4]}</span>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 6. SLIDE 4: GRAFIK KELAS & 21 HALAQOH
+    // =========================================================================
+
+    function renderClassChart() {
+      const ctx = document.getElementById('classChart').getContext('2d');
+      if (charts.classChart) charts.classChart.destroy();
+
+      charts.classChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: CLASSES_DATA.map(c => `${c.label} (n=${c.n})`),
+          datasets: [{
+            label: 'Rata-Rata Skor',
+            data: CLASSES_DATA.map(c => c.mean),
+            backgroundColor: CLASSES_DATA.map(c => c.label === '7C' ? '#e11d48' : c.mean >= 4.50 ? '#065f46' : '#0f766e'),
+            borderRadius: 8,
+            barPercentage: 0.65
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              min: 3.4,
+              max: 5.1,
+              ticks: { stepSize: 0.2 },
+              grid: { color: '#f1f5f9' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 11, weight: '700' } }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (c) => {
+                  const item = CLASSES_DATA[c.dataIndex];
+                  return ` Rata-rata: ${item.mean.toFixed(2).replace('.', ',')} (${item.n} responden)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function renderHalaqohData() {
+      const query = (document.getElementById('halaqoh-search').value || '').toLowerCase().trim();
+      const sortMode = document.getElementById('halaqoh-sort').value;
+
+      let list = HALAQOH_DATA.filter(h => h.name.toLowerCase().includes(query) || String(h.num).includes(query));
+
+      list.sort((a, b) => {
+        if (sortMode === 'score-asc') return a.mean - b.mean;
+        if (sortMode === 'score-desc') return b.mean - a.mean;
+        if (sortMode === 'n-desc') return b.n - a.n || a.mean - b.mean;
+        return a.num - b.num;
+      });
+
+      // Grafik Halaqoh
+      const ctx = document.getElementById('halaqohChart').getContext('2d');
+      if (charts.halaqoh) charts.halaqoh.destroy();
+
+      charts.halaqoh = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: list.map(h => `H${h.num}`),
+          datasets: [{
+            label: 'Rata-Rata Skor',
+            data: list.map(h => h.mean),
+            backgroundColor: list.map(h => h.mean < 4.00 ? '#e11d48' : h.mean < 4.30 ? '#d97706' : '#065f46'),
+            borderRadius: 6,
+            barPercentage: 0.72
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              min: 2.8,
+              max: 5.1,
+              ticks: { stepSize: 0.4 },
+              grid: { color: '#f1f5f9' }
+            },
+            x: {
+              grid: { display: false },
+              ticks: { font: { size: 11, weight: '700' } }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                title: (items) => list[items[0].dataIndex].name,
+                label: (c) => {
+                  const h = list[c.dataIndex];
+                  return ` Skor: ${h.mean.toFixed(2).replace('.', ',')} (n = ${h.n})`;
+                }
+              }
+            }
+          }
+        }
+      });
+
+      // Tabel Halaqoh
+      const tbody = document.getElementById('halaqoh-table-body');
+      tbody.innerHTML = list.map(h => {
+        const pctWidth = Math.round((h.mean / 5) * 100);
+        let statusHtml = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200">Baik / Unggul</span>';
+        let barColor = 'bg-emerald-600';
+
+        if (h.mean < 4.00) {
+          statusHtml = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-rose-100 text-rose-800 border border-rose-200">Prioritas Audit</span>';
+          barColor = 'bg-rose-600';
+        } else if (h.mean < 4.30) {
+          statusHtml = '<span class="px-2.5 py-0.5 rounded-full text-[11px] font-bold bg-amber-100 text-amber-800 border border-amber-200">Perlu Pembinaan</span>';
+          barColor = 'bg-amber-500';
+        }
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition">
+            <td class="py-2.5 px-4 font-bold text-slate-800">${h.name}</td>
+            <td class="py-2.5 px-4 text-center font-semibold text-slate-600">${h.n}</td>
+            <td class="py-2.5 px-4 text-center font-extrabold text-slate-900">${h.mean.toFixed(2).replace('.', ',')}</td>
+            <td class="py-2.5 px-4 w-48">
+              <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                <div class="h-full ${barColor} rounded-full" style="width: ${pctWidth}%"></div>
+              </div>
+            </td>
+            <td class="py-2.5 px-4 text-center">${statusHtml}</td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // =========================================================================
+    // 7. SLIDE 5: 3 GRAFIK KEBIJAKAN TABLET
+    // =========================================================================
+
+    function renderTabletCharts() {
+      // 1. Distribusi Persetujuan (Skala 1-5)
+      const ctx1 = document.getElementById('tabletApprovalChart').getContext('2d');
+      if (charts.tabletApproval) charts.tabletApproval.destroy();
+      charts.tabletApproval = new Chart(ctx1, {
+        type: 'bar',
+        data: {
+          labels: ['Skor 1', 'Skor 2', 'Skor 3', 'Skor 4', 'Skor 5'],
+          datasets: [{
+            label: 'Jumlah Responden',
+            data: [2, 1, 6, 17, 31],
+            backgroundColor: ['#dc2626', '#f97316', '#eab308', '#0f766e', '#065f46'],
+            borderRadius: 8,
+            barPercentage: 0.65
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true, max: 35, grid: { color: '#f1f5f9' } },
+            x: { grid: { display: false }, ticks: { font: { weight: '700', size: 11 } } }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.parsed.y} responden (${((c.parsed.y / 57) * 100).toFixed(1).replace('.', ',')}%)`
+              }
+            }
+          }
+        }
+      });
+
+      // 2. Donut Metode Pengadaan
+      const ctx2 = document.getElementById('tabletMethodChart').getContext('2d');
+      if (charts.tabletMethod) charts.tabletMethod.destroy();
+      charts.tabletMethod = new Chart(ctx2, {
+        type: 'doughnut',
+        data: {
+          labels: ['Cicilan sekolah (25)', 'Beli mandiri (18)', 'Tunai sekolah (14)'],
+          datasets: [{
+            data: [25, 18, 14],
+            backgroundColor: ['#d97706', '#0f766e', '#065f46'],
+            borderWidth: 2,
+            borderColor: '#ffffff'
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '60%',
+          plugins: {
+            legend: { position: 'bottom', labels: { boxWidth: 11, font: { size: 11, weight: '600' } } },
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.label}: ${((c.parsed / 57) * 100).toFixed(1).replace('.', ',')}%`
+              }
+            }
+          }
+        }
+      });
+
+      // 3. Kesiapan Finansial (Skala 1-3)
+      const ctx3 = document.getElementById('tabletReadinessChart').getContext('2d');
+      if (charts.tabletReadiness) charts.tabletReadiness.destroy();
+      charts.tabletReadiness = new Chart(ctx3, {
+        type: 'bar',
+        data: {
+          labels: ['Skor 1\n(Kurang)', 'Skor 2\n(Cukup)', 'Skor 3\n(Sangat Siap)'],
+          datasets: [{
+            label: 'Jumlah Responden',
+            data: [1, 25, 31],
+            backgroundColor: ['#e11d48', '#d97706', '#065f46'],
+            borderRadius: 8,
+            barPercentage: 0.55
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: { beginAtZero: true, max: 35, grid: { color: '#f1f5f9' } },
+            x: { grid: { display: false }, ticks: { font: { weight: '700', size: 11 } } }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (c) => ` ${c.parsed.y} responden (${((c.parsed.y / 57) * 100).toFixed(1).replace('.', ',')}%)`
+              }
+            }
+          }
+        }
+      });
+    }
+
+    // =========================================================================
+    // 8. SLIDE 6: GRAFIK HARAPAN UTAMA & FILTER 7 KATEGORI KUALITATIF
+    // =========================================================================
+
+    function renderHarapanChart() {
+      const ctx = document.getElementById('harapanChart').getContext('2d');
+      if (charts.harapan) charts.harapan.destroy();
+
+      charts.harapan = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: [
+            "Hafalan Al-Qur'an / Hafizah",
+            'Akhlak & Kesholehahan',
+            'Akademik & Prestasi',
+            'Kemandirian',
+            'Teknologi, Bahasa & Skill'
+          ],
+          datasets: [{
+            label: 'Persentase Responden (%)',
+            data: [68.4, 52.6, 40.4, 33.3, 10.5],
+            backgroundColor: ['#065f46', '#0f766e', '#d97706', '#0284c7', '#475569'],
+            borderRadius: 8,
+            barPercentage: 0.65
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              min: 0,
+              max: 80,
+              ticks: { callback: (v) => v + '%' },
+              grid: { color: '#f1f5f9' }
+            },
+            y: {
+              grid: { display: false },
+              ticks: { font: { weight: '700', size: 12 } }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (c) => {
+                  const counts = [39, 30, 23, 19, 6];
+                  return ` ${counts[c.dataIndex]} responden (${c.parsed.x.toFixed(1).replace('.', ',')}%)`;
+                }
+              }
+            }
+          }
+        }
+      });
+    }
+
+    function setQualFilter(id) {
+      activeQualFilter = id;
+      renderQualitativeSection();
+    }
+
+    function renderQualitativeSection() {
+      const filterContainer = document.getElementById('qualitative-filters');
+      const allFilters = [
+        { id: 'all', label: 'Semua Tema (7)' },
+        ...QUALITATIVE_ISSUES.map(q => ({ id: q.id, label: `${q.short} (${q.pct})` }))
+      ];
+
+      filterContainer.innerHTML = allFilters.map(f => {
+        const isActive = activeQualFilter === f.id;
+        return `
+          <button onclick="setQualFilter('${f.id}')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition border ${
+            isActive
+              ? 'bg-emeraldDeep text-white border-emeraldDeep shadow-sm'
+              : 'bg-white text-slate-600 border-slate-200 hover:border-emerald-300 hover:text-emeraldDeep'
+          }">
+            ${f.label}
+          </button>
+        `;
+      }).join('');
+
+      const cardsContainer = document.getElementById('qualitative-cards');
+      const filtered = activeQualFilter === 'all'
+        ? QUALITATIVE_ISSUES
+        : QUALITATIVE_ISSUES.filter(q => q.id === activeQualFilter);
+
+      const colorMap = {
+        emerald: { bg: 'bg-emerald-50', text: 'text-emerald-800', icon: 'text-emerald-700', border: 'border-emerald-200' },
+        teal:    { bg: 'bg-teal-50', text: 'text-teal-800', icon: 'text-teal-700', border: 'border-teal-200' },
+        sky:     { bg: 'bg-sky-50', text: 'text-sky-800', icon: 'text-sky-700', border: 'border-sky-200' },
+        amber:   { bg: 'bg-amber-50', text: 'text-amber-800', icon: 'text-amber-700', border: 'border-amber-200' },
+        indigo:  { bg: 'bg-indigo-50', text: 'text-indigo-800', icon: 'text-indigo-700', border: 'border-indigo-200' },
+        rose:    { bg: 'bg-rose-50', text: 'text-rose-800', icon: 'text-rose-700', border: 'border-rose-200' },
+        slate:   { bg: 'bg-slate-100', text: 'text-slate-800', icon: 'text-slate-700', border: 'border-slate-200' }
+      };
+
+      cardsContainer.innerHTML = filtered.map(item => {
+        const c = colorMap[item.color];
+        return `
+          <div class="bg-white rounded-2xl p-5 shadow-soft border border-slate-100 hover:border-slate-200 transition flex flex-col justify-between gap-4 print-break-avoid">
+            <div>
+              <div class="flex items-start justify-between gap-3 mb-3">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-xl ${c.bg} ${c.icon} flex items-center justify-center shrink-0">
+                    <i data-lucide="${item.icon}" class="w-5 h-5"></i>
+                  </div>
+                  <h4 class="text-sm font-bold text-slate-900 leading-snug">${item.title}</h4>
+                </div>
+                <span class="shrink-0 px-2.5 py-1 rounded-full text-xs font-extrabold ${c.bg} ${c.text} border ${c.border}">
+                  ${item.count} (${item.pct})
+                </span>
+              </div>
+              <ul class="space-y-2 text-xs sm:text-sm text-slate-700 mt-3">
+                ${item.points.map(p => `
+                  <li class="flex items-start gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 shrink-0"></span>
+                    <span class="leading-relaxed">${p}</span>
+                  </li>
+                `).join('')}
+              </ul>
+            </div>
+            <div class="p-3 rounded-xl bg-slate-50 border-l-4 border-slate-300 text-xs italic text-slate-600 leading-relaxed">
+              ${item.quote}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      lucide.createIcons();
+    }
+
+    // =========================================================================
+    // 9. SLIDE 7: PETA JALAN REKOMENDASI & ACTION PLAN (9 AKSI)
+    // =========================================================================
+
+    function filterActionPlan(prio) {
+      activeActionFilter = prio;
+      document.querySelectorAll('.prio-btn').forEach(btn => {
+        const isMatch = btn.getAttribute('data-prio') === prio;
+        btn.className = isMatch
+          ? 'prio-btn px-3 py-1.5 rounded-lg text-xs font-bold bg-white text-emeraldDeep shadow-xs transition'
+          : 'prio-btn px-3 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-slate-900 transition';
+      });
+      renderActionPlans();
+    }
+
+    function renderActionPlans() {
+      const container = document.getElementById('action-plan-grid');
+      const items = activeActionFilter === 'all'
+        ? ACTION_PLANS
+        : ACTION_PLANS.filter(a => a.priority === activeActionFilter);
+
+      container.innerHTML = items.map((plan, idx) => `
+        <div class="bg-white rounded-2xl p-5 sm:p-6 shadow-soft border border-slate-100 border-l-4 ${plan.borderClass} flex flex-col justify-between gap-4 print-break-avoid">
+          <div>
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <div class="flex flex-wrap items-center gap-1.5">
+                <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold border ${plan.badgeClass}">
+                  ${plan.priorityLabel}
+                </span>
+                <span class="px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 text-[10px] font-bold">${plan.tag}</span>
+              </div>
+              <span class="text-xs font-semibold text-slate-500 flex items-center gap-1.5">
+                <i data-lucide="briefcase" class="w-3.5 h-3.5 text-slate-400"></i>
+                ${plan.owner}
+              </span>
+            </div>
+            <h3 class="text-base font-extrabold text-slate-900 leading-snug mb-3">${idx + 1}. ${plan.title}</h3>
+            <ul class="space-y-2 text-xs sm:text-sm text-slate-700">
+              ${plan.steps.map(s => `
+                <li class="flex items-start gap-2">
+                  <i data-lucide="chevron-right" class="w-4 h-4 text-emerald-600 mt-0.5 shrink-0"></i>
+                  <span class="leading-relaxed">${s}</span>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+          <div class="pt-3.5 border-t border-slate-100 bg-slate-50/70 -mx-5 sm:-mx-6 -mb-5 sm:-mb-6 px-5 sm:px-6 py-3.5 rounded-b-2xl">
+            <p class="text-xs text-slate-700 leading-relaxed">
+              <strong class="text-emeraldDeep uppercase tracking-wider text-[11px]">Indikator Keberhasilan (KPI):</strong><br/>
+              ${plan.kpi}
+            </p>
+          </div>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    // =========================================================================
+    // 10. INISIALISASI SAAT HALAMAN DIMUAT
+    // =========================================================================
+
+    window.addEventListener('DOMContentLoaded', () => {
+      try {
+        lucide.createIcons();
+        switchSection(0);
+        renderCriticalHighlights();
+        renderAspectChart();
+        renderAspectTable();
+        renderClassChart();
+        renderHalaqohData();
+        renderTabletCharts();
+        renderHarapanChart();
+        renderQualitativeSection();
+        renderActionPlans();
+      } catch (err) {
+        console.error('Terjadi kesalahan inisialisasi dashboard:', err);
+      }
+    });
+  </script>
+</body>
+</html>
